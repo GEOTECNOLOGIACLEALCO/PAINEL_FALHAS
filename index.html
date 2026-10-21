@@ -810,6 +810,10 @@
                 dadosMetas = window.DADOS_CLEALCO_EMBARCADOS.metas_globais || {};
                 dadosAcompanhamento = window.DADOS_CLEALCO_EMBARCADOS.acompanhamento || [];
                 creditosInforow = window.DADOS_CLEALCO_EMBARCADOS.creditos_inforow || 11195.23;
+                if (window.DADOS_CLEALCO_EMBARCADOS.data_compilacao) {
+                    const elData = document.getElementById('lbl-data-hora');
+                    if (elData) elData.innerText = window.DADOS_CLEALCO_EMBARCADOS.data_compilacao;
+                }
             }
 
             renderizarDashboard();

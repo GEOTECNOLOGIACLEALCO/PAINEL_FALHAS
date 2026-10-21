@@ -1,4 +1,5 @@
 import openpyxl, json
+from datetime import datetime
 
 caminho_xlsx = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados.xlsx"
 caminho_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_injetados.js"
@@ -138,7 +139,8 @@ dados_completos = {
     "falhas_plantio": falhas,
     "metas_globais": metas,
     "acompanhamento": acomp,
-    "creditos_inforow": 11195.23
+    "creditos_inforow": 11195.23,
+    "data_compilacao": datetime.now().strftime("%d/%m/%Y às %H:%M")
 }
 
 with open(caminho_js, "w", encoding="utf-8") as f:
