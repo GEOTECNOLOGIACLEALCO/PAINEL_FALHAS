@@ -258,6 +258,25 @@
                 display: block !important;
             }
         }
+
+        /* ================= MODO TV / APRESENTAÇÃO ================= */
+        body.modo-tv header {
+            padding-top: 6px !important;
+            padding-bottom: 6px !important;
+        }
+        body.modo-tv main {
+            max-width: 98vw !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+        body.modo-tv #tv-control-bar {
+            opacity: 0.95 !important;
+            pointer-events: auto !important;
+            transform: translate(-50%, 0) !important;
+        }
+        body.modo-tv #tv-control-bar:hover {
+            opacity: 1 !important;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
@@ -300,6 +319,9 @@
 
             <!-- Ações e Controles -->
             <div class="flex items-center gap-2">
+                <button onclick="toggleModoTV()" id="btn-modo-tv" title="Modo Apresentação TV (Tela Cheia)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                    📺 <span>Modo TV</span>
+                </button>
                 <button onclick="gerarPDFExecutivo()" title="Imprimir ou Salvar PDF Executivo" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
                     🖨️ <span>PDF Executivo</span>
                 </button>
@@ -860,6 +882,29 @@
         </div>
     </footer>
 
+    <!-- BARRA FLUTUANTE DE CONTROLE MODO TV -->
+    <div id="tv-control-bar" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900/95 text-white backdrop-blur-md px-5 py-2.5 rounded-full border border-slate-700 shadow-2xl flex items-center gap-4 transition-all duration-300 opacity-0 pointer-events-none no-print">
+        <div class="flex items-center gap-2">
+            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-400">Modo TV</span>
+        </div>
+        <div class="h-4 w-px bg-slate-700"></div>
+        <div class="flex items-center gap-2 text-xs">
+            <span id="tv-relogio" class="font-mono text-amber-400 font-bold text-sm">--:--:--</span>
+        </div>
+        <div class="h-4 w-px bg-slate-700"></div>
+        <div class="flex items-center gap-2">
+            <button onclick="toggleRotacaoTV()" id="btn-rotacao-tv" class="text-xs font-bold px-2.5 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-600 transition flex items-center gap-1.5 cursor-pointer">
+                <span id="icone-rotacao-tv">⏸️</span> <span id="texto-rotacao-tv">Pausar</span>
+            </button>
+            <span class="text-[11px] text-slate-300 font-mono font-bold" id="tv-timer-count">15s</span>
+        </div>
+        <div class="h-4 w-px bg-slate-700"></div>
+        <button onclick="toggleModoTV()" class="text-xs font-bold px-3 py-1 rounded-md bg-red-600/80 hover:bg-red-600 text-white transition flex items-center gap-1 cursor-pointer">
+            ✖ Sair
+        </button>
+    </div>
+
     <!-- ================= JAVASCRIPT DINÂMICO DO PAINEL ================= -->
     <script>
         // Dados mestre em memória
@@ -928,6 +973,103 @@
                 if (btn) btn.classList.remove('animate-spin');
                 if (msg) msg.innerText = "Sistema Clealco pronto. Dados sincronizados com sucesso!";
             }, 600);
+        }
+
+        // ================= MODO TV / APRESENTAÇÃO =================
+        let modoTVAtivo = false;
+        let timerRotacaoTV = null;
+        let segundosRestantesTV = 15;
+        let rotacaoPausada = false;
+        const ABAS_TV = ['dashboard', 'acompanhamento', 'falhas', 'backlog'];
+        let indiceAbaTV = 0;
+
+        function atualizarRelogioTV() {
+            const el = document.getElementById('tv-relogio');
+            if (el) el.innerText = new Date().toLocaleTimeString('pt-BR');
+        }
+
+        function toggleModoTV() {
+            modoTVAtivo = !modoTVAtivo;
+            const body = document.body;
+            const btn = document.getElementById('btn-modo-tv');
+
+            if (modoTVAtivo) {
+                body.classList.add('modo-tv');
+                if (btn) btn.innerHTML = '📺 <span>Sair da TV</span>';
+                if (document.documentElement.requestFullscreen && !document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(() => {});
+                }
+                iniciarCicloTV();
+            } else {
+                body.classList.remove('modo-tv');
+                if (btn) btn.innerHTML = '📺 <span>Modo TV</span>';
+                if (document.exitFullscreen && document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
+                }
+                pararCicloTV();
+            }
+        }
+
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement && modoTVAtivo) {
+                toggleModoTV();
+            }
+        });
+
+        function iniciarCicloTV() {
+            pararCicloTV();
+            segundosRestantesTV = 15;
+            rotacaoPausada = false;
+            atualizarUIControleTV();
+            atualizarRelogioTV();
+
+            // Detectar qual aba está ativa agora para continuar o ciclo a partir dela
+            const abas = ['dashboard', 'acompanhamento', 'falhas', 'backlog'];
+            const abaAtual = abas.find(a => !document.getElementById('aba-' + a)?.classList.contains('hidden')) || 'dashboard';
+            indiceAbaTV = ABAS_TV.indexOf(abaAtual);
+            if (indiceAbaTV === -1) indiceAbaTV = 0;
+
+            timerRotacaoTV = setInterval(() => {
+                atualizarRelogioTV();
+                if (!rotacaoPausada) {
+                    segundosRestantesTV--;
+                    const timerEl = document.getElementById('tv-timer-count');
+                    if (timerEl) timerEl.innerText = segundosRestantesTV + 's';
+
+                    if (segundosRestantesTV <= 0) {
+                        segundosRestantesTV = 15;
+                        indiceAbaTV = (indiceAbaTV + 1) % ABAS_TV.length;
+                        trocarAba(ABAS_TV[indiceAbaTV]);
+                    }
+                }
+            }, 1000);
+        }
+
+        function pararCicloTV() {
+            if (timerRotacaoTV) {
+                clearInterval(timerRotacaoTV);
+                timerRotacaoTV = null;
+            }
+        }
+
+        function toggleRotacaoTV() {
+            rotacaoPausada = !rotacaoPausada;
+            atualizarUIControleTV();
+        }
+
+        function atualizarUIControleTV() {
+            const icone = document.getElementById('icone-rotacao-tv');
+            const texto = document.getElementById('texto-rotacao-tv');
+            const timerEl = document.getElementById('tv-timer-count');
+            if (rotacaoPausada) {
+                if (icone) icone.innerText = '▶️';
+                if (texto) texto.innerText = 'Retomar';
+                if (timerEl) timerEl.innerText = 'Pausado';
+            } else {
+                if (icone) icone.innerText = '⏸️';
+                if (texto) texto.innerText = 'Pausar';
+                if (timerEl) timerEl.innerText = segundosRestantesTV + 's';
+            }
         }
 
         async function tentarFetchExcelRemoto() {
