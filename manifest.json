@@ -1,19 +1,29 @@
 {
-  "name": "Singularity AI - Clealco Geotecnologia",
-  "short_name": "Singularity",
-  "start_url": "./",
+  "name": "Clealco - Controle de Voos & Processamentos",
+  "short_name": "Clealco Voos",
+  "description": "Painel Operacional de Voos, Ortomosaicos, Falhas de Plantio e Backlog da Geotecnologia Clealco",
+  "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
-  "background_color": "#010102",
-  "theme_color": "#FFD166",
+  "orientation": "any",
+  "background_color": "#ffffff",
+  "theme_color": "#E30613",
   "icons": [
     {
-      "src": "logo_clealco.png",
+      "src": "icon-192.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
-      "src": "logo_clealco.png",
+      "src": "icon-512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
       "type": "image/png"
     }
   ]

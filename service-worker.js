@@ -1,9 +1,14 @@
-const CACHE_NAME = 'singularity-cache-v2';
+const CACHE_NAME = 'clealco-voos-v3';
 const ASSETS_ESTATICOS = [
     './',
     './index.html',
+    './manifest.json',
+    './dados_injetados.js',
     './logo_clealco.png',
-    './manifest.json'
+    './icon-192.png',
+    './icon-512.png',
+    './apple-touch-icon.png',
+    './favicon.png'
 ];
 
 self.addEventListener('install', (event) => {

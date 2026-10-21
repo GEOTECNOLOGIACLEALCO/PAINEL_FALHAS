@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Singularity AI | Clealco Geotecnologia</title>
+    <title>Clealco Geotecnologia | Voos & Processamentos</title>
     
     <!-- PWA Settings -->
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0b0f17">
+    <meta name="theme-color" content="#E30613">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="logo_clealco.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Clealco Voos">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="64x64" href="favicon.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -319,6 +322,9 @@
 
             <!-- Ações e Controles -->
             <div class="flex items-center gap-2">
+                <button onclick="acionarInstalacaoApp()" id="btn-instalar-app" title="Instalar no Celular, Tablet ou Computador" class="text-xs bg-red-600 hover:bg-red-700 text-white border border-red-700 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                    📲 <span>Instalar App</span>
+                </button>
                 <button onclick="toggleModoTV()" id="btn-modo-tv" title="Modo Apresentação TV (Tela Cheia)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                     📺 <span>Modo TV</span>
                 </button>
@@ -903,6 +909,50 @@
         <button onclick="toggleModoTV()" class="text-xs font-bold px-3 py-1 rounded-md bg-red-600/80 hover:bg-red-600 text-white transition flex items-center gap-1 cursor-pointer">
             ✖ Sair
         </button>
+    </div>
+
+    <!-- MODAL DE INSTALAÇÃO PWA (CELULAR / TABLET / COMPUTADOR) -->
+    <div id="modal-instalar-app" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200">
+            <button onclick="fecharModalInstalar()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-2xl font-bold p-1 leading-none">&times;</button>
+            
+            <div class="flex items-center gap-4 mb-4">
+                <img src="icon-192.png" alt="Clealco Voos" class="w-16 h-16 rounded-2xl shadow-md border border-slate-100 p-1 bg-white">
+                <div>
+                    <h3 class="text-lg font-black text-slate-900 leading-tight">Instalar Aplicativo Clealco</h3>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5">Painel de Voos & Processamentos no seu Celular e Tablet</p>
+                </div>
+            </div>
+
+            <div class="space-y-3 my-4 text-sm text-slate-700">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+                        <span>🍎</span> No iPhone ou iPad (Safari):
+                    </p>
+                    <ol class="list-decimal list-inside text-xs space-y-1.5 text-slate-600">
+                        <li>Toque no botão <b>Compartilhar</b> <span class="text-blue-600 font-bold text-sm">⎋</span> (barra inferior do Safari)</li>
+                        <li>Role a lista para baixo e toque em <b>Adicionar à Tela de Início</b> <span class="font-bold text-sm">⊞</span></li>
+                        <li>Toque em <b>Adicionar</b> no canto superior direito</li>
+                    </ol>
+                </div>
+
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+                        <span>🤖</span> No Android ou Computador (Chrome/Edge):
+                    </p>
+                    <p class="text-xs text-slate-600">
+                        Clique no botão <b>Instalar Agora</b> abaixo ou abra o menu do navegador (<span class="font-bold">⋮</span>) e selecione <b>Adicionar à tela inicial / Instalar aplicativo</b>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="flex gap-2 justify-end mt-5 pt-3 border-t border-slate-100">
+                <button onclick="fecharModalInstalar()" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-lg transition">Fechar</button>
+                <button id="btn-confirmar-instalacao" onclick="executarPromptInstalacao()" class="px-5 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm transition flex items-center gap-1.5">
+                    📲 Instalar Agora
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- ================= JAVASCRIPT DINÂMICO DO PAINEL ================= -->
@@ -1554,6 +1604,54 @@
 
         // Início
         window.onload = inicializarPainel;
+
+        // ================= PWA: INSTALAÇÃO & SERVICE WORKER =================
+        let eventoInstalacaoPWA = null;
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            eventoInstalacaoPWA = e;
+            console.log('Evento beforeinstallprompt capturado');
+        });
+
+        window.addEventListener('appinstalled', () => {
+            eventoInstalacaoPWA = null;
+            console.log('Clealco Voos instalado com sucesso!');
+        });
+
+        function acionarInstalacaoApp() {
+            if (eventoInstalacaoPWA) {
+                eventoInstalacaoPWA.prompt();
+                eventoInstalacaoPWA.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        eventoInstalacaoPWA = null;
+                    }
+                });
+            } else {
+                // Abre o modal orientativo para iOS Safari e instruções de instalação
+                document.getElementById('modal-instalar-app').classList.remove('hidden');
+            }
+        }
+
+        function executarPromptInstalacao() {
+            if (eventoInstalacaoPWA) {
+                eventoInstalacaoPWA.prompt();
+            }
+            fecharModalInstalar();
+        }
+
+        function fecharModalInstalar() {
+            document.getElementById('modal-instalar-app').classList.add('hidden');
+        }
+
+        // Registrar Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(reg => console.log('Service Worker registrado:', reg.scope))
+                    .catch(err => console.log('Service Worker falha:', err));
+            });
+        }
     </script>
 </body>
 </html>
