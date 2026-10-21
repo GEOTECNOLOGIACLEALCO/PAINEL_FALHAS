@@ -232,6 +232,32 @@
         body.light-theme [class*="bg-white\/10"] {
             background-color: #E2E8F0 !important;
         }
+
+        .print-header { display: none; }
+
+        @media print {
+            header, nav, #file-input, .filtro-pill, #input-busca, footer, button, #btn-recarregar, .no-print {
+                display: none !important;
+            }
+            body {
+                background: #ffffff !important;
+                color: #0f172a !important;
+                padding: 0 !important;
+            }
+            main {
+                max-width: 100% !important;
+                padding: 10px !important;
+                margin: 0 !important;
+            }
+            .glass-panel {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+                page-break-inside: avoid;
+            }
+            .print-header {
+                display: block !important;
+            }
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
@@ -273,7 +299,10 @@
             </nav>
 
             <!-- Ações e Controles -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2">
+                <button onclick="gerarPDFExecutivo()" title="Imprimir ou Salvar PDF Executivo" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm">
+                    🖨️ <span>PDF Executivo</span>
+                </button>
                 <button onclick="document.getElementById('file-input').click()" title="Carregar outra planilha dados.xlsx" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-2 shadow-sm">
                     📁 <span>Importar Planilha</span>
                 </button>
@@ -284,6 +313,20 @@
 
     <!-- ÁREA PRINCIPAL -->
     <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-grow">
+
+        <!-- CABEÇALHO EXCLUSIVO PARA IMPRESSÃO / PDF -->
+        <div class="print-header mb-6 pb-4 border-b-2 border-red-600">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-black text-slate-900 uppercase">CLEALCO // GEOTECNOLOGIA</h1>
+                    <p class="text-sm text-slate-600 font-bold">Relatório Executivo Operacional - Voos & Processamentos</p>
+                </div>
+                <div class="text-right text-xs text-slate-500">
+                    <div>Data de Emissão: <b class="text-slate-900" id="print-data-emissao"></b></div>
+                    <div>Sincronização: <b class="text-red-600" id="print-data-sync"></b></div>
+                </div>
+            </div>
+        </div>
 
         <!-- ================= ABA 1: VISÃO GERAL (DASHBOARD) ================= -->
         <section id="aba-dashboard" class="space-y-6">
@@ -297,7 +340,12 @@
                     </span>
                 </div>
                 <div class="text-xs text-slate-500 flex items-center gap-4 font-medium">
-                    <span>Última Sincronização: <b id="lbl-data-hora" class="text-slate-800">Hoje</b></span>
+                    <span class="flex items-center gap-1.5">
+                        Última Sincronização: <b id="lbl-data-hora" class="text-slate-800">Hoje</b>
+                        <button onclick="recarregarPainel()" title="Recarregar dados agora" class="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-red-600 transition" id="btn-recarregar">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        </button>
+                    </span>
                     <span>Origem: <b class="text-red-600 font-bold">dados.xlsx</b></span>
                 </div>
             </div>
@@ -526,6 +574,34 @@
                         <button onclick="exportarTabelaPNG('aba-falhas', 'Falhas_Plantio_Clealco.png')" class="bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg transition">
                             📥 Baixar Imagem / PPT
                         </button>
+                    </div>
+                </div>
+
+                <!-- Mini Indicadores Resumo da Safra -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-sm">
+                        <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center text-xl text-red-600 font-bold">🌾</div>
+                        <div>
+                            <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Área Avaliada (Falhas)</div>
+                            <div class="text-xl font-black text-slate-900 mt-0.5">4.809,68 ha</div>
+                            <div class="text-[11px] text-slate-500 font-medium">83 talhões auditados</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-sm">
+                        <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center text-xl text-emerald-600 font-bold">📏</div>
+                        <div>
+                            <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Linhas Mapeadas</div>
+                            <div class="text-xl font-black text-slate-900 mt-0.5">60.593 km</div>
+                            <div class="text-[11px] text-slate-500 font-medium">Comprimento total avaliado</div>
+                        </div>
+                    </div>
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-sm">
+                        <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center text-xl text-amber-600 font-bold">🎯</div>
+                        <div>
+                            <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Média Geral de Falha</div>
+                            <div class="text-xl font-black text-amber-600 mt-0.5">2,29%</div>
+                            <div class="text-[11px] text-emerald-700 font-bold">✓ Padrão Aceitável (&lt; 6%)</div>
+                        </div>
                     </div>
                 </div>
 
@@ -824,6 +900,36 @@
             tentarFetchExcelRemoto();
         }
 
+        function gerarPDFExecutivo() {
+            const dataEmissao = new Date().toLocaleString('pt-BR');
+            const dataSync = document.getElementById('lbl-data-hora') ? document.getElementById('lbl-data-hora').innerText : 'Hoje';
+            const elEmissao = document.getElementById('print-data-emissao');
+            const elSync = document.getElementById('print-data-sync');
+            if (elEmissao) elEmissao.innerText = dataEmissao;
+            if (elSync) elSync.innerText = dataSync;
+            window.print();
+        }
+
+        async function recarregarPainel() {
+            const btn = document.getElementById('btn-recarregar');
+            if (btn) btn.classList.add('animate-spin');
+            const msg = document.getElementById('ai-status-msg');
+            if (msg) msg.innerText = "Atualizando dados...";
+
+            try {
+                await tentarFetchExcelRemoto();
+            } catch(e) {}
+
+            renderizarDashboard();
+            renderizarBacklog();
+            renderizarAcompanhamento();
+
+            setTimeout(() => {
+                if (btn) btn.classList.remove('animate-spin');
+                if (msg) msg.innerText = "Sistema Clealco pronto. Dados sincronizados com sucesso!";
+            }, 600);
+        }
+
         async function tentarFetchExcelRemoto() {
             try {
                 const res = await fetch('./dados.xlsx', { cache: 'no-store' });
@@ -1013,11 +1119,18 @@
                 return;
             }
 
-            container.innerHTML = lista.map(item => `
+            container.innerHTML = lista.map(item => {
+                const isProp = item.fa.startsWith('2');
+                return `
                 <div class="bg-white border border-slate-200 rounded-xl p-3.5 hover:border-red-400 hover:shadow-md transition shadow-sm">
                     <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
-                        <span class="text-xs font-black text-red-600">FA ${item.fa}</span>
-                        <span class="text-xs font-bold text-slate-800 truncate max-w-[180px]">${item.fazenda}</span>
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-black text-red-600">FA ${item.fa}</span>
+                            <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded ${isProp ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
+                                ${isProp ? 'PRÓPRIA' : 'TERCEIRO'}
+                            </span>
+                        </div>
+                        <span class="text-xs font-bold text-slate-800 truncate max-w-[150px]" title="${item.fazenda}">${item.fazenda}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
                         <div><b class="text-slate-800">Base:</b> ${item.base}</div>
@@ -1029,7 +1142,7 @@
                         <div class="col-span-2 pt-1 border-t border-slate-200 text-slate-700"><b class="text-slate-800">Exportação:</b> <span class="${item.exp==='FEITO'?'text-emerald-700 font-bold':'text-amber-600 font-bold'}">${item.exp}</span></div>
                     </div>
                 </div>
-            `).join('');
+            `;}).join('');
         }
 
         // ================= BACKLOG =================

@@ -6397,5 +6397,5 @@ window.DADOS_CLEALCO_EMBARCADOS = {
   },
   "acompanhamento": [],
   "creditos_inforow": 11195.23,
-  "data_compilacao": "21/10/2026 às 14:51"
+  "data_compilacao": "21/10/2026 às 14:59"
 };
