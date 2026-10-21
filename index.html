@@ -851,7 +851,14 @@
                         linhas: String(r['LINHAS'] || '').toUpperCase().includes('FEITO') ? 'FEITO' : 'PENDENTE',
                         data_linhas: formatarData(r['DATA/PROCESSAMENTO']),
                         ha_voo: parseNum(r['HA/VOO']),
-                        area_kml: parseNum(r['HÁ'] || r['HA'] || r['HA/VOO']),
+                        area_kml: (() => {
+                            for (let k in r) {
+                                if ((k === 'HA' || k === 'HÁ' || k.startsWith('H')) && k !== 'HA/VOO' && !k.includes('VOO')) {
+                                    return parseNum(r[k]);
+                                }
+                            }
+                            return 0;
+                        })(),
                         bd_falhas: String(r['LINHAS'] || '').toUpperCase().includes('FEITO') ? 'FEITO' : 'PENDENTE',
                         bd_pisoteio: 'FEITO',
                         exp: String(r['EXP/COLHEITA'] || '').toUpperCase().includes('FEITO') ? 'FEITO' : 'Pendente'
