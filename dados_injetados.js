@@ -1609,7 +1609,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 230.0,
       "data": "21/07/2026",
-      "dias": 91,
+      "dias": 92,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1619,7 +1619,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 225.62,
       "data": "19/06/2026",
-      "dias": 123,
+      "dias": 124,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1629,7 +1629,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 200.36,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1639,7 +1639,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 192.99,
       "data": "19/06/2026",
-      "dias": 123,
+      "dias": 124,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1649,7 +1649,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 165.64,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1659,7 +1659,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 164.52,
       "data": "28/07/2026",
-      "dias": 84,
+      "dias": 85,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1669,7 +1669,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 154.13,
       "data": "02/07/2026",
-      "dias": 110,
+      "dias": 111,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1679,7 +1679,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 136.8,
       "data": "15/03/2026",
-      "dias": 219,
+      "dias": 220,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1689,7 +1689,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 120.0,
       "data": "06/06/2026",
-      "dias": 136,
+      "dias": 137,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1699,7 +1699,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 97.8,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1709,7 +1709,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 88.63,
       "data": "03/06/2026",
-      "dias": 139,
+      "dias": 140,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1719,7 +1719,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 75.97,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1729,7 +1729,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 71.88,
       "data": "16/05/2026",
-      "dias": 157,
+      "dias": 158,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1739,7 +1739,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 71.11,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1749,7 +1749,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 69.9,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1759,7 +1759,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 62.48,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1769,7 +1769,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 59.92,
       "data": "08/06/2026",
-      "dias": 134,
+      "dias": 135,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1779,7 +1779,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 59.81,
       "data": "12/06/2026",
-      "dias": 130,
+      "dias": 131,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1789,7 +1789,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 59.79,
       "data": "02/06/2026",
-      "dias": 140,
+      "dias": 141,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1799,7 +1799,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 58.08,
       "data": "05/03/2026",
-      "dias": 229,
+      "dias": 230,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1809,7 +1809,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 57.4,
       "data": "10/07/2026",
-      "dias": 102,
+      "dias": 103,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1819,7 +1819,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 54.41,
       "data": "12/06/2026",
-      "dias": 130,
+      "dias": 131,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1829,7 +1829,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 52.62,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1839,7 +1839,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 52.6,
       "data": "05/06/2026",
-      "dias": 137,
+      "dias": 138,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1849,7 +1849,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 51.65,
       "data": "03/05/2026",
-      "dias": 170,
+      "dias": 171,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1859,7 +1859,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 51.49,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1869,7 +1869,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 51.25,
       "data": "20/07/2026",
-      "dias": 92,
+      "dias": 93,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1879,7 +1879,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 50.14,
       "data": "04/05/2026",
-      "dias": 169,
+      "dias": 170,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1889,7 +1889,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 48.33,
       "data": "10/07/2026",
-      "dias": 102,
+      "dias": 103,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1899,7 +1899,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 47.04,
       "data": "10/05/2026",
-      "dias": 163,
+      "dias": 164,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1909,7 +1909,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 46.86,
       "data": "25/05/2026",
-      "dias": 148,
+      "dias": 149,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1919,7 +1919,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 46.53,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1929,7 +1929,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 46.36,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1939,7 +1939,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 46.26000000000001,
       "data": "15/07/2026",
-      "dias": 97,
+      "dias": 98,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1949,7 +1949,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 45.51,
       "data": "12/06/2026",
-      "dias": 130,
+      "dias": 131,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1959,7 +1959,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 45.45999999999999,
       "data": "03/05/2026",
-      "dias": 170,
+      "dias": 171,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1969,7 +1969,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 44.56,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1979,7 +1979,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 44.48,
       "data": "10/05/2026",
-      "dias": 163,
+      "dias": 164,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1989,7 +1989,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 44.03,
       "data": "29/05/2026",
-      "dias": 144,
+      "dias": 145,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -1999,7 +1999,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 43.56,
       "data": "23/06/2026",
-      "dias": 119,
+      "dias": 120,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2009,7 +2009,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 43.56,
       "data": "15/03/2026",
-      "dias": 219,
+      "dias": 220,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2019,7 +2019,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 43.39,
       "data": "15/04/2026",
-      "dias": 188,
+      "dias": 189,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2029,7 +2029,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 43.32,
       "data": "29/04/2026",
-      "dias": 174,
+      "dias": 175,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2039,7 +2039,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 42.77,
       "data": "09/05/2026",
-      "dias": 164,
+      "dias": 165,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2049,7 +2049,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 42.55,
       "data": "04/07/2026",
-      "dias": 108,
+      "dias": 109,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2059,7 +2059,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 42.44,
       "data": "22/04/2026",
-      "dias": 181,
+      "dias": 182,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2069,7 +2069,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 42.23,
       "data": "21/07/2026",
-      "dias": 91,
+      "dias": 92,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2079,7 +2079,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 42.18,
       "data": "10/07/2026",
-      "dias": 102,
+      "dias": 103,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2089,7 +2089,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 42.12,
       "data": "10/07/2026",
-      "dias": 102,
+      "dias": 103,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2099,7 +2099,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 42.11,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2109,7 +2109,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 41.04,
       "data": "29/05/2026",
-      "dias": 144,
+      "dias": 145,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2119,7 +2119,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 40.4,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2129,7 +2129,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 40.17,
       "data": "13/05/2026",
-      "dias": 160,
+      "dias": 161,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2139,7 +2139,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 39.84,
       "data": "28/07/2026",
-      "dias": 84,
+      "dias": 85,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2149,7 +2149,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 39.79,
       "data": "08/05/2026",
-      "dias": 165,
+      "dias": 166,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2159,7 +2159,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 39.66,
       "data": "03/06/2026",
-      "dias": 139,
+      "dias": 140,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2169,7 +2169,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 39.57,
       "data": "09/07/2026",
-      "dias": 103,
+      "dias": 104,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2179,7 +2179,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 39.5,
       "data": "16/04/2026",
-      "dias": 187,
+      "dias": 188,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2189,7 +2189,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 39.2,
       "data": "07/06/2026",
-      "dias": 135,
+      "dias": 136,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2199,7 +2199,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 39.16,
       "data": "14/05/2026",
-      "dias": 159,
+      "dias": 160,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2209,7 +2209,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 39.14,
       "data": "25/03/2026",
-      "dias": 209,
+      "dias": 210,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2219,7 +2219,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 38.7,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2229,7 +2229,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 38.33,
       "data": "04/07/2026",
-      "dias": 108,
+      "dias": 109,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2239,7 +2239,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 38.2,
       "data": "03/06/2026",
-      "dias": 139,
+      "dias": 140,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2249,7 +2249,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 37.63,
       "data": "09/05/2026",
-      "dias": 164,
+      "dias": 165,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2259,7 +2259,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 37.43,
       "data": "03/06/2026",
-      "dias": 139,
+      "dias": 140,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2269,7 +2269,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 37.29,
       "data": "28/05/2026",
-      "dias": 145,
+      "dias": 146,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2279,7 +2279,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 37.24,
       "data": "01/07/2026",
-      "dias": 111,
+      "dias": 112,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2289,7 +2289,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 36.82,
       "data": "10/08/2026",
-      "dias": 71,
+      "dias": 72,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2299,7 +2299,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 36.78,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2309,7 +2309,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 36.61,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2319,7 +2319,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 36.52,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2329,7 +2329,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 35.34,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2339,7 +2339,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 35.02,
       "data": "02/05/2026",
-      "dias": 171,
+      "dias": 172,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2349,7 +2349,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 34.96,
       "data": "02/06/2026",
-      "dias": 140,
+      "dias": 141,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2359,7 +2359,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 34.84,
       "data": "03/05/2026",
-      "dias": 170,
+      "dias": 171,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2369,7 +2369,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 33.89,
       "data": "09/05/2026",
-      "dias": 164,
+      "dias": 165,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2379,7 +2379,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 33.66,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2389,7 +2389,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 33.61,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2399,7 +2399,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 33.33,
       "data": "03/05/2026",
-      "dias": 170,
+      "dias": 171,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2409,7 +2409,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 33.3,
       "data": "13/05/2026",
-      "dias": 160,
+      "dias": 161,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2419,7 +2419,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 33.29,
       "data": "06/06/2026",
-      "dias": 136,
+      "dias": 137,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2429,7 +2429,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 33.0,
       "data": "01/05/2026",
-      "dias": 172,
+      "dias": 173,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2439,7 +2439,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 32.8,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2449,7 +2449,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 32.66,
       "data": "20/05/2026",
-      "dias": 153,
+      "dias": 154,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2459,7 +2459,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 32.46,
       "data": "23/04/2026",
-      "dias": 180,
+      "dias": 181,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2469,7 +2469,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 32.23,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2479,7 +2479,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 31.41,
       "data": "02/06/2026",
-      "dias": 140,
+      "dias": 141,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2489,7 +2489,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 31.4,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2499,7 +2499,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 31.22,
       "data": "12/05/2026",
-      "dias": 161,
+      "dias": 162,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2509,7 +2509,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 30.86,
       "data": "06/06/2026",
-      "dias": 136,
+      "dias": 137,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2519,7 +2519,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 29.87,
       "data": "01/06/2026",
-      "dias": 141,
+      "dias": 142,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2529,7 +2529,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 29.6,
       "data": "08/05/2026",
-      "dias": 165,
+      "dias": 166,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2539,7 +2539,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 29.38,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2549,7 +2549,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 29.33,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2559,7 +2559,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 29.25,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2569,7 +2569,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 29.09,
       "data": "08/05/2026",
-      "dias": 165,
+      "dias": 166,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2579,7 +2579,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 29.05,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2589,7 +2589,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 28.94,
       "data": "25/03/2026",
-      "dias": 209,
+      "dias": 210,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2599,7 +2599,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 28.89,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2609,7 +2609,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 28.45,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2619,7 +2619,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 28.36,
       "data": "17/05/2026",
-      "dias": 156,
+      "dias": 157,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2629,7 +2629,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 28.31,
       "data": "13/07/2026",
-      "dias": 99,
+      "dias": 100,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2639,7 +2639,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 28.15,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2649,7 +2649,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 28.07,
       "data": "25/04/2026",
-      "dias": 178,
+      "dias": 179,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2659,7 +2659,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 28.04,
       "data": "14/05/2026",
-      "dias": 159,
+      "dias": 160,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2669,7 +2669,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 27.89,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2679,7 +2679,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 27.79,
       "data": "12/06/2026",
-      "dias": 130,
+      "dias": 131,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2689,7 +2689,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 27.74,
       "data": "21/06/2026",
-      "dias": 121,
+      "dias": 122,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2699,7 +2699,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 27.7,
       "data": "21/05/2026",
-      "dias": 152,
+      "dias": 153,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2709,7 +2709,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 27.62,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2719,7 +2719,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 27.6,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2729,7 +2729,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 27.44,
       "data": "06/05/2026",
-      "dias": 167,
+      "dias": 168,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2739,7 +2739,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 27.42,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2749,7 +2749,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 27.24,
       "data": "12/07/2026",
-      "dias": 100,
+      "dias": 101,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2759,7 +2759,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 27.01,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2769,7 +2769,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 26.99,
       "data": "08/05/2026",
-      "dias": 165,
+      "dias": 166,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2779,7 +2779,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 26.79,
       "data": "02/05/2026",
-      "dias": 171,
+      "dias": 172,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2789,7 +2789,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 26.65,
       "data": "02/06/2026",
-      "dias": 140,
+      "dias": 141,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2799,7 +2799,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 26.55,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2809,7 +2809,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 26.4,
       "data": "05/06/2026",
-      "dias": 137,
+      "dias": 138,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2819,7 +2819,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 26.2,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2829,7 +2829,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 26.15,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2839,7 +2839,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 26.02,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2849,7 +2849,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 25.85,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2859,7 +2859,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 25.82,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2869,7 +2869,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 25.53,
       "data": "20/05/2026",
-      "dias": 153,
+      "dias": 154,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2879,7 +2879,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 25.3,
       "data": "20/06/2026",
-      "dias": 122,
+      "dias": 123,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2889,7 +2889,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 25.11,
       "data": "08/05/2026",
-      "dias": 165,
+      "dias": 166,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2899,7 +2899,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 24.97,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2909,7 +2909,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 24.73,
       "data": "19/06/2026",
-      "dias": 123,
+      "dias": 124,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2919,7 +2919,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 24.34,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2929,7 +2929,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 24.31,
       "data": "02/06/2026",
-      "dias": 140,
+      "dias": 141,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2939,7 +2939,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 24.26,
       "data": "01/06/2026",
-      "dias": 141,
+      "dias": 142,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2949,7 +2949,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 24.25,
       "data": "19/05/2026",
-      "dias": 154,
+      "dias": 155,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2959,7 +2959,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 24.02,
       "data": "02/07/2026",
-      "dias": 110,
+      "dias": 111,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2969,7 +2969,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 23.86,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2979,7 +2979,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 23.84,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2989,7 +2989,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 23.68,
       "data": "28/06/2026",
-      "dias": 114,
+      "dias": 115,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -2999,7 +2999,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 23.31,
       "data": "27/05/2026",
-      "dias": 146,
+      "dias": 147,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3009,7 +3009,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 23.24,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3019,7 +3019,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 22.74,
       "data": "20/06/2026",
-      "dias": 122,
+      "dias": 123,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3029,7 +3029,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 22.52,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3039,7 +3039,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 22.49,
       "data": "10/04/2026",
-      "dias": 193,
+      "dias": 194,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3049,7 +3049,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 22.47,
       "data": "28/07/2026",
-      "dias": 84,
+      "dias": 85,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3059,7 +3059,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 22.35,
       "data": "05/05/2026",
-      "dias": 168,
+      "dias": 169,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3069,7 +3069,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 22.29,
       "data": "24/05/2026",
-      "dias": 149,
+      "dias": 150,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3079,7 +3079,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 22.06,
       "data": "09/07/2026",
-      "dias": 103,
+      "dias": 104,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3089,7 +3089,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 22.02,
       "data": "23/06/2026",
-      "dias": 119,
+      "dias": 120,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3099,7 +3099,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 21.81,
       "data": "02/05/2026",
-      "dias": 171,
+      "dias": 172,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3109,7 +3109,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 21.7,
       "data": "29/05/2026",
-      "dias": 144,
+      "dias": 145,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3119,7 +3119,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 21.46,
       "data": "28/06/2026",
-      "dias": 114,
+      "dias": 115,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3129,7 +3129,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 21.28,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3139,7 +3139,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 21.2,
       "data": "28/04/2026",
-      "dias": 175,
+      "dias": 176,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3149,7 +3149,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 21.19,
       "data": "14/05/2026",
-      "dias": 159,
+      "dias": 160,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3159,7 +3159,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 21.14,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3169,7 +3169,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 21.12,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3179,7 +3179,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 20.87,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3189,7 +3189,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 20.84,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3199,7 +3199,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 20.82,
       "data": "11/06/2026",
-      "dias": 131,
+      "dias": 132,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3209,7 +3209,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 20.62,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3219,7 +3219,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 20.44,
       "data": "06/06/2026",
-      "dias": 136,
+      "dias": 137,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3229,7 +3229,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 20.18,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3239,7 +3239,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 20.02,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3249,7 +3249,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 19.9,
       "data": "02/05/2026",
-      "dias": 171,
+      "dias": 172,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3259,7 +3259,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 19.86,
       "data": "06/07/2026",
-      "dias": 106,
+      "dias": 107,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3269,7 +3269,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 19.81,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3279,7 +3279,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 19.76,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3289,7 +3289,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 19.72,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3299,7 +3299,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 19.61,
       "data": "07/05/2026",
-      "dias": 166,
+      "dias": 167,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3309,7 +3309,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 19.29,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3319,7 +3319,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 19.27,
       "data": "12/05/2026",
-      "dias": 161,
+      "dias": 162,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3329,7 +3329,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 19.23,
       "data": "22/05/2026",
-      "dias": 151,
+      "dias": 152,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3339,7 +3339,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 19.21,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3349,7 +3349,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 19.14,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3359,7 +3359,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 19.06,
       "data": "06/07/2026",
-      "dias": 106,
+      "dias": 107,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3369,7 +3369,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 19.0,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3379,7 +3379,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 18.99,
       "data": "20/05/2026",
-      "dias": 153,
+      "dias": 154,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3389,7 +3389,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 18.95,
       "data": "15/04/2026",
-      "dias": 188,
+      "dias": 189,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3399,7 +3399,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 18.78,
       "data": "04/05/2026",
-      "dias": 169,
+      "dias": 170,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3409,7 +3409,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 18.64,
       "data": "05/05/2026",
-      "dias": 168,
+      "dias": 169,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3419,7 +3419,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 18.39,
       "data": "08/05/2026",
-      "dias": 165,
+      "dias": 166,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3429,7 +3429,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 18.2,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3439,7 +3439,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 18.12,
       "data": "20/05/2026",
-      "dias": 153,
+      "dias": 154,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3449,7 +3449,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 17.96,
       "data": "04/06/2026",
-      "dias": 138,
+      "dias": 139,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3459,7 +3459,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 17.9,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3469,7 +3469,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 17.84,
       "data": "18/08/2026",
-      "dias": 63,
+      "dias": 64,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3479,7 +3479,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 17.76,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3489,7 +3489,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 17.61,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3499,7 +3499,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 17.51,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3509,7 +3509,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 17.5,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3519,7 +3519,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 17.38,
       "data": "20/05/2026",
-      "dias": 153,
+      "dias": 154,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3529,7 +3529,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 17.27,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3539,7 +3539,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 17.12,
       "data": "13/05/2026",
-      "dias": 160,
+      "dias": 161,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3549,7 +3549,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 17.1,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3559,7 +3559,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 16.97,
       "data": "12/05/2026",
-      "dias": 161,
+      "dias": 162,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3569,7 +3569,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 16.75,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3579,7 +3579,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 16.75,
       "data": "23/04/2026",
-      "dias": 180,
+      "dias": 181,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3589,7 +3589,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 16.67,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3599,7 +3599,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 16.59,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3609,7 +3609,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 16.58,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3619,7 +3619,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 16.54,
       "data": "08/05/2026",
-      "dias": 165,
+      "dias": 166,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3629,7 +3629,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 16.53,
       "data": "10/07/2026",
-      "dias": 102,
+      "dias": 103,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3639,7 +3639,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 16.17,
       "data": "15/04/2026",
-      "dias": 188,
+      "dias": 189,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3649,7 +3649,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 16.01,
       "data": "12/06/2026",
-      "dias": 130,
+      "dias": 131,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3659,7 +3659,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 15.99,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3669,7 +3669,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 15.75,
       "data": "02/05/2026",
-      "dias": 171,
+      "dias": 172,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3679,7 +3679,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 15.74,
       "data": "29/05/2026",
-      "dias": 144,
+      "dias": 145,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3689,7 +3689,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 15.61,
       "data": "04/07/2026",
-      "dias": 108,
+      "dias": 109,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3699,7 +3699,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 15.44,
       "data": "13/05/2026",
-      "dias": 160,
+      "dias": 161,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3709,7 +3709,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 15.37,
       "data": "10/04/2026",
-      "dias": 193,
+      "dias": 194,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3719,7 +3719,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 15.3,
       "data": "04/05/2026",
-      "dias": 169,
+      "dias": 170,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3729,7 +3729,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 15.29,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3739,7 +3739,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 15.17,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3749,7 +3749,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 15.0,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3759,7 +3759,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 14.97,
       "data": "22/05/2026",
-      "dias": 151,
+      "dias": 152,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3769,7 +3769,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 14.97,
       "data": "17/05/2026",
-      "dias": 156,
+      "dias": 157,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3779,7 +3779,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 14.93,
       "data": "13/07/2026",
-      "dias": 99,
+      "dias": 100,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3789,7 +3789,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 14.8,
       "data": "04/06/2026",
-      "dias": 138,
+      "dias": 139,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3799,7 +3799,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 14.62,
       "data": "13/05/2026",
-      "dias": 160,
+      "dias": 161,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3809,7 +3809,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 14.53,
       "data": "03/07/2026",
-      "dias": 109,
+      "dias": 110,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3819,7 +3819,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 14.3,
       "data": "24/08/2026",
-      "dias": 57,
+      "dias": 58,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3829,7 +3829,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 14.23,
       "data": "05/06/2026",
-      "dias": 137,
+      "dias": 138,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3839,7 +3839,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 14.15,
       "data": "05/05/2026",
-      "dias": 168,
+      "dias": 169,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3849,7 +3849,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 14.06,
       "data": "16/05/2026",
-      "dias": 157,
+      "dias": 158,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3859,7 +3859,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 13.81,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3869,7 +3869,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 13.77,
       "data": "06/07/2026",
-      "dias": 106,
+      "dias": 107,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3879,7 +3879,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 13.71,
       "data": "01/07/2026",
-      "dias": 111,
+      "dias": 112,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3889,7 +3889,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 13.66,
       "data": "28/07/2026",
-      "dias": 84,
+      "dias": 85,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3899,7 +3899,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 13.46,
       "data": "04/06/2026",
-      "dias": 138,
+      "dias": 139,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3909,7 +3909,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 13.36,
       "data": "12/06/2026",
-      "dias": 130,
+      "dias": 131,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3919,7 +3919,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 13.27,
       "data": "23/06/2026",
-      "dias": 119,
+      "dias": 120,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3929,7 +3929,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 13.19,
       "data": "02/05/2026",
-      "dias": 171,
+      "dias": 172,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3939,7 +3939,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 13.13,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3949,7 +3949,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 13.07,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3959,7 +3959,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 12.97,
       "data": "09/05/2026",
-      "dias": 164,
+      "dias": 165,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3969,7 +3969,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.96,
       "data": "11/05/2026",
-      "dias": 162,
+      "dias": 163,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3979,7 +3979,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.94,
       "data": "20/05/2026",
-      "dias": 153,
+      "dias": 154,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3989,7 +3989,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.93,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -3999,7 +3999,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.85,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4009,7 +4009,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.83,
       "data": "06/07/2026",
-      "dias": 106,
+      "dias": 107,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4019,7 +4019,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.82,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4029,7 +4029,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 12.71,
       "data": "01/03/2026",
-      "dias": 233,
+      "dias": 234,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4039,7 +4039,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.68,
       "data": "20/05/2026",
-      "dias": 153,
+      "dias": 154,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4049,7 +4049,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.68,
       "data": "11/05/2026",
-      "dias": 162,
+      "dias": 163,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4059,7 +4059,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.68,
       "data": "05/05/2026",
-      "dias": 168,
+      "dias": 169,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4069,7 +4069,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.52,
       "data": "21/04/2026",
-      "dias": 182,
+      "dias": 183,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4079,7 +4079,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.21,
       "data": "10/05/2026",
-      "dias": 163,
+      "dias": 164,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4089,7 +4089,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.12,
       "data": "12/06/2026",
-      "dias": 130,
+      "dias": 131,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4099,7 +4099,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.11,
       "data": "15/04/2026",
-      "dias": 188,
+      "dias": 189,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4109,7 +4109,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 12.11,
       "data": "23/04/2026",
-      "dias": 180,
+      "dias": 181,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4119,7 +4119,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.98,
       "data": "13/05/2026",
-      "dias": 160,
+      "dias": 161,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4129,7 +4129,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.96,
       "data": "14/05/2026",
-      "dias": 159,
+      "dias": 160,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4139,7 +4139,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.91,
       "data": "12/05/2026",
-      "dias": 161,
+      "dias": 162,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4149,7 +4149,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.85,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4159,7 +4159,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.75,
       "data": "05/06/2026",
-      "dias": 137,
+      "dias": 138,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4169,7 +4169,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.6,
       "data": "04/06/2026",
-      "dias": 138,
+      "dias": 139,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4179,7 +4179,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.53,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4189,7 +4189,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.47,
       "data": "15/04/2026",
-      "dias": 188,
+      "dias": 189,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4199,7 +4199,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.21,
       "data": "04/06/2026",
-      "dias": 138,
+      "dias": 139,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4209,7 +4209,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.21,
       "data": "10/05/2026",
-      "dias": 163,
+      "dias": 164,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4219,7 +4219,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.13,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4229,7 +4229,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.13,
       "data": "02/05/2026",
-      "dias": 171,
+      "dias": 172,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4239,7 +4239,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.06,
       "data": "23/06/2026",
-      "dias": 119,
+      "dias": 120,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4249,7 +4249,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 11.02,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4259,7 +4259,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 11.0,
       "data": "08/05/2026",
-      "dias": 165,
+      "dias": 166,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4269,7 +4269,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.78,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4279,7 +4279,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.75,
       "data": "06/07/2026",
-      "dias": 106,
+      "dias": 107,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4289,7 +4289,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.71,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4299,7 +4299,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.62,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4309,7 +4309,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.61,
       "data": "23/04/2026",
-      "dias": 180,
+      "dias": 181,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4319,7 +4319,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.6,
       "data": "04/05/2026",
-      "dias": 169,
+      "dias": 170,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4329,7 +4329,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.54,
       "data": "25/04/2026",
-      "dias": 178,
+      "dias": 179,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4339,7 +4339,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.35,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4349,7 +4349,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 10.34,
       "data": "31/05/2026",
-      "dias": 142,
+      "dias": 143,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4359,7 +4359,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.32,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4369,7 +4369,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 10.29,
       "data": "01/03/2026",
-      "dias": 233,
+      "dias": 234,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4379,7 +4379,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.29,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4389,7 +4389,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.22,
       "data": "13/05/2026",
-      "dias": 160,
+      "dias": 161,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4399,7 +4399,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 10.19,
       "data": "17/07/2026",
-      "dias": 95,
+      "dias": 96,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4409,7 +4409,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 10.09,
       "data": "12/05/2026",
-      "dias": 161,
+      "dias": 162,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4419,7 +4419,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.06,
       "data": "16/05/2026",
-      "dias": 157,
+      "dias": 158,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4429,7 +4429,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 10.04,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4439,7 +4439,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 10.03,
       "data": "01/06/2026",
-      "dias": 141,
+      "dias": 142,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4449,7 +4449,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 9.88,
       "data": "01/06/2026",
-      "dias": 141,
+      "dias": 142,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4459,7 +4459,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.87,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4469,7 +4469,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.86,
       "data": "28/07/2026",
-      "dias": 84,
+      "dias": 85,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4479,7 +4479,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.85,
       "data": "16/05/2026",
-      "dias": 157,
+      "dias": 158,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4489,7 +4489,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.82,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4499,7 +4499,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.79,
       "data": "22/04/2026",
-      "dias": 181,
+      "dias": 182,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4509,7 +4509,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.73,
       "data": "28/07/2026",
-      "dias": 84,
+      "dias": 85,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4519,7 +4519,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.69,
       "data": "29/05/2026",
-      "dias": 144,
+      "dias": 145,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4529,7 +4529,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.26,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4539,7 +4539,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.19,
       "data": "02/05/2026",
-      "dias": 171,
+      "dias": 172,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4549,7 +4549,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.18,
       "data": "28/06/2026",
-      "dias": 114,
+      "dias": 115,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4559,7 +4559,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 9.12,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4569,7 +4569,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 8.89,
       "data": "14/04/2026",
-      "dias": 189,
+      "dias": 190,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4579,7 +4579,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 8.82,
       "data": "28/07/2026",
-      "dias": 84,
+      "dias": 85,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4589,7 +4589,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 8.55,
       "data": "12/06/2026",
-      "dias": 130,
+      "dias": 131,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4599,7 +4599,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 8.55,
       "data": "28/07/2026",
-      "dias": 84,
+      "dias": 85,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4609,7 +4609,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 8.53,
       "data": "31/05/2026",
-      "dias": 142,
+      "dias": 143,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4619,7 +4619,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 8.5,
       "data": "01/06/2026",
-      "dias": 141,
+      "dias": 142,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4629,7 +4629,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 8.49,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4639,7 +4639,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 8.4,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4649,7 +4649,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 8.22,
       "data": "06/07/2026",
-      "dias": 106,
+      "dias": 107,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4659,7 +4659,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 8.2,
       "data": "05/07/2026",
-      "dias": 107,
+      "dias": 108,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4669,7 +4669,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.9,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4679,7 +4679,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.9,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4689,7 +4689,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.87,
       "data": "13/05/2026",
-      "dias": 160,
+      "dias": 161,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4699,7 +4699,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.79,
       "data": "23/04/2026",
-      "dias": 180,
+      "dias": 181,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4709,7 +4709,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.59,
       "data": "02/07/2026",
-      "dias": 110,
+      "dias": 111,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4719,7 +4719,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.33,
       "data": "13/07/2026",
-      "dias": 99,
+      "dias": 100,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4729,7 +4729,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.32,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4739,7 +4739,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.24,
       "data": "04/06/2026",
-      "dias": 138,
+      "dias": 139,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4749,7 +4749,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.18,
       "data": "13/05/2026",
-      "dias": 160,
+      "dias": 161,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4759,7 +4759,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.16,
       "data": "01/06/2026",
-      "dias": 141,
+      "dias": 142,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4769,7 +4769,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 7.06,
       "data": "19/06/2026",
-      "dias": 123,
+      "dias": 124,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4779,7 +4779,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.89,
       "data": "23/04/2026",
-      "dias": 180,
+      "dias": 181,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4789,7 +4789,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.86,
       "data": "10/05/2026",
-      "dias": 163,
+      "dias": 164,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4799,7 +4799,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.83,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4809,7 +4809,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.82,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4819,7 +4819,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.71,
       "data": "23/06/2026",
-      "dias": 119,
+      "dias": 120,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4829,7 +4829,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.64,
       "data": "11/05/2026",
-      "dias": 162,
+      "dias": 163,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4839,7 +4839,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.64,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4849,7 +4849,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.59,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4859,7 +4859,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.53,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4869,7 +4869,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.42,
       "data": "25/04/2026",
-      "dias": 178,
+      "dias": 179,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4879,7 +4879,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.32,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4889,7 +4889,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.25,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4899,7 +4899,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 6.12,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4909,7 +4909,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.96,
       "data": "01/06/2026",
-      "dias": 141,
+      "dias": 142,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4919,7 +4919,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.91,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4929,7 +4929,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.86,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4939,7 +4939,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.82,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4949,7 +4949,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.78,
       "data": "21/04/2026",
-      "dias": 182,
+      "dias": 183,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4959,7 +4959,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.75,
       "data": "22/04/2026",
-      "dias": 181,
+      "dias": 182,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4969,7 +4969,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.43,
       "data": "23/06/2026",
-      "dias": 119,
+      "dias": 120,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4979,7 +4979,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.42,
       "data": "02/07/2026",
-      "dias": 110,
+      "dias": 111,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4989,7 +4989,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.2,
       "data": "01/06/2026",
-      "dias": 141,
+      "dias": 142,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -4999,7 +4999,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.19,
       "data": "21/04/2026",
-      "dias": 182,
+      "dias": 183,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5009,7 +5009,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 5.17,
       "data": "09/05/2026",
-      "dias": 164,
+      "dias": 165,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5019,7 +5019,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.03,
       "data": "20/05/2026",
-      "dias": 153,
+      "dias": 154,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5029,7 +5029,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.02,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5039,7 +5039,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 5.02,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5049,7 +5049,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 4.87,
       "data": "06/07/2026",
-      "dias": 106,
+      "dias": 107,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5059,7 +5059,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 4.69,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5069,7 +5069,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 4.65,
       "data": "04/07/2026",
-      "dias": 108,
+      "dias": 109,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5079,7 +5079,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 4.44,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5089,7 +5089,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 4.36,
       "data": "07/05/2026",
-      "dias": 166,
+      "dias": 167,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5099,7 +5099,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 4.26,
       "data": "28/04/2026",
-      "dias": 175,
+      "dias": 176,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5109,7 +5109,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 4.17,
       "data": "02/07/2026",
-      "dias": 110,
+      "dias": 111,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5119,7 +5119,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 4.16,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5129,7 +5129,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 4.16,
       "data": "12/05/2026",
-      "dias": 161,
+      "dias": 162,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5139,7 +5139,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 4.08,
       "data": "09/05/2026",
-      "dias": 164,
+      "dias": 165,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5149,7 +5149,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 3.96,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5159,7 +5159,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 3.92,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5169,7 +5169,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 3.88,
       "data": "30/05/2026",
-      "dias": 143,
+      "dias": 144,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5179,7 +5179,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 3.88,
       "data": "16/05/2026",
-      "dias": 157,
+      "dias": 158,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5189,7 +5189,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 3.84,
       "data": "23/04/2026",
-      "dias": 180,
+      "dias": 181,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5199,7 +5199,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 3.64,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5209,7 +5209,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 3.58,
       "data": "22/06/2026",
-      "dias": 120,
+      "dias": 121,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5219,7 +5219,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 3.55,
       "data": "01/06/2026",
-      "dias": 141,
+      "dias": 142,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5229,7 +5229,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 3.27,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5239,7 +5239,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 3.11,
       "data": "24/04/2026",
-      "dias": 179,
+      "dias": 180,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5249,7 +5249,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 2.97,
       "data": "25/04/2026",
-      "dias": 178,
+      "dias": 179,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5259,7 +5259,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 2.85,
       "data": "02/05/2026",
-      "dias": 171,
+      "dias": 172,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5269,7 +5269,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 2.54,
       "data": "26/05/2026",
-      "dias": 147,
+      "dias": 148,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5279,7 +5279,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 2.12,
       "data": "20/04/2026",
-      "dias": 183,
+      "dias": 184,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5289,7 +5289,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.92,
       "data": "15/05/2026",
-      "dias": 158,
+      "dias": 159,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5299,7 +5299,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.89,
       "data": "23/05/2026",
-      "dias": 150,
+      "dias": 151,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5309,7 +5309,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.66,
       "data": "02/07/2026",
-      "dias": 110,
+      "dias": 111,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5319,7 +5319,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 1.53,
       "data": "02/06/2026",
-      "dias": 140,
+      "dias": 141,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5329,7 +5329,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.52,
       "data": "05/05/2026",
-      "dias": 168,
+      "dias": 169,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5339,7 +5339,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.51,
       "data": "16/05/2026",
-      "dias": 157,
+      "dias": 158,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5349,7 +5349,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.48,
       "data": "04/06/2026",
-      "dias": 138,
+      "dias": 139,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5359,7 +5359,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.45,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5369,7 +5369,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.38,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5379,7 +5379,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.19,
       "data": "30/04/2026",
-      "dias": 173,
+      "dias": 174,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5389,7 +5389,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 1.15,
       "data": "09/05/2026",
-      "dias": 164,
+      "dias": 165,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5399,7 +5399,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.15,
       "data": "02/05/2026",
-      "dias": 171,
+      "dias": 172,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5409,7 +5409,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.14,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5419,7 +5419,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.11,
       "data": "02/07/2026",
-      "dias": 110,
+      "dias": 111,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5429,7 +5429,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 1.05,
       "data": "04/07/2026",
-      "dias": 108,
+      "dias": 109,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5439,7 +5439,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 1.02,
       "data": "08/05/2026",
-      "dias": 165,
+      "dias": 166,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5449,7 +5449,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 0.94,
       "data": "06/07/2026",
-      "dias": 106,
+      "dias": 107,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5459,7 +5459,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 0.8,
       "data": "04/05/2026",
-      "dias": 169,
+      "dias": 170,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5469,7 +5469,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 0.66,
       "data": "21/04/2026",
-      "dias": 182,
+      "dias": 183,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5479,7 +5479,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Própria",
       "ha": 0.6,
       "data": "14/05/2026",
-      "dias": 159,
+      "dias": 160,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -5489,7 +5489,7 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "tipo": "Terceiro",
       "ha": 0.44,
       "data": "10/06/2026",
-      "dias": 132,
+      "dias": 133,
       "status_prazo": "🔴 Atrasado"
     },
     {
@@ -6395,142 +6395,6 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "acompanhamento_terceiros": 7567.0
     }
   },
-  "acompanhamento": [
-    {
-      "Ano": "2026",
-      "Categoria": "Voos realizados",
-      "Segmento": "Própria",
-      "Previsto": 3374.33,
-      "Realizado": 2289.0,
-      "Semana": 0.0,
-      "Mes": 0.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Voos realizados",
-      "Segmento": "Fornecedores",
-      "Previsto": 11000.0,
-      "Realizado": 5207.0,
-      "Semana": 0.0,
-      "Mes": 0.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Voos realizados",
-      "Segmento": "Consolidado",
-      "Previsto": 14374.33,
-      "Realizado": 7496.0,
-      "Semana": 0.0,
-      "Mes": 0.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Mosaico processado",
-      "Segmento": "Própria",
-      "Previsto": 3374.33,
-      "Realizado": 2289.0,
-      "Semana": 0.0,
-      "Mes": 0.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Mosaico processado",
-      "Segmento": "Fornecedores",
-      "Previsto": 11000.0,
-      "Realizado": 5207.0,
-      "Semana": 0.0,
-      "Mes": 0.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Mosaico processado",
-      "Segmento": "Consolidado",
-      "Previsto": 14374.33,
-      "Realizado": 7496.0,
-      "Semana": 0.0,
-      "Mes": 0.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Falhas no plantio",
-      "Segmento": "Própria",
-      "Previsto": 3374.33,
-      "Realizado": 1125.0,
-      "Semana": 0.0,
-      "Mes": 0.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Falhas no plantio",
-      "Segmento": "Fornecedores",
-      "Previsto": 11000.0,
-      "Realizado": 3685.0,
-      "Semana": 66.0,
-      "Mes": 330.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Falhas no plantio",
-      "Segmento": "Consolidado",
-      "Previsto": 14374.33,
-      "Realizado": 4810.0,
-      "Semana": 66.0,
-      "Mes": 330.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Pós plantio",
-      "Segmento": "Própria",
-      "Previsto": 3374.33,
-      "Realizado": 1816.0,
-      "Semana": 0.0,
-      "Mes": 266.71
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Pós plantio",
-      "Segmento": "Fornecedores",
-      "Previsto": 11000.0,
-      "Realizado": 5703.0,
-      "Semana": 0.0,
-      "Mes": 125.57
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Pós plantio",
-      "Segmento": "Consolidado",
-      "Previsto": 14374.33,
-      "Realizado": 7519.0,
-      "Semana": 0.0,
-      "Mes": 392.28
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Exportação para piloto",
-      "Segmento": "Própria",
-      "Previsto": 3374.33,
-      "Realizado": 236.0,
-      "Semana": 0.0,
-      "Mes": 0.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Exportação para piloto",
-      "Segmento": "Fornecedores",
-      "Previsto": 11000.0,
-      "Realizado": 1634.0,
-      "Semana": 0.0,
-      "Mes": 0.0
-    },
-    {
-      "Ano": "2026",
-      "Categoria": "Exportação para piloto",
-      "Segmento": "Consolidado",
-      "Previsto": 14374.33,
-      "Realizado": 1871.0,
-      "Semana": 0.0,
-      "Mes": 0.0
-    }
-  ],
+  "acompanhamento": [],
   "creditos_inforow": 11195.23
 };
