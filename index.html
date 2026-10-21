@@ -684,7 +684,12 @@
                         <p class="text-xs text-slate-500">Demandas cadastradas que ainda não foram sobrevoadas</p>
                     </div>
 
-                    <div class="flex items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-3">
+                        <!-- Campo de Pesquisa por FA e Fazenda no Backlog -->
+                        <div class="relative">
+                            <input type="text" id="input-busca-backlog" placeholder="🔍 Pesquisar FA ou Fazenda..." onkeyup="renderizarBacklog()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:bg-white w-56 md:w-64 transition">
+                        </div>
+
                         <button id="btn-tipo-agrupamento" onclick="alternarModoBacklog()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg font-bold transition shadow-sm">
                             🔄 Visualizar: Consolidado (Por FA)
                         </button>
@@ -1062,7 +1067,22 @@
                 lista = Object.values(map).sort((a, b) => b.ha - a.ha);
             }
 
+            // Filtro de busca por FA ou Fazenda
+            const termoBusca = (document.getElementById('input-busca-backlog')?.value || '').toLowerCase().trim();
+            if (termoBusca) {
+                lista = lista.filter(b => 
+                    b.fa.toLowerCase().includes(termoBusca) || 
+                    b.fazenda.toLowerCase().includes(termoBusca) ||
+                    (b.talhao && String(b.talhao).toLowerCase().includes(termoBusca))
+                );
+            }
+
             const container = document.getElementById('lista-backlog');
+            if (lista.length === 0) {
+                container.innerHTML = `<div class="bg-slate-50 border border-slate-200 text-center py-8 rounded-lg text-slate-500 text-xs">Nenhum FA ou Fazenda encontrada para a pesquisa "${termoBusca}".</div>`;
+                return;
+            }
+
             container.innerHTML = lista.map(b => {
                 const corBadge = b.tipo === 'Própria' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200';
                 const corBorder = b.tipo === 'Própria' ? 'border-l-red-600' : 'border-l-amber-500';
