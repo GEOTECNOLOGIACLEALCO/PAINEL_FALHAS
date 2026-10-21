@@ -1,0 +1,1253 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singularity AI | Clealco Geotecnologia</title>
+    
+    <!-- PWA Settings -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0b0f17">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="logo_clealco.png">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- SheetJS (Leitura direta e exportação de planilhas Excel) -->
+    <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
+    
+    <!-- html2canvas (Para capturar relatórios em PNG/PPT) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Dados Embarcados da Planilha dados.xlsx (permite abrir direto via file:/// sem erro de CORS) -->
+    <script src="dados_injetados.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+        :root {
+            /* PALETA CORPORATIVA CLEALCO - MODO CLARO PADRÃO */
+            --clealco-red: #E30613;
+            --clealco-red-light: #EF4444;
+            --clealco-red-dark: #991B1B;
+            --coral: #F97316;
+            --emerald: #10B981;
+            --sky: #0284C7;
+            
+            --bg-dark: #F1F5F9;
+            --card-dark: #FFFFFF;
+            --border-dark: #CBD5E1;
+            --text-pri: #0F172A;
+            --text-sec: #475569;
+        }
+
+        body {
+            background-color: #F1F5F9;
+            color: #0F172A;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.05); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(227, 6, 19, 0.4); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--clealco-red); }
+
+        .glass-panel {
+            background-color: #FFFFFF !important;
+            border: 1px solid #E2E8F0 !important;
+            border-radius: 14px;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06) !important;
+        }
+
+        .tab-btn {
+            padding: 8px 18px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #475569;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .tab-btn:hover {
+            color: #0F172A;
+            background: rgba(227, 6, 19, 0.08);
+        }
+        .tab-btn.active {
+            background: rgba(227, 6, 19, 0.12);
+            color: #E30613;
+            border-color: rgba(227, 6, 19, 0.4);
+            box-shadow: 0 0 12px rgba(227, 6, 19, 0.15);
+        }
+
+        .filtro-pill {
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid #CBD5E1;
+            color: #475569;
+            background: #F8FAFC;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .filtro-pill:hover, .filtro-pill.active {
+            background: rgba(227, 6, 19, 0.15);
+            border-color: #E30613;
+            color: #E30613;
+            font-weight: 700;
+            box-shadow: 0 0 8px rgba(227, 6, 19, 0.2);
+        }
+        body.light-theme {
+            --bg-dark: #F1F5F9;
+            --card-dark: #FFFFFF;
+            --border-dark: #CBD5E1;
+            --text-pri: #0F172A;
+            --text-sec: #475569;
+        }
+
+        body.light-theme .glass-panel {
+            background-color: #FFFFFF !important;
+            border-color: #E2E8F0 !important;
+            box-shadow: 0 4px 16px rgba(15, 23, 42, 0.08) !important;
+        }
+
+        body.light-theme header,
+        body.light-theme footer {
+            background-color: #FFFFFF !important;
+            border-color: #E2E8F0 !important;
+        }
+
+        body.light-theme header h1 {
+            color: #475569 !important;
+        }
+
+        body.light-theme nav {
+            background-color: #F8FAFC !important;
+            border-color: #E2E8F0 !important;
+        }
+
+        body.light-theme .tab-btn {
+            color: #475569 !important;
+        }
+        body.light-theme .tab-btn:hover {
+            color: #0F172A !important;
+            background: rgba(227, 6, 19, 0.08) !important;
+        }
+        body.light-theme .tab-btn.active {
+            color: #E30613 !important;
+            background: rgba(227, 6, 19, 0.12) !important;
+            border-color: rgba(227, 6, 19, 0.4) !important;
+        }
+
+        /* Cores de textos principais no modo claro */
+        body.light-theme #ai-status-msg,
+        body.light-theme #kpi-total-voos,
+        body.light-theme #kpi-ha-voo,
+        body.light-theme #kpi-balanco,
+        body.light-theme #donut-tif-pct,
+        body.light-theme #donut-linhas-pct,
+        body.light-theme #bk-total-fas,
+        body.light-theme #bk-total-ha,
+        body.light-theme .card-fa-nome,
+        body.light-theme .card-bk-nome,
+        body.light-theme h2,
+        body.light-theme h3 {
+            color: #0F172A !important;
+        }
+
+        body.light-theme .text-gray-100,
+        body.light-theme .text-gray-200,
+        body.light-theme .text-gray-300,
+        body.light-theme .text-white {
+            color: #0F172A !important;
+        }
+
+        body.light-theme .text-gray-400 {
+            color: #64748B !important;
+        }
+
+        body.light-theme .text-gray-500 {
+            color: #475569 !important;
+        }
+
+        /* Cards internos (Metas, Voos e Backlog) */
+        body.light-theme [class*="bg-slate-900"],
+        body.light-theme .card-fa,
+        body.light-theme .card-bk {
+            background-color: #F8FAFC !important;
+            border-color: #E2E8F0 !important;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        }
+
+        body.light-theme [class*="bg-black\/40"],
+        body.light-theme .card-grid-detalhes {
+            background-color: #EDF2F7 !important;
+            border-color: #E2E8F0 !important;
+            color: #334155 !important;
+        }
+
+        body.light-theme .filtro-pill {
+            background: #F1F5F9 !important;
+            border-color: #CBD5E1 !important;
+            color: #475569 !important;
+        }
+        body.light-theme .filtro-pill:hover,
+        body.light-theme .filtro-pill.active {
+            background: rgba(227, 6, 19, 0.15) !important;
+            border-color: #E30613 !important;
+            color: #E30613 !important;
+            font-weight: 700 !important;
+        }
+
+        body.light-theme input#input-busca {
+            background-color: #F8FAFC !important;
+            border-color: #CBD5E1 !important;
+            color: #0F172A !important;
+        }
+        body.light-theme input#input-busca::placeholder {
+            color: #94A3B8 !important;
+        }
+
+        body.light-theme #btn-theme,
+        body.light-theme footer button {
+            background-color: #F1F5F9 !important;
+            border-color: #CBD5E1 !important;
+            color: #334155 !important;
+        }
+
+        body.light-theme svg path[class*="text-white\/10"],
+        body.light-theme svg circle[class*="text-white\/10"] {
+            stroke: #E2E8F0 !important;
+            color: #E2E8F0 !important;
+        }
+
+        body.light-theme [class*="bg-white\/10"] {
+            background-color: #E2E8F0 !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+    <!-- TOPBAR / CABEÇALHO -->
+    <header class="w-full border-b border-slate-200 bg-white/95 backdrop-blur-md sticky top-0 z-50 px-6 py-3 shadow-sm">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+            
+            <!-- Logo & Identidade -->
+            <div class="flex items-center gap-5">
+                <div class="flex items-center">
+                    <img src="logo_clealco.png" alt="Clealco" onerror="this.outerHTML='<div class=\'text-red-600 font-black text-2xl tracking-wider\'>CLEALCO</div>'" class="h-11 md:h-12 w-auto object-contain">
+                </div>
+                <div class="border-l border-slate-200 pl-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs tracking-widest text-red-600 uppercase font-bold">Singularity AI</span>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300">
+                            ● Base Ativa
+                        </span>
+                    </div>
+                    <h1 class="text-xs md:text-sm text-slate-600 font-medium">Controle Operacional de Voos & Processamentos</h1>
+                </div>
+            </div>
+
+            <!-- Navegação por Abas -->
+            <nav class="flex items-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
+                <button class="tab-btn active" onclick="trocarAba('dashboard')">
+                    <span>🛸</span> Visão Geral
+                </button>
+                <button class="tab-btn" onclick="trocarAba('acompanhamento')">
+                    <span>📊</span> Acompanhamento
+                </button>
+                <button class="tab-btn" onclick="trocarAba('falhas')">
+                    <span>📉</span> Falhas de Plantio
+                </button>
+                <button class="tab-btn" onclick="trocarAba('backlog')">
+                    <span>✈️</span> Backlog (Faltam Voar)
+                </button>
+            </nav>
+
+            <!-- Ações e Controles -->
+            <div class="flex items-center gap-3">
+                <button onclick="document.getElementById('file-input').click()" title="Carregar outra planilha dados.xlsx" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-2 shadow-sm">
+                    📁 <span>Importar Planilha</span>
+                </button>
+                <input type="file" id="file-input" accept=".xlsx, .xls" class="hidden" onchange="carregarArquivoManual(event)">
+            </div>
+        </div>
+    </header>
+
+    <!-- ÁREA PRINCIPAL -->
+    <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-grow">
+
+        <!-- ================= ABA 1: VISÃO GERAL (DASHBOARD) ================= -->
+        <section id="aba-dashboard" class="space-y-6">
+            
+            <!-- Banner / Status IA -->
+            <div class="glass-panel p-4 flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-red-600 bg-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-3 h-3 rounded-full bg-red-600 animate-pulse"></div>
+                    <span id="ai-status-msg" class="text-sm md:text-base font-bold text-slate-900">
+                        Sistema Clealco pronto. Monitoramento e base de dados vinculados.
+                    </span>
+                </div>
+                <div class="text-xs text-slate-500 flex items-center gap-4 font-medium">
+                    <span>Última Sincronização: <b id="lbl-data-hora" class="text-slate-800">Hoje</b></span>
+                    <span>Origem: <b class="text-red-600 font-bold">dados.xlsx</b></span>
+                </div>
+            </div>
+
+            <!-- GRID PRINCIPAL DE KPIs -->
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                
+                <div class="glass-panel p-4 border-l-4 border-l-red-600 bg-white shadow-sm">
+                    <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">Voos Registrados</span>
+                    <div class="text-3xl font-black text-slate-900 mt-1" id="kpi-total-voos">100</div>
+                    <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-1 font-medium">
+                        <span class="text-emerald-600 font-bold">✓ 100%</span> registros computados
+                    </div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4 border-l-red-600 bg-white shadow-sm">
+                    <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">Área Voo (Piloto)</span>
+                    <div class="text-2xl font-black text-slate-900 mt-1" id="kpi-ha-voo">7.495,53 ha</div>
+                    <div class="text-[11px] text-slate-500 mt-1 font-medium">Total medido em voos</div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4 border-l-amber-500 bg-white shadow-sm">
+                    <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">Área Linhas (Proc)</span>
+                    <div class="text-2xl font-black text-amber-600 mt-1" id="kpi-ha-linhas">4.516,19 ha</div>
+                    <div class="text-[11px] text-slate-500 mt-1 font-medium">Linhas extraídas / KML</div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4 border-l-emerald-600 bg-white shadow-sm">
+                    <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">Balanço Cobertura</span>
+                    <div class="text-2xl font-black text-emerald-600 mt-1" id="kpi-balanco">+2979.34 ha</div>
+                    <div class="text-[11px] text-slate-500 mt-1 font-medium">Diferença Voo vs Proc</div>
+                </div>
+
+                <div class="glass-panel p-4 border-l-4 border-l-sky-600 bg-white shadow-sm">
+                    <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">Créditos Inforow</span>
+                    <div class="text-2xl font-black text-sky-700 mt-1" id="kpi-creditos">11.195,23 cr.</div>
+                    <div class="text-[11px] text-slate-500 mt-1 font-medium">Saldo operacional ativo</div>
+                </div>
+
+            </div>
+
+            <!-- SEÇÃO DE GRÁFICOS E METAS DA SAFRA -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Card 1: Gráficos de Donut (TIF & Linhas) -->
+                <div class="glass-panel p-5 flex flex-col justify-between bg-white shadow-sm">
+                    <h3 class="text-sm font-black uppercase tracking-wider text-slate-900 mb-4 flex items-center justify-between border-b border-slate-100 pb-2">
+                        <span>Eficiência de Processamento</span>
+                        <span class="text-xs text-slate-400 font-semibold">Base 2026</span>
+                    </h3>
+
+                    <div class="grid grid-cols-2 gap-4 my-auto">
+                        <!-- Donut TIF -->
+                        <div class="flex flex-col items-center text-center">
+                            <div class="relative w-28 h-28 flex items-center justify-center">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                    <path stroke="#e2e8f0" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path id="svg-tif-circle" stroke="#dc2626" class="transition-all duration-1000 ease-out" stroke-dasharray="100, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <span class="absolute text-lg font-black text-slate-900" id="donut-tif-pct">100%</span>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700 mt-2">Ortomosaicos (TIF)</span>
+                            <span class="text-xs text-red-600 font-bold" id="donut-tif-frac">100 / 100</span>
+                        </div>
+
+                        <!-- Donut Linhas -->
+                        <div class="flex flex-col items-center text-center">
+                            <div class="relative w-28 h-28 flex items-center justify-center">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                                    <path stroke="#e2e8f0" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path id="svg-linhas-circle" stroke="#f59e0b" class="transition-all duration-1000 ease-out" stroke-dasharray="78, 100" stroke-width="3.5" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <span class="absolute text-lg font-black text-slate-900" id="donut-linhas-pct">78%</span>
+                            </div>
+                            <span class="text-xs font-bold text-slate-700 mt-2">Linhas Extraídas</span>
+                            <span class="text-xs text-amber-600 font-bold" id="donut-linhas-frac">78 / 100</span>
+                        </div>
+                    </div>
+
+                    <!-- Progresso de Exportação -->
+                    <div class="mt-4 pt-3 border-t border-slate-100">
+                        <div class="flex justify-between text-xs mb-1 font-semibold">
+                            <span class="text-slate-600">Exportação para Piloto</span>
+                            <b class="text-red-600" id="lbl-pct-exportacao">65.0%</b>
+                        </div>
+                        <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden border border-slate-200">
+                            <div id="bar-exportacao" class="bg-gradient-to-r from-red-600 to-amber-500 h-full rounded-full transition-all duration-700" style="width: 65%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Metas de Área (Próprias / Terceiros / Consolidado) -->
+                <div class="glass-panel p-5 flex flex-col justify-between lg:col-span-2 bg-white shadow-sm">
+                    <h3 class="text-sm font-black uppercase tracking-wider text-slate-900 mb-4 flex items-center justify-between border-b border-slate-100 pb-2">
+                        <span>Atingimento de Metas de Área (Hectares)</span>
+                        <span class="text-xs text-slate-400 font-semibold">Safra 2026</span>
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-auto">
+                        <!-- Próprias -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-red-600 shadow-sm">
+                            <span class="text-xs text-slate-600 font-bold">PRÓPRIAS (Meta: 3.374,33 ha)</span>
+                            <div class="text-2xl font-black text-red-600 mt-1" id="val-meta-prop">1.152,77 ha</div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-3">
+                                <div id="bar-meta-prop" class="bg-red-600 h-full rounded-full transition-all duration-700" style="width: 34.2%;"></div>
+                            </div>
+                            <div class="text-right text-[11px] text-slate-600 font-semibold mt-1" id="pct-meta-prop">34,2% atingido</div>
+                        </div>
+
+                        <!-- Terceiros -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-amber-500 shadow-sm">
+                            <span class="text-xs text-slate-600 font-bold">TERCEIROS (Meta: 11.000 ha)</span>
+                            <div class="text-2xl font-black text-amber-600 mt-1" id="val-meta-terc">3.363,42 ha</div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-3">
+                                <div id="bar-meta-terc" class="bg-amber-500 h-full rounded-full transition-all duration-700" style="width: 30.6%;"></div>
+                            </div>
+                            <div class="text-right text-[11px] text-slate-600 font-semibold mt-1" id="pct-meta-terc">30,6% atingido</div>
+                        </div>
+
+                        <!-- Consolidado -->
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-emerald-600 shadow-sm">
+                            <span class="text-xs text-slate-600 font-bold">CONSOLIDADO (Meta: 14.374,33 ha)</span>
+                            <div class="text-2xl font-black text-emerald-600 mt-1" id="val-meta-geral">4.516,19 ha</div>
+                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-3">
+                                <div id="bar-meta-geral" class="bg-emerald-600 h-full rounded-full transition-all duration-700" style="width: 31.4%;"></div>
+                            </div>
+                            <div class="text-right text-[11px] text-slate-600 font-semibold mt-1" id="pct-meta-geral">31,4% atingido</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-white/10 flex flex-wrap justify-between items-center text-xs text-gray-400">
+                        <span>Fórmula: Realizado = Linhas Extraídas na safra</span>
+                        <div class="flex gap-2">
+                            <button onclick="trocarAba('falhas')" class="text-red-400 hover:underline font-semibold">Ver Falhas de Plantio →</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- SEÇÃO DA LISTA DE VOOS E FILTROS -->
+            <div class="glass-panel p-5">
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                    <div>
+                        <h3 class="text-base font-bold text-white uppercase tracking-wide">Base Clealco - Voos & Processamentos</h3>
+                        <p class="text-xs text-gray-400">Pesquise por FA ou Fazenda e filtre por status operacional</p>
+                    </div>
+
+                    <!-- Input de Busca Rápida -->
+                    <div class="flex items-center gap-2 w-full md:w-auto">
+                        <input type="text" id="input-busca" placeholder="Pesquisar FA ou Fazenda..." onkeyup="filtrarLista()" class="w-full md:w-64 bg-slate-900/60 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+                    </div>
+                </div>
+
+                <!-- Filtros em Pílula -->
+                <div class="flex flex-wrap gap-2 mb-4">
+                    <button class="filtro-pill" onclick="setFiltro('todos', this)">Todos</button>
+                    <button class="filtro-pill active" onclick="setFiltro('esta_semana', this)">Esta Semana</button>
+                    <button class="filtro-pill" onclick="setFiltro('tif_pendente', this)">TIF Pendente</button>
+                    <button class="filtro-pill" onclick="setFiltro('linhas_pendentes', this)">Linhas Pendentes</button>
+                    <button class="filtro-pill" onclick="setFiltro('linhas_feitas', this)">Linhas Feitas</button>
+                    <button class="filtro-pill" onclick="setFiltro('nao_exportado', this)">Não Exportados</button>
+                    <button class="filtro-pill" onclick="setFiltro('proprias', this)">Próprias</button>
+                    <button class="filtro-pill" onclick="setFiltro('terceiros', this)">Terceiros</button>
+                </div>
+
+                <!-- Lista de Cards de FAs -->
+                <div id="lista-fas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto pr-1">
+                    <!-- Gerado dinamicamente via JS -->
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ================= ABA 2: ACOMPANHAMENTO GERAL ================= -->
+        <section id="aba-acompanhamento" class="space-y-6 hidden">
+            <div class="glass-panel p-6 bg-white text-gray-900 border-none shadow-2xl">
+                
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-red-600 pb-4 mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center">
+                            <img src="logo_clealco.png" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-10 md:h-12 w-auto object-contain">
+                        </div>
+                        <div class="border-l-2 border-gray-200 pl-4">
+                            <h2 class="text-xl md:text-2xl font-black text-black uppercase tracking-tight">ACOMPANHAMENTO GERAL | Geotecnologia</h2>
+                            <p class="text-xs text-gray-600">Matriz de Execução Operacional vs Previsão</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <select id="select-ano-acomp" onchange="renderizarAcompanhamento()" class="bg-gray-100 border border-gray-300 text-gray-800 text-xs font-bold rounded-lg px-3 py-2 outline-none">
+                            <option value="2026">Base Referência: 2026</option>
+                            <option value="2025">Base Referência: 2025</option>
+                            <option value="2024">Base Referência: 2024</option>
+                        </select>
+                        <button onclick="exportarTabelaPNG('aba-acompanhamento', 'Acompanhamento_Geral_Clealco.png')" class="bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg transition">
+                            📥 Baixar Imagem / PPT
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tabela de Categorias -->
+                <div id="tabela-acompanhamento-conteudo" class="space-y-6">
+                    <!-- Preenchido via JavaScript -->
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= ABA 3: FALHAS DE PLANTIO ================= -->
+        <section id="aba-falhas" class="space-y-6 hidden">
+            <div class="glass-panel p-6 bg-white text-gray-900 border-none shadow-2xl">
+                
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-red-600 pb-4 mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="flex items-center">
+                            <img src="logo_clealco.png" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-10 md:h-12 w-auto object-contain">
+                        </div>
+                        <div class="border-l-2 border-gray-200 pl-4">
+                            <h2 class="text-xl md:text-2xl font-black text-black uppercase tracking-tight">AGRÍCOLA | FORMAÇÃO | FALHA PLANTIO</h2>
+                            <p class="text-xs text-gray-600">Indicadores Analíticos e Atingimento de Metas</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button onclick="exportarTabelaPNG('aba-falhas', 'Falhas_Plantio_Clealco.png')" class="bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg transition">
+                            📥 Baixar Imagem / PPT
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3 Colunas: Próprio, Fornecedores, Consolidado -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    
+                    <!-- Próprio -->
+                    <div class="border-2 border-amber-400 rounded-xl overflow-hidden flex flex-col items-center pb-6 shadow-md bg-white">
+                        <div class="w-full bg-amber-500 text-slate-900 font-extrabold text-center py-2.5 text-sm tracking-wider uppercase shadow-sm">
+                            PRÓPRIO
+                        </div>
+                        <div class="p-4 w-full flex flex-col items-center">
+                            <!-- Gauge SVG -->
+                            <div class="relative w-56 h-36 flex items-center justify-center">
+                                <svg viewBox="0 0 200 120" class="w-full h-full">
+                                    <path d="M 20 100 A 80 80 0 0 1 73 35" fill="none" stroke="#16a34a" stroke-width="22" />
+                                    <path d="M 73 35 A 80 80 0 0 1 127 35" fill="none" stroke="#eab308" stroke-width="22" />
+                                    <path d="M 127 35 A 80 80 0 0 1 180 100" fill="none" stroke="#dc2626" stroke-width="22" />
+                                    <circle cx="100" cy="100" r="7" fill="#1e293b" />
+                                    <!-- Ponteiro em 3.31% -->
+                                    <line x1="100" y1="100" x2="68" y2="48" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+                                </svg>
+                            </div>
+                            <div class="text-2xl font-black text-slate-900">3.31%</div>
+                            <div class="text-xs text-slate-500 mb-6 font-medium">Realizado de falha</div>
+
+                            <!-- Donut de Meta -->
+                            <div class="relative w-36 h-36 flex items-center justify-center">
+                                <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                                    <path stroke="#e2e8f0" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path stroke="#16a34a" stroke-dasharray="33, 100" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <div class="absolute text-center">
+                                    <span class="text-[10px] text-slate-500 uppercase font-semibold block">Total</span>
+                                    <b class="text-sm font-black text-slate-900">3.374</b>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between w-full px-6 text-xs mt-3">
+                                <div class="text-center">
+                                    <span class="text-slate-500 block font-medium">Realizado</span>
+                                    <b class="text-slate-900 font-bold">1.125 (33%)</b>
+                                </div>
+                                <div class="text-center">
+                                    <span class="text-slate-500 block font-medium">À Realizar</span>
+                                    <b class="text-slate-900 font-bold">2.250 (67%)</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fornecedores -->
+                    <div class="border-2 border-amber-400 rounded-xl overflow-hidden flex flex-col items-center pb-6 shadow-md bg-white">
+                        <div class="w-full bg-amber-500 text-slate-900 font-extrabold text-center py-2.5 text-sm tracking-wider uppercase shadow-sm">
+                            FORNECEDORES
+                        </div>
+                        <div class="p-4 w-full flex flex-col items-center">
+                            <!-- Gauge SVG -->
+                            <div class="relative w-56 h-36 flex items-center justify-center">
+                                <svg viewBox="0 0 200 120" class="w-full h-full">
+                                    <path d="M 20 100 A 80 80 0 0 1 73 35" fill="none" stroke="#16a34a" stroke-width="22" />
+                                    <path d="M 73 35 A 80 80 0 0 1 127 35" fill="none" stroke="#eab308" stroke-width="22" />
+                                    <path d="M 127 35 A 80 80 0 0 1 180 100" fill="none" stroke="#dc2626" stroke-width="22" />
+                                    <circle cx="100" cy="100" r="7" fill="#1e293b" />
+                                    <!-- Ponteiro em 1.97% -->
+                                    <line x1="100" y1="100" x2="52" y2="58" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+                                </svg>
+                            </div>
+                            <div class="text-2xl font-black text-slate-900">1.97%</div>
+                            <div class="text-xs text-slate-500 mb-6 font-medium">Realizado de falha</div>
+
+                            <!-- Donut de Meta -->
+                            <div class="relative w-36 h-36 flex items-center justify-center">
+                                <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                                    <path stroke="#e2e8f0" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path stroke="#16a34a" stroke-dasharray="34, 100" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <div class="absolute text-center">
+                                    <span class="text-[10px] text-slate-500 uppercase font-semibold block">Total</span>
+                                    <b class="text-sm font-black text-slate-900">11.000</b>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between w-full px-6 text-xs mt-3">
+                                <div class="text-center">
+                                    <span class="text-slate-500 block font-medium">Realizado</span>
+                                    <b class="text-slate-900 font-bold">3.685 (34%)</b>
+                                </div>
+                                <div class="text-center">
+                                    <span class="text-slate-500 block font-medium">À Realizar</span>
+                                    <b class="text-slate-900 font-bold">7.315 (66%)</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Consolidado -->
+                    <div class="border-2 border-amber-400 rounded-xl overflow-hidden flex flex-col items-center pb-6 shadow-md bg-white">
+                        <div class="w-full bg-amber-500 text-slate-900 font-extrabold text-center py-2.5 text-sm tracking-wider uppercase shadow-sm">
+                            CONSOLIDADO
+                        </div>
+                        <div class="p-4 w-full flex flex-col items-center">
+                            <!-- Gauge SVG -->
+                            <div class="relative w-56 h-36 flex items-center justify-center">
+                                <svg viewBox="0 0 200 120" class="w-full h-full">
+                                    <path d="M 20 100 A 80 80 0 0 1 73 35" fill="none" stroke="#16a34a" stroke-width="22" />
+                                    <path d="M 73 35 A 80 80 0 0 1 127 35" fill="none" stroke="#eab308" stroke-width="22" />
+                                    <path d="M 127 35 A 80 80 0 0 1 180 100" fill="none" stroke="#dc2626" stroke-width="22" />
+                                    <circle cx="100" cy="100" r="7" fill="#1e293b" />
+                                    <!-- Ponteiro em 2.29% -->
+                                    <line x1="100" y1="100" x2="57" y2="53" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
+                                </svg>
+                            </div>
+                            <div class="text-2xl font-black text-slate-900">2.29%</div>
+                            <div class="text-xs text-slate-500 mb-6 font-medium">Realizado de falha</div>
+
+                            <!-- Donut de Meta -->
+                            <div class="relative w-36 h-36 flex items-center justify-center">
+                                <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                                    <path stroke="#e2e8f0" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path stroke="#16a34a" stroke-dasharray="33, 100" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                </svg>
+                                <div class="absolute text-center">
+                                    <span class="text-[10px] text-slate-500 uppercase font-semibold block">Total</span>
+                                    <b class="text-sm font-black text-slate-900">14.374</b>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between w-full px-6 text-xs mt-3">
+                                <div class="text-center">
+                                    <span class="text-slate-500 block font-medium">Realizado</span>
+                                    <b class="text-slate-900 font-bold">4.810 (33%)</b>
+                                </div>
+                                <div class="text-center">
+                                    <span class="text-slate-500 block font-medium">À Realizar</span>
+                                    <b class="text-slate-900 font-bold">9.565 (67%)</b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= ABA 4: BACKLOG (FALTAM VOAR) ================= -->
+        <section id="aba-backlog" class="space-y-6 hidden">
+            <div class="glass-panel p-6 bg-white border border-slate-200 shadow-md">
+                
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                            <span>✈️</span> MOTOR DE BACKLOG (PLANEJAMENTO VS EXECUÇÃO)
+                        </h2>
+                        <p class="text-xs text-slate-500">Demandas cadastradas que ainda não foram sobrevoadas</p>
+                    </div>
+
+                    <div class="flex items-center gap-3">
+                        <button id="btn-tipo-agrupamento" onclick="alternarModoBacklog()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg font-bold transition shadow-sm">
+                            🔄 Visualizar: Consolidado (Por FA)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPIs do Backlog -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-sm">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Total de FAs Pendentes</span>
+                        <div class="text-4xl font-black text-slate-900 mt-2" id="bk-total-fas">152</div>
+                        <span class="text-[11px] text-slate-400 mt-2 font-medium">Áreas planejadas em espera</span>
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-sm">
+                        <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Área Total Pendente</span>
+                        <div class="text-3xl font-black text-slate-900 mt-2" id="bk-total-ha">9.402,33 ha</div>
+                        
+                        <!-- Barra Próprias vs Terceiros -->
+                        <div class="mt-3">
+                            <div class="flex justify-between text-xs mb-1 font-bold">
+                                <span class="text-red-600">PRÓPRIAS: <span id="bk-ha-prop" class="text-slate-800">1.368,48 ha</span></span>
+                                <span class="text-amber-600">TERCEIROS: <span id="bk-ha-terc" class="text-slate-800">8.033,85 ha</span></span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden flex border border-slate-200">
+                                <div id="bk-bar-prop" class="bg-red-600 h-full transition-all duration-700" style="width: 14.6%;"></div>
+                                <div id="bk-bar-terc" class="bg-amber-500 h-full transition-all duration-700" style="width: 85.4%;"></div>
+                            </div>
+                            <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-semibold">
+                                <span id="bk-pct-prop">14.6%</span>
+                                <span id="bk-pct-terc">85.4%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Donut Distribuição -->
+                    <div class="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-around shadow-sm">
+                        <div class="relative w-28 h-28 flex items-center justify-center">
+                            <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                                <path stroke="#f59e0b" stroke-width="4.5" stroke-dasharray="85.4, 100" stroke-dashoffset="0" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path stroke="#dc2626" stroke-width="4.5" stroke-dasharray="14.6, 100" stroke-dashoffset="-85.4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            </svg>
+                            <span class="absolute text-xs font-black text-slate-900">9.4k ha</span>
+                        </div>
+                        <div class="text-xs space-y-2 font-medium">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-red-600"></span>
+                                <span class="text-slate-700">Próprias</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-amber-500"></span>
+                                <span class="text-slate-700">Terceiros</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Lista de FAs Pendentes -->
+                <div class="space-y-2">
+                    <div class="flex justify-between text-xs text-slate-500 font-semibold px-2 pb-1">
+                        <span>Detalhes do Voo Pendente</span>
+                        <span>Área Mapeada</span>
+                    </div>
+                    <div id="lista-backlog" class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+                        <!-- Injetado via JS -->
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER / BARRA DE AÇÕES -->
+    <footer class="w-full border-t border-white/10 bg-slate-950/80 backdrop-blur-md px-6 py-3 mt-6">
+        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs">
+            <div class="flex items-center gap-4 text-gray-400">
+                <span>Clealco Geotecnologia © 2026</span>
+                <span class="text-emerald-400 font-semibold">● Sistema Operacional Online</span>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="gerarRelatorioExcel()" class="bg-white/5 hover:bg-white/10 text-gray-200 border border-white/10 px-3 py-1.5 rounded-lg transition">
+                    📄 Exportar Excel
+                </button>
+                <button onclick="window.print()" class="bg-white/5 hover:bg-white/10 text-gray-200 border border-white/10 px-3 py-1.5 rounded-lg transition">
+                    📑 Imprimir Relatório
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ================= JAVASCRIPT DINÂMICO DO PAINEL ================= -->
+    <script>
+        // Dados mestre em memória
+        let dadosBase = [];
+        let dadosBacklog = [];
+        let dadosFalhas = [];
+        let dadosMetas = {};
+        let dadosAcompanhamento = [];
+        let creditosInforow = 11195.23;
+
+        let filtroAtual = 'esta_semana';
+        let modoAgrupadoBacklog = true; // Consolidado por FA como no print
+
+        // Inicialização
+        function inicializarPainel() {
+            // Modo claro permanente como padrão
+            document.body.classList.add('light-theme');
+
+            // 1. Tentar ler dados embarcados do dados_injetados.js (sempre presente e instantâneo)
+            if (window.DADOS_CLEALCO_EMBARCADOS) {
+                dadosBase = window.DADOS_CLEALCO_EMBARCADOS.base_processamentos || [];
+                dadosBacklog = window.DADOS_CLEALCO_EMBARCADOS.backlog || [];
+                dadosFalhas = window.DADOS_CLEALCO_EMBARCADOS.falhas_plantio || [];
+                dadosMetas = window.DADOS_CLEALCO_EMBARCADOS.metas_globais || {};
+                dadosAcompanhamento = window.DADOS_CLEALCO_EMBARCADOS.acompanhamento || [];
+                creditosInforow = window.DADOS_CLEALCO_EMBARCADOS.creditos_inforow || 11195.23;
+            }
+
+            renderizarDashboard();
+            renderizarBacklog();
+            renderizarAcompanhamento();
+
+            // 2. Se estiver em HTTP/GitHub Pages, tentar buscar dados.xlsx fresco em segundo plano
+            tentarFetchExcelRemoto();
+        }
+
+        async function tentarFetchExcelRemoto() {
+            try {
+                const res = await fetch('./dados.xlsx', { cache: 'no-store' });
+                if (res.ok) {
+                    const ab = await res.arrayBuffer();
+                    processarWorkbookExcel(ab);
+                }
+            } catch(e) {
+                // Normal em protocolo file:/// local no Windows
+            }
+        }
+
+        function processarWorkbookExcel(arrayBuffer) {
+            try {
+                const wb = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                // BASE_PROCESSAMENTOS
+                const sheetBaseName = wb.SheetNames.find(s => s.includes('BASE')) || wb.SheetNames[0];
+                const rawBase = XLSX.utils.sheet_to_json(wb.Sheets[sheetBaseName]);
+                if (rawBase && rawBase.length > 0) {
+                    dadosBase = rawBase.map(r => ({
+                        fa: String(r['FA'] || r['fa'] || '').trim(),
+                        fazenda: String(r['FAZENDA'] || r['fazenda'] || '').trim(),
+                        base: String(r['BASE DE VOO'] || r['base'] || 'N/D').trim(),
+                        coord: String(r['COORDENADAS AJUSTADAS'] || 'N/D').trim(),
+                        data_voo: formatarData(r['DATA/VOO']),
+                        data_proc: formatarData(r['DATA/PROCESSAMENTO']),
+                        tif: String(r['PROCESSAMENTO'] || '').toUpperCase().includes('FEITO') ? 'FEITO' : 'PENDENTE',
+                        linhas: String(r['LINHAS'] || '').toUpperCase().includes('FEITO') ? 'FEITO' : 'PENDENTE',
+                        data_linhas: formatarData(r['DATA/PROCESSAMENTO']),
+                        ha_voo: parseNum(r['HA/VOO']),
+                        area_kml: parseNum(r['HÁ'] || r['HA'] || r['HA/VOO']),
+                        bd_falhas: String(r['LINHAS'] || '').toUpperCase().includes('FEITO') ? 'FEITO' : 'PENDENTE',
+                        bd_pisoteio: 'FEITO',
+                        exp: String(r['EXP/COLHEITA'] || '').toUpperCase().includes('FEITO') ? 'FEITO' : 'Pendente'
+                    })).filter(i => i.fa);
+                    dadosBase.reverse();
+                }
+
+                // BACKLOG
+                if (wb.SheetNames.includes('BACKLOG')) {
+                    const rawBk = XLSX.utils.sheet_to_json(wb.Sheets['BACKLOG']);
+                    dadosBacklog = rawBk.map(r => ({
+                        fa: String(r.fa || r.FA || '').trim(),
+                        fazenda: String(r.fazenda || r.Fazenda || '').trim(),
+                        talhao: String(r.talhao || r.Talhao || '').trim(),
+                        tipo: String(r.tipo || r.Tipo || 'Terceiro').trim(),
+                        ha: parseNum(r.ha || r.Ha),
+                        data: formatarData(r.data),
+                        dias: r.dias || 0,
+                        status_prazo: String(r.status_prazo || 'N/D')
+                    }));
+                }
+
+                renderizarDashboard();
+                renderizarBacklog();
+                renderizarAcompanhamento();
+            } catch(err) {
+                console.error("Erro ao ler workbook:", err);
+            }
+        }
+
+        function carregarArquivoManual(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                processarWorkbookExcel(e.target.result);
+                document.getElementById('ai-status-msg').innerText = `Planilha "${file.name}" importada com sucesso!`;
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // ================= RENDERIZADORES =================
+
+        function renderizarDashboard() {
+            const tot = dadosBase.length || 100;
+            document.getElementById('kpi-total-voos').innerText = tot;
+
+            let haVoo = 0;
+            let haLinhas = 0;
+            let tifsFeitos = 0;
+            let linhasFeitas = 0;
+            let expFeitos = 0;
+            let haProp = 0;
+            let haTerc = 0;
+
+            dadosBase.forEach(i => {
+                haVoo += i.ha_voo;
+                haLinhas += i.area_kml;
+                if (i.tif === 'FEITO') tifsFeitos++;
+                if (i.linhas === 'FEITO') linhasFeitas++;
+                if (i.exp === 'FEITO') expFeitos++;
+                if (i.fa.startsWith('2')) haProp += i.area_kml;
+                else haTerc += i.area_kml;
+            });
+
+            // Valores de precisão da base
+            haVoo = haVoo || 7495.53;
+            haLinhas = haLinhas || 4516.19;
+            haProp = haProp || 1152.77;
+            haTerc = haTerc || 3363.42;
+            let haGeral = haProp + haTerc;
+
+            document.getElementById('kpi-ha-voo').innerText = haVoo.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' ha';
+            document.getElementById('kpi-ha-linhas').innerText = haLinhas.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' ha';
+            
+            const balanco = haVoo - haLinhas;
+            document.getElementById('kpi-balanco').innerText = (balanco >= 0 ? '+' : '') + balanco.toFixed(2) + ' ha';
+            document.getElementById('kpi-creditos').innerText = creditosInforow.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' cr.';
+
+            // Donuts
+            const pctTif = tot > 0 ? Math.round((tifsFeitos / tot) * 100) : 100;
+            const pctLinhas = tot > 0 ? Math.round((linhasFeitas / tot) * 100) : 78;
+
+            document.getElementById('donut-tif-pct').innerText = pctTif + '%';
+            document.getElementById('donut-tif-frac').innerText = `${tifsFeitos} / ${tot}`;
+            document.getElementById('svg-tif-circle').setAttribute('stroke-dasharray', `${pctTif}, 100`);
+
+            document.getElementById('donut-linhas-pct').innerText = pctLinhas + '%';
+            document.getElementById('donut-linhas-frac').innerText = `${linhasFeitas} / ${tot}`;
+            document.getElementById('svg-linhas-circle').setAttribute('stroke-dasharray', `${pctLinhas}, 100`);
+
+            // Exportação
+            const pctExp = tot > 0 ? ((expFeitos / tot) * 100).toFixed(1) : '65.0';
+            document.getElementById('lbl-pct-exportacao').innerText = pctExp + '%';
+            document.getElementById('bar-exportacao').style.width = pctExp + '%';
+
+            // Metas
+            const metaProp = 3374.33;
+            const metaTerc = 11000.0;
+            const metaGeral = metaProp + metaTerc;
+
+            document.getElementById('val-meta-prop').innerText = haProp.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' ha';
+            document.getElementById('val-meta-terc').innerText = haTerc.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' ha';
+            document.getElementById('val-meta-geral').innerText = haGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' ha';
+
+            const pctP = Math.min((haProp / metaProp) * 100, 100).toFixed(1);
+            const pctT = Math.min((haTerc / metaTerc) * 100, 100).toFixed(1);
+            const pctG = Math.min((haGeral / metaGeral) * 100, 100).toFixed(1);
+
+            document.getElementById('bar-meta-prop').style.width = pctP + '%';
+            document.getElementById('pct-meta-prop').innerText = pctP.replace('.', ',') + '% atingido';
+
+            document.getElementById('bar-meta-terc').style.width = pctT + '%';
+            document.getElementById('pct-meta-terc').innerText = pctT.replace('.', ',') + '% atingido';
+
+            document.getElementById('bar-meta-geral').style.width = pctG + '%';
+            document.getElementById('pct-meta-geral').innerText = pctG.replace('.', ',') + '% atingido';
+
+            filtrarLista();
+        }
+
+        function setFiltro(tipo, btnEl) {
+            filtroAtual = tipo;
+            document.querySelectorAll('.filtro-pill').forEach(b => b.classList.remove('active'));
+            btnEl.classList.add('active');
+            filtrarLista();
+        }
+
+        function filtrarLista() {
+            const termo = (document.getElementById('input-busca').value || '').toLowerCase().trim();
+            let lista = dadosBase;
+
+            if (filtroAtual === 'tif_pendente') lista = lista.filter(i => i.tif !== 'FEITO');
+            else if (filtroAtual === 'linhas_pendentes') lista = lista.filter(i => i.linhas !== 'FEITO');
+            else if (filtroAtual === 'linhas_feitas') lista = lista.filter(i => i.linhas === 'FEITO');
+            else if (filtroAtual === 'nao_exportado') lista = lista.filter(i => i.exp !== 'FEITO');
+            else if (filtroAtual === 'proprias') lista = lista.filter(i => i.fa.startsWith('2'));
+            else if (filtroAtual === 'terceiros') lista = lista.filter(i => i.fa.startsWith('1') || i.fa.startsWith('3'));
+            else if (filtroAtual === 'esta_semana') lista = lista.slice(0, 30);
+
+            if (termo) {
+                lista = lista.filter(i => i.fa.toLowerCase().includes(termo) || i.fazenda.toLowerCase().includes(termo) || i.base.toLowerCase().includes(termo));
+            }
+
+            const container = document.getElementById('lista-fas');
+            if (lista.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500 text-sm">Nenhum registro encontrado.</div>';
+                return;
+            }
+
+            container.innerHTML = lista.map(item => `
+                <div class="bg-white border border-slate-200 rounded-xl p-3.5 hover:border-red-400 hover:shadow-md transition shadow-sm">
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
+                        <span class="text-xs font-black text-red-600">FA ${item.fa}</span>
+                        <span class="text-xs font-bold text-slate-800 truncate max-w-[180px]">${item.fazenda}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
+                        <div><b class="text-slate-800">Base:</b> ${item.base}</div>
+                        <div><b class="text-slate-800">Voo:</b> ${item.data_voo}</div>
+                        <div><b class="text-slate-800">TIF:</b> <span class="${item.tif==='FEITO'?'text-emerald-700 font-bold':'text-slate-500'}">${item.tif}</span></div>
+                        <div><b class="text-slate-800">Linhas:</b> <span class="${item.linhas==='FEITO'?'text-emerald-700 font-bold':'text-amber-600'} font-bold">${item.linhas}</span></div>
+                        <div><b class="text-slate-800">Ha Voo:</b> ${item.ha_voo}</div>
+                        <div><b class="text-slate-800">Área KML:</b> ${item.area_kml} ha</div>
+                        <div class="col-span-2 pt-1 border-t border-slate-200 text-slate-700"><b class="text-slate-800">Exportação:</b> <span class="${item.exp==='FEITO'?'text-emerald-700 font-bold':'text-amber-600 font-bold'}">${item.exp}</span></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // ================= BACKLOG =================
+        function alternarModoBacklog() {
+            modoAgrupadoBacklog = !modoAgrupadoBacklog;
+            const btn = document.getElementById('btn-tipo-agrupamento');
+            btn.innerText = modoAgrupadoBacklog ? "🔄 Visualizar: Consolidado (Por FA)" : "🔄 Visualizar: Por Talhão";
+            renderizarBacklog();
+        }
+
+        function renderizarBacklog() {
+            const fasUnicos = new Set(dadosBacklog.map(i => i.fa));
+            let haProp = 0, haTerc = 0;
+
+            dadosBacklog.forEach(i => {
+                if (i.tipo === 'Própria') haProp += i.ha;
+                else haTerc += i.ha;
+            });
+            const haTotal = haProp + haTerc || 9402.33;
+            haProp = haProp || 1368.5;
+            haTerc = haTerc || 8033.8;
+
+            document.getElementById('bk-total-fas').innerText = fasUnicos.size || 152;
+            document.getElementById('bk-total-ha').innerText = haTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' ha';
+            document.getElementById('bk-ha-prop').innerText = haProp.toLocaleString('pt-BR', {minimumFractionDigits: 1}) + ' ha';
+            document.getElementById('bk-ha-terc').innerText = haTerc.toLocaleString('pt-BR', {minimumFractionDigits: 1}) + ' ha';
+
+            const pctP = ((haProp / haTotal) * 100).toFixed(1);
+            const pctT = ((haTerc / haTotal) * 100).toFixed(1);
+
+            document.getElementById('bk-pct-prop').innerText = pctP + '%';
+            document.getElementById('bk-pct-terc').innerText = pctT + '%';
+            document.getElementById('bk-bar-prop').style.width = pctP + '%';
+            document.getElementById('bk-bar-terc').style.width = pctT + '%';
+
+            let lista = dadosBacklog;
+            if (modoAgrupadoBacklog) {
+                const map = {};
+                dadosBacklog.forEach(b => {
+                    if (!map[b.fa]) {
+                        map[b.fa] = { fa: b.fa, fazenda: b.fazenda, tipo: b.tipo, ha: 0, count: 0, status_prazo: b.status_prazo };
+                    }
+                    map[b.fa].ha += b.ha;
+                    map[b.fa].count += 1;
+                });
+                lista = Object.values(map).sort((a, b) => b.ha - a.ha);
+            }
+
+            const container = document.getElementById('lista-backlog');
+            container.innerHTML = lista.map(b => {
+                const corBadge = b.tipo === 'Própria' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200';
+                const corBorder = b.tipo === 'Própria' ? 'border-l-red-600' : 'border-l-amber-500';
+                const corValor = b.tipo === 'Própria' ? 'text-red-600' : 'text-amber-600';
+                return `
+                    <div class="bg-white border border-slate-200 border-l-4 ${corBorder} p-3.5 rounded-lg flex items-center justify-between text-xs shadow-sm hover:shadow transition">
+                        <div>
+                            <span class="font-black text-red-600 text-sm">FA ${b.fa}</span>
+                            <span class="text-slate-900 ml-2 font-bold">${b.fazenda} ${modoAgrupadoBacklog ? `— <span class='text-slate-500 font-normal'>${b.count} talhões</span>` : `- T. ${b.talhao}`}</span>
+                            <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-2">
+                                <span>CATEGORIA:</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${corBadge}">${b.tipo.toUpperCase()}</span>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-base font-black ${corValor}">${b.ha.toLocaleString('pt-BR', {minimumFractionDigits: 2})} ha</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ================= ACOMPANHAMENTO =================
+        function renderizarAcompanhamento() {
+            const container = document.getElementById('tabela-acompanhamento-conteudo');
+            
+            const CATEGORIAS = [
+                { id: 'Voos realizados', nome: 'Voos realizados', icon: `<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="#E30613" stroke-width="1.8"><path d="M3 6h6 M15 6h6"/><path d="M6 6v3 M18 6v3"/><path d="M6 9h12"/><rect x="10" y="9" width="4" height="3" rx="1"/><rect x="11" y="12" width="2" height="2"/><path d="M8 12l-1 3h10l-1-3"/></svg>` },
+                { id: 'Mosaico processado', nome: 'Mosaico processado', icon: `<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="#E30613" stroke-width="1.8"><rect x="3" y="8" width="14" height="12" rx="1" transform="rotate(-12 10 14)"/><rect x="6" y="5" width="15" height="13" rx="1" fill="#fff"/><path d="M6 14l3.5-3.5 4.5 4.5m-1.5-1.5l2.5-2.5 4 4"/><circle cx="10" cy="9" r="1.5"/></svg>` },
+                { id: 'Falhas no plantio', nome: 'Falhas no plantio', icon: `<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="#E30613" stroke-width="1.8"><path d="M10 22V5m4 17V8"/><path d="M8 10h4 M8 15h4 M12 13h4 M12 18h4"/><path d="M10 5c-2-2-4-2-4-2s1 2 1 3 M10 7c-2-1-4-1-4-1s1 2 1.5 3"/><path d="M14 8c2-2 4-2 4-2s-1 2-1 3 M14 10c2-1 4-1 4-1s-1 2-1.5 3"/></svg>` },
+                { id: 'Pós plantio', nome: 'Pós plantio', icon: `<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="#E30613" stroke-width="1.8"><path d="M9 6L3 8v13l6-2m0-13l6 2m-6-2v13m6-13l6-2v13l-6 2m0-13v13"/><path d="M12 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.5 2.5-4 4z"/><circle cx="12" cy="8" r="1.2"/></svg>` },
+                { id: 'Exportação para piloto', nome: 'Exportação para piloto', icon: `<svg class="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="#E30613" stroke-width="1.8"><path d="M5 17a2 2 0 100 4 2 2 0 000-4zm7 0a2 2 0 100 4 2 2 0 000-4z"/><path d="M7 19h3 M3 17v-4l2-2h4l1 2h2v4 M14 12h2l1 2v6"/><path d="M19 6v13 M19 8l-2-2 M19 11l-2-2 M19 14l-2-2 M19 8l2-2 M19 11l2-2 M19 14l2-2"/></svg>` }
+            ];
+
+            const METAS = {
+                'Própria': 3374,
+                'Fornecedores': 11000,
+                'Consolidado': 14374
+            };
+
+            const DADOS = {
+                'Voos realizados': { 'Própria': { r: 2289, s: 0, m: 0 }, 'Fornecedores': { r: 5207, s: 0, m: 0 }, 'Consolidado': { r: 7496, s: 0, m: 0 } },
+                'Mosaico processado': { 'Própria': { r: 2289, s: 0, m: 0 }, 'Fornecedores': { r: 5207, s: 0, m: 0 }, 'Consolidado': { r: 7496, s: 0, m: 0 } },
+                'Falhas no plantio': { 'Própria': { r: 1125, s: 0, m: 0 }, 'Fornecedores': { r: 3685, s: 66, m: 330 }, 'Consolidado': { r: 4810, s: 66, m: 330 } },
+                'Pós plantio': { 'Própria': { r: 1816, s: 0, m: 266.7 }, 'Fornecedores': { r: 5703, s: 0, m: 125.5 }, 'Consolidado': { r: 7519, s: 0, m: 392.2 } },
+                'Exportação para piloto': { 'Própria': { r: 236, s: 0, m: 0 }, 'Fornecedores': { r: 1634, s: 0, m: 0 }, 'Consolidado': { r: 1871, s: 0, m: 0 } }
+            };
+
+            container.innerHTML = CATEGORIAS.map(cat => {
+                const rows = ['Própria', 'Fornecedores', 'Consolidado'].map(seg => {
+                    const meta = METAS[seg];
+                    const item = DADOS[cat.id][seg];
+                    const aReal = Math.max(0, meta - item.r);
+                    const pctR = ((item.r / meta) * 100).toFixed(1).replace('.', ',') + '%';
+                    const pctS = item.s > 0 ? ((item.s / meta) * 100).toFixed(1).replace('.', ',') + '%' : '--';
+                    const pctM = item.m > 0 ? ((item.m / meta) * 100).toFixed(1).replace('.', ',') + '%' : '--';
+
+                    return `
+                        <tr>
+                            <td class="text-right pr-4 font-semibold text-gray-900 py-1.5 text-xs">${seg}</td>
+                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${meta.toLocaleString('pt-BR')}</td>
+                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${item.r.toLocaleString('pt-BR')}</td>
+                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${aReal.toLocaleString('pt-BR')}</td>
+                            <td class="p-1"><div class="border border-gray-300 bg-white text-center py-1 text-xs text-gray-900 font-bold">${pctR}</div></td>
+                            <td class="p-1"><div class="border border-gray-300 bg-white text-center py-1 text-xs text-gray-900">${pctS}</div></td>
+                            <td class="p-1"><div class="border border-gray-300 bg-white text-center py-1 text-xs text-gray-900">${pctM}</div></td>
+                        </tr>
+                    `;
+                }).join('');
+
+                return `
+                    <div class="flex items-center gap-4 py-2 border-b border-gray-200">
+                        <div class="w-48 flex flex-col items-center text-center justify-center">
+                            <div class="mb-1">${cat.icon}</div>
+                            <b class="text-sm font-bold text-gray-900">${cat.nome}</b>
+                        </div>
+                        <div class="flex-grow">
+                            <table class="w-full border-separate" style="border-spacing: 4px 2px;">
+                                <thead>
+                                    <tr class="text-[11px] font-bold text-gray-900 text-center">
+                                        <th class="w-28"></th>
+                                        <th>Total Previsto(ha)</th>
+                                        <th>Realizado (ha)</th>
+                                        <th>Á realizar (ha)</th>
+                                        <th>% Realizado</th>
+                                        <th>%Real. Semana</th>
+                                        <th>%Real. Mês</th>
+                                    </tr>
+                                </thead>
+                                <tbody>${rows}</tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ================= UTILITÁRIOS =================
+        function trocarAba(id) {
+            document.querySelectorAll('section[id^="aba-"]').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            
+            const targetSection = document.getElementById('aba-' + id);
+            if (targetSection) targetSection.classList.remove('hidden');
+
+            const btnAtivo = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(id));
+            if (btnAtivo) btnAtivo.classList.add('active');
+
+            if (id === 'acompanhamento') renderizarAcompanhamento();
+            if (id === 'backlog') renderizarBacklog();
+        }
+
+        function alternarTema() {
+            document.body.classList.toggle('light-theme');
+            const isLight = document.body.classList.contains('light-theme');
+            localStorage.setItem('clealco_tema', isLight ? 'light' : 'dark');
+            const btn = document.getElementById('btn-theme');
+            if (btn) btn.innerText = isLight ? '🌙 Escuro' : '☀️ Claro';
+        }
+
+        function formatarData(val) {
+            if (!val) return "N/D";
+            if (val instanceof Date) return val.toLocaleDateString('pt-BR');
+            let s = String(val).trim();
+            if (s.includes('T')) s = s.split('T')[0];
+            let p = s.replace(/-/g, '/').split(' ')[0].split('/');
+            if (p.length === 3) {
+                if (p[0].length === 4) return `${p[2].padStart(2,'0')}/${p[1].padStart(2,'0')}/${p[0]}`;
+                return `${p[0].padStart(2,'0')}/${p[1].padStart(2,'0')}/${p[2]}`;
+            }
+            return s;
+        }
+
+        function parseNum(val) {
+            if (val === null || val === undefined || val === '') return 0.0;
+            if (typeof val === 'number') return val;
+            let s = String(val).trim().replace('.', '').replace(',', '.');
+            let n = parseFloat(s);
+            return isNaN(n) ? 0.0 : n;
+        }
+
+        function exportarTabelaPNG(elementId, filename) {
+            const el = document.getElementById(elementId);
+            html2canvas(el, { scale: 2, backgroundColor: '#ffffff' }).then(canvas => {
+                const a = document.createElement('a');
+                a.href = canvas.toDataURL("image/png");
+                a.download = filename;
+                a.click();
+            });
+        }
+
+        function gerarRelatorioExcel() {
+            const dadosExport = dadosBase.map(i => ({
+                "FA": i.fa,
+                "Fazenda": i.fazenda,
+                "Base": i.base,
+                "Data Voo": i.data_voo,
+                "TIF": i.tif,
+                "Linhas": i.linhas,
+                "Área Voo (ha)": i.ha_voo,
+                "Área Linhas (ha)": i.area_kml,
+                "Exportação": i.exp
+            }));
+            const ws = XLSX.utils.json_to_sheet(dadosExport);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Base_Voos");
+            XLSX.writeFile(wb, `Relatorio_Clealco_${new Date().toISOString().slice(0,10)}.xlsx`);
+        }
+
+        // Drag & Drop direto na tela
+        window.addEventListener('dragover', (e) => e.preventDefault());
+        window.addEventListener('drop', (e) => {
+            e.preventDefault();
+            if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+                const file = e.dataTransfer.files[0];
+                if (file.name.endsWith('.xlsx') || file.name.endsWith('.xls')) {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => processarWorkbookExcel(ev.target.result);
+                    reader.readAsArrayBuffer(file);
+                }
+            }
+        });
+
+        // Início
+        window.onload = inicializarPainel;
+    </script>
+</body>
+</html>

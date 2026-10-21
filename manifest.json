@@ -1,0 +1,20 @@
+{
+  "name": "Singularity AI - Clealco Geotecnologia",
+  "short_name": "Singularity",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#010102",
+  "theme_color": "#FFD166",
+  "icons": [
+    {
+      "src": "logo_clealco.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo_clealco.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
