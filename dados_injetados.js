@@ -1128,11 +1128,11 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "data_voo": "06/08/2026",
       "data_proc": "13/08/2026",
       "tif": "FEITO",
-      "linhas": "PENDENTE",
+      "linhas": "FEITO",
       "data_linhas": "13/08/2026",
       "ha_voo": 60.89,
-      "area_kml": 0.0,
-      "bd_falhas": "PENDENTE",
+      "area_kml": 60.64,
+      "bd_falhas": "FEITO",
       "bd_pisoteio": "FEITO",
       "exp": "Pendente"
     },
@@ -6165,6 +6165,16 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "Indice_Falha": "Aceitável"
     },
     {
+      "FA": "308096",
+      "Fazenda": "SÍTIO TAKATA",
+      "Tipo": "Terceiro",
+      "Area_Ha": 46.86,
+      "Comp_Linhas": 776146.4500000001,
+      "Comp_Falhas": 1653.8,
+      "Porc_Falha": 0.21,
+      "Indice_Falha": "Aceitável"
+    },
+    {
       "FA": "308098",
       "Fazenda": "SÍTIO SANTA MARCELINA - 301274 - SÍTIO LIMEIRA",
       "Tipo": "Terceiro",
@@ -6397,5 +6407,5 @@ window.DADOS_CLEALCO_EMBARCADOS = {
   },
   "acompanhamento": [],
   "creditos_inforow": 11195.23,
-  "data_compilacao": "21/10/2026 às 14:59"
+  "data_compilacao": "21/10/2026 às 16:51"
 };
