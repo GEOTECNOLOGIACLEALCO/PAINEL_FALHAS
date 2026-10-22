@@ -1,4 +1,4 @@
-const CACHE_NAME = 'clealco-voos-v15';
+const CACHE_NAME = 'clealco-voos-v16';
 const ASSETS_ESTATICOS = [
     './',
     './index.html',
@@ -8,6 +8,7 @@ const ASSETS_ESTATICOS = [
     './leaflet.css',
     './leaflet.js',
     './logo_clealco.png',
+    './logo_login_clealco.jpg',
     './icon-192.png',
     './icon-512.png',
     './apple-touch-icon.png',
