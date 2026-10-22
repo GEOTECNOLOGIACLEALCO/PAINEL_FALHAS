@@ -6395,7 +6395,143 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "acompanhamento_terceiros": 7567.0
     }
   },
-  "acompanhamento": [],
+  "acompanhamento": [
+    {
+      "Ano": "2026",
+      "Categoria": "Voos realizados",
+      "Segmento": "Própria",
+      "Previsto": 3374.33,
+      "Realizado": 2288.66,
+      "Semana": 0.0,
+      "Mes": 0.0
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Voos realizados",
+      "Segmento": "Fornecedores",
+      "Previsto": 11000.0,
+      "Realizado": 5206.870000000002,
+      "Semana": 0.0,
+      "Mes": 0.0
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Voos realizados",
+      "Segmento": "Consolidado",
+      "Previsto": 14374.33,
+      "Realizado": 7495.530000000002,
+      "Semana": 0.0,
+      "Mes": 0.0
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Mosaico processado",
+      "Segmento": "Própria",
+      "Previsto": 3374.33,
+      "Realizado": 2288.66,
+      "Semana": 0.0,
+      "Mes": 0.0
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Mosaico processado",
+      "Segmento": "Fornecedores",
+      "Previsto": 11000.0,
+      "Realizado": 5206.870000000002,
+      "Semana": 0.0,
+      "Mes": 0.0
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Mosaico processado",
+      "Segmento": "Consolidado",
+      "Previsto": 14374.33,
+      "Realizado": 7495.530000000002,
+      "Semana": 0.0,
+      "Mes": 0.0
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Falhas no plantio",
+      "Segmento": "Própria",
+      "Previsto": 3374.33,
+      "Realizado": 1854.19,
+      "Semana": 0.0,
+      "Mes": 0.0
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Falhas no plantio",
+      "Segmento": "Fornecedores",
+      "Previsto": 11000.0,
+      "Realizado": 7151.915000000001,
+      "Semana": 108.19,
+      "Mes": 634.3399999999999
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Falhas no plantio",
+      "Segmento": "Consolidado",
+      "Previsto": 14374.33,
+      "Realizado": 9006.105000000001,
+      "Semana": 108.19,
+      "Mes": 634.3399999999999
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Pós plantio",
+      "Segmento": "Própria",
+      "Previsto": 3374.33,
+      "Realizado": 1816.39,
+      "Semana": 0.0,
+      "Mes": 266.71
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Pós plantio",
+      "Segmento": "Fornecedores",
+      "Previsto": 11000.0,
+      "Realizado": 5702.75,
+      "Semana": 0.0,
+      "Mes": 125.57
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Pós plantio",
+      "Segmento": "Consolidado",
+      "Previsto": 14374.33,
+      "Realizado": 7519.14,
+      "Semana": 0.0,
+      "Mes": 392.28
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Exportação para piloto",
+      "Segmento": "Própria",
+      "Previsto": 3374.33,
+      "Realizado": 236.26,
+      "Semana": 0.0,
+      "Mes": 0.0
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Exportação para piloto",
+      "Segmento": "Fornecedores",
+      "Previsto": 11000.0,
+      "Realizado": 1634.285,
+      "Semana": 0.0,
+      "Mes": 0.0
+    },
+    {
+      "Ano": "2026",
+      "Categoria": "Exportação para piloto",
+      "Segmento": "Consolidado",
+      "Previsto": 14374.33,
+      "Realizado": 1870.545,
+      "Semana": 0.0,
+      "Mes": 0.0
+    }
+  ],
   "creditos_inforow": 11195.23,
-  "data_compilacao": "22/10/2026 às 10:38"
+  "data_compilacao": "22/10/2026 às 11:46"
 };
