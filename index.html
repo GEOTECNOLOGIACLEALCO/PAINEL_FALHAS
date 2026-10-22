@@ -285,6 +285,37 @@
         body.modo-tv #tv-control-bar:hover {
             opacity: 1 !important;
         }
+
+        /* ================= MAPA OPERACIONAL: TELA CHEIA E RESPONSIVIDADE ================= */
+        .mapa-fullscreen-mode {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 99999 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border-radius: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Otimizações Leaflet para Touch / Celular e Tablet */
+        .leaflet-touch .leaflet-control-layers-toggle {
+            width: 44px !important;
+            height: 44px !important;
+        }
+        .leaflet-touch .leaflet-bar a {
+            width: 38px !important;
+            height: 38px !important;
+            line-height: 38px !important;
+            font-size: 18px !important;
+        }
+        .leaflet-popup-content-wrapper {
+            border-radius: 14px !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col justify-between">
@@ -351,7 +382,7 @@
     </header>
 
     <!-- ÁREA PRINCIPAL -->
-    <main class="max-w-7xl w-full mx-auto p-4 md:p-6 flex-grow">
+    <main id="main-content" class="max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex-grow transition-all duration-300">
 
         <!-- CABEÇALHO EXCLUSIVO PARA IMPRESSÃO / PDF -->
         <div class="print-header mb-6 pb-4 border-b-2 border-red-600">
@@ -921,170 +952,184 @@
         </section>
 
         <!-- ================= ABA 5: MAPA OPERACIONAL DE VOOS & BACKLOG ================= -->
-        <section id="aba-mapa" class="space-y-6 hidden">
-            <div class="glass-panel p-6 bg-white border border-slate-200 shadow-md">
+        <section id="aba-mapa" class="space-y-4 hidden">
+            <div class="glass-panel p-3 sm:p-5 lg:p-6 bg-white border border-slate-200 shadow-md rounded-2xl">
                 
                 <!-- Cabeçalho do Mapa -->
-                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
-                    <div>
-                        <h2 class="text-xl font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
-                            <span>🗺️</span> MAPA OPERACIONAL DE VOOS & BACKLOG
-                        </h2>
-                        <p class="text-xs text-slate-500">Monitoramento Geográfico dos Talhões em Tempo Real com Imagem de Satélite</p>
+                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 pb-3 mb-4">
+                    <div class="flex items-center gap-2.5">
+                        <span class="text-2xl">🗺️</span>
+                        <div>
+                            <h2 class="text-base sm:text-xl font-black text-slate-900 uppercase tracking-wide leading-tight">
+                                MAPA OPERACIONAL DE VOOS & BACKLOG
+                            </h2>
+                            <p class="text-[11px] sm:text-xs text-slate-500 font-medium">Monitoramento Geográfico dos Talhões em Tempo Real</p>
+                        </div>
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="localizarMinhaPosicao()" id="btn-gps-posicao" title="Ativar GPS e ver sua localização atual no mapa" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            📍 <span>Minha Posição</span>
+                        </button>
                         <button onclick="centralizarMapaVoos()" title="Centralizar visualização em todos os talhões" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                             🎯 <span>Centralizar</span>
                         </button>
                         <button onclick="exportarKMLFiltro()" title="Baixar KML de todos os talhões visíveis para levar ao drone ou Google Earth" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
-                            📥 <span>Exportar KML (Filtrados)</span>
+                            📥 <span>Exportar KML</span>
+                        </button>
+                        <button onclick="toggleTelaCheiaMapa()" id="btn-tela-cheia" title="Expandir mapa para tela cheia (ideal para celular/tablet)" class="text-xs bg-slate-900 hover:bg-black text-white border border-slate-800 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            ⛶ <span id="lbl-btn-tela-cheia">Tela Cheia</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- KPIs Rápidos do Mapa -->
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
-                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
-                        <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider block">Total no Backlog</span>
-                        <div class="text-xl font-black text-slate-900 mt-0.5" id="mapa-kpi-total-bk">--</div>
-                        <span class="text-[11px] text-slate-500 font-medium" id="mapa-kpi-area-bk">-- ha</span>
+                <!-- KPIs Rápidos do Mapa (Responsivo: 2 cols celular, 3 tablet, 5 desktop) -->
+                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3 mb-3.5">
+                    <div class="bg-slate-50 p-2.5 sm:p-3 rounded-xl border border-slate-200">
+                        <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider block truncate">Total Backlog</span>
+                        <div class="text-lg sm:text-xl font-black text-slate-900 mt-0.5" id="mapa-kpi-total-bk">--</div>
+                        <span class="text-[10px] sm:text-[11px] text-slate-500 font-medium" id="mapa-kpi-area-bk">-- ha</span>
                     </div>
 
-                    <div class="bg-red-50/80 p-3 rounded-xl border border-red-200">
-                        <span class="text-[10px] uppercase font-bold text-red-700 tracking-wider flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span> Crítico / Porte Alto
+                    <div class="bg-red-50/80 p-2.5 sm:p-3 rounded-xl border border-red-200">
+                        <span class="text-[10px] uppercase font-bold text-red-700 tracking-wider flex items-center gap-1 truncate">
+                            <span class="w-2 h-2 rounded-full bg-red-600 animate-ping flex-shrink-0"></span> Crítico (&gt; 90d)
                         </span>
-                        <div class="text-xl font-black text-red-700 mt-0.5" id="mapa-kpi-total-crit">--</div>
-                        <span class="text-[11px] text-red-600 font-medium" id="mapa-kpi-area-crit">&gt; 90 dias</span>
+                        <div class="text-lg sm:text-xl font-black text-red-700 mt-0.5" id="mapa-kpi-total-crit">--</div>
+                        <span class="text-[10px] sm:text-[11px] text-red-600 font-medium" id="mapa-kpi-area-crit">&gt; 90 dias</span>
                     </div>
 
-                    <div class="bg-amber-50/80 p-3 rounded-xl border border-amber-200">
-                        <span class="text-[10px] uppercase font-bold text-amber-700 tracking-wider flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Atenção
+                    <div class="bg-amber-50/80 p-2.5 sm:p-3 rounded-xl border border-amber-200">
+                        <span class="text-[10px] uppercase font-bold text-amber-700 tracking-wider flex items-center gap-1 truncate">
+                            <span class="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0"></span> Atenção (60-90d)
                         </span>
-                        <div class="text-xl font-black text-amber-700 mt-0.5" id="mapa-kpi-total-aten">--</div>
-                        <span class="text-[11px] text-amber-600 font-medium" id="mapa-kpi-area-aten">60 a 90 dias</span>
+                        <div class="text-lg sm:text-xl font-black text-amber-700 mt-0.5" id="mapa-kpi-total-aten">--</div>
+                        <span class="text-[10px] sm:text-[11px] text-amber-600 font-medium" id="mapa-kpi-area-aten">60 a 90 dias</span>
                     </div>
 
-                    <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-200">
-                        <span class="text-[10px] uppercase font-bold text-blue-700 tracking-wider flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-blue-500"></span> No Prazo
+                    <div class="bg-blue-50/80 p-2.5 sm:p-3 rounded-xl border border-blue-200">
+                        <span class="text-[10px] uppercase font-bold text-blue-700 tracking-wider flex items-center gap-1 truncate">
+                            <span class="w-2 h-2 rounded-full bg-blue-500 flex-shrink-0"></span> No Prazo (&lt; 60d)
                         </span>
-                        <div class="text-xl font-black text-blue-700 mt-0.5" id="mapa-kpi-total-prazo">--</div>
-                        <span class="text-[11px] text-blue-600 font-medium" id="mapa-kpi-area-prazo">&lt; 60 dias</span>
+                        <div class="text-lg sm:text-xl font-black text-blue-700 mt-0.5" id="mapa-kpi-total-prazo">--</div>
+                        <span class="text-[10px] sm:text-[11px] text-blue-600 font-medium" id="mapa-kpi-area-prazo">&lt; 60 dias</span>
                     </div>
 
-                    <div class="bg-purple-50/80 p-3 rounded-xl border border-purple-200">
-                        <span class="text-[10px] uppercase font-bold text-purple-700 tracking-wider flex items-center gap-1">
-                            <span class="w-2 h-2 rounded-full bg-purple-600"></span> Voados / Mapeados
+                    <div class="bg-purple-50/80 p-2.5 sm:p-3 rounded-xl border border-purple-200 col-span-2 sm:col-span-1">
+                        <span class="text-[10px] uppercase font-bold text-purple-700 tracking-wider flex items-center gap-1 truncate">
+                            <span class="w-2 h-2 rounded-full bg-purple-600 flex-shrink-0"></span> Voados / Mapeados
                         </span>
-                        <div class="text-xl font-black text-purple-700 mt-0.5" id="mapa-kpi-total-voado">--</div>
-                        <span class="text-[11px] text-purple-600 font-medium" id="mapa-kpi-area-voado">Concluídos</span>
+                        <div class="text-lg sm:text-xl font-black text-purple-700 mt-0.5" id="mapa-kpi-total-voado">--</div>
+                        <span class="text-[10px] sm:text-[11px] text-purple-600 font-medium" id="mapa-kpi-area-voado">Concluídos</span>
                     </div>
                 </div>
 
-                <!-- Interface Principal: Filtros + Mapa -->
-                <div class="flex flex-col lg:flex-row gap-5 items-stretch">
+                <!-- Barra Rápida Superior de Controles (Sempre acessível no topo do mapa) -->
+                <div class="bg-slate-50 p-2.5 sm:p-3 rounded-xl border border-slate-200 mb-3 flex flex-wrap items-center gap-2">
+                    <!-- Busca Instantânea -->
+                    <div class="relative flex-1 min-w-[180px]">
+                        <input type="text" id="mapa-busca-input" placeholder="🔍 Buscar Fazenda, FA ou Talhão..." oninput="filtrarBuscaMapa(this.value)" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition shadow-sm">
+                        <div id="mapa-busca-sugestoes" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-2xl max-h-56 overflow-y-auto z-[2000] hidden divide-y divide-slate-100 text-xs">
+                        </div>
+                    </div>
+
+                    <!-- Filtro de Status -->
+                    <div class="w-full sm:w-auto min-w-[180px]">
+                        <select id="mapa-filtro-status" onchange="aplicarFiltrosMapa()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:border-red-500 shadow-sm cursor-pointer">
+                            <option value="TODOS">🚦 Todos os Status</option>
+                            <option value="BACKLOG_TODOS">Somente Backlog (A Voar)</option>
+                            <option value="CRITICO">🔴 Crítico / Porte Alto (&gt; 90 dias)</option>
+                            <option value="ATENCAO">🟡 Atenção (60 a 90 dias)</option>
+                            <option value="NOPRAZO">🔵 No Prazo (&lt; 60 dias)</option>
+                            <option value="VOADO">🟣 Já Voado / Concluído</option>
+                        </select>
+                    </div>
+
+                    <!-- Filtro de Tipo -->
+                    <div class="w-full sm:w-auto min-w-[140px]">
+                        <select id="mapa-filtro-tipo" onchange="aplicarFiltrosMapa()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:border-red-500 shadow-sm cursor-pointer">
+                            <option value="TODOS">🌾 Todas Propriedades</option>
+                            <option value="Própria">Próprias</option>
+                            <option value="Terceiro">Fornecedores / Terceiros</option>
+                        </select>
+                    </div>
+
+                    <!-- Botão Toggle Painel Lateral / Legenda -->
+                    <button onclick="togglePainelLateralMapa()" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer ml-auto">
+                        <span>📊 Legenda & Ranking</span>
+                        <span id="seta-painel-lateral" class="text-[10px] transition-transform">▼</span>
+                    </button>
+                </div>
+
+                <!-- Painel Expansível de Legenda e Ranking (Drawer colapsável) -->
+                <div id="mapa-painel-lateral" class="hidden mb-3 grid grid-cols-1 md:grid-cols-2 gap-3 transition-all duration-300">
+                    <!-- Legenda Visual com Contadores -->
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 text-xs">
+                        <span class="text-[10px] uppercase font-bold text-slate-500 block">Legenda Operacional</span>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded bg-red-600 border border-red-700 flex-shrink-0"></span>
+                                    <span class="text-slate-700 font-medium">Crítico (&gt; 90d)</span>
+                                </span>
+                                <b class="text-slate-900 font-black ml-2" id="legenda-count-critico">0</b>
+                            </div>
+                            <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded bg-amber-500 border border-amber-600 flex-shrink-0"></span>
+                                    <span class="text-slate-700 font-medium">Atenção (60-90d)</span>
+                                </span>
+                                <b class="text-slate-900 font-black ml-2" id="legenda-count-atencao">0</b>
+                            </div>
+                            <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded bg-blue-500 border border-blue-600 flex-shrink-0"></span>
+                                    <span class="text-slate-700 font-medium">No Prazo (&lt; 60d)</span>
+                                </span>
+                                <b class="text-slate-900 font-black ml-2" id="legenda-count-noprazo">0</b>
+                            </div>
+                            <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded bg-purple-600 border border-purple-700 flex-shrink-0"></span>
+                                    <span class="text-slate-700 font-medium">Já Voado</span>
+                                </span>
+                                <b class="text-slate-900 font-black ml-2" id="legenda-count-voado">0</b>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Top Fazendas no Backlog -->
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <span class="text-[10px] uppercase font-bold text-slate-500 block mb-1.5">Top Fazendas no Backlog (Área a Voar)</span>
+                        <div id="mapa-top-fazendas" class="space-y-1 text-xs">
+                            <!-- Injetado via JS -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Container do Mapa Leaflet: AMPLIADO E RESPONSIVO -->
+                <div id="mapa-wrapper" class="w-full h-[64vh] sm:h-[72vh] lg:h-[78vh] min-h-[480px] sm:min-h-[580px] lg:min-h-[740px] rounded-2xl overflow-hidden border border-slate-300 shadow-lg relative bg-slate-950 transition-all duration-300">
+                    <div id="mapa-voos-container" class="w-full h-full z-10"></div>
                     
-                    <!-- Barra Lateral de Controles e Filtros -->
-                    <div class="w-full lg:w-80 flex-shrink-0 bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between space-y-4">
-                        
-                        <div class="space-y-4">
-                            <!-- Busca Instantânea -->
-                            <div>
-                                <label class="text-[11px] uppercase font-bold text-slate-600 tracking-wider block mb-1.5">
-                                    🔍 Localizar Talhão / Fazenda
-                                </label>
-                                <div class="relative">
-                                    <input type="text" id="mapa-busca-input" placeholder="Digite Fazenda, FA ou Talhão..." oninput="filtrarBuscaMapa(this.value)" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition">
-                                    <div id="mapa-busca-sugestoes" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl max-h-48 overflow-y-auto z-50 hidden divide-y divide-slate-100 text-xs">
-                                        <!-- Sugestões injetadas via JS -->
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Filtro de Status -->
-                            <div>
-                                <label class="text-[11px] uppercase font-bold text-slate-600 tracking-wider block mb-1.5">
-                                    🚦 Filtrar por Status / Urgência
-                                </label>
-                                <select id="mapa-filtro-status" onchange="aplicarFiltrosMapa()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:border-red-500">
-                                    <option value="TODOS">Todos os Status</option>
-                                    <option value="BACKLOG_TODOS">Somente Backlog (A Voar)</option>
-                                    <option value="CRITICO">🔴 Crítico / Porte Alto (&gt; 90 dias)</option>
-                                    <option value="ATENCAO">🟡 Atenção (60 a 90 dias)</option>
-                                    <option value="NOPRAZO">🔵 No Prazo (&lt; 60 dias)</option>
-                                    <option value="VOADO">🟣 Já Voado / Concluído</option>
-                                </select>
-                            </div>
-
-                            <!-- Filtro de Tipo -->
-                            <div>
-                                <label class="text-[11px] uppercase font-bold text-slate-600 tracking-wider block mb-1.5">
-                                    🌾 Tipo de Propriedade
-                                </label>
-                                <select id="mapa-filtro-tipo" onchange="aplicarFiltrosMapa()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:border-red-500">
-                                    <option value="TODOS">Todas (Próprias e Terceiros)</option>
-                                    <option value="Própria">Próprias</option>
-                                    <option value="Terceiro">Fornecedores / Terceiros</option>
-                                </select>
-                            </div>
-
-                            <!-- Legenda Visual -->
-                            <div class="bg-white p-3 rounded-lg border border-slate-200 space-y-2 text-xs">
-                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Legenda Operacional</span>
-                                <div class="flex items-center justify-between">
-                                    <span class="flex items-center gap-2">
-                                        <span class="w-3.5 h-3.5 rounded bg-red-600 border border-red-700"></span>
-                                        <span class="text-slate-700 font-medium">Crítico (&gt; 90 dias)</span>
-                                    </span>
-                                    <b class="text-slate-900" id="legenda-count-critico">0</b>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="flex items-center gap-2">
-                                        <span class="w-3.5 h-3.5 rounded bg-amber-500 border border-amber-600"></span>
-                                        <span class="text-slate-700 font-medium">Atenção (60-90 dias)</span>
-                                    </span>
-                                    <b class="text-slate-900" id="legenda-count-atencao">0</b>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="flex items-center gap-2">
-                                        <span class="w-3.5 h-3.5 rounded bg-blue-500 border border-blue-600"></span>
-                                        <span class="text-slate-700 font-medium">No Prazo (&lt; 60 dias)</span>
-                                    </span>
-                                    <b class="text-slate-900" id="legenda-count-noprazo">0</b>
-                                </div>
-                                <div class="flex items-center justify-between">
-                                    <span class="flex items-center gap-2">
-                                        <span class="w-3.5 h-3.5 rounded bg-purple-600 border border-purple-700"></span>
-                                        <span class="text-slate-700 font-medium">Já Voado</span>
-                                    </span>
-                                    <b class="text-slate-900" id="legenda-count-voado">0</b>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Top 5 Fazendas com mais área a voar -->
-                        <div class="bg-white p-3 rounded-lg border border-slate-200">
-                            <span class="text-[10px] uppercase font-bold text-slate-500 block mb-2">Top Fazendas no Backlog</span>
-                            <div id="mapa-top-fazendas" class="space-y-1.5 text-xs">
-                                <!-- Injetado via JS -->
-                            </div>
-                        </div>
-
+                    <!-- Botão Flutuante de Tela Cheia e GPS no topo do Mapa -->
+                    <div class="absolute top-3 left-12 z-[1000] flex items-center gap-2">
+                        <button onclick="toggleTelaCheiaMapa()" class="bg-white/95 hover:bg-white text-slate-800 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Modo Tela Cheia">
+                            ⛶ <span class="hidden sm:inline">Tela Cheia</span>
+                        </button>
+                        <button onclick="localizarMinhaPosicao()" class="bg-white/95 hover:bg-white text-blue-700 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Ver minha localização GPS em campo">
+                            📍 <span class="hidden sm:inline">GPS</span>
+                        </button>
                     </div>
 
-                    <!-- Container do Mapa Leaflet -->
-                    <div class="flex-1 min-h-[550px] lg:min-h-[680px] rounded-xl overflow-hidden border border-slate-300 shadow-md relative bg-slate-900">
-                        <div id="mapa-voos-container" class="w-full h-full min-h-[550px] lg:min-h-[680px] z-10"></div>
-                        
-                        <!-- Overlay de Dica de Navegação -->
-                        <div class="absolute bottom-3 left-3 z-[1000] bg-slate-900/80 backdrop-blur-md text-white text-[11px] px-3 py-1.5 rounded-lg border border-white/20 shadow-lg pointer-events-none flex items-center gap-2">
-                            <span>💡 Clique em qualquer talhão para ver os dados completos e baixar o KML</span>
-                        </div>
+                    <!-- Overlay de Dica de Navegação / Suporte a Toque -->
+                    <div class="absolute bottom-3 left-3 z-[1000] bg-slate-900/85 backdrop-blur-md text-white text-[11px] px-3 py-1.5 rounded-lg border border-white/20 shadow-lg pointer-events-none flex items-center gap-2 max-w-[85%] sm:max-w-none">
+                        <span>💡 Toque ou clique em um talhão para ver os dados e baixar o KML</span>
                     </div>
 
+                    <!-- Botão Flutuante de Fechar Tela Cheia (aparece apenas quando ativo) -->
+                    <button id="btn-fechar-tela-cheia" onclick="toggleTelaCheiaMapa()" class="hidden absolute top-4 right-4 z-[2000] bg-red-600 hover:bg-red-700 text-white font-black text-xs sm:text-sm px-3.5 py-2 rounded-xl shadow-2xl border-2 border-white flex items-center gap-2 cursor-pointer transition">
+                        ✕ <span>Sair da Tela Cheia</span>
+                    </button>
                 </div>
 
             </div>
@@ -1934,6 +1979,18 @@
             const btnAtivo = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(id));
             if (btnAtivo) btnAtivo.classList.add('active');
 
+            // Expande o container principal na aba Mapa para aproveitar toda a tela no PC, tablet e celular
+            const mainContent = document.getElementById('main-content');
+            if (mainContent) {
+                if (id === 'mapa') {
+                    mainContent.classList.remove('max-w-7xl');
+                    mainContent.classList.add('max-w-[98vw]');
+                } else {
+                    mainContent.classList.remove('max-w-[98vw]');
+                    mainContent.classList.add('max-w-7xl');
+                }
+            }
+
             if (id === 'acompanhamento') renderizarAcompanhamento();
             if (id === 'falhas') renderizarFalhas();
             if (id === 'backlog') renderizarBacklog();
@@ -1943,7 +2000,12 @@
                     if (window.mapaVoosInstancia) {
                         window.mapaVoosInstancia.invalidateSize();
                     }
-                }, 200);
+                }, 100);
+                setTimeout(() => {
+                    if (window.mapaVoosInstancia) {
+                        window.mapaVoosInstancia.invalidateSize();
+                    }
+                }, 350);
             }
         }
 
@@ -1966,7 +2028,9 @@
                 mapaVoosInstancia = L.map('mapa-voos-container', {
                     center: [-21.55, -50.40],
                     zoom: 10,
-                    zoomControl: true
+                    zoomControl: true,
+                    touchZoom: true,
+                    tap: true
                 });
 
                 // Camadas Base
@@ -2208,12 +2272,12 @@
             if (!camadaGeoJsonVoos) return;
 
             let layerEncontrado = null;
+            const limpa = (v) => String(v || '').trim().replace(/^0+/, '');
+
             camadaGeoJsonVoos.eachLayer(layer => {
                 const p = layer.feature?.properties || {};
-                if (String(p.fa).trim().lstrip?.('0') === String(fa).trim().lstrip?.('0') || (p.fa == fa && p.talhao == talhao)) {
-                    if (p.talhao == talhao) {
-                        layerEncontrado = layer;
-                    }
+                if ((limpa(p.fa) === limpa(fa) || String(p.fa) === String(fa)) && String(p.talhao) === String(talhao)) {
+                    layerEncontrado = layer;
                 }
             });
 
@@ -2342,6 +2406,133 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
         }
+
+        // ================= CONTROLES AVANÇADOS DO MAPA (MOBILE, TABLET E GPS) =================
+        function togglePainelLateralMapa() {
+            const painel = document.getElementById('mapa-painel-lateral');
+            const seta = document.getElementById('seta-painel-lateral');
+            if (!painel) return;
+
+            if (painel.classList.contains('hidden')) {
+                painel.classList.remove('hidden');
+                if (seta) seta.innerText = '▲';
+            } else {
+                painel.classList.add('hidden');
+                if (seta) seta.innerText = '▼';
+            }
+        }
+
+        function toggleTelaCheiaMapa() {
+            const wrapper = document.getElementById('mapa-wrapper');
+            const btnFechar = document.getElementById('btn-fechar-tela-cheia');
+            const lblBtn = document.getElementById('lbl-btn-tela-cheia');
+            if (!wrapper) return;
+
+            const isFullscreen = wrapper.classList.contains('mapa-fullscreen-mode');
+
+            if (isFullscreen) {
+                wrapper.classList.remove('mapa-fullscreen-mode');
+                if (btnFechar) btnFechar.classList.add('hidden');
+                if (lblBtn) lblBtn.innerText = 'Tela Cheia';
+                document.body.style.overflow = '';
+            } else {
+                wrapper.classList.add('mapa-fullscreen-mode');
+                if (btnFechar) btnFechar.classList.remove('hidden');
+                if (lblBtn) lblBtn.innerText = 'Sair da Tela';
+                document.body.style.overflow = 'hidden';
+            }
+
+            setTimeout(() => {
+                if (window.mapaVoosInstancia) {
+                    window.mapaVoosInstancia.invalidateSize();
+                }
+            }, 150);
+        }
+
+        // Geolocalização GPS em Tempo Real para celular/tablet no campo
+        let marcadorGps = null;
+        let circuloGps = null;
+
+        function localizarMinhaPosicao() {
+            if (!navigator.geolocation) {
+                alert('Geolocalização não é suportada por este dispositivo ou navegador.');
+                return;
+            }
+
+            const btn = document.getElementById('btn-gps-posicao');
+            if (btn) btn.innerHTML = '⌛ <span>Buscando...</span>';
+
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    if (!window.mapaVoosInstancia) return;
+                    const lat = pos.coords.latitude;
+                    const lng = pos.coords.longitude;
+                    const accuracy = Math.round(pos.coords.accuracy || 10);
+
+                    if (marcadorGps) window.mapaVoosInstancia.removeLayer(marcadorGps);
+                    if (circuloGps) window.mapaVoosInstancia.removeLayer(circuloGps);
+
+                    // Círculo de precisão do GPS
+                    circuloGps = L.circle([lat, lng], {
+                        radius: accuracy,
+                        color: '#2563eb',
+                        fillColor: '#60a5fa',
+                        fillOpacity: 0.20,
+                        weight: 1.5
+                    }).addTo(window.mapaVoosInstancia);
+
+                    // Marcador com anel azul moderno
+                    const gpsIcon = L.divIcon({
+                        className: 'gps-marker-custom',
+                        html: '<div style="width:16px;height:16px;border-radius:50%;background:#2563eb;border:3px solid #ffffff;box-shadow:0 0 10px rgba(37,99,235,0.85);"></div>',
+                        iconSize: [16, 16],
+                        iconAnchor: [8, 8]
+                    });
+
+                    marcadorGps = L.marker([lat, lng], { icon: gpsIcon })
+                        .addTo(window.mapaVoosInstancia)
+                        .bindPopup(`
+                            <div class="p-1 text-xs font-sans">
+                                <b class="text-blue-700">📍 Sua Localização Atual</b><br>
+                                <span class="text-slate-600">Precisão GPS: ~${accuracy} metros</span>
+                            </div>
+                        `)
+                        .openPopup();
+
+                    window.mapaVoosInstancia.setView([lat, lng], 15);
+                    if (btn) btn.innerHTML = '📍 <span>Minha Posição</span>';
+                },
+                (err) => {
+                    if (btn) btn.innerHTML = '📍 <span>Minha Posição</span>';
+                    alert('Não foi possível obter sua localização GPS: ' + (err.message || 'Permissão negada ou sinal fraco.'));
+                },
+                { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+            );
+        }
+
+        // Listener de tecla ESC para sair da Tela Cheia
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const wrapper = document.getElementById('mapa-wrapper');
+                if (wrapper && wrapper.classList.contains('mapa-fullscreen-mode')) {
+                    toggleTelaCheiaMapa();
+                }
+            }
+        });
+
+        // Listeners de Redimensionamento e Giro de Tela (Orientação celular/tablet)
+        window.addEventListener('resize', () => {
+            if (window.mapaVoosInstancia) {
+                window.mapaVoosInstancia.invalidateSize();
+            }
+        });
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                if (window.mapaVoosInstancia) {
+                    window.mapaVoosInstancia.invalidateSize();
+                }
+            }, 300);
+        });
 
         function alternarTema() {
             document.body.classList.toggle('light-theme');
