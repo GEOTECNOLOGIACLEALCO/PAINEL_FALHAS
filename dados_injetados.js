@@ -6533,5 +6533,5 @@ window.DADOS_CLEALCO_EMBARCADOS = {
     }
   ],
   "creditos_inforow": 11121.66,
-  "data_compilacao": "22/10/2026 às 13:38"
+  "data_compilacao": "22/10/2026 às 14:09"
 };
