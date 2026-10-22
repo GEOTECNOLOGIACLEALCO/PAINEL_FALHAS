@@ -1372,49 +1372,82 @@
         </div>
     </div>
 
-    <!-- ================= MODAL DE SEGURANÇA E ACESSO RESTRITO ================= -->
-    <div id="modal-autenticacao" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center z-[99999] p-4 transition-all duration-300">
-        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 relative text-center animate-in fade-in zoom-in duration-200">
-            <!-- Emblema / Ícone do App -->
-            <div class="relative w-20 h-20 mx-auto mb-4">
-                <img src="icon-192.png?v=2" alt="Clealco" class="w-20 h-20 rounded-2xl shadow-lg border-2 border-emerald-500/20 p-1 bg-slate-900 object-cover">
-                <div class="absolute -bottom-1 -right-1 bg-emerald-600 text-white rounded-full p-1.5 shadow">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+    <!-- ================= MODAL DE SEGURANÇA E ACESSO RESTRITO (GLASSMORPHISM & SPLASH 1S) ================= -->
+    <div id="modal-autenticacao" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xl flex items-center justify-center z-[99999] p-4 transition-all duration-500">
+        <!-- Card Central Glassmorphism -->
+        <div class="relative w-full max-w-sm bg-white/95 backdrop-blur-2xl rounded-[32px] p-7 shadow-2xl border border-white/60 text-center overflow-hidden transition-all duration-300">
+            
+            <!-- Brilho de Fundo Suave -->
+            <div class="absolute -top-16 -left-16 w-36 h-36 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="absolute -bottom-16 -right-16 w-36 h-36 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+
+            <!-- Topo com Logo Clealco e Ícone High-Tech Lado a Lado -->
+            <div class="flex items-center justify-center gap-3 mb-4">
+                <img src="logo_clealco.png" alt="Clealco" class="h-9 object-contain drop-shadow-sm">
+                <span class="h-6 w-px bg-slate-300"></span>
+                <div class="relative">
+                    <img src="icon-192.png?v=2" alt="Clealco Voos" class="w-10 h-10 rounded-xl shadow-md border border-emerald-500/30 p-0.5 bg-slate-900 object-cover">
+                    <span class="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                    </span>
                 </div>
             </div>
 
-            <h3 class="text-xl font-black text-slate-900 leading-tight">Painel Operacional</h3>
-            <p class="text-xs text-slate-500 font-semibold tracking-wide uppercase mt-0.5">Geotecnologia & Qualidade Clealco</p>
-            <p class="text-[12px] text-slate-500 mt-2 px-2">Acesso restrito à equipe autorizada. Digite a senha do setor para descriptografar os dados:</p>
+            <!-- Identidade & Título -->
+            <h3 class="text-xl font-black text-slate-900 tracking-tight leading-tight">Painel Operacional</h3>
+            <p class="text-[11px] font-bold text-emerald-700 tracking-wider uppercase mt-0.5">Geotecnologia & Qualidade</p>
+            <p class="text-xs text-slate-500 mt-2 leading-relaxed">Área restrita à equipe. Digite a senha para liberar os dados criptografados:</p>
 
-            <form id="form-auth" onsubmit="processarAutenticacao(event)" class="mt-5 space-y-3">
+            <!-- Formulário de Login (Normal) -->
+            <form id="form-auth" onsubmit="processarAutenticacao(event)" class="mt-5 space-y-3.5">
                 <div class="relative">
-                    <input type="password" id="input-senha-acesso" placeholder="Senha de Acesso" required
-                           class="w-full px-4 py-3 text-center text-sm font-semibold tracking-wider bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
-                    <button type="button" onclick="toggleVisibilidadeSenha()" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 text-sm">
+                    <input type="password" id="input-senha-acesso" placeholder="Senha do Setor" required
+                           class="w-full px-4 py-3 text-center text-sm font-semibold tracking-wider text-slate-800 bg-slate-100/80 border border-slate-300/80 rounded-2xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition shadow-inner">
+                    <button type="button" onclick="toggleVisibilidadeSenha()" title="Ver/Ocultar Senha" class="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 text-sm transition">
                         <span id="icone-ver-senha">👁️</span>
                     </button>
                 </div>
 
                 <div class="flex items-center justify-between text-left px-1">
-                    <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-600 select-none">
-                        <input type="checkbox" id="chk-lembrar-acesso" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                    <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-600 select-none hover:text-slate-800 transition">
+                        <input type="checkbox" id="chk-lembrar-acesso" checked class="w-4 h-4 text-emerald-600 rounded-md border-slate-300 focus:ring-emerald-500">
                         <span>Lembrar neste aparelho</span>
                     </label>
                 </div>
 
-                <div id="auth-erro-msg" class="text-xs text-red-600 font-bold hidden bg-red-50 p-2 rounded-lg border border-red-200">
+                <div id="auth-erro-msg" class="text-xs text-red-600 font-bold hidden bg-red-50 p-2.5 rounded-xl border border-red-200 animate-shake">
                     ❌ Senha incorreta. Tente novamente.
                 </div>
 
                 <button type="submit" id="btn-submit-auth"
-                        class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
-                    <span>🔓</span> Desbloquear Painel
+                        class="w-full py-3.5 px-4 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 active:scale-[0.98] text-white text-sm font-black rounded-2xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
+                    <span>🔓</span> <span>Desbloquear Painel</span>
                 </button>
             </form>
 
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
-                <span>🛡️ Criptografia AES-GCM 256-bit ponta a ponta</span>
+            <!-- Tela de Carregamento / Splash (1 Segundo) -->
+            <div id="auth-splash-loading" class="hidden my-4 py-3 flex-col items-center justify-center animate-in fade-in zoom-in duration-300">
+                <div class="relative w-14 h-14 mb-3 flex items-center justify-center">
+                    <!-- Anel de progresso circular giratório -->
+                    <svg class="w-14 h-14 animate-spin text-emerald-200" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" stroke="currentColor" stroke-width="8" fill="none" class="opacity-25" />
+                        <circle cx="50" cy="50" r="42" stroke="#059669" stroke-width="8" stroke-dasharray="264" stroke-dashoffset="66" stroke-linecap="round" fill="none" />
+                    </svg>
+                    <span class="absolute text-xs font-black text-emerald-700">100%</span>
+                </div>
+                <p class="text-xs font-bold text-slate-800" id="splash-status-txt">Descriptografando base de dados...</p>
+                <p class="text-[10px] text-slate-400 mt-0.5">Carregando métricas e mapas operacionais</p>
+                
+                <!-- Barra horizontal de 1s -->
+                <div class="w-full bg-slate-100 rounded-full h-1.5 mt-3 overflow-hidden">
+                    <div id="splash-progress-bar" class="bg-emerald-600 h-1.5 rounded-full transition-all duration-1000 ease-out w-0"></div>
+                </div>
+            </div>
+
+            <!-- Rodapé com Badge de Criptografia -->
+            <div class="mt-5 pt-3.5 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] text-slate-400 font-medium">
+                <span>🛡️ Protegido com AES-256-GCM militar</span>
             </div>
         </div>
     </div>
@@ -1504,6 +1537,36 @@
             location.reload();
         }
 
+        function animarSplashEExibirPainel(callback) {
+            const formAuth = document.getElementById('form-auth');
+            const splash = document.getElementById('auth-splash-loading');
+            const pBar = document.getElementById('splash-progress-bar');
+            const modal = document.getElementById('modal-autenticacao');
+
+            if (formAuth) formAuth.classList.add('hidden');
+            if (splash) splash.classList.remove('hidden');
+
+            // Inicia animação da barra de 1 segundo
+            setTimeout(() => {
+                if (pBar) pBar.style.width = '100%';
+            }, 50);
+
+            // Aguarda exatamente 1 segundo para efeito visual suave e descriptografia
+            setTimeout(() => {
+                if (modal) {
+                    modal.classList.add('opacity-0', 'pointer-events-none');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        modal.classList.remove('opacity-0', 'pointer-events-none');
+                        if (formAuth) formAuth.classList.remove('hidden');
+                        if (splash) splash.classList.add('hidden');
+                        if (pBar) pBar.style.width = '0';
+                    }, 400);
+                }
+                if (typeof callback === 'function') callback();
+            }, 1000);
+        }
+
         async function processarAutenticacao(event) {
             if (event) event.preventDefault();
             const input = document.getElementById('input-senha-acesso');
@@ -1539,16 +1602,14 @@
                     } catch (e) {}
                 }
 
-                // Esconde modal de autenticação
-                const modal = document.getElementById('modal-autenticacao');
-                if (modal) modal.classList.add('hidden');
-
-                // Renderiza painel completo
-                carregarDadosEmbarcadosERenderizar();
+                // Aciona a Splash Screen executiva de 1 segundo
+                animarSplashEExibirPainel(() => {
+                    carregarDadosEmbarcadosERenderizar();
+                });
             } catch (err) {
                 console.error("Falha de autenticação/descriptografia:", err);
                 erroMsg.classList.remove('hidden');
-                btnSubmit.innerHTML = '<span>🔓</span> Desbloquear Painel';
+                btnSubmit.innerHTML = '<span>🔓</span> <span>Desbloquear Painel</span>';
                 btnSubmit.disabled = false;
                 if (input) {
                     input.value = '';
@@ -1611,15 +1672,20 @@
 
             if (senhaSalva) {
                 try {
+                    // Exibe a tela de splash elegante de 1s para carregar direto
+                    const formAuth = document.getElementById('form-auth');
+                    const splash = document.getElementById('auth-splash-loading');
+                    if (formAuth) formAuth.classList.add('hidden');
+                    if (splash) splash.classList.remove('hidden');
+
                     let dadosDecifrados = await descriptografarPayload(window.DADOS_CLEALCO_EMBARCADOS, senhaSalva);
                     let mapaDecifrado = await descriptografarPayload(window.DADOS_MAPA_VOOS, senhaSalva);
                     window.DADOS_CLEALCO_EMBARCADOS = dadosDecifrados;
                     window.DADOS_MAPA_VOOS = mapaDecifrado;
 
-                    const modal = document.getElementById('modal-autenticacao');
-                    if (modal) modal.classList.add('hidden');
-
-                    carregarDadosEmbarcadosERenderizar();
+                    animarSplashEExibirPainel(() => {
+                        carregarDadosEmbarcadosERenderizar();
+                    });
                     return;
                 } catch (e) {
                     console.log("Token salvo inválido ou expirado, solicitando senha.");
@@ -1627,8 +1693,13 @@
                 }
             }
 
-            // Se não tem senha salva ou falhou, exibe modal de login
+            // Se não tem senha salva ou falhou, exibe modal de login com form visível
             const modal = document.getElementById('modal-autenticacao');
+            const formAuth = document.getElementById('form-auth');
+            const splash = document.getElementById('auth-splash-loading');
+            if (formAuth) formAuth.classList.remove('hidden');
+            if (splash) splash.classList.add('hidden');
+
             if (modal) {
                 modal.classList.remove('hidden');
                 setTimeout(() => {
