@@ -155,11 +155,27 @@ try:
     import os, time
     
     t_mapa = time.time()
-    caminho_shp = r"W:\11-SHAPES TEMATICOS\09-SHP ATUALIZADO\SHP_CLEALCO.shp"
+    pasta_shp = r"W:\11-SHAPES TEMATICOS\09-SHP ATUALIZADO"
+    caminho_shp = os.path.join(pasta_shp, "SHP_CLEALCO.shp")
     caminho_mapa_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_mapa_voos.js"
     
+    # Busca automaticamente o shapefile mais recente ou atualizado na pasta
+    if os.path.exists(pasta_shp):
+        shps_encontrados = [
+            os.path.join(pasta_shp, f) for f in os.listdir(pasta_shp)
+            if f.lower().endswith('.shp') and not f.lower().startswith('~$')
+        ]
+        if shps_encontrados:
+            # Ordena decrescente por data de modificação
+            shps_encontrados.sort(key=lambda x: os.path.getmtime(x), reverse=True)
+            # Prioriza SHP_CLEALCO se existir ou pega o mais recente
+            shp_clealco_cand = [s for s in shps_encontrados if 'CLEALCO' in os.path.basename(s).upper()]
+            caminho_shp = shp_clealco_cand[0] if shp_clealco_cand else shps_encontrados[0]
+            dt_mod = datetime.fromtimestamp(os.path.getmtime(caminho_shp)).strftime('%d/%m/%Y %H:%M')
+            print(f"Shapefile detectado automaticamente: {os.path.basename(caminho_shp)} (Modificado em: {dt_mod})")
+    
     if os.path.exists(caminho_shp):
-        print("Processando Shapefile SHP_CLEALCO para o Mapa de Voos...")
+        print(f"Processando Shapefile ({os.path.basename(caminho_shp)}) para o Mapa de Voos...")
         
         # Mapa de voados
         fas_voadas = set(p['fa'].strip().lstrip('0') for p in base_proc if p.get('fa'))
