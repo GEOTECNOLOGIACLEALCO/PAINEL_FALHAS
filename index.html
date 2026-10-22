@@ -396,7 +396,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen bg-slate-100 flex flex-col md:flex-row antialiased text-slate-800">
+<body class="light-theme min-h-screen bg-slate-100 flex flex-col md:flex-row antialiased text-slate-800">
 
     <!-- BACKDROP PARA MOBILE (Fecha gaveta ao tocar fora) -->
     <div id="sidebar-backdrop" onclick="fecharSidebarMobile()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
@@ -495,40 +495,37 @@
     <div class="flex-1 flex flex-col min-w-0 min-h-screen bg-slate-100">
 
         <!-- TOPBAR SUPERIOR ENXUTO -->
-        <header class="topbar-compacto w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 md:px-6 py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-xs">
-            <div class="flex items-center gap-3">
+        <header class="topbar-compacto w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-3 sm:px-4 md:px-6 py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-xs">
+            <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                 <!-- Botão Hamburger no Mobile -->
-                <button onclick="abrirSidebarMobile()" class="md:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition" title="Abrir Menu">
+                <button onclick="abrirSidebarMobile()" class="md:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition flex-shrink-0" title="Abrir Menu">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
                 </button>
 
                 <!-- Título dinâmico da Aba Ativa -->
-                <div>
-                    <h1 id="topbar-titulo-pagina" class="text-sm md:text-base font-black text-slate-900 flex items-center gap-2 uppercase tracking-wide">
+                <div class="min-w-0">
+                    <h1 id="topbar-titulo-pagina" class="text-xs sm:text-sm md:text-base font-black text-slate-900 flex items-center gap-1.5 sm:gap-2 uppercase tracking-wide truncate">
                         <span>🛸</span> VISÃO GERAL
                     </h1>
                 </div>
             </div>
 
             <!-- Informações de Status e Sincronização -->
-            <div class="flex items-center gap-3 text-xs">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300">
+            <div class="flex items-center gap-2 sm:gap-3 text-xs flex-shrink-0">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300 whitespace-nowrap">
                     ● Base Ativa
                 </span>
                 <span class="hidden sm:flex items-center gap-1 text-slate-500 font-medium">
                     Sync: <b id="lbl-data-hora" class="text-slate-800">Hoje</b>
                 </span>
-                <button onclick="forcarLimpezaCacheEAtualizar()" title="Atualizar dados agora" class="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-emerald-600 transition">
-                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                </button>
-                <button onclick="alternarTema()" id="btn-theme" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-2 py-1 rounded-lg font-medium transition cursor-pointer">
-                    🌙 Escuro
+                <button onclick="forcarLimpezaCacheEAtualizar()" title="Atualizar dados agora" class="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-emerald-600 transition flex items-center justify-center">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                 </button>
             </div>
         </header>
 
         <!-- ÁREA PRINCIPAL -->
-        <main id="main-content" class="max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex-grow transition-all duration-300">
+        <main id="main-content" class="max-w-7xl w-full mx-auto p-2.5 sm:p-4 md:p-6 flex-grow transition-all duration-300 min-w-0">
 
         <!-- CABEÇALHO EXCLUSIVO PARA IMPRESSÃO / PDF -->
         <div class="print-header mb-6 pb-4 border-b-2 border-red-600">
@@ -738,33 +735,33 @@
 
         <!-- ================= ABA 2: ACOMPANHAMENTO GERAL ================= -->
         <section id="aba-acompanhamento" class="space-y-6 hidden">
-            <div class="glass-panel p-6 bg-white text-gray-900 border-none shadow-2xl">
+            <div class="glass-panel p-3 sm:p-6 bg-white text-gray-900 border-none shadow-2xl overflow-hidden">
                 
-                <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-red-600 pb-4 mb-6">
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center">
-                            <img src="logo_clealco_oficial.png?v=6" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-14 md:h-16 w-auto object-contain">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b-2 border-red-600 pb-3 sm:pb-4 mb-4 sm:mb-6">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="flex items-center flex-shrink-0">
+                            <img src="logo_clealco_oficial.png?v=6" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-10 sm:h-14 md:h-16 w-auto object-contain">
                         </div>
-                        <div class="border-l-2 border-gray-200 pl-4">
-                            <h2 class="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">ACOMPANHAMENTO GERAL | Geotecnologia</h2>
-                            <p class="text-xs text-gray-500 font-medium">Matriz de Execução Operacional vs Previsão</p>
+                        <div class="border-l-2 border-gray-200 pl-3 sm:pl-4 min-w-0">
+                            <h2 class="text-base sm:text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight leading-tight">ACOMPANHAMENTO GERAL <span class="hidden sm:inline">|</span><br class="sm:hidden"><span class="text-xs sm:text-lg font-bold text-red-600 sm:text-slate-900">Geotecnologia</span></h2>
+                            <p class="text-[11px] sm:text-xs text-gray-500 font-medium">Matriz de Execução Operacional vs Previsão</p>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <select id="select-ano-acomp" onchange="renderizarAcompanhamento()" class="bg-gray-100 border border-gray-300 text-gray-800 text-xs font-bold rounded-lg px-3 py-2 outline-none">
+                    <div class="flex flex-wrap items-center gap-2 sm:gap-3 w-full sm:w-auto">
+                        <select id="select-ano-acomp" onchange="renderizarAcompanhamento()" class="flex-1 sm:flex-initial bg-gray-100 border border-gray-300 text-gray-800 text-xs font-bold rounded-lg px-2.5 py-1.5 sm:px-3 sm:py-2 outline-none">
                             <option value="2026">Base Referência: 2026</option>
                             <option value="2025">Base Referência: 2025</option>
                             <option value="2024">Base Referência: 2024</option>
                         </select>
-                        <button onclick="exportarTabelaPNG('aba-acompanhamento', 'Acompanhamento_Geral_Clealco.png')" class="bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg transition">
+                        <button onclick="exportarTabelaPNG('aba-acompanhamento', 'Acompanhamento_Geral_Clealco.png')" class="flex-1 sm:flex-initial bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-xs font-bold px-2.5 py-1.5 sm:px-3 sm:py-2 rounded-lg transition whitespace-nowrap text-center">
                             📥 Baixar Imagem / PPT
                         </button>
                     </div>
                 </div>
 
                 <!-- Tabela de Categorias -->
-                <div id="tabela-acompanhamento-conteudo" class="space-y-6">
+                <div id="tabela-acompanhamento-conteudo" class="space-y-4 sm:space-y-6">
                     <!-- Preenchido via JavaScript -->
                 </div>
 
@@ -773,21 +770,21 @@
 
         <!-- ================= ABA 3: FALHAS DE PLANTIO ================= -->
         <section id="aba-falhas" class="space-y-6 hidden">
-            <div class="glass-panel p-6 bg-white text-gray-900 border-none shadow-2xl">
+            <div class="glass-panel p-3 sm:p-6 bg-white text-gray-900 border-none shadow-2xl overflow-hidden">
                 
-                <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-red-600 pb-4 mb-6">
-                    <div class="flex items-center gap-4">
-                        <div class="flex items-center">
-                            <img src="logo_clealco_oficial.png?v=6" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-14 md:h-16 w-auto object-contain">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b-2 border-red-600 pb-3 sm:pb-4 mb-4 sm:mb-6">
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="flex items-center flex-shrink-0">
+                            <img src="logo_clealco_oficial.png?v=6" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-10 sm:h-14 md:h-16 w-auto object-contain">
                         </div>
-                        <div class="border-l-2 border-gray-200 pl-4">
-                            <h2 class="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">AGRÍCOLA | FORMAÇÃO | FALHA PLANTIO</h2>
-                            <p class="text-xs text-gray-500 font-medium">Indicadores Analíticos e Atingimento de Metas</p>
+                        <div class="border-l-2 border-gray-200 pl-3 sm:pl-4 min-w-0">
+                            <h2 class="text-base sm:text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight leading-tight">AGRÍCOLA | FORMAÇÃO <span class="hidden sm:inline">|</span><br class="sm:hidden"><span class="text-xs sm:text-lg font-bold text-red-600 sm:text-slate-900">FALHA PLANTIO</span></h2>
+                            <p class="text-[11px] sm:text-xs text-gray-500 font-medium">Indicadores Analíticos e Atingimento de Metas</p>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-3">
-                        <button onclick="exportarTabelaPNG('aba-falhas', 'Falhas_Plantio_Clealco.png')" class="bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <button onclick="exportarTabelaPNG('aba-falhas', 'Falhas_Plantio_Clealco.png')" class="flex-1 sm:flex-initial bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold px-3 py-2 rounded-lg transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
                             📥 <span>Baixar Imagem / PPT</span>
                         </button>
                     </div>
@@ -1253,7 +1250,7 @@
                         <button onclick="toggleTelaCheiaMapa()" class="bg-white/95 hover:bg-white text-slate-800 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Modo Tela Cheia">
                             ⛶ <span class="hidden sm:inline">Tela Cheia</span>
                         </button>
-                        <button onclick="localizarMinhaPosicao()" class="bg-white/95 hover:bg-white text-blue-700 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Ver minha localização GPS em campo">
+                        <button onclick="localizarMinhaPosicao()" id="btn-gps-floating" class="bg-white/95 hover:bg-white text-blue-700 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Ver minha localização GPS em campo">
                             📍 <span class="hidden sm:inline">GPS</span>
                         </button>
                     </div>
@@ -2280,34 +2277,34 @@
 
                     return `
                         <tr>
-                            <td class="text-right pr-4 font-semibold text-gray-900 py-1.5 text-xs">${seg}</td>
-                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${Math.round(meta).toLocaleString('pt-BR')}</td>
-                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${Math.round(item.r).toLocaleString('pt-BR')}</td>
-                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${Math.round(aReal).toLocaleString('pt-BR')}</td>
-                            <td class="p-1"><div class="border border-gray-300 bg-white text-center py-1 text-xs text-gray-900 font-bold">${pctR}</div></td>
-                            <td class="p-1"><div class="border border-gray-300 bg-white text-center py-1 text-xs text-gray-900">${pctS}</div></td>
-                            <td class="p-1"><div class="border border-gray-300 bg-white text-center py-1 text-xs text-gray-900">${pctM}</div></td>
+                            <td class="text-right pr-2 sm:pr-4 font-semibold text-gray-900 py-1 sm:py-1.5 text-xs whitespace-nowrap">${seg}</td>
+                            <td class="border border-gray-300 text-center py-1 px-1.5 sm:px-2 text-xs text-gray-800 bg-white font-medium whitespace-nowrap">${Math.round(meta).toLocaleString('pt-BR')}</td>
+                            <td class="border border-gray-300 text-center py-1 px-1.5 sm:px-2 text-xs text-gray-800 bg-white font-medium whitespace-nowrap">${Math.round(item.r).toLocaleString('pt-BR')}</td>
+                            <td class="border border-gray-300 text-center py-1 px-1.5 sm:px-2 text-xs text-gray-800 bg-white font-medium whitespace-nowrap">${Math.round(aReal).toLocaleString('pt-BR')}</td>
+                            <td class="p-0.5 sm:p-1"><div class="border border-gray-300 bg-white text-center py-1 px-1 text-xs text-gray-900 font-bold whitespace-nowrap">${pctR}</div></td>
+                            <td class="p-0.5 sm:p-1"><div class="border border-gray-300 bg-white text-center py-1 px-1 text-xs text-gray-900 whitespace-nowrap">${pctS}</div></td>
+                            <td class="p-0.5 sm:p-1"><div class="border border-gray-300 bg-white text-center py-1 px-1 text-xs text-gray-900 whitespace-nowrap">${pctM}</div></td>
                         </tr>
                     `;
                 }).join('');
 
                 return `
-                    <div class="flex items-center gap-4 py-2 border-b border-gray-200">
-                        <div class="w-48 flex flex-col items-center text-center justify-center">
-                            <div class="w-12 h-12 rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shadow-sm mb-1.5 transition-transform hover:scale-105">${cat.icon}</div>
-                            <b class="text-sm font-bold text-gray-900">${cat.nome}</b>
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 py-3 sm:py-2 border-b border-gray-200">
+                        <div class="w-full sm:w-48 flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-2.5 sm:gap-0 flex-shrink-0 bg-slate-50 sm:bg-transparent p-2 sm:p-0 rounded-lg">
+                            <div class="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-red-50 border border-red-100 flex items-center justify-center shadow-xs sm:shadow-sm sm:mb-1.5 flex-shrink-0 transition-transform hover:scale-105">${cat.icon}</div>
+                            <b class="text-xs sm:text-sm font-bold text-gray-900 leading-tight">${cat.nome}</b>
                         </div>
-                        <div class="flex-grow">
-                            <table class="w-full border-separate" style="border-spacing: 4px 2px;">
+                        <div class="flex-grow w-full overflow-x-auto pb-1 sm:pb-0 -mx-1 px-1 sm:mx-0 sm:px-0">
+                            <table class="w-full min-w-[540px] sm:min-w-0 border-separate" style="border-spacing: 3px 2px;">
                                 <thead>
-                                    <tr class="text-[11px] font-bold text-gray-900 text-center">
-                                        <th class="w-28"></th>
-                                        <th>Total Previsto(ha)</th>
-                                        <th>Realizado (ha)</th>
-                                        <th>Á realizar (ha)</th>
-                                        <th>% Realizado</th>
-                                        <th>%Real. Semana</th>
-                                        <th>%Real. Mês</th>
+                                    <tr class="text-[10px] sm:text-[11px] font-bold text-gray-900 text-center">
+                                        <th class="w-24 sm:w-28"></th>
+                                        <th class="px-1.5 py-1 whitespace-nowrap">Total Previsto(ha)</th>
+                                        <th class="px-1.5 py-1 whitespace-nowrap">Realizado (ha)</th>
+                                        <th class="px-1.5 py-1 whitespace-nowrap">Á realizar (ha)</th>
+                                        <th class="px-1.5 py-1 whitespace-nowrap">% Realizado</th>
+                                        <th class="px-1.5 py-1 whitespace-nowrap">%Real. Semana</th>
+                                        <th class="px-1.5 py-1 whitespace-nowrap">%Real. Mês</th>
                                     </tr>
                                 </thead>
                                 <tbody>${rows}</tbody>
@@ -2934,16 +2931,33 @@
                 return;
             }
 
-            const btn = document.getElementById('btn-gps-posicao');
-            if (btn) btn.innerHTML = '⌛ <span>Buscando...</span>';
+            // Se o mapa ainda não foi renderizado, inicializa agora
+            if (!window.mapaVoosInstancia && typeof inicializarOuAtualizarMapaVoos === 'function') {
+                inicializarOuAtualizarMapaVoos();
+            }
 
-            navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    if (!window.mapaVoosInstancia) return;
-                    const lat = pos.coords.latitude;
-                    const lng = pos.coords.longitude;
-                    const accuracy = Math.round(pos.coords.accuracy || 10);
+            const btns = document.querySelectorAll('#btn-gps-posicao, #btn-gps-floating');
+            btns.forEach(b => {
+                b.dataset.origHtml = b.innerHTML;
+                b.innerHTML = '⌛ <span class="hidden sm:inline">Buscando...</span><span class="sm:hidden">GPS...</span>';
+            });
 
+            const restaurarBotoes = () => {
+                const b1 = document.getElementById('btn-gps-posicao');
+                if (b1) b1.innerHTML = '📍 <span>Minha Posição</span>';
+                const b2 = document.getElementById('btn-gps-floating');
+                if (b2) b2.innerHTML = '📍 <span class="hidden sm:inline">GPS</span>';
+            };
+
+            const onSucesso = (pos) => {
+                if (!window.mapaVoosInstancia && typeof inicializarOuAtualizarMapaVoos === 'function') {
+                    inicializarOuAtualizarMapaVoos();
+                }
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                const accuracy = Math.round(pos.coords.accuracy || 15);
+
+                if (window.mapaVoosInstancia) {
                     if (marcadorGps) window.mapaVoosInstancia.removeLayer(marcadorGps);
                     if (circuloGps) window.mapaVoosInstancia.removeLayer(circuloGps);
 
@@ -2952,36 +2966,59 @@
                         radius: accuracy,
                         color: '#2563eb',
                         fillColor: '#60a5fa',
-                        fillOpacity: 0.20,
-                        weight: 1.5
+                        fillOpacity: 0.22,
+                        weight: 2
                     }).addTo(window.mapaVoosInstancia);
 
-                    // Marcador com anel azul moderno
+                    // Marcador moderno com pulso e anel azul
                     const gpsIcon = L.divIcon({
                         className: 'gps-marker-custom',
-                        html: '<div style="width:16px;height:16px;border-radius:50%;background:#2563eb;border:3px solid #ffffff;box-shadow:0 0 10px rgba(37,99,235,0.85);"></div>',
-                        iconSize: [16, 16],
-                        iconAnchor: [8, 8]
+                        html: '<div style="width:18px;height:18px;border-radius:50%;background:#2563eb;border:3px solid #ffffff;box-shadow:0 0 12px rgba(37,99,235,0.9);animation:pulse 2s infinite;"></div>',
+                        iconSize: [18, 18],
+                        iconAnchor: [9, 9]
                     });
 
                     marcadorGps = L.marker([lat, lng], { icon: gpsIcon })
                         .addTo(window.mapaVoosInstancia)
                         .bindPopup(`
-                            <div class="p-1 text-xs font-sans">
-                                <b class="text-blue-700">📍 Sua Localização Atual</b><br>
-                                <span class="text-slate-600">Precisão GPS: ~${accuracy} metros</span>
+                            <div class="p-1.5 text-xs font-sans">
+                                <b class="text-blue-700 text-sm">📍 Sua Posição Atual</b><br>
+                                <span class="text-slate-600">Precisão GPS: <b>~${accuracy} metros</b></span><br>
+                                <span class="text-[10px] text-slate-400">Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}</span>
                             </div>
                         `)
                         .openPopup();
 
-                    window.mapaVoosInstancia.setView([lat, lng], 15);
-                    if (btn) btn.innerHTML = '📍 <span>Minha Posição</span>';
+                    window.mapaVoosInstancia.setView([lat, lng], Math.max(window.mapaVoosInstancia.getZoom(), 15));
+                }
+
+                restaurarBotoes();
+            };
+
+            // Tentativa 1: Alta Precisão (Satélite GPS - timeout 7s)
+            // Se falhar ou expirar timeout por estar coberto/indoor, executa Fallback via Triangulação de Rede / Wi-Fi
+            navigator.geolocation.getCurrentPosition(
+                onSucesso,
+                (err1) => {
+                    console.warn('Tentativa 1 com alta precisão falhou. Iniciando fallback por rede celular/Wi-Fi...', err1);
+                    navigator.geolocation.getCurrentPosition(
+                        onSucesso,
+                        (err2) => {
+                            restaurarBotoes();
+                            let msg = 'Não foi possível obter sua localização.';
+                            if (err2.code === 1) {
+                                msg = 'Permissão de localização negada. Toque no ícone de opções/cadeado ao lado do link e permita o acesso à "Localização" no navegador do celular.';
+                            } else if (err2.code === 2) {
+                                msg = 'Sinal de GPS/localização indisponível. Verifique se o GPS do celular está ligado nas configurações rápidas do dispositivo.';
+                            } else if (err2.code === 3) {
+                                msg = 'Tempo limite esgotado para sinal GPS. Tente novamente em área aberta ou conecte-se aos dados móveis / Wi-Fi.';
+                            }
+                            alert(msg);
+                        },
+                        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+                    );
                 },
-                (err) => {
-                    if (btn) btn.innerHTML = '📍 <span>Minha Posição</span>';
-                    alert('Não foi possível obter sua localização GPS: ' + (err.message || 'Permissão negada ou sinal fraco.'));
-                },
-                { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 }
+                { enableHighAccuracy: true, timeout: 7000, maximumAge: 30000 }
             );
         }
 
@@ -3057,11 +3094,9 @@
         });
 
         function alternarTema() {
-            document.body.classList.toggle('light-theme');
-            const isLight = document.body.classList.contains('light-theme');
-            localStorage.setItem('clealco_tema', isLight ? 'light' : 'dark');
-            const btn = document.getElementById('btn-theme');
-            if (btn) btn.innerText = isLight ? '🌙 Escuro' : '☀️ Claro';
+            // Modo claro permanente para o padrão executivo
+            document.body.classList.add('light-theme');
+            localStorage.setItem('clealco_tema', 'light');
         }
 
         function formatarData(val) {
