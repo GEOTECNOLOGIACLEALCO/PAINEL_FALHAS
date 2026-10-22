@@ -678,7 +678,7 @@
                                 </div>
                                 <div class="text-center">
                                     <span class="text-slate-500 block font-medium">À Realizar</span>
-                                    <b class="text-slate-900 font-bold" id="falhas-prop-areal">2.249 (67%)</b>
+                                    <b class="text-slate-900 font-bold" id="falhas-prop-areal">2.250 (67%)</b>
                                 </div>
                             </div>
                         </div>
@@ -768,7 +768,7 @@
                                 </div>
                                 <div class="text-center">
                                     <span class="text-slate-500 block font-medium">À Realizar</span>
-                                    <b class="text-slate-900 font-bold" id="falhas-consol-areal">9.517 (66%)</b>
+                                    <b class="text-slate-900 font-bold" id="falhas-consol-areal">9.518 (66%)</b>
                                 </div>
                             </div>
                         </div>
@@ -1540,7 +1540,7 @@
             const DADOS = {
                 'Voos realizados': { 'Própria': { r: 2289, s: 0, m: 0 }, 'Fornecedores': { r: 5207, s: 0, m: 0 }, 'Consolidado': { r: 7496, s: 0, m: 0 } },
                 'Mosaico processado': { 'Própria': { r: 2289, s: 0, m: 0 }, 'Fornecedores': { r: 5207, s: 0, m: 0 }, 'Consolidado': { r: 7496, s: 0, m: 0 } },
-                'Falhas no plantio': { 'Própria': { r: rFalhasProp, s: 0, m: 0 }, 'Fornecedores': { r: rFalhasFornec, s: 66, m: 330 }, 'Consolidado': { r: rFalhasConsol, s: 66, m: 330 } },
+                'Falhas no plantio': { 'Própria': { r: rFalhasProp, s: 0, m: 0 }, 'Fornecedores': { r: rFalhasFornec, s: 113, m: 377 }, 'Consolidado': { r: rFalhasConsol, s: 113, m: 377 } },
                 'Pós plantio': { 'Própria': { r: 1816, s: 0, m: 266.7 }, 'Fornecedores': { r: 5703, s: 0, m: 125.5 }, 'Consolidado': { r: 7519, s: 0, m: 392.2 } },
                 'Exportação para piloto': { 'Própria': { r: 236, s: 0, m: 0 }, 'Fornecedores': { r: 1634, s: 0, m: 0 }, 'Consolidado': { r: 1871, s: 0, m: 0 } }
             };
@@ -1549,10 +1549,10 @@
                 const rows = ['Própria', 'Fornecedores', 'Consolidado'].map(seg => {
                     const meta = METAS[seg];
                     const item = DADOS[cat.id][seg];
-                    const aReal = Math.max(0, meta - item.r);
-                    const pctR = ((item.r / meta) * 100).toFixed(1).replace('.', ',') + '%';
-                    const pctS = item.s > 0 ? ((item.s / meta) * 100).toFixed(1).replace('.', ',') + '%' : '--';
-                    const pctM = item.m > 0 ? ((item.m / meta) * 100).toFixed(1).replace('.', ',') + '%' : '--';
+                    const aReal = seg === 'Consolidado' ? Math.round(14374.33 - item.r) : (seg === 'Própria' ? Math.round(3374.33 - item.r) : Math.max(0, 11000 - item.r));
+                    const pctR = ((item.r / (seg === 'Consolidado' ? 14374.33 : (seg === 'Própria' ? 3374.33 : 11000))) * 100).toFixed(1).replace('.', ',') + '%';
+                    const pctS = item.s > 0 ? ((item.s / (seg === 'Consolidado' ? 14374.33 : (seg === 'Própria' ? 3374.33 : 11000))) * 100).toFixed(1).replace('.', ',') + '%' : '--';
+                    const pctM = item.m > 0 ? ((item.m / (seg === 'Consolidado' ? 14374.33 : (seg === 'Própria' ? 3374.33 : 11000))) * 100).toFixed(1).replace('.', ',') + '%' : '--';
 
                     return `
                         <tr>
@@ -1637,7 +1637,7 @@
             const metaTotal = metaProp + metaFornec;
 
             const realProp = Math.round(propArea);
-            const arealProp = Math.max(0, metaProp - realProp);
+            const arealProp = Math.round(3374.33 - propArea);
             const pctMetaProp = Math.round((realProp / metaProp) * 100);
 
             const realFornec = Math.round(fornecArea);
@@ -1645,7 +1645,7 @@
             const pctMetaFornec = Math.round((realFornec / metaFornec) * 100);
 
             const realTotal = realProp + realFornec;
-            const arealTotal = Math.max(0, metaTotal - realTotal);
+            const arealTotal = Math.round(14374.33 - totalArea);
             const pctMetaTotal = Math.round((realTotal / metaTotal) * 100);
 
             // Atualiza KPIs principais do topo
