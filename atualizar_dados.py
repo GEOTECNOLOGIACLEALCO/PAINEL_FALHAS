@@ -91,7 +91,8 @@ rows_f = list(sheet_f.iter_rows(values_only=True))
 falhas = []
 for r in rows_f[1:]:
     fa = str(r[0] or '').strip()
-    if not fa: continue
+    if not fa or 'comparativo' in fa.lower() or 'valores_coluna' in fa.lower():
+        continue
     falhas.append({
         "FA": fa,
         "Fazenda": str(r[1] or '').strip(),

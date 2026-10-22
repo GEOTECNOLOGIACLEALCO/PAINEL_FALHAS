@@ -6363,26 +6363,6 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "Comp_Falhas": 2871.400000000001,
       "Porc_Falha": 0.39,
       "Indice_Falha": "Aceitável"
-    },
-    {
-      "FA": "comparativo_kml_vs_banco_falhas",
-      "Fazenda": "N/D",
-      "Tipo": "Terceiro",
-      "Area_Ha": 0.0,
-      "Comp_Linhas": 0.0,
-      "Comp_Falhas": 0.0,
-      "Porc_Falha": 0.0,
-      "Indice_Falha": "Aceitável"
-    },
-    {
-      "FA": "valores_coluna_C_linha_2",
-      "Fazenda": "N/D",
-      "Tipo": "Terceiro",
-      "Area_Ha": 0.0,
-      "Comp_Linhas": 0.0,
-      "Comp_Falhas": 0.0,
-      "Porc_Falha": 0.0,
-      "Indice_Falha": "Aceitável"
     }
   ],
   "metas_globais": {
@@ -6407,5 +6387,5 @@ window.DADOS_CLEALCO_EMBARCADOS = {
   },
   "acompanhamento": [],
   "creditos_inforow": 11195.23,
-  "data_compilacao": "22/10/2026 às 07:03"
+  "data_compilacao": "22/10/2026 às 07:21"
 };

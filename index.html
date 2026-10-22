@@ -611,15 +611,15 @@
                         <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center text-xl text-red-600 font-bold">🌾</div>
                         <div>
                             <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Área Avaliada (Falhas)</div>
-                            <div class="text-xl font-black text-slate-900 mt-0.5">4.809,68 ha</div>
-                            <div class="text-[11px] text-slate-500 font-medium">83 talhões auditados</div>
+                            <div class="text-xl font-black text-slate-900 mt-0.5" id="falhas-kpi-area">4.856,54 ha</div>
+                            <div class="text-[11px] text-slate-500 font-medium" id="falhas-kpi-talhoes">82 talhões auditados</div>
                         </div>
                     </div>
                     <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-sm">
                         <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center text-xl text-emerald-600 font-bold">📏</div>
                         <div>
                             <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Linhas Mapeadas</div>
-                            <div class="text-xl font-black text-slate-900 mt-0.5">60.593 km</div>
+                            <div class="text-xl font-black text-slate-900 mt-0.5" id="falhas-kpi-linhas">61.369 km</div>
                             <div class="text-[11px] text-slate-500 font-medium">Comprimento total avaliado</div>
                         </div>
                     </div>
@@ -627,7 +627,7 @@
                         <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center text-xl text-amber-600 font-bold">🎯</div>
                         <div>
                             <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Média Geral de Falha</div>
-                            <div class="text-xl font-black text-amber-600 mt-0.5">2,29%</div>
+                            <div class="text-xl font-black text-amber-600 mt-0.5" id="falhas-kpi-media">2,27%</div>
                             <div class="text-[11px] text-emerald-700 font-bold">✓ Padrão Aceitável (&lt; 6%)</div>
                         </div>
                     </div>
@@ -653,7 +653,7 @@
                                     <line x1="100" y1="100" x2="68" y2="48" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
                                 </svg>
                             </div>
-                            <div class="text-2xl font-black text-slate-900">3.31%</div>
+                            <div class="text-2xl font-black text-slate-900" id="falhas-prop-pct">3.31%</div>
                             <div class="text-xs text-slate-500 mb-6 font-medium">Realizado de falha</div>
 
                             <!-- Donut de Meta -->
@@ -671,11 +671,11 @@
                             <div class="flex justify-between w-full px-6 text-xs mt-3">
                                 <div class="text-center">
                                     <span class="text-slate-500 block font-medium">Realizado</span>
-                                    <b class="text-slate-900 font-bold">1.125 (33%)</b>
+                                    <b class="text-slate-900 font-bold" id="falhas-prop-real">1.125 (33%)</b>
                                 </div>
                                 <div class="text-center">
                                     <span class="text-slate-500 block font-medium">À Realizar</span>
-                                    <b class="text-slate-900 font-bold">2.250 (67%)</b>
+                                    <b class="text-slate-900 font-bold" id="falhas-prop-areal">2.249 (67%)</b>
                                 </div>
                             </div>
                         </div>
@@ -694,11 +694,11 @@
                                     <path d="M 73 35 A 80 80 0 0 1 127 35" fill="none" stroke="#eab308" stroke-width="22" />
                                     <path d="M 127 35 A 80 80 0 0 1 180 100" fill="none" stroke="#dc2626" stroke-width="22" />
                                     <circle cx="100" cy="100" r="7" fill="#1e293b" />
-                                    <!-- Ponteiro em 1.97% -->
+                                    <!-- Ponteiro em 1.94% -->
                                     <line x1="100" y1="100" x2="52" y2="58" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
                                 </svg>
                             </div>
-                            <div class="text-2xl font-black text-slate-900">1.97%</div>
+                            <div class="text-2xl font-black text-slate-900" id="falhas-fornec-pct">1.94%</div>
                             <div class="text-xs text-slate-500 mb-6 font-medium">Realizado de falha</div>
 
                             <!-- Donut de Meta -->
@@ -716,11 +716,11 @@
                             <div class="flex justify-between w-full px-6 text-xs mt-3">
                                 <div class="text-center">
                                     <span class="text-slate-500 block font-medium">Realizado</span>
-                                    <b class="text-slate-900 font-bold">3.685 (34%)</b>
+                                    <b class="text-slate-900 font-bold" id="falhas-fornec-real">3.732 (34%)</b>
                                 </div>
                                 <div class="text-center">
                                     <span class="text-slate-500 block font-medium">À Realizar</span>
-                                    <b class="text-slate-900 font-bold">7.315 (66%)</b>
+                                    <b class="text-slate-900 font-bold" id="falhas-fornec-areal">7.268 (66%)</b>
                                 </div>
                             </div>
                         </div>
@@ -739,18 +739,18 @@
                                     <path d="M 73 35 A 80 80 0 0 1 127 35" fill="none" stroke="#eab308" stroke-width="22" />
                                     <path d="M 127 35 A 80 80 0 0 1 180 100" fill="none" stroke="#dc2626" stroke-width="22" />
                                     <circle cx="100" cy="100" r="7" fill="#1e293b" />
-                                    <!-- Ponteiro em 2.29% -->
+                                    <!-- Ponteiro em 2.27% -->
                                     <line x1="100" y1="100" x2="57" y2="53" stroke="#1e293b" stroke-width="3.5" stroke-linecap="round" />
                                 </svg>
                             </div>
-                            <div class="text-2xl font-black text-slate-900">2.29%</div>
+                            <div class="text-2xl font-black text-slate-900" id="falhas-consol-pct">2.27%</div>
                             <div class="text-xs text-slate-500 mb-6 font-medium">Realizado de falha</div>
 
                             <!-- Donut de Meta -->
                             <div class="relative w-36 h-36 flex items-center justify-center">
                                 <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
                                     <path stroke="#e2e8f0" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                    <path stroke="#16a34a" stroke-dasharray="33, 100" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path stroke="#16a34a" stroke-dasharray="34, 100" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                 </svg>
                                 <div class="absolute text-center">
                                     <span class="text-[10px] text-slate-500 uppercase font-semibold block">Total</span>
@@ -761,11 +761,11 @@
                             <div class="flex justify-between w-full px-6 text-xs mt-3">
                                 <div class="text-center">
                                     <span class="text-slate-500 block font-medium">Realizado</span>
-                                    <b class="text-slate-900 font-bold">4.810 (33%)</b>
+                                    <b class="text-slate-900 font-bold" id="falhas-consol-real">4.857 (34%)</b>
                                 </div>
                                 <div class="text-center">
                                     <span class="text-slate-500 block font-medium">À Realizar</span>
-                                    <b class="text-slate-900 font-bold">9.565 (67%)</b>
+                                    <b class="text-slate-900 font-bold" id="falhas-consol-areal">9.517 (66%)</b>
                                 </div>
                             </div>
                         </div>
@@ -990,6 +990,7 @@
             renderizarDashboard();
             renderizarBacklog();
             renderizarAcompanhamento();
+            renderizarFalhas();
 
             // 2. Se estiver em HTTP/GitHub Pages, tentar buscar dados.xlsx fresco em segundo plano
             tentarFetchExcelRemoto();
@@ -1018,6 +1019,7 @@
             renderizarDashboard();
             renderizarBacklog();
             renderizarAcompanhamento();
+            renderizarFalhas();
 
             setTimeout(() => {
                 if (btn) btn.classList.remove('animate-spin');
@@ -1183,9 +1185,25 @@
                     }));
                 }
 
+                // FALHAS_PLANTIO
+                if (wb.SheetNames.includes('FALHAS_PLANTIO')) {
+                    const rawF = XLSX.utils.sheet_to_json(wb.Sheets['FALHAS_PLANTIO']);
+                    dadosFalhas = rawF.map(r => ({
+                        FA: String(r.FA || r.fa || '').trim(),
+                        Fazenda: String(r.Fazenda || r.fazenda || '').trim(),
+                        Tipo: String(r.Tipo || r.tipo || 'Terceiro').trim(),
+                        Area_Ha: parseNum(r.Area_Ha || r.area_ha || r['Área'] || r.ha),
+                        Comp_Linhas: parseNum(r.Comp_Linhas || r.comp_linhas),
+                        Comp_Falhas: parseNum(r.Comp_Falhas || r.comp_falhas),
+                        Porc_Falha: parseNum(r.Porc_Falha || r.porc_falha),
+                        Indice_Falha: String(r.Indice_Falha || r.indice_falha || 'Aceitável')
+                    })).filter(f => f.FA && !f.FA.toLowerCase().includes('comparativo') && !f.FA.toLowerCase().includes('valores_coluna'));
+                }
+
                 renderizarDashboard();
                 renderizarBacklog();
                 renderizarAcompanhamento();
+                renderizarFalhas();
             } catch(err) {
                 console.error("Erro ao ler workbook:", err);
             }
@@ -1459,10 +1477,30 @@
                 'Consolidado': 14374
             };
 
+            // Cálculo dinâmico das Falhas no Plantio a partir de dadosFalhas (aba FALHAS_PLANTIO)
+            let haFalhasProp = 0;
+            let haFalhasFornec = 0;
+            if (dadosFalhas && dadosFalhas.length > 0) {
+                dadosFalhas.forEach(f => {
+                    const faStr = String(f.FA || '').trim();
+                    if (!faStr || faStr.toLowerCase().includes('comparativo') || faStr.toLowerCase().includes('valores_coluna')) return;
+                    const tipo = (f.Tipo || '').toLowerCase();
+                    const area = parseFloat(f.Area_Ha) || 0;
+                    if (tipo.includes('próp') || tipo.includes('prop')) {
+                        haFalhasProp += area;
+                    } else {
+                        haFalhasFornec += area;
+                    }
+                });
+            }
+            const rFalhasProp = haFalhasProp > 0 ? Math.round(haFalhasProp) : 1125;
+            const rFalhasFornec = haFalhasFornec > 0 ? Math.round(haFalhasFornec) : 3732;
+            const rFalhasConsol = rFalhasProp + rFalhasFornec;
+
             const DADOS = {
                 'Voos realizados': { 'Própria': { r: 2289, s: 0, m: 0 }, 'Fornecedores': { r: 5207, s: 0, m: 0 }, 'Consolidado': { r: 7496, s: 0, m: 0 } },
                 'Mosaico processado': { 'Própria': { r: 2289, s: 0, m: 0 }, 'Fornecedores': { r: 5207, s: 0, m: 0 }, 'Consolidado': { r: 7496, s: 0, m: 0 } },
-                'Falhas no plantio': { 'Própria': { r: 1125, s: 0, m: 0 }, 'Fornecedores': { r: 3685, s: 66, m: 330 }, 'Consolidado': { r: 4810, s: 66, m: 330 } },
+                'Falhas no plantio': { 'Própria': { r: rFalhasProp, s: 0, m: 0 }, 'Fornecedores': { r: rFalhasFornec, s: 66, m: 330 }, 'Consolidado': { r: rFalhasConsol, s: 66, m: 330 } },
                 'Pós plantio': { 'Própria': { r: 1816, s: 0, m: 266.7 }, 'Fornecedores': { r: 5703, s: 0, m: 125.5 }, 'Consolidado': { r: 7519, s: 0, m: 392.2 } },
                 'Exportação para piloto': { 'Própria': { r: 236, s: 0, m: 0 }, 'Fornecedores': { r: 1634, s: 0, m: 0 }, 'Consolidado': { r: 1871, s: 0, m: 0 } }
             };
@@ -1516,6 +1554,98 @@
             }).join('');
         }
 
+        // ================= FALHAS DE PLANTIO =================
+        function renderizarFalhas() {
+            let propArea = 0, propLinhas = 0, propFalhas = 0, propCount = 0;
+            let fornecArea = 0, fornecLinhas = 0, fornecFalhas = 0, fornecCount = 0;
+
+            const lista = (dadosFalhas || []).filter(f => {
+                const fa = String(f.FA || '').trim();
+                return fa && !fa.toLowerCase().includes('comparativo') && !fa.toLowerCase().includes('valores_coluna');
+            });
+
+            lista.forEach(f => {
+                const tipo = (f.Tipo || '').toLowerCase();
+                const area = parseFloat(f.Area_Ha) || 0;
+                const linhas = parseFloat(f.Comp_Linhas) || 0;
+                const falhas = parseFloat(f.Comp_Falhas) || 0;
+
+                if (tipo.includes('próp') || tipo.includes('prop')) {
+                    propArea += area;
+                    propLinhas += linhas;
+                    propFalhas += falhas;
+                    propCount++;
+                } else {
+                    fornecArea += area;
+                    fornecLinhas += linhas;
+                    fornecFalhas += falhas;
+                    fornecCount++;
+                }
+            });
+
+            const totalArea = propArea + fornecArea;
+            const totalLinhas = propLinhas + fornecLinhas;
+            const totalFalhas = propFalhas + fornecFalhas;
+            const totalCount = propCount + fornecCount;
+
+            const pctFalhaProp = propLinhas > 0 ? (propFalhas / propLinhas * 100) : 3.31;
+            const pctFalhaFornec = fornecLinhas > 0 ? (fornecFalhas / fornecLinhas * 100) : 1.94;
+            const pctFalhaTotal = totalLinhas > 0 ? (totalFalhas / totalLinhas * 100) : 2.27;
+
+            const metaProp = 3374;
+            const metaFornec = 11000;
+            const metaTotal = metaProp + metaFornec;
+
+            const realProp = Math.round(propArea);
+            const arealProp = Math.max(0, metaProp - realProp);
+            const pctMetaProp = Math.round((realProp / metaProp) * 100);
+
+            const realFornec = Math.round(fornecArea);
+            const arealFornec = Math.max(0, metaFornec - realFornec);
+            const pctMetaFornec = Math.round((realFornec / metaFornec) * 100);
+
+            const realTotal = realProp + realFornec;
+            const arealTotal = Math.max(0, metaTotal - realTotal);
+            const pctMetaTotal = Math.round((realTotal / metaTotal) * 100);
+
+            // Atualiza KPIs principais do topo
+            const elArea = document.getElementById('falhas-kpi-area');
+            if (elArea) elArea.innerText = totalArea.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ha';
+
+            const elTalhoes = document.getElementById('falhas-kpi-talhoes');
+            if (elTalhoes) elTalhoes.innerText = `${totalCount} talhões auditados`;
+
+            const elLinhas = document.getElementById('falhas-kpi-linhas');
+            if (elLinhas) elLinhas.innerText = Math.round(totalLinhas / 1000).toLocaleString('pt-BR') + ' km';
+
+            const elMedia = document.getElementById('falhas-kpi-media');
+            if (elMedia) elMedia.innerText = pctFalhaTotal.toFixed(2).replace('.', ',') + '%';
+
+            // Próprio
+            const elPropPct = document.getElementById('falhas-prop-pct');
+            if (elPropPct) elPropPct.innerText = pctFalhaProp.toFixed(2) + '%';
+            const elPropReal = document.getElementById('falhas-prop-real');
+            if (elPropReal) elPropReal.innerText = `${realProp.toLocaleString('pt-BR')} (${pctMetaProp}%)`;
+            const elPropAreal = document.getElementById('falhas-prop-areal');
+            if (elPropAreal) elPropAreal.innerText = `${arealProp.toLocaleString('pt-BR')} (${100 - pctMetaProp}%)`;
+
+            // Fornecedores
+            const elFornecPct = document.getElementById('falhas-fornec-pct');
+            if (elFornecPct) elFornecPct.innerText = pctFalhaFornec.toFixed(2) + '%';
+            const elFornecReal = document.getElementById('falhas-fornec-real');
+            if (elFornecReal) elFornecReal.innerText = `${realFornec.toLocaleString('pt-BR')} (${pctMetaFornec}%)`;
+            const elFornecAreal = document.getElementById('falhas-fornec-areal');
+            if (elFornecAreal) elFornecAreal.innerText = `${arealFornec.toLocaleString('pt-BR')} (${100 - pctMetaFornec}%)`;
+
+            // Consolidado
+            const elConsolPct = document.getElementById('falhas-consol-pct');
+            if (elConsolPct) elConsolPct.innerText = pctFalhaTotal.toFixed(2) + '%';
+            const elConsolReal = document.getElementById('falhas-consol-real');
+            if (elConsolReal) elConsolReal.innerText = `${realTotal.toLocaleString('pt-BR')} (${pctMetaTotal}%)`;
+            const elConsolAreal = document.getElementById('falhas-consol-areal');
+            if (elConsolAreal) elConsolAreal.innerText = `${arealTotal.toLocaleString('pt-BR')} (${100 - pctMetaTotal}%)`;
+        }
+
         // ================= UTILITÁRIOS =================
         function trocarAba(id) {
             document.querySelectorAll('section[id^="aba-"]').forEach(s => s.classList.add('hidden'));
@@ -1528,6 +1658,7 @@
             if (btnAtivo) btnAtivo.classList.add('active');
 
             if (id === 'acompanhamento') renderizarAcompanhamento();
+            if (id === 'falhas') renderizarFalhas();
             if (id === 'backlog') renderizarBacklog();
         }
 
