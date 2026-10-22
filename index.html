@@ -406,19 +406,17 @@
         
         <!-- Topo da Sidebar: Logo & Identidade -->
         <div>
-            <div class="sidebar-logo-container flex items-center justify-between px-3 py-4 border-b border-slate-100">
-                <div class="flex items-center gap-2 overflow-hidden w-full">
-                    <img src="logo_clealco.png?v=6" alt="Clealco" onerror="this.outerHTML='<div class=\'text-red-600 font-black text-2xl tracking-wider\'>CLEALCO</div>'" class="h-14 md:h-16 max-h-16 w-auto object-contain flex-shrink-0 transition-all">
-                    <div class="sidebar-logo-text border-l-2 border-slate-200 pl-2.5">
-                        <div class="text-[11px] tracking-widest text-red-600 uppercase font-black leading-tight">Singularity AI</div>
-                        <div class="text-xs text-slate-600 font-bold tracking-tight">Geotecnologia</div>
-                    </div>
-                </div>
-
+            <div class="sidebar-logo-container px-4 py-3.5 border-b border-slate-100 flex flex-col items-center text-center relative">
                 <!-- Botão Fechar no Mobile -->
-                <button onclick="fecharSidebarMobile()" class="md:hidden text-slate-400 hover:text-slate-700 p-1.5 rounded-lg">
+                <button onclick="fecharSidebarMobile()" class="md:hidden absolute top-2 right-2 text-slate-400 hover:text-slate-700 p-1.5 rounded-lg">
                     ✕
                 </button>
+                <img src="logo_clealco.png?v=7" alt="Clealco" onerror="this.outerHTML='<div class=\'text-red-600 font-black text-2xl tracking-wider\'>CLEALCO</div>'" class="h-12 w-auto max-w-[200px] object-contain transition-all">
+                <div class="sidebar-logo-text flex items-center justify-center gap-2 mt-1.5 pt-1.5 border-t border-slate-100 w-full">
+                    <span class="text-[10px] tracking-widest text-red-600 uppercase font-black">Singularity AI</span>
+                    <span class="text-slate-300">•</span>
+                    <span class="text-[11px] text-slate-600 font-bold">Geotecnologia</span>
+                </div>
             </div>
 
             <!-- Grupo 1: Navegação por Abas -->
