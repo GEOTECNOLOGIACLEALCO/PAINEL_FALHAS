@@ -322,6 +322,9 @@
 
             <!-- Ações e Controles -->
             <div class="flex items-center gap-2">
+                <button onclick="forcarLimpezaCacheEAtualizar()" id="btn-limpar-cache" title="Limpar cache do navegador e recarregar os dados mais recentes do GitHub" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white border border-emerald-700 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                    🔄 <span>Atualizar Dados</span>
+                </button>
                 <button onclick="acionarInstalacaoApp()" id="btn-instalar-app" title="Instalar no Celular, Tablet ou Computador" class="text-xs bg-red-600 hover:bg-red-700 text-white border border-red-700 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                     📲 <span>Instalar App</span>
                 </button>
@@ -370,7 +373,7 @@
                 <div class="text-xs text-slate-500 flex items-center gap-4 font-medium">
                     <span class="flex items-center gap-1.5">
                         Última Sincronização: <b id="lbl-data-hora" class="text-slate-800">Hoje</b>
-                        <button onclick="recarregarPainel()" title="Recarregar dados agora" class="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-red-600 transition" id="btn-recarregar">
+                        <button onclick="forcarLimpezaCacheEAtualizar()" title="Limpar cache e buscar atualizações agora" class="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-emerald-600 transition" id="btn-recarregar">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                         </button>
                     </span>
@@ -1004,6 +1007,43 @@
             if (elEmissao) elEmissao.innerText = dataEmissao;
             if (elSync) elSync.innerText = dataSync;
             window.print();
+        }
+
+        async function forcarLimpezaCacheEAtualizar() {
+            const btnTop = document.getElementById('btn-limpar-cache');
+            const btnRec = document.getElementById('btn-recarregar');
+            if (btnTop) {
+                btnTop.innerHTML = '⏳ <span>Limpando...</span>';
+                btnTop.classList.add('opacity-75');
+            }
+            if (btnRec) btnRec.classList.add('animate-spin');
+
+            const msg = document.getElementById('ai-status-msg');
+            if (msg) msg.innerText = "Limpando cache desta página e buscando versão mais recente...";
+
+            try {
+                // 1. Limpa todas as instâncias do CacheStorage (Service Worker)
+                if ('caches' in window) {
+                    const keys = await caches.keys();
+                    await Promise.all(keys.map(k => caches.delete(k)));
+                }
+
+                // 2. Desregistra Service Workers ativos para obrigar instalação da versão nova
+                if ('serviceWorker' in navigator) {
+                    const regs = await navigator.serviceWorker.getRegistrations();
+                    for (let r of regs) {
+                        await r.unregister();
+                    }
+                }
+            } catch (err) {
+                console.warn("Aviso ao limpar cache:", err);
+            }
+
+            // 3. Força recarregamento com timestamp único que bypassa cache de disco e CDN
+            setTimeout(() => {
+                const basePath = window.location.href.split('?')[0].split('#')[0];
+                window.location.replace(basePath + '?nocache=' + Date.now());
+            }, 300);
         }
 
         async function recarregarPainel() {

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'clealco-voos-v3';
+const CACHE_NAME = 'clealco-voos-v4';
 const ASSETS_ESTATICOS = [
     './',
     './index.html',
@@ -34,14 +34,23 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-    // Para dados.xlsx e API, sempre buscar na rede primeiro
-    if (event.request.url.includes('dados.xlsx')) {
+    const url = event.request.url;
+
+    // Para dados, html e scripts: NETWORK FIRST (busca sempre a versão mais recente na rede)
+    if (url.includes('dados.xlsx') || url.includes('dados_injetados.js') || url.includes('index.html') || event.request.mode === 'navigate') {
         event.respondWith(
-            fetch(event.request).catch(() => caches.match(event.request))
+            fetch(event.request).then((response) => {
+                if (response && response.status === 200) {
+                    const responseClone = response.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+                }
+                return response;
+            }).catch(() => caches.match(event.request))
         );
         return;
     }
 
+    // Para outros arquivos estáticos (ícones, logos): Cache com fallback para rede
     event.respondWith(
         caches.match(event.request).then((response) => {
             return response || fetch(event.request);
