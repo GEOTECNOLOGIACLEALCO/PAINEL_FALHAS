@@ -134,13 +134,21 @@ if 'ACOMPANHAMENTO' in wb.sheetnames:
             "Mes": parse_num(r[6])
         })
 
+# 6. CONFIGURAÇÕES ADICIONAIS (Créditos Inforow)
+creditos_dinamicos = 0.0
+if 'CONFIG' in wb.sheetnames:
+    sheet_c = wb['CONFIG']
+    rows_c = list(sheet_c.iter_rows(values_only=True))
+    if len(rows_c) > 1:
+        creditos_dinamicos = parse_num(rows_c[1][0])
+
 dados_completos = {
     "base_processamentos": base_proc,
     "backlog": backlog,
     "falhas_plantio": falhas,
     "metas_globais": metas,
     "acompanhamento": acomp,
-    "creditos_inforow": 11195.23,
+    "creditos_inforow": creditos_dinamicos,
     "data_compilacao": datetime.now().strftime("%d/%m/%Y às %H:%M")
 }
 

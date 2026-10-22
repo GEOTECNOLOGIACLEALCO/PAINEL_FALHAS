@@ -1,4 +1,4 @@
-const CACHE_NAME = 'clealco-voos-v11';
+const CACHE_NAME = 'clealco-voos-v12';
 const ASSETS_ESTATICOS = [
     './',
     './index.html',
@@ -39,24 +39,41 @@ self.addEventListener('activate', (event) => {
 self.addEventListener('fetch', (event) => {
     const url = event.request.url;
 
-    // Para dados, html e scripts: NETWORK FIRST (busca sempre a versão mais recente na rede)
-    if (url.includes('dados.xlsx') || url.includes('dados_injetados.js') || url.includes('index.html') || event.request.mode === 'navigate') {
+    // Estratégia Network-First estrita com { cache: 'no-store' } para arquivos de dados, HTML e navegação
+    const isDynamicData = url.includes('dados.xlsx') ||
+                          url.includes('dados_injetados.js') ||
+                          url.includes('dados_mapa_voos.js') ||
+                          url.includes('index.html') ||
+                          event.request.mode === 'navigate';
+
+    if (isDynamicData) {
         event.respondWith(
-            fetch(event.request).then((response) => {
-                if (response && response.status === 200) {
-                    const responseClone = response.clone();
-                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
-                }
-                return response;
-            }).catch(() => caches.match(event.request))
+            fetch(event.request, { cache: 'no-store' })
+                .then((response) => {
+                    if (response && response.status === 200) {
+                        const responseClone = response.clone();
+                        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+                    }
+                    return response;
+                })
+                .catch(() => caches.match(event.request))
         );
         return;
     }
 
-    // Para outros arquivos estáticos (ícones, logos): Cache com fallback para rede
+    // Estratégia Cache-First para os restantes ficheiros estáticos (ícones, logos, CSS, bibliotecas)
     event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request);
+        caches.match(event.request).then((cachedResponse) => {
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+            return fetch(event.request).then((networkResponse) => {
+                if (networkResponse && networkResponse.status === 200) {
+                    const responseClone = networkResponse.clone();
+                    caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+                }
+                return networkResponse;
+            });
         })
     );
 });

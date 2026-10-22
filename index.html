@@ -1892,6 +1892,7 @@
         // ================= ACOMPANHAMENTO =================
         function renderizarAcompanhamento() {
             const container = document.getElementById('tabela-acompanhamento-conteudo');
+            if (!container) return;
             
             const CATEGORIAS = [
                 { 
@@ -1921,55 +1922,89 @@
                 }
             ];
 
+            // 1. Captura dinâmica do Ano Selecionado (fallback: '2026')
+            const elSelectAno = document.getElementById('select-ano-acomp');
+            const anoAlvo = (elSelectAno && elSelectAno.value) ? elSelectAno.value : '2026';
+
+            // 2. Metas Dinâmicas (leitura por ano de dadosMetas com fallbacks seguros)
+            const metaConfig = (typeof dadosMetas !== 'undefined' && dadosMetas && dadosMetas[anoAlvo]) ? dadosMetas[anoAlvo] : {};
+            const metaProp = parseNum(metaConfig.acompanhamento_propria) || 3374.33;
+            const metaFornec = parseNum(metaConfig.acompanhamento_terceiros) || 11000.0;
+            const metaConsol = metaProp + metaFornec;
+
             const METAS = {
-                'Própria': 3374,
-                'Fornecedores': 11000,
-                'Consolidado': 14374
+                'Própria': metaProp,
+                'Fornecedores': metaFornec,
+                'Consolidado': metaConsol
             };
 
-            // Cálculo dinâmico das Falhas no Plantio a partir de dadosFalhas (aba FALHAS_PLANTIO)
-            let haFalhasProp = 0;
-            let haFalhasFornec = 0;
-            if (dadosFalhas && dadosFalhas.length > 0) {
-                dadosFalhas.forEach(f => {
-                    const faStr = String(f.FA || '').trim();
-                    if (!faStr || faStr.toLowerCase().includes('comparativo') || faStr.toLowerCase().includes('valores_coluna')) return;
-                    const tipo = (f.Tipo || '').toLowerCase();
-                    const area = parseFloat(f.Area_Ha) || 0;
-                    if (tipo.includes('próp') || tipo.includes('prop')) {
-                        haFalhasProp += area;
-                    } else {
-                        haFalhasFornec += area;
+            // 3. Filtrar dadosAcompanhamento pelo ano selecionado
+            const acompFiltrado = (typeof dadosAcompanhamento !== 'undefined' && Array.isArray(dadosAcompanhamento))
+                ? dadosAcompanhamento.filter(item => String(item.Ano || '').trim() === String(anoAlvo).trim())
+                : [];
+
+            // Função auxiliar de normalização textual (imune a acentos e encoding)
+            const norm = (s) => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+            // 4. População da Matriz Dinâmica iterando pelas Categorias
+            const matrizDinamica = {};
+            CATEGORIAS.forEach(cat => {
+                matrizDinamica[cat.id] = {
+                    'Própria': { r: 0, s: 0, m: 0 },
+                    'Fornecedores': { r: 0, s: 0, m: 0 },
+                    'Consolidado': { r: 0, s: 0, m: 0 }
+                };
+
+                ['Própria', 'Fornecedores', 'Consolidado'].forEach(seg => {
+                    const item = acompFiltrado.find(i => {
+                        return norm(i.Categoria) === norm(cat.id) && norm(i.Segmento) === norm(seg);
+                    });
+
+                    if (item) {
+                        matrizDinamica[cat.id][seg] = {
+                            r: parseNum(item.Realizado),
+                            s: parseNum(item.Semana),
+                            m: parseNum(item.Mes)
+                        };
                     }
                 });
-            }
-            const rFalhasProp = haFalhasProp > 0 ? Math.round(haFalhasProp) : 1125;
-            const rFalhasFornec = haFalhasFornec > 0 ? Math.round(haFalhasFornec) : 3732;
-            const rFalhasConsol = rFalhasProp + rFalhasFornec;
 
-            const DADOS = {
-                'Voos realizados': { 'Própria': { r: 2289, s: 0, m: 0 }, 'Fornecedores': { r: 5207, s: 0, m: 0 }, 'Consolidado': { r: 7496, s: 0, m: 0 } },
-                'Mosaico processado': { 'Própria': { r: 2289, s: 0, m: 0 }, 'Fornecedores': { r: 5207, s: 0, m: 0 }, 'Consolidado': { r: 7496, s: 0, m: 0 } },
-                'Falhas no plantio': { 'Própria': { r: rFalhasProp, s: 0, m: 0 }, 'Fornecedores': { r: rFalhasFornec, s: 113, m: 377 }, 'Consolidado': { r: rFalhasConsol, s: 113, m: 377 } },
-                'Pós plantio': { 'Própria': { r: 1816, s: 0, m: 266.7 }, 'Fornecedores': { r: 5703, s: 0, m: 125.5 }, 'Consolidado': { r: 7519, s: 0, m: 392.2 } },
-                'Exportação para piloto': { 'Própria': { r: 236, s: 0, m: 0 }, 'Fornecedores': { r: 1634, s: 0, m: 0 }, 'Consolidado': { r: 1871, s: 0, m: 0 } }
-            };
+                // Fallback de cálculo consolidado se não estiver explicitamente presente
+                if (matrizDinamica[cat.id]['Consolidado'].r === 0 && (matrizDinamica[cat.id]['Própria'].r > 0 || matrizDinamica[cat.id]['Fornecedores'].r > 0)) {
+                    matrizDinamica[cat.id]['Consolidado'] = {
+                        r: matrizDinamica[cat.id]['Própria'].r + matrizDinamica[cat.id]['Fornecedores'].r,
+                        s: matrizDinamica[cat.id]['Própria'].s + matrizDinamica[cat.id]['Fornecedores'].s,
+                        m: matrizDinamica[cat.id]['Própria'].m + matrizDinamica[cat.id]['Fornecedores'].m
+                    };
+                }
+            });
 
+            // 5. Renderização mantendo rigorosamente o layout HTML e classes Tailwind
             container.innerHTML = CATEGORIAS.map(cat => {
                 const rows = ['Própria', 'Fornecedores', 'Consolidado'].map(seg => {
                     const meta = METAS[seg];
-                    const item = DADOS[cat.id][seg];
-                    const aReal = seg === 'Consolidado' ? Math.round(14374.33 - item.r) : (seg === 'Própria' ? Math.round(3374.33 - item.r) : Math.max(0, 11000 - item.r));
-                    const pctR = ((item.r / (seg === 'Consolidado' ? 14374.33 : (seg === 'Própria' ? 3374.33 : 11000))) * 100).toFixed(1).replace('.', ',') + '%';
-                    const pctS = item.s > 0 ? ((item.s / (seg === 'Consolidado' ? 14374.33 : (seg === 'Própria' ? 3374.33 : 11000))) * 100).toFixed(1).replace('.', ',') + '%' : '--';
-                    const pctM = item.m > 0 ? ((item.m / (seg === 'Consolidado' ? 14374.33 : (seg === 'Própria' ? 3374.33 : 11000))) * 100).toFixed(1).replace('.', ',') + '%' : '--';
+                    const item = matrizDinamica[cat.id][seg];
+                    const aReal = Math.max(0, meta - item.r);
+
+                    // Proteção estrita contra NaN e Infinity (se meta for 0)
+                    const pctR = (meta > 0 && !isNaN(item.r))
+                        ? ((item.r / meta) * 100).toFixed(1).replace('.', ',') + '%'
+                        : '0,0%';
+
+                    const pctS = (meta > 0 && item.s > 0 && !isNaN(item.s))
+                        ? ((item.s / meta) * 100).toFixed(1).replace('.', ',') + '%'
+                        : '--';
+
+                    const pctM = (meta > 0 && item.m > 0 && !isNaN(item.m))
+                        ? ((item.m / meta) * 100).toFixed(1).replace('.', ',') + '%'
+                        : '--';
 
                     return `
                         <tr>
                             <td class="text-right pr-4 font-semibold text-gray-900 py-1.5 text-xs">${seg}</td>
-                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${meta.toLocaleString('pt-BR')}</td>
-                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${item.r.toLocaleString('pt-BR')}</td>
-                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${aReal.toLocaleString('pt-BR')}</td>
+                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${Math.round(meta).toLocaleString('pt-BR')}</td>
+                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${Math.round(item.r).toLocaleString('pt-BR')}</td>
+                            <td class="border border-gray-300 text-center py-1 px-2 text-xs text-gray-800 bg-white font-medium">${Math.round(aReal).toLocaleString('pt-BR')}</td>
                             <td class="p-1"><div class="border border-gray-300 bg-white text-center py-1 text-xs text-gray-900 font-bold">${pctR}</div></td>
                             <td class="p-1"><div class="border border-gray-300 bg-white text-center py-1 text-xs text-gray-900">${pctS}</div></td>
                             <td class="p-1"><div class="border border-gray-300 bg-white text-center py-1 text-xs text-gray-900">${pctM}</div></td>
