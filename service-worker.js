@@ -1,9 +1,12 @@
-const CACHE_NAME = 'clealco-voos-v6';
+const CACHE_NAME = 'clealco-voos-v7';
 const ASSETS_ESTATICOS = [
     './',
     './index.html',
     './manifest.json',
     './dados_injetados.js',
+    './dados_mapa_voos.js',
+    './leaflet.css',
+    './leaflet.js',
     './logo_clealco.png',
     './icon-192.png',
     './icon-512.png',

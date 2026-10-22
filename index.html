@@ -25,8 +25,13 @@
     <!-- html2canvas (Para capturar relatórios em PNG/PPT) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-    <!-- Dados Embarcados da Planilha dados.xlsx (permite abrir direto via file:/// sem erro de CORS) -->
+    <!-- Leaflet CSS & JS (Mapa Operacional WebGIS) -->
+    <link rel="stylesheet" href="./leaflet.css">
+    <script src="./leaflet.js"></script>
+
+    <!-- Dados Embarcados da Planilha dados.xlsx e Mapa de Voos -->
     <script src="dados_injetados.js"></script>
+    <script src="dados_mapa_voos.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -317,6 +322,9 @@
                 </button>
                 <button class="tab-btn" onclick="trocarAba('backlog')">
                     <span>✈️</span> Backlog (Faltam Voar)
+                </button>
+                <button class="tab-btn" onclick="trocarAba('mapa')">
+                    <span>🗺️</span> Mapa de Voos
                 </button>
             </nav>
 
@@ -907,6 +915,176 @@
                     <div id="lista-backlog" class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
                         <!-- Injetado via JS -->
                     </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ================= ABA 5: MAPA OPERACIONAL DE VOOS & BACKLOG ================= -->
+        <section id="aba-mapa" class="space-y-6 hidden">
+            <div class="glass-panel p-6 bg-white border border-slate-200 shadow-md">
+                
+                <!-- Cabeçalho do Mapa -->
+                <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 pb-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-black text-slate-900 uppercase tracking-wide flex items-center gap-2">
+                            <span>🗺️</span> MAPA OPERACIONAL DE VOOS & BACKLOG
+                        </h2>
+                        <p class="text-xs text-slate-500">Monitoramento Geográfico dos Talhões em Tempo Real com Imagem de Satélite</p>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="centralizarMapaVoos()" title="Centralizar visualização em todos os talhões" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            🎯 <span>Centralizar</span>
+                        </button>
+                        <button onclick="exportarKMLFiltro()" title="Baixar KML de todos os talhões visíveis para levar ao drone ou Google Earth" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            📥 <span>Exportar KML (Filtrados)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPIs Rápidos do Mapa -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-200">
+                        <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider block">Total no Backlog</span>
+                        <div class="text-xl font-black text-slate-900 mt-0.5" id="mapa-kpi-total-bk">--</div>
+                        <span class="text-[11px] text-slate-500 font-medium" id="mapa-kpi-area-bk">-- ha</span>
+                    </div>
+
+                    <div class="bg-red-50/80 p-3 rounded-xl border border-red-200">
+                        <span class="text-[10px] uppercase font-bold text-red-700 tracking-wider flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-red-600 animate-ping"></span> Crítico / Porte Alto
+                        </span>
+                        <div class="text-xl font-black text-red-700 mt-0.5" id="mapa-kpi-total-crit">--</div>
+                        <span class="text-[11px] text-red-600 font-medium" id="mapa-kpi-area-crit">&gt; 90 dias</span>
+                    </div>
+
+                    <div class="bg-amber-50/80 p-3 rounded-xl border border-amber-200">
+                        <span class="text-[10px] uppercase font-bold text-amber-700 tracking-wider flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-amber-500"></span> Atenção
+                        </span>
+                        <div class="text-xl font-black text-amber-700 mt-0.5" id="mapa-kpi-total-aten">--</div>
+                        <span class="text-[11px] text-amber-600 font-medium" id="mapa-kpi-area-aten">60 a 90 dias</span>
+                    </div>
+
+                    <div class="bg-blue-50/80 p-3 rounded-xl border border-blue-200">
+                        <span class="text-[10px] uppercase font-bold text-blue-700 tracking-wider flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-blue-500"></span> No Prazo
+                        </span>
+                        <div class="text-xl font-black text-blue-700 mt-0.5" id="mapa-kpi-total-prazo">--</div>
+                        <span class="text-[11px] text-blue-600 font-medium" id="mapa-kpi-area-prazo">&lt; 60 dias</span>
+                    </div>
+
+                    <div class="bg-emerald-50/80 p-3 rounded-xl border border-emerald-200">
+                        <span class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider flex items-center gap-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-600"></span> Voados / Mapeados
+                        </span>
+                        <div class="text-xl font-black text-emerald-700 mt-0.5" id="mapa-kpi-total-voado">--</div>
+                        <span class="text-[11px] text-emerald-600 font-medium" id="mapa-kpi-area-voado">Concluídos</span>
+                    </div>
+                </div>
+
+                <!-- Interface Principal: Filtros + Mapa -->
+                <div class="flex flex-col lg:flex-row gap-5 items-stretch">
+                    
+                    <!-- Barra Lateral de Controles e Filtros -->
+                    <div class="w-full lg:w-80 flex-shrink-0 bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-between space-y-4">
+                        
+                        <div class="space-y-4">
+                            <!-- Busca Instantânea -->
+                            <div>
+                                <label class="text-[11px] uppercase font-bold text-slate-600 tracking-wider block mb-1.5">
+                                    🔍 Localizar Talhão / Fazenda
+                                </label>
+                                <div class="relative">
+                                    <input type="text" id="mapa-busca-input" placeholder="Digite Fazenda, FA ou Talhão..." oninput="filtrarBuscaMapa(this.value)" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:ring-1 focus:ring-red-500 transition">
+                                    <div id="mapa-busca-sugestoes" class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-lg shadow-xl max-h-48 overflow-y-auto z-50 hidden divide-y divide-slate-100 text-xs">
+                                        <!-- Sugestões injetadas via JS -->
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Filtro de Status -->
+                            <div>
+                                <label class="text-[11px] uppercase font-bold text-slate-600 tracking-wider block mb-1.5">
+                                    🚦 Filtrar por Status / Urgência
+                                </label>
+                                <select id="mapa-filtro-status" onchange="aplicarFiltrosMapa()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:border-red-500">
+                                    <option value="TODOS">Todos os Status</option>
+                                    <option value="BACKLOG_TODOS">Somente Backlog (A Voar)</option>
+                                    <option value="CRITICO">🔴 Crítico / Porte Alto (&gt; 90 dias)</option>
+                                    <option value="ATENCAO">🟡 Atenção (60 a 90 dias)</option>
+                                    <option value="NOPRAZO">🔵 No Prazo (&lt; 60 dias)</option>
+                                    <option value="VOADO">🟢 Já Voado / Concluído</option>
+                                </select>
+                            </div>
+
+                            <!-- Filtro de Tipo -->
+                            <div>
+                                <label class="text-[11px] uppercase font-bold text-slate-600 tracking-wider block mb-1.5">
+                                    🌾 Tipo de Propriedade
+                                </label>
+                                <select id="mapa-filtro-tipo" onchange="aplicarFiltrosMapa()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:border-red-500">
+                                    <option value="TODOS">Todas (Próprias e Terceiros)</option>
+                                    <option value="Própria">Próprias</option>
+                                    <option value="Terceiro">Fornecedores / Terceiros</option>
+                                </select>
+                            </div>
+
+                            <!-- Legenda Visual -->
+                            <div class="bg-white p-3 rounded-lg border border-slate-200 space-y-2 text-xs">
+                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Legenda Operacional</span>
+                                <div class="flex items-center justify-between">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded bg-red-600 border border-red-700"></span>
+                                        <span class="text-slate-700 font-medium">Crítico (&gt; 90 dias)</span>
+                                    </span>
+                                    <b class="text-slate-900" id="legenda-count-critico">0</b>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded bg-amber-500 border border-amber-600"></span>
+                                        <span class="text-slate-700 font-medium">Atenção (60-90 dias)</span>
+                                    </span>
+                                    <b class="text-slate-900" id="legenda-count-atencao">0</b>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded bg-blue-500 border border-blue-600"></span>
+                                        <span class="text-slate-700 font-medium">No Prazo (&lt; 60 dias)</span>
+                                    </span>
+                                    <b class="text-slate-900" id="legenda-count-noprazo">0</b>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded bg-emerald-600 border border-emerald-700"></span>
+                                        <span class="text-slate-700 font-medium">Já Voado</span>
+                                    </span>
+                                    <b class="text-slate-900" id="legenda-count-voado">0</b>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Top 5 Fazendas com mais área a voar -->
+                        <div class="bg-white p-3 rounded-lg border border-slate-200">
+                            <span class="text-[10px] uppercase font-bold text-slate-500 block mb-2">Top Fazendas no Backlog</span>
+                            <div id="mapa-top-fazendas" class="space-y-1.5 text-xs">
+                                <!-- Injetado via JS -->
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <!-- Container do Mapa Leaflet -->
+                    <div class="flex-1 min-h-[550px] lg:min-h-[680px] rounded-xl overflow-hidden border border-slate-300 shadow-md relative bg-slate-900">
+                        <div id="mapa-voos-container" class="w-full h-full min-h-[550px] lg:min-h-[680px] z-10"></div>
+                        
+                        <!-- Overlay de Dica de Navegação -->
+                        <div class="absolute bottom-3 left-3 z-[1000] bg-slate-900/80 backdrop-blur-md text-white text-[11px] px-3 py-1.5 rounded-lg border border-white/20 shadow-lg pointer-events-none flex items-center gap-2">
+                            <span>💡 Clique em qualquer talhão para ver os dados completos e baixar o KML</span>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
@@ -1759,6 +1937,410 @@
             if (id === 'acompanhamento') renderizarAcompanhamento();
             if (id === 'falhas') renderizarFalhas();
             if (id === 'backlog') renderizarBacklog();
+            if (id === 'mapa') {
+                renderizarMapaVoos();
+                setTimeout(() => {
+                    if (window.mapaVoosInstancia) {
+                        window.mapaVoosInstancia.invalidateSize();
+                    }
+                }, 200);
+            }
+        }
+
+        // ================= MOTOR DO MAPA OPERACIONAL (LEAFLET / SHP) =================
+        let mapaVoosInstancia = null;
+        let camadaGeoJsonVoos = null;
+        let featuresFiltradasAtuais = [];
+
+        function renderizarMapaVoos() {
+            if (!window.DADOS_MAPA_VOOS || !window.DADOS_MAPA_VOOS.features) {
+                console.warn('DADOS_MAPA_VOOS não encontrados.');
+                return;
+            }
+
+            const features = window.DADOS_MAPA_VOOS.features;
+
+            // Inicializa mapa Leaflet apenas uma vez
+            if (!mapaVoosInstancia) {
+                // Coordenadas aproximadas da região Clealco (Clementina / Queiroz / SP)
+                mapaVoosInstancia = L.map('mapa-voos-container', {
+                    center: [-21.55, -50.40],
+                    zoom: 10,
+                    zoomControl: true
+                });
+
+                // Camadas Base
+                const sateliteGoogle = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                    maxZoom: 20,
+                    attribution: '© Google Satellite & Hybrid'
+                });
+
+                const sateliteEsri = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+                    maxZoom: 19,
+                    attribution: '© Esri World Imagery'
+                });
+
+                const mapaRuas = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap contributors'
+                });
+
+                sateliteGoogle.addTo(mapaVoosInstancia);
+
+                L.control.layers({
+                    "🛰️ Satélite Híbrido (Google)": sateliteGoogle,
+                    "🌍 Satélite Puro (Esri)": sateliteEsri,
+                    "🗺️ Mapa de Ruas (OSM)": mapaRuas
+                }, null, { position: 'topright' }).addTo(mapaVoosInstancia);
+            }
+
+            // Atualiza KPIs e desenha polígonos
+            aplicarFiltrosMapa();
+        }
+
+        function getEstiloTalhao(status) {
+            switch(status) {
+                case 'CRITICO':
+                    return { fillColor: '#dc2626', color: '#991b1b', weight: 1.5, fillOpacity: 0.65 };
+                case 'ATENCAO':
+                    return { fillColor: '#f59e0b', color: '#b45309', weight: 1.5, fillOpacity: 0.65 };
+                case 'NOPRAZO':
+                    return { fillColor: '#3b82f6', color: '#1d4ed8', weight: 1.5, fillOpacity: 0.60 };
+                case 'VOADO':
+                    return { fillColor: '#16a34a', color: '#15803d', weight: 1.2, fillOpacity: 0.40 };
+                default:
+                    return { fillColor: '#64748b', color: '#334155', weight: 1.0, fillOpacity: 0.35 };
+            }
+        }
+
+        function aplicarFiltrosMapa() {
+            if (!mapaVoosInstancia || !window.DADOS_MAPA_VOOS) return;
+
+            const filtroStatus = document.getElementById('mapa-filtro-status')?.value || 'TODOS';
+            const filtroTipo = document.getElementById('mapa-filtro-tipo')?.value || 'TODOS';
+
+            const features = window.DADOS_MAPA_VOOS.features;
+
+            // Contadores Globais
+            let totalBk = 0, areaBk = 0;
+            let totalCrit = 0, areaCrit = 0;
+            let totalAten = 0, areaAten = 0;
+            let totalPrazo = 0, areaPrazo = 0;
+            let totalVoado = 0, areaVoado = 0;
+            const topFazendasMap = {};
+
+            features.forEach(f => {
+                const p = f.properties || {};
+                const st = p.status;
+                const ha = parseFloat(p.area_ha) || 0;
+                const faz = p.fazenda || 'Outra';
+
+                if (st === 'CRITICO' || st === 'ATENCAO' || st === 'NOPRAZO') {
+                    totalBk++;
+                    areaBk += ha;
+                    topFazendasMap[faz] = (topFazendasMap[faz] || 0) + ha;
+                }
+
+                if (st === 'CRITICO') { totalCrit++; areaCrit += ha; }
+                else if (st === 'ATENCAO') { totalAten++; areaAten += ha; }
+                else if (st === 'NOPRAZO') { totalPrazo++; areaPrazo += ha; }
+                else if (st === 'VOADO') { totalVoado++; areaVoado += ha; }
+            });
+
+            // Atualiza KPIs
+            const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
+            setTxt('mapa-kpi-total-bk', totalBk);
+            setTxt('mapa-kpi-area-bk', areaBk.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+            setTxt('mapa-kpi-total-crit', totalCrit);
+            setTxt('mapa-kpi-area-crit', areaCrit.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+            setTxt('mapa-kpi-total-aten', totalAten);
+            setTxt('mapa-kpi-area-aten', areaAten.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+            setTxt('mapa-kpi-total-prazo', totalPrazo);
+            setTxt('mapa-kpi-area-prazo', areaPrazo.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+            setTxt('mapa-kpi-total-voado', totalVoado);
+            setTxt('mapa-kpi-area-voado', areaVoado.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+
+            setTxt('legenda-count-critico', totalCrit);
+            setTxt('legenda-count-atencao', totalAten);
+            setTxt('legenda-count-noprazo', totalPrazo);
+            setTxt('legenda-count-voado', totalVoado);
+
+            // Renderiza Top 5 Fazendas no Backlog
+            const containerTop = document.getElementById('mapa-top-fazendas');
+            if (containerTop) {
+                const sortedFaz = Object.entries(topFazendasMap).sort((a,b) => b[1] - a[1]).slice(0, 5);
+                containerTop.innerHTML = sortedFaz.map(([nome, ha], i) => `
+                    <div class="flex justify-between items-center py-0.5 border-b border-slate-100 last:border-none cursor-pointer hover:text-red-600 transition" onclick="document.getElementById('mapa-busca-input').value='${nome}'; filtrarBuscaMapa('${nome}')">
+                        <span class="truncate max-w-[170px] text-slate-700">${i+1}. ${nome}</span>
+                        <b class="text-slate-900 font-bold">${ha.toFixed(1)} ha</b>
+                    </div>
+                `).join('') || '<div class="text-slate-400">Nenhum backlog ativo</div>';
+            }
+
+            // Filtra features
+            featuresFiltradasAtuais = features.filter(f => {
+                const p = f.properties || {};
+                
+                // Filtro Status
+                if (filtroStatus === 'BACKLOG_TODOS') {
+                    if (p.status !== 'CRITICO' && p.status !== 'ATENCAO' && p.status !== 'NOPRAZO') return false;
+                } else if (filtroStatus !== 'TODOS' && p.status !== filtroStatus) {
+                    return false;
+                }
+
+                // Filtro Tipo
+                if (filtroTipo !== 'TODOS' && p.tipo !== filtroTipo) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            // Remove camada antiga se existir
+            if (camadaGeoJsonVoos) {
+                mapaVoosInstancia.removeLayer(camadaGeoJsonVoos);
+            }
+
+            // Adiciona nova camada GeoJSON
+            camadaGeoJsonVoos = L.geoJSON({
+                "type": "FeatureCollection",
+                "features": featuresFiltradasAtuais
+            }, {
+                style: (feat) => getEstiloTalhao(feat.properties.status),
+                onEachFeature: (feat, layer) => {
+                    const p = feat.properties || {};
+                    
+                    // Tooltip no hover
+                    layer.bindTooltip(`
+                        <b>${p.fazenda}</b> - T${p.talhao}<br>
+                        Área: ${p.area_ha} ha | Status: ${p.status}
+                    `, { sticky: true, className: 'leaflet-tooltip-clealco' });
+
+                    // Popup no clique
+                    const statusBadge = p.status === 'CRITICO' ? '<span class="px-2 py-0.5 bg-red-100 text-red-700 font-bold rounded text-[10px]">🔴 CRÍTICO (> 90d)</span>' :
+                                       p.status === 'ATENCAO' ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-700 font-bold rounded text-[10px]">🟡 ATENÇÃO (60-90d)</span>' :
+                                       p.status === 'NOPRAZO' ? '<span class="px-2 py-0.5 bg-blue-100 text-blue-700 font-bold rounded text-[10px]">🔵 NO PRAZO (&lt; 60d)</span>' :
+                                       '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded text-[10px]">🟢 JÁ VOADO</span>';
+
+                    const popupContent = `
+                        <div class="p-1 font-sans text-xs space-y-2 min-w-[240px]">
+                            <div class="border-b border-slate-200 pb-1.5 flex justify-between items-start gap-2">
+                                <div>
+                                    <h4 class="font-black text-slate-900 text-sm leading-tight uppercase">${p.fazenda}</h4>
+                                    <span class="text-slate-500 text-[11px]">FA: <b>${p.fa}</b> | Talhão: <b>${p.talhao}</b></span>
+                                </div>
+                                <div>${statusBadge}</div>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-1.5 bg-slate-50 p-2 rounded-lg border border-slate-200 text-[11px]">
+                                <div>Área: <b class="text-slate-900">${p.area_ha} ha</b></div>
+                                <div>Tipo: <b class="text-slate-900">${p.tipo}</b></div>
+                                <div>Plantio: <b class="text-slate-900">${p.data_plantio || 'N/D'}</b></div>
+                                <div>Idade: <b class="text-slate-900">${p.dias_brota ? p.dias_brota + ' dias' : 'N/D'}</b></div>
+                                ${p.variedade ? `<div class="col-span-2">Variedade: <b class="text-slate-900">${p.variedade}</b></div>` : ''}
+                                ${p.porte_cm ? `<div class="col-span-2">Porte: <b class="text-slate-900">${p.porte_cm} cm</b></div>` : ''}
+                            </div>
+
+                            <button onclick="baixarKMLTalhaoPorChave('${p.fa}', '${p.talhao}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition flex items-center justify-center gap-1.5 shadow-sm cursor-pointer mt-1">
+                                📥 <span>Baixar KML deste Talhão</span>
+                            </button>
+                        </div>
+                    `;
+
+                    layer.bindPopup(popupContent);
+                }
+            }).addTo(mapaVoosInstancia);
+
+            // Ajusta o zoom para englobar os talhões se houver
+            if (featuresFiltradasAtuais.length > 0 && camadaGeoJsonVoos.getBounds().isValid()) {
+                mapaVoosInstancia.fitBounds(camadaGeoJsonVoos.getBounds(), { padding: [30, 30], maxZoom: 15 });
+            }
+        }
+
+        function centralizarMapaVoos() {
+            if (camadaGeoJsonVoos && camadaGeoJsonVoos.getBounds().isValid()) {
+                mapaVoosInstancia.fitBounds(camadaGeoJsonVoos.getBounds(), { padding: [30, 30] });
+            }
+        }
+
+        function filtrarBuscaMapa(termo) {
+            const containerSug = document.getElementById('mapa-busca-sugestoes');
+            if (!containerSug) return;
+
+            const q = String(termo || '').trim().toUpperCase();
+            if (q.length < 2) {
+                containerSug.classList.add('hidden');
+                containerSug.innerHTML = '';
+                return;
+            }
+
+            const features = window.DADOS_MAPA_VOOS?.features || [];
+            const matches = features.filter(f => {
+                const p = f.properties || {};
+                return String(p.fazenda || '').toUpperCase().includes(q) ||
+                       String(p.fa || '').toUpperCase().includes(q) ||
+                       `T${p.talhao}`.toUpperCase() === q;
+            }).slice(0, 10);
+
+            if (matches.length === 0) {
+                containerSug.innerHTML = '<div class="p-2 text-slate-400 text-center">Nenhum talhão encontrado</div>';
+                containerSug.classList.remove('hidden');
+                return;
+            }
+
+            containerSug.innerHTML = matches.map(f => {
+                const p = f.properties || {};
+                return `
+                    <div class="p-2 hover:bg-slate-100 cursor-pointer flex justify-between items-center transition" onclick="selecionarTalhaoMapa('${p.fa}', '${p.talhao}')">
+                        <div>
+                            <b class="text-slate-900">${p.fazenda}</b>
+                            <span class="text-slate-500 block text-[10px]">FA ${p.fa} - Talhão ${p.talhao}</span>
+                        </div>
+                        <span class="text-[10px] font-bold text-slate-700">${p.area_ha} ha</span>
+                    </div>
+                `;
+            }).join('');
+            containerSug.classList.remove('hidden');
+        }
+
+        function selecionarTalhaoMapa(fa, talhao) {
+            document.getElementById('mapa-busca-sugestoes')?.classList.add('hidden');
+            if (!camadaGeoJsonVoos) return;
+
+            let layerEncontrado = null;
+            camadaGeoJsonVoos.eachLayer(layer => {
+                const p = layer.feature?.properties || {};
+                if (String(p.fa).trim().lstrip?.('0') === String(fa).trim().lstrip?.('0') || (p.fa == fa && p.talhao == talhao)) {
+                    if (p.talhao == talhao) {
+                        layerEncontrado = layer;
+                    }
+                }
+            });
+
+            if (layerEncontrado) {
+                mapaVoosInstancia.fitBounds(layerEncontrado.getBounds(), { maxZoom: 16 });
+                layerEncontrado.openPopup();
+            }
+        }
+
+        function baixarKMLTalhaoPorChave(fa, talhao) {
+            const features = window.DADOS_MAPA_VOOS?.features || [];
+            const feat = features.find(f => {
+                const p = f.properties || {};
+                return String(p.fa) === String(fa) && String(p.talhao) === String(talhao);
+            });
+            if (!feat) return;
+
+            const p = feat.properties;
+            const geom = feat.geometry;
+            const nome = `${p.fazenda || 'FAZENDA'}_T${p.talhao}`.replace(/[\/\\?%*:|"<>]/g, '_');
+
+            let kmlCoords = "";
+            if (geom.type === "Polygon") {
+                kmlCoords = geom.coordinates[0].map(c => `${c[0]},${c[1]},0`).join(' ');
+            } else if (geom.type === "MultiPolygon") {
+                kmlCoords = geom.coordinates[0][0].map(c => `${c[0]},${c[1]},0`).join(' ');
+            }
+
+            const kmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>${nome}</name>
+    <Style id="talhaoClealco">
+      <LineStyle><color>ff0000ff</color><width>2.5</width></LineStyle>
+      <PolyStyle><color>4d0000ff</color></PolyStyle>
+    </Style>
+    <Placemark>
+      <name>${nome} - ${p.area_ha} ha</name>
+      <description><![CDATA[
+        <b>Fazenda:</b> ${p.fazenda}<br>
+        <b>FA:</b> ${p.fa}<br>
+        <b>Talhão:</b> ${p.talhao}<br>
+        <b>Área:</b> ${p.area_ha} ha<br>
+        <b>Status:</b> ${p.status}<br>
+        <b>Idade / Dias:</b> ${p.dias_brota || '-'}<br>
+        <b>Porte:</b> ${p.porte_cm || '-'}<br>
+        <b>Variedade:</b> ${p.variedade || '-'}
+      ]]></description>
+      <styleUrl>#talhaoClealco</styleUrl>
+      <Polygon>
+        <extrude>1</extrude>
+        <altitudeMode>clampToGround</altitudeMode>
+        <outerBoundaryIs>
+          <LinearRing>
+            <coordinates>${kmlCoords}</coordinates>
+          </LinearRing>
+        </outerBoundaryIs>
+      </Polygon>
+    </Placemark>
+  </Document>
+</kml>`;
+
+            const blob = new Blob([kmlContent], { type: 'application/vnd.google-earth.kml+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${nome}.kml`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function exportarKMLFiltro() {
+            if (!featuresFiltradasAtuais || featuresFiltradasAtuais.length === 0) {
+                alert('Nenhum talhão visível no filtro para exportar.');
+                return;
+            }
+
+            let placemarksKML = "";
+            featuresFiltradasAtuais.forEach(f => {
+                const p = f.properties || {};
+                const geom = f.geometry;
+                if (!geom || !geom.coordinates) return;
+
+                let coords = "";
+                if (geom.type === "Polygon") {
+                    coords = geom.coordinates[0].map(c => `${c[0]},${c[1]},0`).join(' ');
+                } else if (geom.type === "MultiPolygon") {
+                    coords = geom.coordinates[0][0].map(c => `${c[0]},${c[1]},0`).join(' ');
+                }
+
+                const nome = `${p.fazenda || 'FAZENDA'}_T${p.talhao}`;
+                placemarksKML += `
+    <Placemark>
+      <name>${nome} (${p.area_ha} ha)</name>
+      <description><![CDATA[
+        <b>Fazenda:</b> ${p.fazenda}<br>
+        <b>FA:</b> ${p.fa} | <b>Talhão:</b> ${p.talhao}<br>
+        <b>Área:</b> ${p.area_ha} ha | <b>Tipo:</b> ${p.tipo}<br>
+        <b>Status:</b> ${p.status} | <b>Dias:</b> ${p.dias_brota || '-'}<br>
+        <b>Porte:</b> ${p.porte_cm || '-'}<br>
+        <b>Variedade:</b> ${p.variedade || '-'}
+      ]]></description>
+      <Polygon>
+        <outerBoundaryIs><LinearRing><coordinates>${coords}</coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>`;
+            });
+
+            const kmlCompleto = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>Talhoes_Clealco_Backlog</name>
+    ${placemarksKML}
+  </Document>
+</kml>`;
+
+            const blob = new Blob([kmlCompleto], { type: 'application/vnd.google-earth.kml+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Talhoes_Clealco_Backlog_${new Date().toISOString().slice(0,10)}.kml`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
 
         function alternarTema() {

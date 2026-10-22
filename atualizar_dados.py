@@ -148,3 +148,172 @@ with open(caminho_js, "w", encoding="utf-8") as f:
     f.write("window.DADOS_CLEALCO_EMBARCADOS = " + json.dumps(dados_completos, ensure_ascii=False, indent=2) + ";\n")
 
 print(f"dados_injetados.js criado com sucesso! {len(base_proc)} voos, {len(backlog)} backlog, {len(falhas)} falhas.")
+
+# ================= 6. MOTOR GEOGRÁFICO (MAPA OPERACIONAL DE VOOS) =================
+try:
+    from osgeo import ogr
+    import os, time
+    
+    t_mapa = time.time()
+    caminho_shp = r"W:\11-SHAPES TEMATICOS\09-SHP ATUALIZADO\SHP_CLEALCO.shp"
+    caminho_mapa_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_mapa_voos.js"
+    
+    if os.path.exists(caminho_shp):
+        print("Processando Shapefile SHP_CLEALCO para o Mapa de Voos...")
+        
+        # Mapa de voados
+        fas_voadas = set(p['fa'].strip().lstrip('0') for p in base_proc if p.get('fa'))
+        
+        # Dicionário do Backlog indexado por (FA, Talhao)
+        backlog_dict = {}
+        for b in backlog:
+            fa_norm = str(b.get('fa') or '').strip().lstrip('0')
+            tal_norm = str(b.get('talhao') or '').strip().lstrip('0')
+            if fa_norm:
+                backlog_dict[(fa_norm, tal_norm)] = {
+                    "fa": b.get('fa'),
+                    "fazenda": b.get('fazenda'),
+                    "talhao": b.get('talhao'),
+                    "tipo": b.get('tipo', 'Terceiro'),
+                    "ha": b.get('ha', 0.0),
+                    "data_plantio": b.get('data', ''),
+                    "dias_brota": int(b.get('dias')) if str(b.get('dias')).isdigit() else 0,
+                    "status_prazo": b.get('status_prazo', ''),
+                    "porte_cm": "",
+                    "variedade": "",
+                    "semaforo": b.get('status_prazo', '')
+                }
+        
+        # Enriquecer com planilhas de vistoria/porte se existirem
+        pastas_planilhas = [
+            r"M:\10-Planilhas\Voos Pós Plantio - Analise de Falhas\2026\BASES - RECEBIDAS",
+            r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\doc_planilhas"
+        ]
+        
+        for pasta in pastas_planilhas:
+            if not os.path.exists(pasta): continue
+            for arq in os.listdir(pasta):
+                if arq.endswith('.xlsx') and not arq.startswith('~$'):
+                    p_full = os.path.join(pasta, arq)
+                    try:
+                        wb_p = openpyxl.load_workbook(p_full, read_only=True, data_only=True)
+                        if 'VOOS' in wb_p.sheetnames:
+                            ws_p = wb_p['VOOS']
+                            rows_p = list(ws_p.iter_rows(values_only=True))
+                            h_idx = 3
+                            for r_i, r in enumerate(rows_p[:6]):
+                                if any('TALH' in str(c).upper() for c in r if c):
+                                    h_idx = r_i
+                                    break
+                            headers = [str(c).upper().strip() if c else '' for c in rows_p[h_idx]]
+                            idx_fa = next((i for i, h in enumerate(headers) if 'F.A' in h or h == 'FA' or 'FAZENDA' in h), 1)
+                            idx_tal = next((i for i, h in enumerate(headers) if 'TALH' in h), 4)
+                            idx_porte = next((i for i, h in enumerate(headers) if 'PORTE' in h), -1)
+                            idx_var = next((i for i, h in enumerate(headers) if 'VARIEDADE' in h), -1)
+                            idx_sem = next((i for i, h in enumerate(headers) if 'SEMAFARO' in h or 'SEMAFORO' in h), -1)
+                            
+                            for r in rows_p[h_idx+1:]:
+                                fa_v = str(r[idx_fa] or '').strip().lstrip('0')
+                                tal_v = str(r[idx_tal] or '').strip().lstrip('0')
+                                k = (fa_v, tal_v)
+                                if k in backlog_dict:
+                                    if idx_porte != -1 and r[idx_porte] and not backlog_dict[k]["porte_cm"]:
+                                        backlog_dict[k]["porte_cm"] = str(r[idx_porte]).strip()
+                                    if idx_var != -1 and r[idx_var] and not backlog_dict[k]["variedade"]:
+                                        backlog_dict[k]["variedade"] = str(r[idx_var]).strip()
+                                    if idx_sem != -1 and r[idx_sem]:
+                                        backlog_dict[k]["semaforo"] = str(r[idx_sem]).strip()
+                    except: pass
+        
+        # Leitura do SHP
+        ds = ogr.Open(caminho_shp)
+        layer = ds.GetLayer()
+        features_geojson = []
+        matched_keys = set()
+        
+        shp_itens = []
+        for feat in layer:
+            geom = feat.GetGeometryRef()
+            if not geom: continue
+            faz_code = str(feat.GetField('FAZENDA') or '').strip().lstrip('0')
+            tal_code = str(feat.GetField('TALHAO') or '').strip().lstrip('0')
+            nome_f = str(feat.GetField('NOME_FAZ') or '').strip().upper()
+            shp_itens.append({
+                "fa": faz_code,
+                "tal": tal_code,
+                "nome": nome_f,
+                "feat": feat
+            })
+            
+        for item in shp_itens:
+            faz = item["fa"]
+            tal = item["tal"]
+            nome = item["nome"]
+            feat = item["feat"]
+            
+            k = (faz, tal)
+            bk = backlog_dict.get(k)
+            
+            # Fallback por nome da fazenda se nao achou por codigo FA
+            if not bk:
+                for b_k, b_val in backlog_dict.items():
+                    if b_k not in matched_keys and b_k[1] == tal:
+                        b_nome = b_val["fazenda"].upper()
+                        if b_nome in nome or nome in b_nome:
+                            bk = b_val
+                            k = b_k
+                            break
+            
+            status_voo = "OUTRO"
+            if bk:
+                matched_keys.add(k)
+                dias = bk["dias_brota"]
+                if dias > 90 or "atrasado" in bk["status_prazo"].lower():
+                    status_voo = "CRITICO"
+                elif dias >= 60:
+                    status_voo = "ATENCAO"
+                else:
+                    status_voo = "NOPRAZO"
+            elif faz in fas_voadas:
+                status_voo = "VOADO"
+            else:
+                continue
+                
+            geom = feat.GetGeometryRef()
+            geom_simpl = geom.Simplify(0.00004) # ~4m de precisao para manter arquivo leve
+            geojson_geom = json.loads(geom_simpl.ExportToJson())
+            
+            props = {
+                "fa": bk["fa"] if bk else feat.GetField('FAZENDA'),
+                "fazenda": bk["fazenda"] if bk else feat.GetField('NOME_FAZ'),
+                "talhao": bk["talhao"] if bk else feat.GetField('TALHAO'),
+                "area_ha": bk["ha"] if bk else round(float(feat.GetField('AREA_TOTAL') or 0), 2),
+                "status": status_voo,
+                "tipo": bk["tipo"] if bk else ("Própria" if "PROP" in str(feat.GetField('ZONA') or '') else "Terceiro"),
+                "dias_brota": bk["dias_brota"] if bk else 0,
+                "porte_cm": bk["porte_cm"] if bk else "",
+                "variedade": bk["variedade"] if bk else "",
+                "data_plantio": bk["data_plantio"] if bk else ""
+            }
+            
+            features_geojson.append({
+                "type": "Feature",
+                "properties": props,
+                "geometry": geojson_geom
+            })
+            
+        geo_col = {
+            "type": "FeatureCollection",
+            "features": features_geojson
+        }
+        
+        with open(caminho_mapa_js, "w", encoding="utf-8") as f:
+            f.write("window.DADOS_MAPA_VOOS = " + json.dumps(geo_col, ensure_ascii=False) + ";\n")
+            
+        mb = os.path.getsize(caminho_mapa_js) / (1024*1024)
+        print(f"dados_mapa_voos.js gerado com sucesso! {len(features_geojson)} talhões mapeados ({len(matched_keys)} backlog cruzados) - {mb:.2f} MB em {time.time()-t_mapa:.2f}s")
+    else:
+        print(f"Aviso: Shapefile {caminho_shp} não encontrado.")
+except Exception as e:
+    print(f"Aviso: Erro ao gerar dados_mapa_voos.js: {e}")
+
