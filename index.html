@@ -1372,26 +1372,22 @@
         </div>
     </div>
 
-    <!-- ================= MODAL DE SEGURANÇA E ACESSO RESTRITO (GLASSMORPHISM & SPLASH 1S) ================= -->
-    <div id="modal-autenticacao" class="fixed inset-0 bg-slate-950/80 backdrop-blur-xl flex items-center justify-center z-[99999] p-4 transition-all duration-500">
-        <!-- Card Central Glassmorphism -->
-        <div class="relative w-full max-w-sm bg-white/95 backdrop-blur-2xl rounded-[32px] p-7 shadow-2xl border border-white/60 text-center overflow-hidden transition-all duration-300">
-            
-            <!-- Brilho de Fundo Suave -->
-            <div class="absolute -top-16 -left-16 w-36 h-36 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none"></div>
-            <div class="absolute -bottom-16 -right-16 w-36 h-36 bg-red-600/10 rounded-full blur-3xl pointer-events-none"></div>
+    <!-- ================= MODAL DE SEGURANÇA E ACESSO RESTRITO ================= -->
+    <div id="modal-autenticacao" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md flex items-center justify-center z-[99999] p-4 transition-all duration-500">
+        <!-- Card Central Clean -->
+        <div class="relative w-full max-w-sm bg-white rounded-3xl p-6 shadow-2xl border border-slate-100 text-center overflow-hidden transition-all duration-300">
 
-            <!-- Topo com Logo Clealco Oficial e Emblema Telemetria -->
-            <div class="mb-4">
-                <div class="relative overflow-hidden rounded-2xl shadow-md border border-emerald-900/40 bg-slate-950 p-1">
-                    <img src="logo_login_clealco.jpg?v=1" alt="Clealco - Açúcar, Etanol e Energia" class="w-full h-auto object-cover rounded-xl">
+            <!-- Topo com Logo Oficial Clealco e Emblema Telemetria -->
+            <div class="mb-3">
+                <div class="relative overflow-hidden rounded-2xl shadow-sm border border-slate-200/80 bg-[#091712]">
+                    <img src="logo_login_clealco.jpg?v=2" alt="Clealco - Açúcar, Etanol e Energia" class="w-full h-auto object-cover rounded-xl block">
                 </div>
             </div>
 
             <!-- Identidade & Título -->
             <h3 class="text-xl font-black text-slate-900 tracking-tight leading-tight">Painel Operacional</h3>
-            <p class="text-[11px] font-bold text-emerald-700 tracking-wider uppercase mt-0.5">Geotecnologia & Qualidade</p>
-            <p class="text-xs text-slate-500 mt-2 leading-relaxed">Área restrita à equipe. Digite a senha para liberar os dados criptografados:</p>
+            <p class="text-[11px] font-bold text-red-600 tracking-wider uppercase mt-0.5">Geotecnologia & Qualidade</p>
+            <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Área restrita à equipe. Digite a senha para liberar o painel:</p>
 
             <!-- Formulário de Login (Normal) -->
             <form id="form-auth" onsubmit="processarAutenticacao(event)" class="mt-5 space-y-3.5">
