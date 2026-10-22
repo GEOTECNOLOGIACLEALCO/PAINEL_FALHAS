@@ -696,11 +696,11 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "data_voo": "12/08/2026",
       "data_proc": "13/08/2026",
       "tif": "FEITO",
-      "linhas": "PENDENTE",
+      "linhas": "FEITO",
       "data_linhas": "13/08/2026",
       "ha_voo": 12.89,
-      "area_kml": 0.0,
-      "bd_falhas": "PENDENTE",
+      "area_kml": 12.93,
+      "bd_falhas": "FEITO",
       "bd_pisoteio": "FEITO",
       "exp": "FEITO"
     },
@@ -5885,6 +5885,16 @@ window.DADOS_CLEALCO_EMBARCADOS = {
       "Indice_Falha": "Aceitável"
     },
     {
+      "FA": "306366",
+      "Fazenda": "SITIO SANTA CLARA I",
+      "Tipo": "Terceiro",
+      "Area_Ha": 12.93,
+      "Comp_Linhas": 167706.74,
+      "Comp_Falhas": 96.6,
+      "Porc_Falha": 0.06,
+      "Indice_Falha": "Aceitável"
+    },
+    {
       "FA": "306470",
       "Fazenda": "SÍTIO SÃO PAULO",
       "Tipo": "Terceiro",
@@ -6387,5 +6397,5 @@ window.DADOS_CLEALCO_EMBARCADOS = {
   },
   "acompanhamento": [],
   "creditos_inforow": 11195.23,
-  "data_compilacao": "22/10/2026 às 09:52"
+  "data_compilacao": "22/10/2026 às 10:38"
 };
