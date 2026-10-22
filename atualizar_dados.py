@@ -1,5 +1,29 @@
-import openpyxl, json
+import openpyxl, json, os, base64
 from datetime import datetime
+from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
+from cryptography.hazmat.primitives import hashes
+
+CHAVE_ACESSO_CLEALCO = "Clealco@Geo2026"
+
+def criptografar_payload(data_str, password=CHAVE_ACESSO_CLEALCO):
+    salt = os.urandom(16)
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=salt,
+        iterations=100000,
+    )
+    key = kdf.derive(password.encode('utf-8'))
+    aesgcm = AESGCM(key)
+    iv = os.urandom(12)
+    ciphertext = aesgcm.encrypt(iv, data_str.encode('utf-8'), None)
+    return {
+        "c": True,
+        "s": base64.b64encode(salt).decode('utf-8'),
+        "i": base64.b64encode(iv).decode('utf-8'),
+        "d": base64.b64encode(ciphertext).decode('utf-8')
+    }
 
 caminho_xlsx = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados.xlsx"
 caminho_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_injetados.js"
@@ -152,10 +176,13 @@ dados_completos = {
     "data_compilacao": datetime.now().strftime("%d/%m/%Y às %H:%M")
 }
 
-with open(caminho_js, "w", encoding="utf-8") as f:
-    f.write("window.DADOS_CLEALCO_EMBARCADOS = " + json.dumps(dados_completos, ensure_ascii=False, indent=2) + ";\n")
+dados_str = json.dumps(dados_completos, ensure_ascii=False)
+payload_cifrado = criptografar_payload(dados_str, CHAVE_ACESSO_CLEALCO)
 
-print(f"dados_injetados.js criado com sucesso! {len(base_proc)} voos, {len(backlog)} backlog, {len(falhas)} falhas.")
+with open(caminho_js, "w", encoding="utf-8") as f:
+    f.write("window.DADOS_CLEALCO_EMBARCADOS = " + json.dumps(payload_cifrado, ensure_ascii=False) + ";\n")
+
+print(f"dados_injetados.js criptografado com sucesso! {len(base_proc)} voos, {len(backlog)} backlog, {len(falhas)} falhas.")
 
 # ================= 6. MOTOR GEOGRÁFICO (MAPA OPERACIONAL DE VOOS) =================
 try:
@@ -331,11 +358,14 @@ try:
             "features": features_geojson
         }
         
+        geo_str = json.dumps(geo_col, ensure_ascii=False)
+        payload_mapa_cifrado = criptografar_payload(geo_str, CHAVE_ACESSO_CLEALCO)
+        
         with open(caminho_mapa_js, "w", encoding="utf-8") as f:
-            f.write("window.DADOS_MAPA_VOOS = " + json.dumps(geo_col, ensure_ascii=False) + ";\n")
+            f.write("window.DADOS_MAPA_VOOS = " + json.dumps(payload_mapa_cifrado, ensure_ascii=False) + ";\n")
             
         mb = os.path.getsize(caminho_mapa_js) / (1024*1024)
-        print(f"dados_mapa_voos.js gerado com sucesso! {len(features_geojson)} talhões mapeados ({len(matched_keys)} backlog cruzados) - {mb:.2f} MB em {time.time()-t_mapa:.2f}s")
+        print(f"dados_mapa_voos.js criptografado com sucesso! {len(features_geojson)} talhões mapeados ({len(matched_keys)} backlog cruzados) - {mb:.2f} MB em {time.time()-t_mapa:.2f}s")
     else:
         print(f"Aviso: Shapefile {caminho_shp} não encontrado.")
 except Exception as e:

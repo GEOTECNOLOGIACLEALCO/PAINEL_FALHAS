@@ -474,6 +474,10 @@
                     <span class="sidebar-text truncate font-bold text-red-600">Importar Planilha</span>
                 </button>
                 <input type="file" id="file-input" accept=".xlsx, .xls" class="hidden" onchange="carregarArquivoManual(event)">
+                <button onclick="bloquearPainel()" class="sidebar-btn hover:text-amber-800 text-amber-700 hover:bg-amber-50" title="Bloquear Painel / Sair da Sessão">
+                    <span class="sidebar-icon">🔒</span>
+                    <span class="sidebar-text truncate font-medium">Bloquear Acesso</span>
+                </button>
             </div>
         </div>
 
@@ -1368,6 +1372,53 @@
         </div>
     </div>
 
+    <!-- ================= MODAL DE SEGURANÇA E ACESSO RESTRITO ================= -->
+    <div id="modal-autenticacao" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md flex items-center justify-center z-[99999] p-4 transition-all duration-300">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-slate-100 relative text-center animate-in fade-in zoom-in duration-200">
+            <!-- Emblema / Ícone do App -->
+            <div class="relative w-20 h-20 mx-auto mb-4">
+                <img src="icon-192.png?v=2" alt="Clealco" class="w-20 h-20 rounded-2xl shadow-lg border-2 border-emerald-500/20 p-1 bg-slate-900 object-cover">
+                <div class="absolute -bottom-1 -right-1 bg-emerald-600 text-white rounded-full p-1.5 shadow">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </div>
+            </div>
+
+            <h3 class="text-xl font-black text-slate-900 leading-tight">Painel Operacional</h3>
+            <p class="text-xs text-slate-500 font-semibold tracking-wide uppercase mt-0.5">Geotecnologia & Qualidade Clealco</p>
+            <p class="text-[12px] text-slate-500 mt-2 px-2">Acesso restrito à equipe autorizada. Digite a senha do setor para descriptografar os dados:</p>
+
+            <form id="form-auth" onsubmit="processarAutenticacao(event)" class="mt-5 space-y-3">
+                <div class="relative">
+                    <input type="password" id="input-senha-acesso" placeholder="Senha de Acesso" required
+                           class="w-full px-4 py-3 text-center text-sm font-semibold tracking-wider bg-slate-50 border border-slate-300 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition">
+                    <button type="button" onclick="toggleVisibilidadeSenha()" class="absolute right-3 top-3 text-slate-400 hover:text-slate-600 text-sm">
+                        <span id="icone-ver-senha">👁️</span>
+                    </button>
+                </div>
+
+                <div class="flex items-center justify-between text-left px-1">
+                    <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-600 select-none">
+                        <input type="checkbox" id="chk-lembrar-acesso" checked class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500">
+                        <span>Lembrar neste aparelho</span>
+                    </label>
+                </div>
+
+                <div id="auth-erro-msg" class="text-xs text-red-600 font-bold hidden bg-red-50 p-2 rounded-lg border border-red-200">
+                    ❌ Senha incorreta. Tente novamente.
+                </div>
+
+                <button type="submit" id="btn-submit-auth"
+                        class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white text-sm font-bold rounded-xl shadow-lg shadow-emerald-600/30 transition flex items-center justify-center gap-2">
+                    <span>🔓</span> Desbloquear Painel
+                </button>
+            </form>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
+                <span>🛡️ Criptografia AES-GCM 256-bit ponta a ponta</span>
+            </div>
+        </div>
+    </div>
+
     <!-- ================= JAVASCRIPT DINÂMICO DO PAINEL ================= -->
     <script>
         // Dados mestre em memória
@@ -1381,12 +1432,132 @@
         let filtroAtual = 'esta_semana';
         let modoAgrupadoBacklog = true; // Consolidado por FA como no print
 
-        // Inicialização
-        function inicializarPainel() {
-            // Modo claro permanente como padrão
-            document.body.classList.add('light-theme');
+        // ================= CRIPTOGRAFIA & AUTENTICAÇÃO SEGURA (AES-GCM-256) =================
+        const CHAVE_STORAGE_AUTH = 'clealco_geo_auth_token_v1';
 
-            // 1. Tentar ler dados embarcados do dados_injetados.js (sempre presente e instantâneo)
+        // Converte Base64 para Uint8Array
+        function base64ToBytes(base64) {
+            const binaryString = atob(base64);
+            const bytes = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) {
+                bytes[i] = binaryString.charCodeAt(i);
+            }
+            return bytes;
+        }
+
+        // Descriptografa payload { s: salt, i: iv, d: data } usando Web Crypto API nativa
+        async function descriptografarPayload(payload, senha) {
+            if (!payload || !payload.c || !payload.d) return payload; // Não está cifrado
+            const salt = base64ToBytes(payload.s);
+            const iv = base64ToBytes(payload.i);
+            const ciphertext = base64ToBytes(payload.d);
+
+            const enc = new TextEncoder();
+            const passwordKey = await crypto.subtle.importKey(
+                'raw',
+                enc.encode(senha),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveKey']
+            );
+
+            const aesKey = await crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: salt,
+                    iterations: 100000,
+                    hash: 'SHA-256'
+                },
+                passwordKey,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['decrypt']
+            );
+
+            const decryptedBuffer = await crypto.subtle.decrypt(
+                { name: 'AES-GCM', iv: iv },
+                aesKey,
+                ciphertext
+            );
+
+            const dec = new TextDecoder();
+            const jsonStr = dec.decode(decryptedBuffer);
+            return JSON.parse(jsonStr);
+        }
+
+        function toggleVisibilidadeSenha() {
+            const input = document.getElementById('input-senha-acesso');
+            const icone = document.getElementById('icone-ver-senha');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icone.innerText = '🙈';
+            } else {
+                input.type = 'password';
+                icone.innerText = '👁️';
+            }
+        }
+
+        function bloquearPainel() {
+            try {
+                localStorage.removeItem(CHAVE_STORAGE_AUTH);
+            } catch (e) {}
+            location.reload();
+        }
+
+        async function processarAutenticacao(event) {
+            if (event) event.preventDefault();
+            const input = document.getElementById('input-senha-acesso');
+            const erroMsg = document.getElementById('auth-erro-msg');
+            const btnSubmit = document.getElementById('btn-submit-auth');
+            const lembrar = document.getElementById('chk-lembrar-acesso')?.checked;
+            const senha = input ? input.value.trim() : '';
+
+            if (!senha) return;
+
+            erroMsg.classList.add('hidden');
+            btnSubmit.innerHTML = '⏳ <span>Verificando...</span>';
+            btnSubmit.disabled = true;
+
+            try {
+                let dadosDecifrados = window.DADOS_CLEALCO_EMBARCADOS;
+                if (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.c) {
+                    dadosDecifrados = await descriptografarPayload(window.DADOS_CLEALCO_EMBARCADOS, senha);
+                }
+
+                let mapaDecifrado = window.DADOS_MAPA_VOOS;
+                if (window.DADOS_MAPA_VOOS && window.DADOS_MAPA_VOOS.c) {
+                    mapaDecifrado = await descriptografarPayload(window.DADOS_MAPA_VOOS, senha);
+                }
+
+                // Se chegou aqui, a senha está correta!
+                window.DADOS_CLEALCO_EMBARCADOS = dadosDecifrados;
+                window.DADOS_MAPA_VOOS = mapaDecifrado;
+
+                if (lembrar) {
+                    try {
+                        localStorage.setItem(CHAVE_STORAGE_AUTH, btoa(encodeURIComponent(senha)));
+                    } catch (e) {}
+                }
+
+                // Esconde modal de autenticação
+                const modal = document.getElementById('modal-autenticacao');
+                if (modal) modal.classList.add('hidden');
+
+                // Renderiza painel completo
+                carregarDadosEmbarcadosERenderizar();
+            } catch (err) {
+                console.error("Falha de autenticação/descriptografia:", err);
+                erroMsg.classList.remove('hidden');
+                btnSubmit.innerHTML = '<span>🔓</span> Desbloquear Painel';
+                btnSubmit.disabled = false;
+                if (input) {
+                    input.value = '';
+                    input.focus();
+                }
+            }
+        }
+
+        function carregarDadosEmbarcadosERenderizar() {
             if (window.DADOS_CLEALCO_EMBARCADOS) {
                 dadosBase = window.DADOS_CLEALCO_EMBARCADOS.base_processamentos || [];
                 dadosBacklog = window.DADOS_CLEALCO_EMBARCADOS.backlog || [];
@@ -1405,8 +1576,66 @@
             renderizarAcompanhamento();
             renderizarFalhas();
 
-            // 2. Se estiver em HTTP/GitHub Pages, tentar buscar dados.xlsx fresco em segundo plano
-            tentarFetchExcelRemoto();
+            // Se o mapa já estiver na aba ativa, atualiza
+            if (typeof aplicarFiltrosMapa === 'function' && window.DADOS_MAPA_VOOS) {
+                aplicarFiltrosMapa();
+            }
+        }
+
+        // Inicialização Principal
+        async function inicializarPainel() {
+            // Modo claro permanente como padrão
+            document.body.classList.add('light-theme');
+
+            // Verifica se os dados estão criptografados
+            const dadosCriptografados = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.c) ||
+                                       (window.DADOS_MAPA_VOOS && window.DADOS_MAPA_VOOS.c);
+
+            if (!dadosCriptografados) {
+                // Modo aberto legado (sem criptografia)
+                const modal = document.getElementById('modal-autenticacao');
+                if (modal) modal.classList.add('hidden');
+                carregarDadosEmbarcadosERenderizar();
+                tentarFetchExcelRemoto();
+                return;
+            }
+
+            // Tenta recuperar senha salva no dispositivo
+            let senhaSalva = null;
+            try {
+                const token = localStorage.getItem(CHAVE_STORAGE_AUTH);
+                if (token) {
+                    senhaSalva = decodeURIComponent(atob(token));
+                }
+            } catch (e) {}
+
+            if (senhaSalva) {
+                try {
+                    let dadosDecifrados = await descriptografarPayload(window.DADOS_CLEALCO_EMBARCADOS, senhaSalva);
+                    let mapaDecifrado = await descriptografarPayload(window.DADOS_MAPA_VOOS, senhaSalva);
+                    window.DADOS_CLEALCO_EMBARCADOS = dadosDecifrados;
+                    window.DADOS_MAPA_VOOS = mapaDecifrado;
+
+                    const modal = document.getElementById('modal-autenticacao');
+                    if (modal) modal.classList.add('hidden');
+
+                    carregarDadosEmbarcadosERenderizar();
+                    return;
+                } catch (e) {
+                    console.log("Token salvo inválido ou expirado, solicitando senha.");
+                    try { localStorage.removeItem(CHAVE_STORAGE_AUTH); } catch(ex) {}
+                }
+            }
+
+            // Se não tem senha salva ou falhou, exibe modal de login
+            const modal = document.getElementById('modal-autenticacao');
+            if (modal) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    const inp = document.getElementById('input-senha-acesso');
+                    if (inp) inp.focus();
+                }, 300);
+            }
         }
 
         function gerarPDFExecutivo() {
