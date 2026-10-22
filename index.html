@@ -316,73 +316,217 @@
             border-radius: 14px !important;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
         }
+
+        /* ================= SIDEBAR LATERAL ESQUERDA ================= */
+        #sidebar-principal {
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Estado colapsado no desktop (apenas ícones centralizados) */
+        #sidebar-principal.sidebar-collapsed {
+            width: 76px !important;
+        }
+        #sidebar-principal.sidebar-collapsed .sidebar-text,
+        #sidebar-principal.sidebar-collapsed .sidebar-section-title,
+        #sidebar-principal.sidebar-collapsed .sidebar-logo-text {
+            display: none !important;
+        }
+        #sidebar-principal.sidebar-collapsed .sidebar-btn {
+            justify-content: center !important;
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+        #sidebar-principal.sidebar-collapsed .sidebar-logo-container {
+            justify-content: center !important;
+            padding: 14px 0 !important;
+        }
+        #sidebar-principal.sidebar-collapsed #btn-toggle-sidebar-bottom span.sidebar-text {
+            display: none !important;
+        }
+        #sidebar-principal.sidebar-collapsed #btn-toggle-sidebar-bottom {
+            justify-content: center !important;
+        }
+
+        /* Botões da Sidebar */
+        .sidebar-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            padding: 9px 12px;
+            border-radius: 12px;
+            font-size: 0.83rem;
+            font-weight: 600;
+            color: #475569;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border: 1px solid transparent;
+            text-align: left;
+        }
+        .sidebar-btn:hover {
+            color: #0F172A;
+            background: rgba(227, 6, 19, 0.06);
+        }
+        .sidebar-btn.active {
+            color: #E30613 !important;
+            background: rgba(227, 6, 19, 0.12) !important;
+            border-color: rgba(227, 6, 19, 0.35) !important;
+            font-weight: 700;
+            box-shadow: 0 0 10px rgba(227, 6, 19, 0.10);
+        }
+        .sidebar-icon {
+            font-size: 1.15rem;
+            line-height: 1;
+            flex-shrink: 0;
+            width: 22px;
+            text-align: center;
+        }
+
+        /* Ocultar sidebar no modo TV e na impressão */
+        body.modo-tv #sidebar-principal,
+        body.modo-tv header.topbar-compacto {
+            display: none !important;
+        }
+        @media print {
+            #sidebar-principal,
+            header.topbar-compacto,
+            #sidebar-backdrop {
+                display: none !important;
+            }
+        }
     </style>
 </head>
-<body class="min-h-screen flex flex-col justify-between">
+<body class="min-h-screen bg-slate-100 flex flex-col md:flex-row antialiased text-slate-800">
 
-    <!-- TOPBAR / CABEÇALHO -->
-    <header class="w-full border-b border-slate-200 bg-white/95 backdrop-blur-md sticky top-0 z-50 px-6 py-3 shadow-sm">
-        <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
-            
-            <!-- Logo & Identidade -->
-            <div class="flex items-center gap-5">
-                <div class="flex items-center">
-                    <img src="logo_clealco.png" alt="Clealco" onerror="this.outerHTML='<div class=\'text-red-600 font-black text-2xl tracking-wider\'>CLEALCO</div>'" class="h-14 md:h-16 w-auto object-contain">
-                </div>
-                <div class="border-l border-slate-200 pl-4">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xs tracking-widest text-red-600 uppercase font-bold">Singularity AI</span>
-                        <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300">
-                            ● Base Ativa
-                        </span>
+    <!-- BACKDROP PARA MOBILE (Fecha gaveta ao tocar fora) -->
+    <div id="sidebar-backdrop" onclick="fecharSidebarMobile()" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity"></div>
+
+    <!-- ================= BARRA LATERAL ESQUERDA (SIDEBAR RETRÁTIL) ================= -->
+    <aside id="sidebar-principal" class="fixed md:sticky top-0 left-0 h-screen z-50 flex flex-col justify-between bg-white border-r border-slate-200 shadow-2xl md:shadow-none w-64 -translate-x-full md:translate-x-0 overflow-y-auto no-print flex-shrink-0 select-none transition-all duration-300">
+        
+        <!-- Topo da Sidebar: Logo & Identidade -->
+        <div>
+            <div class="sidebar-logo-container flex items-center justify-between p-3.5 border-b border-slate-100">
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <img src="logo_clealco.png" alt="Clealco" onerror="this.outerHTML='<div class=\'text-red-600 font-black text-xl tracking-wider\'>CLEALCO</div>'" class="h-10 w-auto object-contain flex-shrink-0">
+                    <div class="sidebar-logo-text border-l border-slate-200 pl-2.5">
+                        <div class="text-[10px] tracking-widest text-red-600 uppercase font-black">Singularity AI</div>
+                        <div class="text-[11px] text-slate-500 font-semibold truncate">Geotecnologia</div>
                     </div>
-                    <h1 class="text-xs md:text-sm text-slate-600 font-medium">Controle Operacional de Voos & Processamentos</h1>
                 </div>
+
+                <!-- Botão Fechar no Mobile -->
+                <button onclick="fecharSidebarMobile()" class="md:hidden text-slate-400 hover:text-slate-700 p-1 rounded-lg">
+                    ✕
+                </button>
             </div>
 
-            <!-- Navegação por Abas -->
-            <nav class="flex items-center gap-1 bg-slate-100 p-1.5 rounded-xl border border-slate-200">
-                <button class="tab-btn active" onclick="trocarAba('dashboard')">
-                    <span>🛸</span> Visão Geral
+            <!-- Grupo 1: Navegação por Abas -->
+            <div class="p-3 space-y-1">
+                <span class="sidebar-section-title text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 py-1 block">Navegação</span>
+                
+                <button class="sidebar-btn tab-btn active" onclick="trocarAba('dashboard')" title="Visão Geral">
+                    <span class="sidebar-icon">🛸</span>
+                    <span class="sidebar-text truncate">Visão Geral</span>
                 </button>
-                <button class="tab-btn" onclick="trocarAba('acompanhamento')">
-                    <span>📊</span> Acompanhamento
+                <button class="sidebar-btn tab-btn" onclick="trocarAba('acompanhamento')" title="Acompanhamento">
+                    <span class="sidebar-icon">📊</span>
+                    <span class="sidebar-text truncate">Acompanhamento</span>
                 </button>
-                <button class="tab-btn" onclick="trocarAba('falhas')">
-                    <span>📉</span> Falhas de Plantio
+                <button class="sidebar-btn tab-btn" onclick="trocarAba('falhas')" title="Falhas de Plantio">
+                    <span class="sidebar-icon">📉</span>
+                    <span class="sidebar-text truncate">Falhas de Plantio</span>
                 </button>
-                <button class="tab-btn" onclick="trocarAba('backlog')">
-                    <span>✈️</span> Backlog (Faltam Voar)
+                <button class="sidebar-btn tab-btn" onclick="trocarAba('backlog')" title="Backlog (Faltam Voar)">
+                    <span class="sidebar-icon">✈️</span>
+                    <span class="sidebar-text truncate">Backlog (Faltam Voar)</span>
                 </button>
-                <button class="tab-btn" onclick="trocarAba('mapa')">
-                    <span>🗺️</span> Mapa de Voos
+                <button class="sidebar-btn tab-btn" onclick="trocarAba('mapa')" title="Mapa de Voos">
+                    <span class="sidebar-icon">🗺️</span>
+                    <span class="sidebar-text truncate">Mapa de Voos</span>
                 </button>
-            </nav>
+            </div>
 
-            <!-- Ações e Controles -->
-            <div class="flex items-center gap-2">
-                <button onclick="forcarLimpezaCacheEAtualizar()" id="btn-limpar-cache" title="Limpar cache do navegador e recarregar os dados mais recentes do GitHub" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
-                    🔄 <span>Atualizar Dados</span>
+            <div class="px-4"><hr class="border-slate-100"></div>
+
+            <!-- Grupo 2: Ações & Ferramentas -->
+            <div class="p-3 space-y-1">
+                <span class="sidebar-section-title text-[10px] uppercase font-bold tracking-wider text-slate-400 px-3 py-1 block">Ferramentas</span>
+
+                <button onclick="forcarLimpezaCacheEAtualizar()" id="btn-limpar-cache" class="sidebar-btn hover:text-emerald-700" title="Atualizar Dados e Limpar Cache">
+                    <span class="sidebar-icon text-emerald-600">🔄</span>
+                    <span class="sidebar-text truncate">Atualizar Dados</span>
                 </button>
-                <button onclick="acionarInstalacaoApp()" id="btn-instalar-app" title="Instalar no Celular, Tablet ou Computador" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
-                    📲 <span>Instalar App</span>
+                <button onclick="acionarInstalacaoApp()" id="btn-instalar-app" class="sidebar-btn hover:text-blue-700" title="Instalar no Celular, Tablet ou PC">
+                    <span class="sidebar-icon text-blue-600">📲</span>
+                    <span class="sidebar-text truncate">Instalar App</span>
                 </button>
-                <button onclick="toggleModoTV()" id="btn-modo-tv" title="Modo Apresentação TV (Tela Cheia)" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
-                    📺 <span>Modo TV</span>
+                <button onclick="toggleModoTV()" id="btn-modo-tv" class="sidebar-btn hover:text-purple-700" title="Modo Apresentação TV">
+                    <span class="sidebar-icon text-purple-600">📺</span>
+                    <span class="sidebar-text truncate">Modo TV</span>
                 </button>
-                <button onclick="gerarPDFExecutivo()" title="Imprimir ou Salvar PDF Executivo" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
-                    🖨️ <span>PDF Executivo</span>
+                <button onclick="gerarPDFExecutivo()" class="sidebar-btn hover:text-slate-900" title="Imprimir / Salvar PDF Executivo">
+                    <span class="sidebar-icon text-slate-600">🖨️</span>
+                    <span class="sidebar-text truncate">PDF Executivo</span>
                 </button>
-                <button onclick="document.getElementById('file-input').click()" title="Carregar outra planilha dados.xlsx" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg font-medium transition flex items-center gap-2 shadow-sm cursor-pointer">
-                    📁 <span>Importar Planilha</span>
+                <button onclick="document.getElementById('file-input').click()" class="sidebar-btn hover:text-red-700 bg-red-50/50" title="Importar Planilha Excel Manual">
+                    <span class="sidebar-icon text-red-600">📁</span>
+                    <span class="sidebar-text truncate font-bold text-red-600">Importar Planilha</span>
                 </button>
                 <input type="file" id="file-input" accept=".xlsx, .xls" class="hidden" onchange="carregarArquivoManual(event)">
             </div>
         </div>
-    </header>
 
-    <!-- ÁREA PRINCIPAL -->
-    <main id="main-content" class="max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex-grow transition-all duration-300">
+        <!-- Rodapé da Sidebar: Botão de Recolher/Expandir -->
+        <div class="p-3 border-t border-slate-100">
+            <button onclick="toggleSidebarCollapse()" id="btn-toggle-sidebar-bottom" class="sidebar-btn hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition justify-between" title="Recolher ou Expandir Barra Lateral">
+                <div class="flex items-center gap-3">
+                    <span id="icone-sidebar-collapse" class="sidebar-icon text-sm">◀</span>
+                    <span class="sidebar-text text-xs font-semibold">Recolher Menu</span>
+                </div>
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- ================= ÁREA DE CONTEÚDO (TOPBAR ENXUTO + MAIN + FOOTER) ================= -->
+    <div class="flex-1 flex flex-col min-w-0 min-h-screen bg-slate-100">
+
+        <!-- TOPBAR SUPERIOR ENXUTO -->
+        <header class="topbar-compacto w-full bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 md:px-6 py-2.5 flex items-center justify-between sticky top-0 z-30 shadow-xs">
+            <div class="flex items-center gap-3">
+                <!-- Botão Hamburger no Mobile -->
+                <button onclick="abrirSidebarMobile()" class="md:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100 transition" title="Abrir Menu">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+
+                <!-- Título dinâmico da Aba Ativa -->
+                <div>
+                    <h1 id="topbar-titulo-pagina" class="text-sm md:text-base font-black text-slate-900 flex items-center gap-2 uppercase tracking-wide">
+                        <span>🛸</span> VISÃO GERAL
+                    </h1>
+                </div>
+            </div>
+
+            <!-- Informações de Status e Sincronização -->
+            <div class="flex items-center gap-3 text-xs">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300">
+                    ● Base Ativa
+                </span>
+                <span class="hidden sm:flex items-center gap-1 text-slate-500 font-medium">
+                    Sync: <b id="lbl-data-hora" class="text-slate-800">Hoje</b>
+                </span>
+                <button onclick="forcarLimpezaCacheEAtualizar()" title="Atualizar dados agora" class="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-emerald-600 transition">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </button>
+                <button onclick="alternarTema()" id="btn-theme" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-2 py-1 rounded-lg font-medium transition cursor-pointer">
+                    🌙 Escuro
+                </button>
+            </div>
+        </header>
+
+        <!-- ÁREA PRINCIPAL -->
+        <main id="main-content" class="max-w-7xl w-full mx-auto p-3 sm:p-4 md:p-6 flex-grow transition-all duration-300">
 
         <!-- CABEÇALHO EXCLUSIVO PARA IMPRESSÃO / PDF -->
         <div class="print-header mb-6 pb-4 border-b-2 border-red-600">
@@ -1155,6 +1299,7 @@
             </div>
         </div>
     </footer>
+    </div>
 
     <!-- BARRA FLUTUANTE DE CONTROLE MODO TV -->
     <div id="tv-control-bar" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 bg-slate-900/95 text-white backdrop-blur-md px-5 py-2.5 rounded-full border border-slate-700 shadow-2xl flex items-center gap-4 transition-all duration-300 opacity-0 pointer-events-none no-print">
@@ -1976,8 +2121,24 @@
             const targetSection = document.getElementById('aba-' + id);
             if (targetSection) targetSection.classList.remove('hidden');
 
-            const btnAtivo = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick').includes(id));
+            const btnAtivo = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick')?.includes(id));
             if (btnAtivo) btnAtivo.classList.add('active');
+
+            // Atualiza o título dinâmico no topbar compacto
+            const titulosAbas = {
+                'dashboard': '<span>🛸</span> VISÃO GERAL',
+                'acompanhamento': '<span>📊</span> ACOMPANHAMENTO DE VOOS',
+                'falhas': '<span>📉</span> FALHAS DE PLANTIO',
+                'backlog': '<span>✈️</span> BACKLOG (FALTAM VOAR)',
+                'mapa': '<span>🗺️</span> MAPA OPERACIONAL DE VOOS & BACKLOG'
+            };
+            const elTitulo = document.getElementById('topbar-titulo-pagina');
+            if (elTitulo && titulosAbas[id]) {
+                elTitulo.innerHTML = titulosAbas[id];
+            }
+
+            // Fecha a barra lateral no mobile se estiver aberta
+            fecharSidebarMobile();
 
             // Expande o container principal na aba Mapa para aproveitar toda a tela no PC, tablet e celular
             const mainContent = document.getElementById('main-content');
@@ -2532,6 +2693,53 @@
                     window.mapaVoosInstancia.invalidateSize();
                 }
             }, 300);
+        });
+
+        // ================= CONTROLES DA BARRA LATERAL (SIDEBAR) =================
+        function toggleSidebarCollapse() {
+            const sb = document.getElementById('sidebar-principal');
+            const icone = document.getElementById('icone-sidebar-collapse');
+            const texto = document.querySelector('#btn-toggle-sidebar-bottom .sidebar-text');
+            if (!sb) return;
+
+            sb.classList.toggle('sidebar-collapsed');
+            const isCollapsed = sb.classList.contains('sidebar-collapsed');
+            localStorage.setItem('clealco_sidebar_collapsed', isCollapsed ? '1' : '0');
+
+            if (icone) icone.innerText = isCollapsed ? '▶' : '◀';
+            if (texto) texto.innerText = isCollapsed ? 'Expandir' : 'Recolher Menu';
+
+            setTimeout(() => {
+                if (window.mapaVoosInstancia) {
+                    window.mapaVoosInstancia.invalidateSize();
+                }
+            }, 320);
+        }
+
+        function abrirSidebarMobile() {
+            const sb = document.getElementById('sidebar-principal');
+            const bd = document.getElementById('sidebar-backdrop');
+            if (sb) sb.classList.remove('-translate-x-full');
+            if (bd) bd.classList.remove('hidden');
+        }
+
+        function fecharSidebarMobile() {
+            const sb = document.getElementById('sidebar-principal');
+            const bd = document.getElementById('sidebar-backdrop');
+            if (sb) sb.classList.add('-translate-x-full');
+            if (bd) bd.classList.add('hidden');
+        }
+
+        // Restaurar estado da barra lateral salva
+        document.addEventListener('DOMContentLoaded', () => {
+            if (localStorage.getItem('clealco_sidebar_collapsed') === '1') {
+                const sb = document.getElementById('sidebar-principal');
+                const icone = document.getElementById('icone-sidebar-collapse');
+                const texto = document.querySelector('#btn-toggle-sidebar-bottom .sidebar-text');
+                if (sb) sb.classList.add('sidebar-collapsed');
+                if (icone) icone.innerText = '▶';
+                if (texto) texto.innerText = 'Expandir';
+            }
         });
 
         function alternarTema() {
