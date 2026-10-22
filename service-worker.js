@@ -1,4 +1,4 @@
-const CACHE_NAME = 'clealco-voos-v19';
+const CACHE_NAME = 'clealco-voos-v20';
 const ASSETS_ESTATICOS = [
     './',
     './index.html',
@@ -8,6 +8,7 @@ const ASSETS_ESTATICOS = [
     './leaflet.css',
     './leaflet.js',
     './logo_clealco.png',
+    './logo_clealco_oficial.png',
     './logo_login_clealco.jpg',
     './icon-192.png',
     './icon-512.png',

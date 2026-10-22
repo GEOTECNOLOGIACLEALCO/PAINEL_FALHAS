@@ -745,11 +745,11 @@
                 <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-red-600 pb-4 mb-6">
                     <div class="flex items-center gap-4">
                         <div class="flex items-center">
-                            <img src="logo_clealco.png" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-12 md:h-14 w-auto object-contain">
+                            <img src="logo_clealco_oficial.png?v=5" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-14 md:h-16 w-auto object-contain">
                         </div>
                         <div class="border-l-2 border-gray-200 pl-4">
-                            <h2 class="text-xl md:text-2xl font-black text-black uppercase tracking-tight">ACOMPANHAMENTO GERAL | Geotecnologia</h2>
-                            <p class="text-xs text-gray-600">Matriz de Execução Operacional vs Previsão</p>
+                            <h2 class="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">ACOMPANHAMENTO GERAL | Geotecnologia</h2>
+                            <p class="text-xs text-gray-500 font-medium">Matriz de Execução Operacional vs Previsão</p>
                         </div>
                     </div>
 
@@ -780,46 +780,37 @@
                 <div class="flex flex-wrap items-center justify-between gap-4 border-b-2 border-red-600 pb-4 mb-6">
                     <div class="flex items-center gap-4">
                         <div class="flex items-center">
-                            <img src="logo_clealco.png" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-12 md:h-14 w-auto object-contain">
+                            <img src="logo_clealco_oficial.png?v=5" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-14 md:h-16 w-auto object-contain">
                         </div>
                         <div class="border-l-2 border-gray-200 pl-4">
-                            <h2 class="text-xl md:text-2xl font-black text-black uppercase tracking-tight">AGRÍCOLA | FORMAÇÃO | FALHA PLANTIO</h2>
-                            <p class="text-xs text-gray-600">Indicadores Analíticos e Atingimento de Metas</p>
+                            <h2 class="text-xl md:text-2xl font-black text-slate-900 uppercase tracking-tight">AGRÍCOLA | FORMAÇÃO | FALHA PLANTIO</h2>
+                            <p class="text-xs text-gray-500 font-medium">Indicadores Analíticos e Atingimento de Metas</p>
                         </div>
                     </div>
 
                     <div class="flex items-center gap-3">
-                        <button onclick="exportarTabelaPNG('aba-falhas', 'Falhas_Plantio_Clealco.png')" class="bg-gray-100 hover:bg-gray-200 border border-gray-300 text-gray-700 text-xs font-bold px-3 py-2 rounded-lg transition">
-                            📥 Baixar Imagem / PPT
+                        <button onclick="exportarTabelaPNG('aba-falhas', 'Falhas_Plantio_Clealco.png')" class="bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold px-3 py-2 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+                            📥 <span>Baixar Imagem / PPT</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Mini Indicadores Resumo da Safra -->
+                <!-- Mini Indicadores Resumo da Safra (Design Limpo e Profissional para Diretoria) -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-sm">
-                        <div class="w-12 h-12 rounded-lg bg-red-100 flex items-center justify-center text-xl text-red-600 font-bold">🌾</div>
-                        <div>
-                            <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Área Avaliada (Falhas)</div>
-                            <div class="text-xl font-black text-slate-900 mt-0.5" id="falhas-kpi-area">4.856,54 ha</div>
-                            <div class="text-[11px] text-slate-500 font-medium" id="falhas-kpi-talhoes">82 talhões auditados</div>
-                        </div>
+                    <div class="bg-slate-50 border-l-4 border-l-slate-600 border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <div class="text-[11px] uppercase font-bold text-slate-500 tracking-wider">Área Avaliada (Falhas)</div>
+                        <div class="text-2xl font-black text-slate-900 mt-1" id="falhas-kpi-area">4.856,54 ha</div>
+                        <div class="text-[11px] text-slate-500 font-medium mt-0.5" id="falhas-kpi-talhoes">82 talhões auditados</div>
                     </div>
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-sm">
-                        <div class="w-12 h-12 rounded-lg bg-emerald-100 flex items-center justify-center text-xl text-emerald-600 font-bold">📏</div>
-                        <div>
-                            <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Linhas Mapeadas</div>
-                            <div class="text-xl font-black text-slate-900 mt-0.5" id="falhas-kpi-linhas">61.369 km</div>
-                            <div class="text-[11px] text-slate-500 font-medium">Comprimento total avaliado</div>
-                        </div>
+                    <div class="bg-slate-50 border-l-4 border-l-emerald-600 border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <div class="text-[11px] uppercase font-bold text-slate-500 tracking-wider">Linhas Mapeadas</div>
+                        <div class="text-2xl font-black text-slate-900 mt-1" id="falhas-kpi-linhas">61.369 km</div>
+                        <div class="text-[11px] text-slate-500 font-medium mt-0.5">Comprimento total avaliado</div>
                     </div>
-                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 flex items-center gap-4 shadow-sm">
-                        <div class="w-12 h-12 rounded-lg bg-amber-100 flex items-center justify-center text-xl text-amber-600 font-bold">🎯</div>
-                        <div>
-                            <div class="text-xs uppercase font-bold text-slate-500 tracking-wider">Média Geral de Falha</div>
-                            <div class="text-xl font-black text-amber-600 mt-0.5" id="falhas-kpi-media">2,27%</div>
-                            <div class="text-[11px] text-emerald-700 font-bold">✓ Padrão Aceitável (&lt; 6%)</div>
-                        </div>
+                    <div class="bg-slate-50 border-l-4 border-l-amber-500 border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <div class="text-[11px] uppercase font-bold text-slate-500 tracking-wider">Média Geral de Falha</div>
+                        <div class="text-2xl font-black text-amber-600 mt-1" id="falhas-kpi-media">2,27%</div>
+                        <div class="text-[11px] text-emerald-700 font-bold mt-0.5">✓ Padrão Aceitável (&lt; 6%)</div>
                     </div>
                 </div>
 
