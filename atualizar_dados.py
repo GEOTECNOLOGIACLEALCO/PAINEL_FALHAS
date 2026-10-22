@@ -158,13 +158,27 @@ if 'ACOMPANHAMENTO' in wb.sheetnames:
             "Mes": parse_num(r[6])
         })
 
-# 6. CONFIGURAÇÕES ADICIONAIS (Créditos Inforow)
+# 6. CONFIGURAÇÕES ADICIONAIS (Créditos Inforow e Senha de Acesso)
 creditos_dinamicos = 0.0
+senha_config = CHAVE_ACESSO_CLEALCO
+
 if 'CONFIG' in wb.sheetnames:
     sheet_c = wb['CONFIG']
     rows_c = list(sheet_c.iter_rows(values_only=True))
-    if len(rows_c) > 1:
-        creditos_dinamicos = parse_num(rows_c[1][0])
+    if len(rows_c) > 0:
+        headers_c = [str(h or '').lower().strip() for h in rows_c[0]]
+        # Lê creditos_inforow
+        idx_cred = next((i for i, h in enumerate(headers_c) if 'credito' in h or 'inforow' in h), 0)
+        if len(rows_c) > 1 and len(rows_c[1]) > idx_cred:
+            creditos_dinamicos = parse_num(rows_c[1][idx_cred])
+        
+        # Lê senha_acesso se existir na coluna
+        idx_senha = next((i for i, h in enumerate(headers_c) if 'senha' in h or 'chave' in h or 'password' in h), -1)
+        if idx_senha != -1 and len(rows_c) > 1 and len(rows_c[1]) > idx_senha and rows_c[1][idx_senha]:
+            senha_config = str(rows_c[1][idx_senha]).strip()
+            print(f"Senha de acesso lida diretamente da aba CONFIG do Excel.")
+
+CHAVE_ACESSO_CLEALCO = senha_config
 
 dados_completos = {
     "base_processamentos": base_proc,
