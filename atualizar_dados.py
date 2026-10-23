@@ -1,4 +1,4 @@
-import openpyxl, json, os, base64
+import openpyxl, json, os, base64, math
 from datetime import datetime
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -229,6 +229,58 @@ try:
         # Mapa de voados
         fas_voadas = set(p['fa'].strip().lstrip('0') for p in base_proc if p.get('fa'))
         
+        # KMLs operacionais de voos parciais / terminar outras partes
+        kmls_parciais = [
+            {
+                "fa": "200",
+                "nome": "FAZ TERRA NOVA II",
+                "caminho": r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\200 - FAZ TERRA NOVA II 22-07-26 TERMINAR OUTRAS PARTES\4 - Nuvens de Pontos\200 - talhao.kml",
+                "tipo": "kml_direto"
+            },
+            {
+                "fa": "200518",
+                "nome": "FAZENDA CACHOEIRA DOS ÍNDIOS",
+                "caminho": r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\200518 - FAZENDA CACHOEIRA DOS ÍDIOS T DO 1 AO 7 18-09-26 TERMINAR OUTRAS PARTES\4 - Nuvens de Pontos\parte 1\200518 - talhao.kml",
+                "tipo": "intersecao"
+            },
+            {
+                "fa": "200560",
+                "nome": "FAZENDA SÃO BENTO",
+                "caminho": r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\200560 - FAZENDA SÃO BENTO 28-08-26 TERMINAR OUTRAS PARTES\200560 - talhao.kml",
+                "tipo": "intersecao"
+            },
+            {
+                "fa": "207870",
+                "nome": "FAZENDA SANTA OLÍMPIA",
+                "caminho": r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\207870 - FAZENDA SANTA OLÍMPIA  24-09-26 TERMINAR OUTRAS PARTES\4 - Nuvens de Pontos\207870 - talhao.kml",
+                "tipo": "intersecao"
+            },
+            {
+                "fa": "207982",
+                "nome": "FAZENDA BOA ESPERANÇA",
+                "caminho": r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\207982 - FAZENDA BOA ESPERANÇA 31-07-26 TERMINAR OUTRAS PARTES\4 - Nuvens de Pontos\207982 - talhao.kml",
+                "tipo": "intersecao"
+            },
+            {
+                "fa": "208066",
+                "nome": "SÍTIO SANTA TEREZINHA",
+                "caminho": r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\208066 - SÍTIO SANTA TEREZINHA 18-06-26 TERMINAR OUTRAS PARTES\4 - Nuvens de Pontos\208066 - talhao.kml",
+                "tipo": "intersecao"
+            }
+        ]
+        
+        kmls_revoo = {}
+        for kp in kmls_parciais:
+            fa_norm = kp["fa"].lstrip("0")
+            if kp.get("tipo") == "intersecao" and os.path.exists(kp["caminho"]):
+                try:
+                    ds_kp = ogr.Open(kp["caminho"])
+                    if ds_kp:
+                        lyr_kp = ds_kp.GetLayer()
+                        kmls_revoo[fa_norm] = [f.GetGeometryRef().Clone() for f in lyr_kp if f.GetGeometryRef()]
+                except Exception as ex_k:
+                    print(f"Erro lendo KML {kp['nome']}: {ex_k}")
+        
         # Dicionário do Backlog indexado por (FA, Talhao)
         backlog_dict = {}
         for b in backlog:
@@ -330,7 +382,29 @@ try:
                             break
             
             status_voo = "OUTRO"
-            if bk:
+            obs_voo = ""
+            
+            if faz in kmls_revoo:
+                geom_item = feat.GetGeometryRef()
+                tg_area = geom_item.GetArea() if geom_item else 0.0
+                max_frac = 0.0
+                if tg_area > 0:
+                    for kg in kmls_revoo[faz]:
+                        if geom_item.Intersects(kg):
+                            inter = geom_item.Intersection(kg)
+                            if inter and not inter.IsEmpty():
+                                f_area = inter.GetArea() / tg_area
+                                if f_area > max_frac:
+                                    max_frac = f_area
+                if max_frac >= 0.15:
+                    status_voo = "VOADO"
+                    obs_voo = f"Voo Parcial Realizado ({int(round(max_frac*100))}% de cobertura KML)"
+                else:
+                    status_voo = "ATENCAO"
+                    obs_voo = "Pendente de Voo / Terminar Outras Partes"
+                if bk:
+                    matched_keys.add(k)
+            elif bk:
                 matched_keys.add(k)
                 dias = bk["dias_brota"]
                 if dias > 90 or "atrasado" in bk["status_prazo"].lower():
@@ -358,7 +432,8 @@ try:
                 "dias_brota": bk["dias_brota"] if bk else 0,
                 "porte_cm": bk["porte_cm"] if bk else "",
                 "variedade": bk["variedade"] if bk else "",
-                "data_plantio": bk["data_plantio"] if bk else ""
+                "data_plantio": bk["data_plantio"] if bk else "",
+                "obs": obs_voo
             }
             
             features_geojson.append({
@@ -366,6 +441,42 @@ try:
                 "properties": props,
                 "geometry": geojson_geom
             })
+            
+        # Inserção de fazendas diretas do KML (ex: FA 200 - FAZ TERRA NOVA II)
+        for kp in kmls_parciais:
+            if kp.get("tipo") == "kml_direto" and os.path.exists(kp["caminho"]):
+                try:
+                    ds_direct = ogr.Open(kp["caminho"])
+                    if ds_direct:
+                        lyr_direct = ds_direct.GetLayer()
+                        print(f"Inserindo {lyr_direct.GetFeatureCount()} talhões diretos do KML: {kp['nome']} (FA {kp['fa']})")
+                        for idx_d, feat_d in enumerate(lyr_direct):
+                            g_d = feat_d.GetGeometryRef()
+                            if not g_d: continue
+                            env_d = g_d.GetEnvelope()
+                            lat_mid_d = (env_d[2] + env_d[3]) / 2.0
+                            area_ha_d = round(g_d.GetArea() * (111319.0 ** 2) * math.cos(math.radians(lat_mid_d)) / 10000.0, 2)
+                            nome_tal_d = feat_d.GetField("Name") or f"{idx_d + 1}"
+                            g_simpl_d = g_d.Simplify(0.00004)
+                            features_geojson.append({
+                                "type": "Feature",
+                                "properties": {
+                                    "fa": kp["fa"],
+                                    "fazenda": kp["nome"],
+                                    "talhao": str(nome_tal_d),
+                                    "area_ha": area_ha_d,
+                                    "status": "VOADO",
+                                    "tipo": "Própria",
+                                    "dias_brota": 0,
+                                    "porte_cm": "",
+                                    "variedade": "",
+                                    "data_plantio": "",
+                                    "obs": "Voo Realizado (KML) - Revoo/Partes pendentes a verificar"
+                                },
+                                "geometry": json.loads(g_simpl_d.ExportToJson())
+                            })
+                except Exception as ex_direct:
+                    print(f"Erro inserindo KML direto {kp['nome']}: {ex_direct}")
             
         geo_col = {
             "type": "FeatureCollection",
