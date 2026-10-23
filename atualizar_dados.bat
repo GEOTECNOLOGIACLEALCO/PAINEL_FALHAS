@@ -1,15 +1,15 @@
 @echo off
 cd /d "%~dp0"
-echo Atualizando dados locais...
 
-:: 1. Executa o Python e corta o fluxo imediatamente se houver erro de script
+:: 1. Previne conflitos baixando eventuais alteracoes da nuvem primeiro
+git pull --rebase origin main >nul 2>&1
+
+echo Atualizando dados locais...
+:: 2. Executa o Python e corta o fluxo imediatamente se houver erro de script
 python atualizar_dados.py || exit /b 1
 echo.
 
 echo Preparando envio para o GitHub...
-:: 2. Previne conflitos baixando eventuais alteracoes da nuvem primeiro
-git pull --rebase origin main
-
 :: 3. Adiciona apenas os arquivos de dados CRIPTOGRAFADOS (dados.xlsx fica protegido localmente)
 git add dados_injetados.js dados_mapa_voos.js
 
