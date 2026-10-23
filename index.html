@@ -1149,12 +1149,12 @@
                         <span class="text-[10px] sm:text-[11px] text-blue-600 font-medium" id="mapa-kpi-area-prazo">&lt; 60 dias</span>
                     </div>
 
-                    <div class="bg-purple-50/80 p-2.5 sm:p-3 rounded-xl border border-purple-200 col-span-2 sm:col-span-1">
-                        <span class="text-[10px] uppercase font-bold text-purple-700 tracking-wider flex items-center gap-1 truncate">
-                            <span class="w-2 h-2 rounded-full bg-purple-600 flex-shrink-0"></span> Voos Realizados (Base)
+                    <div class="bg-emerald-50/80 p-2.5 sm:p-3 rounded-xl border border-emerald-200 col-span-2 sm:col-span-1">
+                        <span class="text-[10px] uppercase font-bold text-emerald-700 tracking-wider flex items-center gap-1 truncate">
+                            <span class="w-2 h-2 rounded-full bg-emerald-600 flex-shrink-0"></span> Voos Realizados (Base)
                         </span>
-                        <div class="text-lg sm:text-xl font-black text-purple-700 mt-0.5" id="mapa-kpi-total-voado">--</div>
-                        <span class="text-[10px] sm:text-[11px] text-purple-600 font-medium" id="mapa-kpi-area-voado">-- ha</span>
+                        <div class="text-lg sm:text-xl font-black text-emerald-700 mt-0.5" id="mapa-kpi-total-voado">--</div>
+                        <span class="text-[10px] sm:text-[11px] text-emerald-600 font-medium" id="mapa-kpi-area-voado">-- ha</span>
                     </div>
                 </div>
 
@@ -1175,7 +1175,7 @@
                             <option value="CRITICO">🔴 Crítico / Porte Alto (&gt; 90 dias)</option>
                             <option value="ATENCAO">🟡 Atenção (60 a 90 dias)</option>
                             <option value="NOPRAZO">🔵 No Prazo (&lt; 60 dias)</option>
-                            <option value="VOADO">🟣 Já Voado / Concluído</option>
+                            <option value="VOADO">🟢 Já Voado / Concluído</option>
                         </select>
                     </div>
 
@@ -1224,7 +1224,7 @@
                             </div>
                             <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
                                 <span class="flex items-center gap-2">
-                                    <span class="w-3.5 h-3.5 rounded bg-purple-600 border border-purple-700 flex-shrink-0"></span>
+                                    <span class="w-3.5 h-3.5 rounded bg-emerald-600 border border-emerald-700 flex-shrink-0"></span>
                                     <span class="text-slate-700 font-medium">Já Voado</span>
                                 </span>
                                 <b class="text-slate-900 font-black ml-2" id="legenda-count-voado">0</b>
@@ -2543,7 +2543,7 @@
                 case 'NOPRAZO':
                     return { fillColor: '#3b82f6', color: '#1d4ed8', weight: 1.5, fillOpacity: 0.60 };
                 case 'VOADO':
-                    return { fillColor: '#8b5cf6', color: '#6d28d9', weight: 1.5, fillOpacity: 0.50 };
+                    return { fillColor: '#10b981', color: '#047857', weight: 1.5, fillOpacity: 0.55 };
                 default:
                     return { fillColor: '#64748b', color: '#334155', weight: 1.0, fillOpacity: 0.35 };
             }
@@ -2708,7 +2708,7 @@
                     const statusBadge = p.status === 'CRITICO' ? '<span class="px-2 py-0.5 bg-red-100 text-red-700 font-bold rounded text-[10px]">🔴 CRÍTICO (> 90d)</span>' :
                                        p.status === 'ATENCAO' ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-700 font-bold rounded text-[10px]">🟡 ATENÇÃO</span>' :
                                        p.status === 'NOPRAZO' ? '<span class="px-2 py-0.5 bg-blue-100 text-blue-700 font-bold rounded text-[10px]">🔵 NO PRAZO (&lt; 60d)</span>' :
-                                       '<span class="px-2 py-0.5 bg-purple-100 text-purple-700 font-bold rounded text-[10px]">🟣 JÁ VOADO</span>';
+                                       '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded text-[10px]">🟢 JÁ VOADO</span>';
 
                     const popupContent = `
                         <div class="p-1 font-sans text-xs space-y-2 min-w-[240px]">
@@ -2721,7 +2721,7 @@
                             </div>
                             
                             ${p.obs ? `
-                                <div class="p-2 rounded-lg border font-semibold text-[11px] flex items-start gap-1.5 ${p.status === 'VOADO' ? 'bg-purple-50 border-purple-200 text-purple-900' : 'bg-amber-50 border-amber-200 text-amber-900'}">
+                                <div class="p-2 rounded-lg border font-semibold text-[11px] flex items-start gap-1.5 ${p.status === 'VOADO' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900'}">
                                     <span class="text-sm">⚠️</span>
                                     <span>${p.obs}</span>
                                 </div>
