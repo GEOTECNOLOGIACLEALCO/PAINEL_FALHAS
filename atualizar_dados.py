@@ -279,7 +279,25 @@ try:
                         lyr_kp = ds_kp.GetLayer()
                         kmls_revoo[fa_norm] = [f.GetGeometryRef().Clone() for f in lyr_kp if f.GetGeometryRef()]
                 except Exception as ex_k:
-                    print(f"Erro lendo KML {kp['nome']}: {ex_k}")
+                    pass
+        
+        # Carregar talhões voados mapeados nos relatórios individuais de Falhas
+        pasta_csv_falhas = r"W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas"
+        talhoes_voados_csv = {}
+        if os.path.exists(pasta_csv_falhas):
+            for arq_csv in os.listdir(pasta_csv_falhas):
+                if arq_csv.lower().endswith('.csv'):
+                    fa_csv = os.path.splitext(arq_csv)[0].strip().lstrip('0')
+                    caminho_csv = os.path.join(pasta_csv_falhas, arq_csv)
+                    talhoes_voados_csv[fa_csv] = set()
+                    try:
+                        with open(caminho_csv, encoding='utf-8', errors='ignore') as f_csv:
+                            for l_csv in f_csv.readlines()[1:]:
+                                parts = l_csv.split(',')
+                                if len(parts) > 1 and parts[1].strip():
+                                    t_clean = parts[1].strip().split('.')[0].strip().lstrip('0')
+                                    if t_clean: talhoes_voados_csv[fa_csv].add(t_clean)
+                    except: pass
         
         # Dicionário do Backlog indexado por (FA, Talhao)
         backlog_dict = {}
@@ -371,16 +389,6 @@ try:
             k = (faz, tal)
             bk = backlog_dict.get(k)
             
-            # Fallback por nome da fazenda se nao achou por codigo FA
-            if not bk:
-                for b_k, b_val in backlog_dict.items():
-                    if b_k not in matched_keys and b_k[1] == tal:
-                        b_nome = b_val["fazenda"].upper()
-                        if b_nome in nome or nome in b_nome:
-                            bk = b_val
-                            k = b_k
-                            break
-            
             status_voo = "OUTRO"
             obs_voo = ""
             
@@ -413,6 +421,11 @@ try:
                     status_voo = "ATENCAO"
                 else:
                     status_voo = "NOPRAZO"
+            elif faz in talhoes_voados_csv:
+                if tal in talhoes_voados_csv[faz]:
+                    status_voo = "VOADO"
+                else:
+                    continue
             elif faz in fas_voadas:
                 status_voo = "VOADO"
             else:

@@ -1151,10 +1151,10 @@
 
                     <div class="bg-purple-50/80 p-2.5 sm:p-3 rounded-xl border border-purple-200 col-span-2 sm:col-span-1">
                         <span class="text-[10px] uppercase font-bold text-purple-700 tracking-wider flex items-center gap-1 truncate">
-                            <span class="w-2 h-2 rounded-full bg-purple-600 flex-shrink-0"></span> Voados / Mapeados
+                            <span class="w-2 h-2 rounded-full bg-purple-600 flex-shrink-0"></span> Voos Realizados (Base)
                         </span>
                         <div class="text-lg sm:text-xl font-black text-purple-700 mt-0.5" id="mapa-kpi-total-voado">--</div>
-                        <span class="text-[10px] sm:text-[11px] text-purple-600 font-medium" id="mapa-kpi-area-voado">Concluídos</span>
+                        <span class="text-[10px] sm:text-[11px] text-purple-600 font-medium" id="mapa-kpi-area-voado">-- ha</span>
                     </div>
                 </div>
 
@@ -2583,18 +2583,69 @@
                 else if (st === 'VOADO') { totalVoado++; areaVoado += ha; }
             });
 
-            // Atualiza KPIs
+            // Atualiza KPIs com dados oficiais das planilhas e polígonos mapeados
             const setTxt = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
-            setTxt('mapa-kpi-total-bk', totalBk);
-            setTxt('mapa-kpi-area-bk', areaBk.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
-            setTxt('mapa-kpi-total-crit', totalCrit);
-            setTxt('mapa-kpi-area-crit', areaCrit.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
-            setTxt('mapa-kpi-total-aten', totalAten);
-            setTxt('mapa-kpi-area-aten', areaAten.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
-            setTxt('mapa-kpi-total-prazo', totalPrazo);
-            setTxt('mapa-kpi-area-prazo', areaPrazo.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
-            setTxt('mapa-kpi-total-voado', totalVoado);
-            setTxt('mapa-kpi-area-voado', areaVoado.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+
+            const listaBkOficial = (typeof dadosBacklog !== 'undefined' && Array.isArray(dadosBacklog) && dadosBacklog.length > 0) ? dadosBacklog : null;
+            const listaVoosOficial = (typeof dadosBase !== 'undefined' && Array.isArray(dadosBase) && dadosBase.length > 0) ? dadosBase : null;
+
+            if (listaBkOficial) {
+                const totalBkOficial = listaBkOficial.length;
+                const areaBkOficial = listaBkOficial.reduce((acc, b) => acc + (parseFloat(b.ha) || 0), 0);
+                
+                let critOficial = 0, areaCritOficial = 0;
+                let atenOficial = 0, areaAtenOficial = 0;
+                let prazoOficial = 0, areaPrazoOficial = 0;
+
+                listaBkOficial.forEach(b => {
+                    const dias = parseInt(b.dias) || 0;
+                    const stPrazo = String(b.status_prazo || '').toLowerCase();
+                    const ha = parseFloat(b.ha) || 0;
+                    if (dias > 90 || stPrazo.includes('atrasado')) {
+                        critOficial++;
+                        areaCritOficial += ha;
+                    } else if (dias >= 60) {
+                        atenOficial++;
+                        areaAtenOficial += ha;
+                    } else {
+                        prazoOficial++;
+                        areaPrazoOficial += ha;
+                    }
+                });
+
+                // Inclui pendências de revoo das fazendas parciais na contagem de atenção
+                const atenRevoo = features.filter(f => f.properties?.status === 'ATENCAO' && f.properties?.obs);
+                const countAtenRevoo = atenRevoo.length;
+                const areaAtenRevoo = atenRevoo.reduce((acc, f) => acc + (parseFloat(f.properties?.area_ha) || 0), 0);
+
+                setTxt('mapa-kpi-total-bk', totalBkOficial);
+                setTxt('mapa-kpi-area-bk', areaBkOficial.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+                setTxt('mapa-kpi-total-crit', critOficial);
+                setTxt('mapa-kpi-area-crit', areaCritOficial.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+                setTxt('mapa-kpi-total-aten', atenOficial + countAtenRevoo);
+                setTxt('mapa-kpi-area-aten', (areaAtenOficial + areaAtenRevoo).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+                setTxt('mapa-kpi-total-prazo', prazoOficial);
+                setTxt('mapa-kpi-area-prazo', areaPrazoOficial.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+            } else {
+                setTxt('mapa-kpi-total-bk', totalBk);
+                setTxt('mapa-kpi-area-bk', areaBk.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+                setTxt('mapa-kpi-total-crit', totalCrit);
+                setTxt('mapa-kpi-area-crit', areaCrit.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+                setTxt('mapa-kpi-total-aten', totalAten);
+                setTxt('mapa-kpi-area-aten', areaAten.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+                setTxt('mapa-kpi-total-prazo', totalPrazo);
+                setTxt('mapa-kpi-area-prazo', areaPrazo.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+            }
+
+            if (listaVoosOficial) {
+                const totalVoosOficial = listaVoosOficial.length;
+                const areaVoosOficial = listaVoosOficial.reduce((acc, v) => acc + (parseFloat(v.ha_voo) || 0), 0);
+                setTxt('mapa-kpi-total-voado', totalVoosOficial);
+                setTxt('mapa-kpi-area-voado', areaVoosOficial.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+            } else {
+                setTxt('mapa-kpi-total-voado', totalVoado);
+                setTxt('mapa-kpi-area-voado', areaVoado.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
+            }
 
             setTxt('legenda-count-critico', totalCrit);
             setTxt('legenda-count-atencao', totalAten);
