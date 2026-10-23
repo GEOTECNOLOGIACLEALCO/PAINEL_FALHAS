@@ -1,0 +1,1466 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Passo a Passo & Fluxogramas | Voo e Processamentos 2.0 - Singularity AI</title>
+    
+    <!-- Mermaid.js para Renderização Automática de Fluxogramas -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#0a0502',
+                primaryColor: '#FF6B35',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#FFD166',
+                lineColor: '#FFD166',
+                secondaryColor: '#B22222',
+                tertiaryColor: '#1a1008',
+                fontSize: '13px',
+                fontFamily: 'Inter, Segoe UI, sans-serif'
+            }
+        });
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500;700&display=swap');
+
+        :root {
+            --ouro: #FFD166;
+            --plasma: #FF6B35;
+            --carmesim: #B22222;
+            --verde: #2e7d32;
+            --verde-claro: #4caf50;
+            --azul: #2196f3;
+            --amarelo: #fbc02d;
+            --vermelho-alerta: #ff3333;
+            
+            --fundo: #010102;
+            --painel: #0a0502;
+            --card-bg: rgba(20, 10, 5, 0.7);
+            --card-inner: rgba(0, 0, 0, 0.5);
+            --borda: rgba(255, 209, 102, 0.2);
+            --borda-hover: rgba(255, 107, 53, 0.5);
+            
+            --texto-pri: #ffffff;
+            --texto-sec: #a1a1aa;
+            --texto-muted: #71717a;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--fundo);
+            color: var(--texto-pri);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+            display: flex;
+        }
+
+        /* BARRA LATERAL FIXA DE NAVEGAÇÃO */
+        #sidebar {
+            width: 290px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: var(--painel);
+            border-right: 1px solid var(--borda);
+            padding: 25px 20px;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        #sidebar::-webkit-scrollbar { width: 4px; }
+        #sidebar::-webkit-scrollbar-thumb { background: rgba(255, 209, 102, 0.3); border-radius: 4px; }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--borda);
+            margin-bottom: 20px;
+        }
+
+        .logo-clealco {
+            background: #ffcc00;
+            color: #000;
+            font-weight: 900;
+            font-size: 1.1rem;
+            padding: 8px 14px;
+            border-radius: 6px;
+            letter-spacing: 1px;
+        }
+
+        .logo-sub {
+            font-size: 0.75rem;
+            color: var(--ouro);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-categoria {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--texto-muted);
+            margin: 15px 0 8px 6px;
+            font-weight: 700;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 9px 12px;
+            border-radius: 8px;
+            color: var(--texto-sec);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .nav-link:hover {
+            color: #fff;
+            background: rgba(255, 209, 102, 0.1);
+            border-left: 3px solid var(--ouro);
+        }
+
+        .nav-link.ativo {
+            color: var(--ouro);
+            background: rgba(255, 107, 53, 0.15);
+            border-left: 3px solid var(--plasma);
+            font-weight: 600;
+        }
+
+        /* CONTEÚDO PRINCIPAL */
+        #content {
+            margin-left: 290px;
+            flex-grow: 1;
+            padding: 40px 60px 100px 60px;
+            max-width: 1400px;
+        }
+
+        /* HEADER SUPERIOR */
+        .header-doc {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.12), rgba(178, 34, 34, 0.1));
+            border: 1px solid var(--borda);
+            border-radius: 16px;
+            padding: 35px 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-doc::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--ouro), var(--plasma), var(--carmesim));
+        }
+
+        .badge-versao {
+            display: inline-block;
+            background: rgba(255, 209, 102, 0.15);
+            color: var(--ouro);
+            border: 1px solid rgba(255, 209, 102, 0.3);
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            font-size: 1.05rem;
+            color: var(--texto-sec);
+            max-width: 900px;
+        }
+
+        /* SEÇÕES E TÍTULOS */
+        section {
+            margin-bottom: 60px;
+            scroll-margin-top: 40px;
+        }
+
+        h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--ouro);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid var(--borda);
+            padding-bottom: 12px;
+        }
+
+        h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--plasma);
+            margin: 25px 0 12px 0;
+        }
+
+        p {
+            color: var(--texto-sec);
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+            line-height: 1.7;
+        }
+
+        /* CARDS E GRIDS */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin: 20px 0;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--borda);
+            border-radius: 12px;
+            padding: 22px;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .card:hover {
+            border-color: var(--borda-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .card-destaque {
+            border-left: 4px solid var(--ouro);
+        }
+
+        .card-plasma {
+            border-left: 4px solid var(--plasma);
+        }
+
+        .card-carmesim {
+            border-left: 4px solid var(--carmesim);
+        }
+
+        .card-verde {
+            border-left: 4px solid var(--verde-claro);
+        }
+
+        /* PASSO A PASSO SEQUENCIAL */
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            margin: 25px 0;
+        }
+
+        .step-card {
+            display: flex;
+            background: var(--card-bg);
+            border: 1px solid var(--borda);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .step-card:hover {
+            border-color: var(--plasma);
+        }
+
+        .step-num-col {
+            width: 90px;
+            background: rgba(255, 107, 53, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid var(--borda);
+            flex-shrink: 0;
+            padding: 20px 10px;
+        }
+
+        .step-num {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: var(--ouro);
+            line-height: 1;
+        }
+
+        .step-num-lbl {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--texto-muted);
+            margin-top: 5px;
+            font-weight: 700;
+        }
+
+        .step-body {
+            padding: 24px 30px;
+            flex-grow: 1;
+        }
+
+        .step-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .step-tag {
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .tag-manual {
+            background: rgba(33, 150, 243, 0.2);
+            color: #64b5f6;
+            border: 1px solid rgba(33, 150, 243, 0.4);
+        }
+
+        .tag-auto {
+            background: rgba(76, 175, 80, 0.2);
+            color: #81c784;
+            border: 1px solid rgba(76, 175, 80, 0.4);
+        }
+
+        .tag-critico {
+            background: rgba(255, 51, 51, 0.2);
+            color: #ff8a80;
+            border: 1px solid rgba(255, 51, 51, 0.4);
+        }
+
+        /* BOX DE ALERTA E OBSERVAÇÃO */
+        .callout {
+            padding: 16px 20px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-size: 0.9rem;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+        }
+
+        .callout-ouro {
+            background: rgba(255, 209, 102, 0.08);
+            border-left: 4px solid var(--ouro);
+            color: #ffe082;
+        }
+
+        .callout-alerta {
+            background: rgba(255, 51, 51, 0.08);
+            border-left: 4px solid var(--vermelho-alerta);
+            color: #ffcdd2;
+        }
+
+        .callout-verde {
+            background: rgba(76, 175, 80, 0.08);
+            border-left: 4px solid var(--verde-claro);
+            color: #c8e6c9;
+        }
+
+        /* CÓDIGO E PATHS */
+        code, pre {
+            font-family: 'Fira Code', Consolas, monospace;
+        }
+
+        code {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--ouro);
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-size: 0.88em;
+        }
+
+        .path-box {
+            background: #000;
+            border: 1px solid rgba(255, 209, 102, 0.25);
+            border-radius: 6px;
+            padding: 10px 14px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: var(--ouro);
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            overflow-x: auto;
+        }
+
+        /* TABELAS */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: var(--card-bg);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 0.88rem;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--borda);
+        }
+
+        th {
+            background: rgba(255, 107, 53, 0.2);
+            color: var(--ouro);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* MERMAID DIAGRAM BOX */
+        .fluxograma-wrapper {
+            background: #060302;
+            border: 1px solid var(--borda);
+            border-radius: 12px;
+            padding: 25px;
+            margin: 25px 0;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+            overflow-x: auto;
+        }
+
+        .fluxograma-wrapper .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        /* CHECKLIST */
+        .checklist {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .checklist li {
+            padding: 10px 14px;
+            background: var(--card-inner);
+            border: 1px solid var(--borda);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.9rem;
+            color: var(--texto-pri);
+        }
+
+        .check-icon {
+            color: var(--verde-claro);
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        /* BOTÕES DE AÇÃO RÁPIDA */
+        .btn-imprimir {
+            background: linear-gradient(45deg, var(--carmesim), var(--plasma));
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+            margin-top: 15px;
+        }
+
+        .btn-imprimir:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
+        }
+
+        @media (max-width: 1024px) {
+            #sidebar { display: none; }
+            #content { margin-left: 0; padding: 20px; }
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+        }
+
+        @media print {
+            #sidebar, .btn-imprimir { display: none !important; }
+            #content { margin: 0 !important; padding: 0 !important; max-width: 100% !important; }
+            body { background: #fff !important; color: #000 !important; }
+            .card, .step-card, .header-doc, .fluxograma-wrapper { background: #fff !important; color: #000 !important; border: 1px solid #ccc !important; box-shadow: none !important; }
+            h1, h2, h3, .step-num, .step-title { color: #000 !important; }
+            p, td, code { color: #222 !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA LATERAL FIXA -->
+    <nav id="sidebar">
+        <div class="logo-box">
+            <div class="logo-clealco">CLEALCO</div>
+            <div>
+                <div class="logo-sub">Geotecnologia</div>
+                <div style="font-size: 0.65rem; color: var(--texto-muted);">Singularity AI 2.0</div>
+            </div>
+        </div>
+
+        <div class="nav-categoria">Visão Geral</div>
+        <a href="#introducao" class="nav-link">📌 1. Apresentação & Objetivo</a>
+        <a href="#unidades-rede" class="nav-link">🗂️ 2. Mapeamento das Redes</a>
+        <a href="#macro-fluxo" class="nav-link">🔄 3. Fluxograma Macro (E2E)</a>
+
+        <div class="nav-categoria">Passo a Passo Operacional</div>
+        <a href="#passo-1-backlog" class="nav-link">✈️ 4.1 Faltam Voar (Backlog)</a>
+        <a href="#passo-2-descarregar" class="nav-link">📂 4.2 Nomenclatura e Pastas</a>
+        <a href="#passo-3-processamento" class="nav-link">⚙️ 4.3 Processamento & Robô</a>
+        <a href="#passo-4-fechamento" class="nav-link">📊 4.4 Fechamento Diário (BD)</a>
+        <a href="#passo-5-github" class="nav-link">🌐 4.5 GitHub Pages & Cron 30 min</a>
+        <a href="#passo-6-mapa-radar" class="nav-link">🌧️ 4.6 Mapa, Radar IPMet & GPS</a>
+
+        <div class="nav-categoria">Regras de Negócio</div>
+        <a href="#regras-ouro" class="nav-link">⚖️ 5. Regras Críticas & Blindagem</a>
+        <a href="#paineis-e-bot" class="nav-link">🖥️ 6. Painel Web, PWA & Telegram</a>
+        <a href="#troubleshooting" class="nav-link">🚨 7. Resolução de Problemas</a>
+        <a href="#checklist-diario" class="nav-link">✅ 8. Checklist do Operador</a>
+
+        <div class="nav-categoria">Governança & TI</div>
+        <a href="#parecer-ti" class="nav-link">🛡️ 9. Parecer Técnico para TI</a>
+
+        <div style="margin-top: auto; padding-top: 15px; border-top: 1px solid var(--borda);">
+            <button class="btn-imprimir" onclick="window.print()" style="width: 100%;">🖨️ Imprimir Manual</button>
+        </div>
+    </nav>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main id="content">
+
+        <!-- HEADER PRINCIPAL -->
+        <div class="header-doc">
+            <span class="badge-versao">Documento Operacional Oficial 2026</span>
+            <h1>Manual Completo de Operação & Fluxogramas</h1>
+            <p class="subtitle">
+                Guia didático, prático e detalhado sobre como funciona o sistema <strong>Singularity AI (Voo e Processamentos 2.0)</strong>. 
+                Desenvolvido para que qualquer novo colaborador, piloto ou analista de geotecnologia entenda com exatidão o que precisa ser feito em cada etapa do dia a dia.
+            </p>
+        </div>
+
+        <!-- SEÇÃO 1: APRESENTAÇÃO -->
+        <section id="introducao">
+            <h2>📌 1. O Que é Este Projeto e Qual o Seu Objetivo?</h2>
+            <p>
+                O <strong>Singularity AI</strong> é o ecossistema automatizado da <strong>Clealco Geotecnologia</strong> que faz a gestão de ponta a ponta de todos os voos de drones para monitoramento de pós-plantio e análise de falhas (em cana-de-açúcar e rotação com soja).
+            </p>
+
+            <div class="grid-3">
+                <div class="card card-destaque">
+                    <h3 style="margin-top:0;">🤖 Automação Robótica</h3>
+                    <p style="font-size:0.85rem; margin-bottom:0;">
+                        O sistema roda em segundo plano através de um robô fiscalizador (<code>Watchdog</code>) que vigia as pastas de rede 24 horas por dia. Quando você salva um arquivo, ele processa, calcula área, atualiza o Excel e envia e-mails sozinho.
+                    </p>
+                </div>
+                <div class="card card-plasma">
+                    <h3 style="margin-top:0;">📊 Inteligência de Metas</h3>
+                    <p style="font-size:0.85rem; margin-bottom:0;">
+                        Separa automaticamente áreas <strong>Próprias</strong> de <strong>Terceiros/Fornecedores</strong>, abate créditos de processamento (Inforow) e calcula diariamente a cobertura e o atingimento das metas anuais.
+                    </p>
+                </div>
+                <div class="card card-carmesim">
+                    <h3 style="margin-top:0;">📱 Notificações & Mobilidade</h3>
+                    <p style="font-size:0.85rem; margin-bottom:0;">
+                        Integração completa com um Dashboard Web em tempo real (com motor 3D Gargantua) e um Bot no Telegram com botões interativos e relatórios em PDF para a diretoria e liderança de operações.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 2: MAPEAMENTO DE REDES -->
+        <section id="unidades-rede">
+            <h2>🗂️ 2. Onde Fica Cada Coisa? (Mapeamento de Pastas)</h2>
+            <p>
+                Para o sistema funcionar, os discos de rede da empresa devem estar mapeados no seu computador exatamente com as letras <strong>W:</strong>, <strong>M:</strong> e <strong>N:</strong>. Abaixo está o dicionário completo de onde os arquivos vivem:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Unidade</th>
+                        <th>Caminho Completo na Rede</th>
+                        <th>O Que Fica Guardado Aqui?</th>
+                        <th>Quem Mexe?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>W:</strong></td>
+                        <td><code>W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados</code></td>
+                        <td>
+                            <strong>Entrada Bruta:</strong> Pastas de voos descarregadas pelos pilotos e a planilha mestre <code>BASE DE PROCESSAMENTOS.xlsx</code>.
+                        </td>
+                        <td>Pilotos, Analistas e Robô</td>
+                    </tr>
+                    <tr>
+                        <td><strong>W:</strong></td>
+                        <td><code>W:\01-DRONE\01-IMAGENS VOO\2026\2 - Falhas e Linhas</code></td>
+                        <td>
+                            <strong>Processados:</strong> Ortomosaicos (<code>.tif</code>), linhas de sulco (<code>.kml</code>), relatórios de falhas (<code>TableGaps.csv</code>) e pisoteio (<code>TableCTF.csv</code>).
+                        </td>
+                        <td>Analista Geotecnologia</td>
+                    </tr>
+                    <tr>
+                        <td><strong>W:</strong></td>
+                        <td><code>W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas</code> e <code>\Paralelismo - Pisoteio</code></td>
+                        <td>
+                            <strong>Repositório Central:</strong> Todos os CSVs de falhas consolidados e renomeados pelo robô no formato <code>[FA].csv</code>.
+                        </td>
+                        <td>Robô (Automático)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>M:</strong></td>
+                        <td><code>M:\10-Planilhas\Voos Pós Plantio - Analise de Falhas\2026\BASES - RECEBIDAS</code></td>
+                        <td>
+                            <strong>Planejamento Agrícola:</strong> Planilhas enviadas pelo Planejamento contendo o que deve ser voado no ano (alimenta o Motor de Backlog).
+                        </td>
+                        <td>Planejamento Agrícola</td>
+                    </tr>
+                    <tr>
+                        <td><strong>M:</strong></td>
+                        <td><code>M:\17-Estudo de Arrendamentos\Status de Estudos.xlsx</code></td>
+                        <td>
+                            <strong>Tabela De-Para:</strong> Mapeia números provisórios de estudo de fazenda para o FA oficial definitivo.
+                        </td>
+                        <td>Arrendamentos / Geo</td>
+                    </tr>
+                    <tr>
+                        <td><strong>M:</strong></td>
+                        <td><code>M:\10-Planilhas\Banco de dados de atividades.xlsm</code></td>
+                        <td>
+                            <strong>Banco de Atividades:</strong> Planilha histórica onde são lançadas as ocorrências diárias (05 a 09) que alimentam o Power BI.
+                        </td>
+                        <td>Analista (Até 17h30)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>N:</strong></td>
+                        <td><code>N:\2_Projetos Colheita\PROPRIA</code> e <code>\FORNECEDORES</code></td>
+                        <td>
+                            <strong>Exportação Colheita:</strong> Projetos enviados aos tratores e colhedoras. O robô monitora para saber se o piloto já tem as linhas.
+                        </td>
+                        <td>Pilotos / Operações</td>
+                    </tr>
+                    <tr>
+                        <td><strong>W: / Web</strong></td>
+                        <td><code>W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0</code><br>🌐 <strong>GitHub Pages:</strong> <code>https://geotecnologiaclealco.github.io/PAINEL_FALHAS/</code></td>
+                        <td>
+                            <strong>Painel Executivo Web Online:</strong> Dashboard leve em HTML/CSS/JS (Light Mode), sem necessidade de servidor local. Sincronizado automaticamente via <code>atualizar_dados.bat</code> ou pelo botão <strong>"Exportar GitHub"</strong> do painel local.
+                        </td>
+                        <td>Diretoria, Gerência, Pilotos e Operadores</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SEÇÃO 3: FLUXOGRAMA MACRO -->
+        <section id="macro-fluxo">
+            <h2>🔄 3. Fluxograma Macro: O Ciclo de Vida de um Voo</h2>
+            <p>
+                Este fluxograma mostra como o dado caminha desde o planejamento do plantio até o envio para o trator no campo e os relatórios de diretoria:
+            </p>
+
+            <div class="fluxograma-wrapper">
+                <div class="mermaid">
+flowchart TD
+    classDef planeja fill:#1a1008,stroke:#FFD166,stroke-width:2px,color:#fff;
+    classDef executa fill:#261205,stroke:#FF6B35,stroke-width:2px,color:#fff;
+    classDef robo fill:#1f0606,stroke:#B22222,stroke-width:2px,color:#fff;
+    classDef entrega fill:#081c0c,stroke:#4caf50,stroke-width:2px,color:#fff;
+
+    subgraph FASE_1 [FASE 1: Planejamento & Fila de Voo]
+        P1[Planejamento Agrícola lança bases no M:]:::planeja --> P2[Motor de Backlog cruza M: com W:]:::planeja
+        P2 --> P3{FA já foi voado?}:::planeja
+        P3 -- NÃO --> P4[Fila 'Faltam Voar' / Alerta Telegram]:::planeja
+        P3 -- SIM --> E1[Segue para Processamento]:::executa
+    end
+
+    subgraph FASE_2 [FASE 2: Campo & Execução de Voo]
+        P4 --> E0[Piloto executa voo com Drone]:::executa
+        E0 --> E1[Piloto cria pasta em W: '1 - Não Processados']:::executa
+        E1 --> E2[Piloto lança Ha Voo na aba 'AREA VOO' do Excel]:::executa
+    end
+
+    subgraph FASE_3 [FASE 3: Processamento & Ação do Robô Watchdog]
+        E2 --> R1[Analista gera TIF, KML e CSVs em '2 - Falhas e Linhas']:::robo
+        R1 --> R2[Robô Watchdog detecta em 5 segundos]:::robo
+        R2 --> R3[Verifica .TIF ➔ Marca FEITO e Dispara E-mail Outlook]:::robo
+        R2 --> R4[Valida KML ➔ Calcula Hectares e Abate Inforow]:::robo
+        R2 --> R5[Testa Geometria de Linhas ➔ Marca FEITO ou ERRO]:::robo
+        R2 --> R6[Copia e Renomeia TableGaps/TableCTF para o Banco W:]:::robo
+    end
+
+    subgraph FASE_4 [FASE 4: Consolidação & Entrega Final]
+        R6 --> D1[Robô monitora exportação N: ➔ Coluna K = FEITO]:::entrega
+        R6 --> D2[Analista lança no M: 'Banco de Atividades' até 17h30]:::entrega
+        D2 --> D3[Dashboards Web em Tempo Real & Bot Telegram]:::entrega
+        D2 --> D4[Exportação para GitHub: /api/exportar_municao]:::entrega
+        D4 --> D5[Gera dados.xlsx e executa atualizar_dados.bat]:::entrega
+        D5 --> D6[GitHub Pages Online: geotecnologiaclealco.github.io/PAINEL_FALHAS]:::entrega
+    end
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 4: PASSO A PASSO OPERACIONAL DETALHADO -->
+        <section id="passo-a-passo">
+            <h2>📋 4. Passo a Passo Detalhado: O Que Você Precisa Fazer</h2>
+            <p>Siga rigorosamente cada etapa descrita abaixo para garantir que a esteira funcione perfeitamente:</p>
+
+            <div class="step-container">
+
+                <!-- PASSO 1 -->
+                <div class="step-card" id="passo-1-backlog">
+                    <div class="step-num-col">
+                        <div class="step-num">01</div>
+                        <div class="step-num-lbl">Planejar</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Consultar o que precisa ser voado hoje (Motor de Backlog)</span>
+                            <span class="step-tag tag-manual">Ação Humana</span>
+                        </div>
+                        <p>
+                            Antes de enviar a equipe a campo, você deve consultar quais fazendas e talhões estão pendentes de voo.
+                        </p>
+                        <div class="grid-2">
+                            <div class="card card-destaque">
+                                <b style="color:var(--ouro);">Opção A: No Painel Web</b>
+                                <p style="font-size:0.85rem; margin-top:5px;">
+                                    Abra <code>http://127.0.0.1:5000</code> no navegador e clique no botão <strong>✈️ Backlog (Faltam Voar)</strong> no rodapé. Você verá o total de hectares pendentes e a lista ordenada por urgência.
+                                </p>
+                            </div>
+                            <div class="card card-plasma">
+                                <b style="color:var(--plasma);">Opção B: Pelo Telegram</b>
+                                <p style="font-size:0.85rem; margin-top:5px;">
+                                    No bot do Telegram da Geotecnologia, toque no botão <strong>📋 Faltam Voar</strong> (ou envie o comando <code>/faltam</code>). O bot enviará o gráfico donut de distribuição e os próximos 5 FAs mais críticos.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="callout callout-ouro">
+                            <span>💡</span>
+                            <div>
+                                <strong>Regra de Semáforo de Prazos:</strong><br>
+                                🟢 <strong><= 15 dias:</strong> No Prazo | 🟡 <strong>16 a 30 dias:</strong> Atenção | 🔴 <strong>> 30 dias:</strong> Atrasado (Prioridade máxima de voo!).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 2 -->
+                <div class="step-card" id="passo-2-descarregar">
+                    <div class="step-num-col">
+                        <div class="step-num">02</div>
+                        <div class="step-num-lbl">Descarregar</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Descarregar o voo com a Nomenclatura Padrão</span>
+                            <span class="step-tag tag-critico">Regra Estrita</span>
+                        </div>
+                        <p>
+                            Após o drone pousar e os dados serem trazidos ao escritório, crie a pasta do voo dentro de:
+                        </p>
+                        <div class="path-box">W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\</div>
+                        
+                        <p><strong>Padrão de Nome Obrigatório da Pasta:</strong></p>
+                        <div class="path-box">FA [NÚMERO] - [NOME DA FAZENDA] [DD-MM-AAAA]</div>
+
+                        <div class="callout callout-alerta">
+                            <span>⚠️</span>
+                            <div>
+                                <strong>ATENÇÃO MÁXIMA AO NOME DA PASTA:</strong><br>
+                                • Exemplo correto: <code>FA 204589 - SAO JOSE 15-03-2026</code><br>
+                                • Nunca use palavras como <code>REFAZER</code> ou <code>TERMINAR</code> no nome, pois o robô ignora propositalmente pastas com essas palavras!<br>
+                                • Se houver subpasta da base geodésica, ela deve começar com <code>B -</code> (ex: <code>B - 102</code>).
+                            </div>
+                        </div>
+
+                        <p><strong>Registro do Hectare de Voo no Excel:</strong></p>
+                        <p style="font-size:0.9rem;">
+                            Abra o arquivo <code>W:\...\1 - Não Processados\BASE DE PROCESSAMENTOS.xlsx</code>, vá na aba <strong>AREA VOO</strong> e insira o FA e o total de hectares medidos no plano de voo do drone. O robô usará essa aba para preencher a Coluna H.
+                        </p>
+                    </div>
+                </div>
+
+                <!-- PASSO 3 -->
+                <div class="step-card" id="passo-3-processamento">
+                    <div class="step-num-col">
+                        <div class="step-num">03</div>
+                        <div class="step-num-lbl">Processar</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Processamento de Imagens & O Que o Robô Faz Sozinho</span>
+                            <span class="step-tag tag-auto">Automação Watchdog</span>
+                        </div>
+                        <p>
+                            O analista realiza o alinhamento das fotos e geração dos produtos no software fotogramétrico (Metashape / PIX4D / Inforow). Os arquivos finais devem ser salvos na pasta correspondente em <code>2 - Falhas e Linhas</code>:
+                        </p>
+                        
+                        <div class="grid-2">
+                            <div class="card">
+                                <b style="color:var(--ouro);">Arquivos que o Analista Deve Salvar:</b>
+                                <ul style="margin: 8px 0 0 20px; font-size:0.85rem; color:var(--texto-sec);">
+                                    <li><code>[FA].tif</code> (Ortomosaico de alta resolução)</li>
+                                    <li><code>[QualquerNome].kml</code> (Polígono de contorno da área)</li>
+                                    <li><code>*LINHA*.kml</code> (KML contendo a palavra 'LINHA' no nome)</li>
+                                    <li><code>TableGaps.csv</code> (Tabela de falhas brutas)</li>
+                                    <li><code>TableCTF.csv</code> (Tabela de paralelismo/pisoteio)</li>
+                                </ul>
+                            </div>
+                            <div class="card">
+                                <b style="color:var(--verde-claro);">O Que o Robô (Python) Faz Automaticamente:</b>
+                                <ul style="margin: 8px 0 0 20px; font-size:0.85rem; color:var(--texto-sec);">
+                                    <li>Detecta os arquivos após 5 segundos de gravação estável.</li>
+                                    <li>Marca a Coluna F como <strong>FEITO</strong> e Coluna G com a Data.</li>
+                                    <li>Calcula a área KML real (EPSG:6933) na Coluna I.</li>
+                                    <li>Abate saldo de área e desconta créditos Inforow.</li>
+                                    <li>Testa a geometria das linhas (marca <strong>FEITO</strong> ou <strong>ERRO</strong> na Coluna J).</li>
+                                    <li>Move e renomeia os CSVs para a pasta <code>08-BANCO DE DADOS</code>.</li>
+                                    <li>Envia e-mail automático via Outlook para <code>geotecnologia@clealco.com.br</code> avisando que o TIF está pronto.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 4 -->
+                <div class="step-card" id="passo-4-fechamento">
+                    <div class="step-num-col">
+                        <div class="step-num">04</div>
+                        <div class="step-num-lbl">Consolidar</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Fechamento Diário no Banco de Atividades (Até 17h30)</span>
+                            <span class="step-tag tag-manual">Compliance Diário</span>
+                        </div>
+                        <p>
+                            Para manter o Power BI da diretoria atualizado, o analista deve fazer o registro das atividades concluídas no dia na planilha mestre:
+                        </p>
+                        <div class="path-box">M:\10-Planilhas\Banco de dados de atividades.xlsm</div>
+
+                        <p><strong>Campos a preencher na aba "BANCO DE DADOS":</strong></p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Coluna</th>
+                                    <th>Campo</th>
+                                    <th>Como Preencher?</th>
+                                    <th>Exemplo</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Coluna C</td>
+                                    <td><strong>FAZENDA</strong></td>
+                                    <td>Número do FA (somente números ou código oficial)</td>
+                                    <td><code>204589</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Coluna F</td>
+                                    <td><strong>OCORRÊNCIA</strong></td>
+                                    <td>Selecione a fase concluída</td>
+                                    <td><code>05 - Voo</code> ou <code>06 - Processamento</code> ou <code>08 - Falha / Linha</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Coluna G</td>
+                                    <td><strong>DATA</strong></td>
+                                    <td>Data da realização da atividade</td>
+                                    <td><code>20/10/2026</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Coluna H</td>
+                                    <td><strong>REFERÊNCIA</strong></td>
+                                    <td>Ano safra de referência</td>
+                                    <td><code>2026</code></td>
+                                </tr>
+                                <tr>
+                                    <td>Coluna I</td>
+                                    <td><strong>HA / ÁREA</strong></td>
+                                    <td>Hectares realizados (use vírgula para decimais)</td>
+                                    <td><code>145,50</code></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="callout callout-verde">
+                            <span>✅</span>
+                            <div>
+                                <strong>Passo Final do Fechamento:</strong><br>
+                                Com o arquivo aberto, clique na guia superior do Excel em <strong>Dados > Atualizar Tudo</strong>. Salve e feche. Pronto! As tabelas dinâmicas e o painel de Acompanhamento Geral estarão 100% atualizados.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 5: SINCRONIZAÇÃO GITHUB PAGES & CRON 30 MIN -->
+                <div class="step-card" id="passo-5-github">
+                    <div class="step-num-col" style="background: rgba(33, 150, 243, 0.1);">
+                        <div class="step-num" style="color: #64b5f6;">05</div>
+                        <div class="step-num-lbl">Online</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Sincronização com o GitHub Pages & Cron Automático de 30 Minutos</span>
+                            <span class="step-tag tag-auto">1-Clique / Automático</span>
+                        </div>
+                        <p>
+                            Para que a diretoria, gerência e os pilotos em campo acessem o painel em qualquer computador, tablet ou celular sem depender de VPN ou rede corporativa, o sistema possui integração direta com o <strong>GitHub Pages</strong> protegida por criptografia de dados militar.
+                        </p>
+                        
+                        <div class="path-box">🌐 Link Online: https://geotecnologiaclealco.github.io/PAINEL_FALHAS/</div>
+                        
+                        <div class="grid-3">
+                            <div class="card card-destaque">
+                                <b style="color:var(--ouro);">Método 1: Automático a Cada 30 Min (Cron)</b>
+                                <p style="font-size:0.85rem; margin-top:5px;">
+                                    Dê dois cliques no atalho <strong>"INICIAR_SISTEMA_CLEALCO_2.0"</strong> na sua Área de Trabalho (ou <code>INICIAR_SISTEMA.bat</code>).
+                                </p>
+                                <ul style="font-size:0.8rem; color:var(--texto-sec); margin-left:18px;">
+                                    <li>Inicia o robô Python <code>2.0importos.py</code>;</li>
+                                    <li>Executa o loop contínuo <code>cron_publicar_github(30)</code> a cada 30 minutos em background;</li>
+                                    <li>Atualiza planilhas, cruza shapes e envia para a nuvem de forma autônoma sem você precisar fazer nada.</li>
+                                </ul>
+                            </div>
+
+                            <div class="card card-plasma">
+                                <b style="color:var(--plasma);">Método 2: Pelo Botão no Painel Local</b>
+                                <p style="font-size:0.85rem; margin-top:5px;">
+                                    No painel local (<code>http://127.0.0.1:5000</code>), clique no botão <strong>"📤 Exportar GitHub"</strong> no rodapé esquerdo.
+                                </p>
+                                <ul style="font-size:0.8rem; color:var(--texto-sec); margin-left:18px;">
+                                    <li>Consolida as abas em <code>dados.xlsx</code> na pasta do GitHub;</li>
+                                    <li>Dispara imediatamente o script <code>atualizar_dados.bat</code>;</li>
+                                    <li>Criptografa e sobe o commit em tempo real.</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="card card-verde">
+                                <b style="color:var(--verde-claro);">Método 3: Execução Manual Rápida (.bat)</b>
+                                <p style="font-size:0.85rem; margin-top:5px;">
+                                    Para forçar uma sincronização isolada a qualquer hora:
+                                </p>
+                                <ul style="font-size:0.8rem; color:var(--texto-sec); margin-left:18px;">
+                                    <li>Abra <code>W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0</code>;</li>
+                                    <li>Dê <strong>2 cliques</strong> em <code>atualizar_dados.bat</code>;</li>
+                                    <li>O script faz o <code>git pull</code>, roda o <code>atualizar_dados.py</code> e faz o <code>git push</code> em poucos segundos.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- FLUXOGRAMA DE SINCRONIZAÇÃO GITHUB -->
+                        <div class="fluxograma-wrapper">
+                            <div class="mermaid">
+flowchart LR
+    classDef origem fill:#1a1008,stroke:#FFD166,stroke-width:2px,color:#fff;
+    classDef processa fill:#261205,stroke:#FF6B35,stroke-width:2px,color:#fff;
+    classDef bat fill:#1f0606,stroke:#B22222,stroke-width:2px,color:#fff;
+    classDef nuvem fill:#062338,stroke:#2196f3,stroke-width:2px,color:#fff;
+
+    A["Cron (30 min) / Botão Local"]:::origem -->|"Compila dados"| B["dados.xlsx (Local Privado)"]:::processa
+    B -->|"Aciona"| C["atualizar_dados.bat"]:::bat
+    C -->|"Executa"| D["atualizar_dados.py"]:::bat
+    D -->|"Criptografia AES-256 GCM"| E["dados_injetados.js + dados_mapa_voos.js"]:::processa
+    C -->|"git push origin main"| F["GitHub (Repositório Seguro)"]:::nuvem
+    F -->|"PWA Cache v35"| G["Painel Online + Celular Campo"]:::nuvem
+                            </div>
+                        </div>
+
+                        <div class="callout callout-ouro">
+                            <span>🔒</span>
+                            <div>
+                                <strong>Arquitetura de Segurança & Criptografia:</strong><br>
+                                A planilha <code>dados.xlsx</code> fica estritamente na rede local interna da Clealco. Para a nuvem pública sobem apenas os arquivos <code>dados_injetados.js</code> e <code>dados_mapa_voos.js</code>, protegidos com criptografia simétrica de nível militar <strong>AES-256 GCM com derivação PBKDF2/SHA-256</strong>. O site descriptografa os números na memória do navegador do usuário sem expor os dados brutos da empresa.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 6: MAPA OPERACIONAL, RADAR METEOROLÓGICO & GPS -->
+                <div class="step-card" id="passo-6-mapa-radar">
+                    <div class="step-num-col" style="background: rgba(0, 150, 136, 0.15);">
+                        <div class="step-num" style="color: #26a69a;">06</div>
+                        <div class="step-num-lbl">SIG & Campo</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Mapa Operacional de Talhões, Radar Meteorológico (IPMet) & GPS</span>
+                            <span class="step-tag tag-auto">Geotecnologia SIG</span>
+                        </div>
+                        <p>
+                            A aba <strong>🗺️ MAPA OPERACIONAL</strong> integra visualização SIG de altíssima precisão com ferramentas essenciais para o planejamento diário de voos e conferência em campo pelos pilotos e coordenadores:
+                        </p>
+
+                        <div class="grid-3">
+                            <div class="card card-destaque">
+                                <b style="color:var(--ouro);">1. Mais de 670 Talhões Vetoriais</b>
+                                <p style="font-size:0.85rem; margin-top:5px;">
+                                    O script cruza os KMLs de voo com o shapefile mestre <code>SHP_CLEALCO.shp</code> e classifica cada talhão no semáforo operacional clássico da usina:
+                                </p>
+                                <ul style="font-size:0.8rem; color:var(--texto-sec); margin-left:18px;">
+                                    <li>🔴 <strong>Crítico (> 90 dias)</strong>: Vermelho vivo.</li>
+                                    <li>🟡 <strong>Atenção (60 a 90 dias)</strong>: Amarelo alerta.</li>
+                                    <li>🔵 <strong>No Prazo (< 60 dias)</strong>: Azul operacional.</li>
+                                    <li>🟢 <strong>Já Voado / Concluído</strong>: Verde Esmeralda oficial (<code>#10b981</code>).</li>
+                                </ul>
+                            </div>
+
+                            <div class="card card-plasma">
+                                <b style="color:var(--plasma);">2. 🌧️ Radar Meteorológico (IPMet)</b>
+                                <p style="font-size:0.85rem; margin-top:5px;">
+                                    Detecção de nuvens de chuva em tempo real integrada aos radares meteorológicos Doppler de Bauru e Presidente Prudente:
+                                </p>
+                                <ul style="font-size:0.8rem; color:var(--texto-sec); margin-left:18px;">
+                                    <li>Botão rápido <strong>🌧️ Radar Chuva</strong> no topo e no mapa;</li>
+                                    <li>Camada semitransparente universal de refletividade sobre os talhões;</li>
+                                    <li>Player de animação que mostra o deslocamento da chuva nas últimas 2 horas;</li>
+                                    <li>Atalho direto para o radar oficial do IPMet.</li>
+                                </ul>
+                            </div>
+
+                            <div class="card card-verde">
+                                <b style="color:var(--verde-claro);">3. 📍 GPS de Campo & KMLs</b>
+                                <p style="font-size:0.85rem; margin-top:5px;">
+                                    Suporte avançado para pilotos diretamente na lavoura com celular ou tablet:
+                                </p>
+                                <ul style="font-size:0.8rem; color:var(--texto-sec); margin-left:18px;">
+                                    <li>Botão <strong>📍 GPS</strong> com timeout estendido de 15 segundos para áreas rurais;</li>
+                                    <li>Marcador pulsante azul mostrando a posição exata e raio de precisão;</li>
+                                    <li>Clique em qualquer talhão para baixar o arquivo <strong>KML direto</strong> ou exporte todo o Backlog de uma vez para os drones DJI.</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="callout callout-verde">
+                            <span>💡</span>
+                            <div>
+                                <strong>Dica Operacional de Voo:</strong><br>
+                                Antes de decolar os drones nas fazendas de Clementina ou Queiroz, abra a aba Mapa e ative o botão <strong>🌧️ Radar</strong>. Se houver manchas amarelas ou vermelhas se aproximando num raio de 40 km, aguarde a passagem da instabilidade para evitar perda de sinal de rádio ou danos aos equipamentos fotogramétricos.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SEÇÃO 5: REGRAS DE OURO -->
+        <section id="regras-ouro">
+            <h2>⚖️ 5. Regras Críticas de Negócio (Atenção Redobrada)</h2>
+            <p>Estas são regras matemáticas e de segurança gravadas no código do sistema que você precisa conhecer:</p>
+
+            <div class="grid-2">
+                <div class="card card-destaque">
+                    <h3 style="color:var(--ouro); margin-top:0;">1. A Regra do FA: Própria vs Terceiros</h3>
+                    <p style="font-size:0.85rem;">
+                        O sistema precisa separar o que é área da usina e o que é de fornecedor parceiro. A regra matemática programada é:
+                    </p>
+                    <div style="background:#000; padding:10px; border-radius:6px; font-family:monospace; font-size:0.82rem; color:#81c784;">
+                        fa_limpo = apenas_numeros(FA)<br>
+                        se fa_limpo começa com '20' E tem exatamente 6 dígitos:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;➔ É PRÓPRIA (Ex: 201234)<br>
+                        caso contrário:<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;➔ É FORNECEDOR / TERCEIRO
+                    </div>
+                </div>
+
+                <div class="card card-plasma">
+                    <h3 style="color:var(--plasma); margin-top:0;">2. Classificação do Índice de Falha</h3>
+                    <p style="font-size:0.85rem;">
+                        O robô calcula: <code>% Falha = (Comprimento Falhas / Comprimento Linhas) * 100</code>. A tolerância é rígida:
+                    </p>
+                    <ul style="font-size:0.85rem; color:var(--texto-sec); margin-left:20px;">
+                        <li>🟢 <strong>Até 5.0% (Terc) ou 8.0% (Própria):</strong> Aceitável.</li>
+                        <li>🟡 <strong>De 5.1% a 10.0%:</strong> Atenção / Alerta.</li>
+                        <li>🔴 <strong>Acima de 10.0%:</strong> <strong>CRÍTICO!</strong> Requer acionamento imediato da Coordenação e Gerência de Operações.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card card-carmesim">
+                    <h3 style="color:var(--carmesim); margin-top:0;">3. Shadow Copy & Lock do Excel</h3>
+                    <p style="font-size:0.85rem;">
+                        Como várias pessoas abrem a planilha pela rede, o robô <strong>nunca lê o Excel direto no W:</strong>. Ele faz uma cópia-sombra temporária com UUID (<code>clealco_shadow_*.xlsx</code>) e usa uma trava em memória (<code>threading.Lock</code>). Isso impede corrupção de arquivos!
+                    </p>
+                </div>
+
+                <div class="card card-verde">
+                    <h3 style="color:var(--verde-claro); margin-top:0;">4. De-Para Automático de Fazendas</h3>
+                    <p style="font-size:0.85rem;">
+                        Se uma área foi voada com código de estudo de arrendamento (ex: FA provisório) e depois recebeu um FA oficial em <code>Status de Estudos.xlsx</code>, o robô renomeia as pastas do W: e atualiza as linhas do Excel automaticamente.
+                    </p>
+                </div>
+            </div>
+
+            <!-- REGRA 5: BLINDAGEM DA AUDITORIA DE FALHAS -->
+            <div class="card card-destaque" style="margin-top: 20px;">
+                <h3 style="color:var(--ouro); margin-top:0;">5. 🛡️ Blindagem da Auditoria de Falhas (Prevenção de Duplicidade)</h3>
+                <p style="font-size:0.85rem;">
+                    A contagem de hectares auditados de <strong>Falhas no Plantio</strong> possui uma regra de soberania absoluta no sistema para impedir duplicidade de números:
+                </p>
+                <div class="grid-2" style="margin: 10px 0;">
+                    <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; border:1px solid rgba(255,209,102,0.2);">
+                        <b style="color:var(--ouro); font-size:0.82rem;">Origem Soberana dos Dados:</b>
+                        <p style="font-size:0.8rem; margin: 5px 0 0 0; color:var(--texto-sec);">
+                            Os <strong>86 arquivos CSVs auditados</strong> em <code>W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas</code> são a única fonte válida. O script zera a categoria antes de somar os arquivos, garantindo que nunca ocorra a soma duplicada com a planilha da rede (que antes inflava para 7.162 ha).
+                        </p>
+                    </div>
+                    <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; border:1px solid rgba(76,175,80,0.2);">
+                        <b style="color:var(--verde-claro); font-size:0.82rem;">Valores Oficiais Auditados (Safra 2026):</b>
+                        <ul style="font-size:0.8rem; margin: 5px 0 0 16px; color:var(--texto-sec);">
+                            <li><strong>Própria</strong>: Meta 3.374 ha | Realizado <strong>1.125 ha</strong> (33,3%)</li>
+                            <li><strong>Fornecedores</strong>: Meta 11.000 ha | Realizado <strong>3.755 ha</strong> (34,1%)</li>
+                            <li><strong>Consolidado</strong>: Meta 14.374 ha | Realizado <strong>4.880 ha</strong> (33,9%)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 6: TELAS E BOT TELEGRAM -->
+        <section id="paineis-e-bot">
+            <h2>🖥️ 6. Como Usar o Painel Web e o Bot do Telegram</h2>
+
+            <h3>A. Painel Web (Dashboard Singularity AI)</h3>
+            <p>
+                Para abrir o painel, acesse no navegador: <a href="http://127.0.0.1:5000" target="_blank" style="color:var(--ouro); font-weight:bold;">http://127.0.0.1:5000</a> (o servidor Python <code>2.0importos.py</code> deve estar rodando na máquina servidora).
+            </p>
+
+            <div class="grid-3">
+                <div class="card card-destaque">
+                    <b style="color:var(--ouro);">📊 Acompanhamento Geral</b>
+                    <p style="font-size:0.85rem; margin-top:5px;">
+                        Tabela oficial de metas comparando o Previsto com o Realizado no Ano, na Semana e no Mês por Própria, Terceiros e Consolidado. Possui botão para exportar print em alta resolução para apresentações executivas.
+                    </p>
+                </div>
+                <div class="card card-plasma">
+                    <b style="color:var(--plasma);">📉 Dashboard de Falhas</b>
+                    <p style="font-size:0.85rem; margin-top:5px;">
+                        Exibe os velocímetros (gauges) com a % de falhas e índices de perda, alimentados diretamente pela auditoria real dos 86 arquivos CSVs de campo (1.125 ha Própria e 3.755 ha Fornecedores).
+                    </p>
+                </div>
+                <div class="card card-carmesim">
+                    <b style="color:var(--carmesim);">⚙️ Metas e Cores</b>
+                    <p style="font-size:0.85rem; margin-top:5px;">
+                        Permite personalizar metas de hectares para qualquer safra futura e ajustar a paleta de cores dos gráficos de rosca e barras de acordo com a preferência da coordenação.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid-2" style="margin-top: 0;">
+                <div class="card card-verde">
+                    <b style="color:var(--verde-claro);">🌐 Painel GitHub Online & PWA Mobile (Cache v35)</b>
+                    <p style="font-size:0.85rem; margin-top:5px;">
+                        Versão 100% online em <a href="https://geotecnologiaclealco.github.io/PAINEL_FALHAS/" target="_blank" style="color:var(--ouro); font-weight:bold;">GitHub Pages</a>. Layout moderno no Modo Claro corporativo, com proteção criptográfica militar AES-256 e suporte offline PWA com ícone oficial da Clealco para instalação direta na tela inicial de celulares Android e iPhones.
+                    </p>
+                </div>
+                <div class="card" style="border-left: 4px solid #26a69a;">
+                    <b style="color:#26a69a;">🌧️ Mapa SIG com Radar Meteorológico & GPS</b>
+                    <p style="font-size:0.85rem; margin-top:5px;">
+                        Mais de 670 talhões mapeados sobre o <code>SHP_CLEALCO.shp</code> com semáforo oficial (incluindo Verde Esmeralda para Voados), radar Doppler de chuva do IPMet (Bauru/Prudente) em tempo real com histórico de 2 horas e botão GPS para localização do operador na lavoura.
+                    </p>
+                </div>
+            </div>
+
+            <h3>B. Comandos do Bot do Telegram</h3>
+            <p>
+                O robô possui um bot próprio no Telegram com teclado de botões rápidos para a liderança consultar de onde estiver:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Botão / Comando</th>
+                        <th>O Que Ele Faz?</th>
+                        <th>Tipo de Retorno</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code>📊 Resumo Safra</code></td>
+                        <td>Gera o balanço geral de cobertura, voos registrados e avanço de TIFs e Linhas.</td>
+                        <td>Imagem gráfica Dark Gargantua</td>
+                    </tr>
+                    <tr>
+                        <td><code>📉 Analítico de Falhas</code></td>
+                        <td>Gera a foto dos velocímetros de falha e percentuais por categoria.</td>
+                        <td>Imagem gráfica dos Gauges</td>
+                    </tr>
+                    <tr>
+                        <td><code>📈 Acompanhamento Geral</code></td>
+                        <td>Gera o relatório visual de previsto vs realizado semanal e mensal.</td>
+                        <td>Imagem oficial da tabela</td>
+                    </tr>
+                    <tr>
+                        <td><code>📋 Faltam Voar</code></td>
+                        <td>Mostra o dashboard de Backlog e lista os próximos 5 FAs pendentes.</td>
+                        <td>Gráfico Donut + Lista detalhada</td>
+                    </tr>
+                    <tr>
+                        <td><code>⏳ Últimos Pendentes</code></td>
+                        <td>Lista os FAs mais recentes que ainda estão aguardando TIF ou Linhas.</td>
+                        <td>Mensagem de texto formatada</td>
+                    </tr>
+                    <tr>
+                        <td><code>🚨 Erros & Falhas</code></td>
+                        <td>Lista voos que apresentaram problemas de KML vazio ou corrompido.</td>
+                        <td>Mensagem de alerta imediato</td>
+                    </tr>
+                    <tr>
+                        <td><code>📑 Relatório PDF</code></td>
+                        <td>Compila automaticamente o Relatório Executivo com as duas páginas principais.</td>
+                        <td>Documento em arquivo .PDF</td>
+                    </tr>
+                    <tr>
+                        <td><code>[Digite o FA]</code></td>
+                        <td>Exemplo: <code>204589</code>. Busca instantaneamente a situação completa daquele voo.</td>
+                        <td>Ficha completa com data, base, TIF e linhas</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <!-- SEÇÃO 7: TROUBLESHOOTING -->
+        <section id="troubleshooting">
+            <h2>🚨 7. Guia de Resolução de Problemas (Troubleshooting)</h2>
+            <p>Se acontecer algum imprevisto, consulte a tabela abaixo para saber como resolver imediatamente:</p>
+
+            <div class="grid-2">
+                <div class="card card-carmesim">
+                    <b style="color:#ff8a80; font-size:1rem;">1. Coluna de Linhas ficou com "ERRO" em vermelho</b>
+                    <p style="font-size:0.85rem; margin-top:8px;">
+                        <strong>Causa:</strong> O arquivo KML de linhas foi salvo vazio (0 bytes), está com polígono sem coordenadas ou corrompeu durante a cópia pela rede.<br>
+                        <strong>Solução:</strong> Abra o software de processamento, reexporte o arquivo KML com as linhas e salve novamente na pasta. Em 5 segundos o robô tentará validar novamente e apagará o erro.
+                    </p>
+                </div>
+
+                <div class="card card-destaque">
+                    <b style="color:var(--ouro); font-size:1rem;">2. O Telegram diz "⛔ Acesso Restrito"</b>
+                    <p style="font-size:0.85rem; margin-top:8px;">
+                        <strong>Causa:</strong> Por segurança, o bot só responde a funcionários cadastrados.<br>
+                        <strong>Solução:</strong> Abra o Painel Web (<code>http://127.0.0.1:5000</code>), clique em <strong>📱 Admin Telegram</strong> no rodapé, copie o ID numérico que apareceu na mensagem do Telegram e clique em <strong>Adicionar</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card card-plasma">
+                    <b style="color:var(--plasma); font-size:1rem;">3. Diagnóstico de Rede no Rodapé mostra "W: ERRO" ou "M: ERRO"</b>
+                    <p style="font-size:0.85rem; margin-top:8px;">
+                        <strong>Causa:</strong> A conexão com os servidores de arquivo caiu ou o cabo de rede foi desconectado.<br>
+                        <strong>Solução:</strong> Abra o "Meu Computador" (Explorador de Arquivos do Windows) e clique duas vezes nas unidades W: e M: para reautenticar sua senha de rede. O sistema voltará a ficar verde automaticamente.
+                    </p>
+                </div>
+
+                <div class="card card-verde">
+                    <b style="color:var(--verde-claro); font-size:1rem;">4. A planilha Excel diz "Arquivo Somente Leitura"</b>
+                    <p style="font-size:0.85rem; margin-top:8px;">
+                        <strong>Causa:</strong> Algum colega de equipe deixou o arquivo <code>BASE DE PROCESSAMENTOS.xlsx</code> aberto.<br>
+                        <strong>Solução:</strong> Peça para o colega fechar a planilha após o uso. O robô da IA possui Shadow Copy e não trava, mas para edição manual humana o Excel requer acesso exclusivo.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEÇÃO 8: CHECKLIST DIÁRIO -->
+        <section id="checklist-diario">
+            <h2>✅ 8. Checklist Rápido do Operador (Rotina Diária)</h2>
+            <p>Guarde este resumo mental para executar todos os dias de trabalho:</p>
+
+            <ul class="checklist">
+                <li>
+                    <span class="check-icon">✓</span>
+                    <div><strong>Início da Manhã (07h30):</strong> Iniciar a automação dando 2 cliques no atalho <code>INICIAR_SISTEMA_CLEALCO_2.0</code> na Área de Trabalho (mantém o robô, o Telegram e a sincronização automática de 30 minutos rodando em background).</div>
+                </li>
+                <li>
+                    <span class="check-icon">✓</span>
+                    <div><strong>Planejamento do Piloto (Antes de Decolar):</strong> Abrir a aba <strong>🗺️ MAPA</strong> no celular ou PC e consultar o <strong>🌧️ Radar Meteorológico (IPMet)</strong> para checar a aproximação de chuvas em um raio de 40 km e conferir os FAs prioritários no Backlog.</div>
+                </li>
+                <li>
+                    <span class="check-icon">✓</span>
+                    <div><strong>Na Lavoura (Em Campo):</strong> Usar o botão <strong>📍 GPS</strong> no mapa do celular para confirmar a posição exata no talhão e baixar o arquivo <strong>KML direto</strong> para o controle do drone.</div>
+                </li>
+                <li>
+                    <span class="check-icon">✓</span>
+                    <div><strong>Ao Receber Voos:</strong> Criar pasta no padrão <code>FA [NÚMERO] - [FAZENDA] [DATA]</code> dentro de <code>1 - Não Processados</code> e lançar o Ha Voo na aba <code>AREA VOO</code>.</div>
+                </li>
+                <li>
+                    <span class="check-icon">✓</span>
+                    <div><strong>Durante o Processamento:</strong> Salvar o Ortomosaico <code>.tif</code>, o KML de contorno, o KML com <code>LINHA</code> no nome e os CSVs de falhas na pasta <code>2 - Falhas e Linhas</code>.</div>
+                </li>
+                <li>
+                    <span class="check-icon">✓</span>
+                    <div><strong>Auditoria Visual:</strong> Conferir no Painel se as colunas TIF, KML e Linhas ficaram verdes com status <strong>FEITO</strong>.</div>
+                </li>
+                <li>
+                    <span class="check-icon">✓</span>
+                    <div><strong>Fechamento da Tarde (Até 17h30):</strong> Inserir os lotes do dia na aba <code>BANCO DE DADOS</code> do <code>Banco de dados de atividades.xlsm</code> no disco M: e clicar em <strong>Dados > Atualizar Tudo</strong>.</div>
+                </li>
+                <li>
+                    <span class="check-icon">✓</span>
+                    <div><strong>Sincronização Online Automática:</strong> O robô <code>2.0importos.py</code> sincroniza sozinho de 30 em 30 minutos para o GitHub Pages. Se quiser forçar na hora, basta clicar em <strong>"📤 Exportar GitHub"</strong> ou rodar <code>atualizar_dados.bat</code>.</div>
+                </li>
+            </ul>
+        </section>
+
+        <!-- SEÇÃO 9: PARECER TÉCNICO PARA TI & SEGURANÇA DA INFORMAÇÃO -->
+        <section id="parecer-ti">
+            <h2>🛡️ 9. Parecer Técnico para Homologação de TI & InfoSec</h2>
+            <p>
+                Esta seção foi elaborada especificamente para atender aos requisitos de <strong>Governança, Segurança da Informação (InfoSec) e Infraestrutura de TI</strong> da Clealco Açúcar e Álcool S.A., fornecendo todas as respostas para a aprovação formal do projeto:
+            </p>
+
+            <div class="grid-2">
+                <div class="card card-destaque">
+                    <h3 style="color:var(--ouro); margin-top:0;">1. Segurança de Rede: Zero Portas de Entrada</h3>
+                    <p style="font-size:0.85rem;">
+                        O sistema <strong>NÃO requer nenhuma porta aberta (Inbound)</strong> no firewall corporativo nem IP fixo, DMZ ou redirecionamentos NAT perigosos. Toda a comunicação externa é realizada estritamente por conexões de saída padrão <strong>HTTPS (Porta 443 Outbound)</strong> para o repositório seguro da empresa no GitHub e para tiles cartográficos públicos (OpenStreetMap, RainViewer).
+                    </p>
+                </div>
+
+                <div class="card card-plasma">
+                    <h3 style="color:var(--plasma); margin-top:0;">2. Criptografia & Proteção de Dados (AES-256)</h3>
+                    <p style="font-size:0.85rem;">
+                        A planilha mestre local <code>dados.xlsx</code> e as planilhas da rede <strong>nunca saem do ambiente corporativo</strong>. Os dados enviados para a nuvem pública consistem apenas em arquivos compilados e protegidos com <strong>AES-256 GCM</strong> com derivação de chave <strong>PBKDF2/SHA-256 (100.000 iterações + Salt de 16 bytes)</strong>. O navegador do usuário final descriptografa os números em memória volátil, sem exposição dos arquivos brutos.
+                    </p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="card card-verde">
+                    <h3 style="color:var(--verde-claro); margin-top:0;">3. Conformidade com a LGPD</h3>
+                    <p style="font-size:0.85rem;">
+                        O ecossistema trata <strong>exclusivamente dados técnicos agrícolas, agronômicos e geoespaciais</strong> (códigos de FA, hectares, porcentagens de falhas e polígonos de canaviais). Não há coleta, armazenamento ou tráfego de dados pessoais de funcionários, clientes ou parceiros (sem CPF, RG, dados bancários, biométricos ou sensíveis), enquadrando-se em total conformidade com a Lei Geral de Proteção de Dados.
+                    </p>
+                </div>
+
+                <div class="card card-carmesim">
+                    <h3 style="color:var(--carmesim); margin-top:0;">4. Custo Zero de Infraestrutura (Serverless Jamstack)</h3>
+                    <p style="font-size:0.85rem;">
+                        Diferente de sistemas legados que exigem servidores dedicados, banco de dados relacional pesado ou máquinas virtuais na nuvem (Azure/AWS), a versão web online opera sobre o modelo <strong>Jamstack Serverless</strong> hospedada gratuitamente no GitHub Pages corporativo, com CDN global de alta disponibilidade, certificado SSL/TLS nativo e <strong>R$ 0,00 de custo operacional de servidores para a TI</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- TABELA DE MATRIZ DE REQUISITOS DE TI -->
+            <h3>Matriz de Requisitos Técnicos & Governança</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Critério de Avaliação da TI</th>
+                        <th>Como o Sistema Atende?</th>
+                        <th>Status para TI</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Portas de Entrada (Inbound)</strong></td>
+                        <td>0 portas abertas. Sem necessidade de liberação de firewall ou VPN externa.</td>
+                        <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Seguro</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tráfego de Dados na Nuvem</strong></td>
+                        <td>Criptografia militar simétrica AES-256 GCM com PBKDF2/SHA-256. Planilhas Excel não sobem.</td>
+                        <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Blindado</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Proteção de Concorrência de Arquivos</strong></td>
+                        <td>Shadow Copying (cópia temporária UUID) + Mutex Threading Lock (não trava arquivos no W: ou M:).</td>
+                        <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Sem Locks</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Continuidade Operacional (Offline)</strong></td>
+                        <td>Progressive Web App (PWA) com Service Worker Cache v35 (funciona em áreas rurais sem sinal).</td>
+                        <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Resiliente</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Licenciamento de Software</strong></td>
+                        <td>Stack 100% baseada em tecnologias abertas de alto padrão (Python, Leaflet, Tailwind CSS). Custo zero.</td>
+                        <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Sem Custos</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="callout callout-ouro">
+                <span>📋</span>
+                <div>
+                    <strong>Parecer Final para a Diretoria & TI:</strong><br>
+                    O projeto cumpre rigorosamente todos os critérios de segurança corporativa, não gera custos recorrentes de servidores, não compromete a segurança de perímetro da rede e fornece uma solução de ponta para a gestão agronômica da Clealco.
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir Este Manual Operacional</button>
+                <div style="font-size: 0.75rem; color: var(--texto-muted); margin-top: 10px;">
+                    Clealco Açúcar e Álcool S.A. | Gerência de Planejamento e Geotecnologia Agrícola
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
