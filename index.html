@@ -317,6 +317,18 @@
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.25), 0 10px 10px -5px rgba(0, 0, 0, 0.1) !important;
         }
 
+        /* Remove o quadrado/caixa preta de seleção de foco ao clicar no talhão */
+        .leaflet-container :focus,
+        .leaflet-container path:focus,
+        .leaflet-interactive:focus,
+        path.leaflet-interactive:focus,
+        svg.leaflet-zoom-animated path:focus {
+            outline: none !important;
+        }
+        path.leaflet-interactive {
+            outline: none !important;
+        }
+
         /* ================= SIDEBAR LATERAL ESQUERDA ================= */
         #sidebar-principal {
             transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
