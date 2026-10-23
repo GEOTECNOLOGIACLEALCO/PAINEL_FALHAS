@@ -281,24 +281,6 @@ try:
                 except Exception as ex_k:
                     pass
         
-        # Carregar talhões voados mapeados nos relatórios individuais de Falhas
-        pasta_csv_falhas = r"W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas"
-        talhoes_voados_csv = {}
-        if os.path.exists(pasta_csv_falhas):
-            for arq_csv in os.listdir(pasta_csv_falhas):
-                if arq_csv.lower().endswith('.csv'):
-                    fa_csv = os.path.splitext(arq_csv)[0].strip().lstrip('0')
-                    caminho_csv = os.path.join(pasta_csv_falhas, arq_csv)
-                    talhoes_voados_csv[fa_csv] = set()
-                    try:
-                        with open(caminho_csv, encoding='utf-8', errors='ignore') as f_csv:
-                            for l_csv in f_csv.readlines()[1:]:
-                                parts = l_csv.split(',')
-                                if len(parts) > 1 and parts[1].strip():
-                                    t_clean = parts[1].strip().split('.')[0].strip().lstrip('0')
-                                    if t_clean: talhoes_voados_csv[fa_csv].add(t_clean)
-                    except: pass
-        
         # Dicionário do Backlog indexado por (FA, Talhao)
         backlog_dict = {}
         for b in backlog:
@@ -421,13 +403,6 @@ try:
                     status_voo = "ATENCAO"
                 else:
                     status_voo = "NOPRAZO"
-            elif faz in talhoes_voados_csv:
-                if tal in talhoes_voados_csv[faz]:
-                    status_voo = "VOADO"
-                else:
-                    continue
-            elif faz in fas_voadas:
-                status_voo = "VOADO"
             else:
                 continue
                 
