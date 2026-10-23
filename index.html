@@ -1114,6 +1114,9 @@
                     </div>
 
                     <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="toggleRadarChuva()" id="btn-radar-chuva" title="Ver manchas de chuva e radar meteorológico (IPMet / RainViewer) em tempo real" class="text-xs bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            🌧️ <span id="lbl-radar-chuva">Radar Chuva</span>
+                        </button>
                         <button onclick="localizarMinhaPosicao()" id="btn-gps-posicao" title="Ativar GPS e ver sua localização atual no mapa" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                             📍 <span>Minha Posição</span>
                         </button>
@@ -1200,8 +1203,14 @@
                         </select>
                     </div>
 
+                    <!-- Botão Toggle Radar Chuva -->
+                    <button id="btn-radar-chuva" onclick="toggleRadarChuva()" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer ml-auto" title="Ligar/Desligar Radar Meteorológico de Chuvas (IPMet / RainViewer)">
+                        <span class="text-base leading-none">🌧️</span>
+                        <span>Radar Chuva</span>
+                    </button>
+
                     <!-- Botão Toggle Painel Lateral / Legenda -->
-                    <button onclick="togglePainelLateralMapa()" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer ml-auto">
+                    <button onclick="togglePainelLateralMapa()" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                         <span>📊 Legenda & Ranking</span>
                         <span id="seta-painel-lateral" class="text-[10px] transition-transform">▼</span>
                     </button>
@@ -1257,7 +1266,7 @@
                 <div id="mapa-wrapper" class="w-full h-[64vh] sm:h-[72vh] lg:h-[78vh] min-h-[480px] sm:min-h-[580px] lg:min-h-[740px] rounded-2xl overflow-hidden border border-slate-300 shadow-lg relative bg-slate-950 transition-all duration-300">
                     <div id="mapa-voos-container" class="w-full h-full z-10"></div>
                     
-                    <!-- Botão Flutuante de Tela Cheia e GPS no topo do Mapa -->
+                    <!-- Botão Flutuante de Tela Cheia, GPS e Radar no topo do Mapa -->
                     <div class="absolute top-3 left-12 z-[1000] flex items-center gap-2">
                         <button onclick="toggleTelaCheiaMapa()" class="bg-white/95 hover:bg-white text-slate-800 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Modo Tela Cheia">
                             ⛶ <span class="hidden sm:inline">Tela Cheia</span>
@@ -1265,6 +1274,43 @@
                         <button onclick="localizarMinhaPosicao()" id="btn-gps-floating" class="bg-white/95 hover:bg-white text-blue-700 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Ver minha localização GPS em campo">
                             📍 <span class="hidden sm:inline">GPS</span>
                         </button>
+                        <button onclick="toggleRadarChuva()" id="btn-radar-floating" class="bg-white/95 hover:bg-white text-cyan-700 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Ligar/Desligar Radar Meteorológico de Chuvas">
+                            🌧️ <span class="hidden sm:inline">Radar</span>
+                        </button>
+                    </div>
+
+                    <!-- Barra de Controle do Radar Meteorológico (aparece quando o radar está ativo) -->
+                    <div id="radar-control-bar" class="hidden absolute bottom-12 left-1/2 -translate-x-1/2 z-[1000] bg-slate-900/95 text-white backdrop-blur-md px-3 sm:px-4 py-2 rounded-2xl border border-cyan-500/50 shadow-2xl flex items-center gap-2 sm:gap-3 transition-all duration-300 max-w-[95vw]">
+                        <div class="flex items-center gap-1.5 sm:gap-2">
+                            <span class="w-2.5 h-2.5 rounded-full bg-cyan-400 animate-ping"></span>
+                            <span class="text-[11px] sm:text-xs font-black tracking-wider text-cyan-300 flex items-center gap-1">
+                                RADAR
+                            </span>
+                        </div>
+
+                        <!-- Timestamp do Frame do Radar -->
+                        <div class="flex flex-col text-left border-l border-white/20 pl-2">
+                            <span id="radar-timestamp" class="text-[11px] sm:text-xs font-bold text-white tracking-wide">Carregando...</span>
+                            <span id="radar-status-msg" class="text-[9px] sm:text-[10px] text-cyan-200 truncate max-w-[130px] sm:max-w-none">Chuva / Nuvens</span>
+                        </div>
+
+                        <!-- Controles Play / Pause / Próximo / Anterior -->
+                        <div class="flex items-center gap-1 border-l border-white/20 pl-2">
+                            <button onclick="voltarFrameRadar()" class="p-1 rounded hover:bg-white/20 text-xs text-white" title="Frame anterior">⏮️</button>
+                            <button onclick="toggleAnimacaoRadar()" id="btn-play-radar" class="p-1 px-2 rounded bg-cyan-600 hover:bg-cyan-500 text-xs font-bold text-white flex items-center gap-1" title="Pausar / Reproduzir Animação">
+                                ⏸️ <span class="hidden md:inline text-[11px]">Pausar</span>
+                            </button>
+                            <button onclick="avancarFrameRadar()" class="p-1 rounded hover:bg-white/20 text-xs text-white" title="Próximo frame">⏭️</button>
+                        </div>
+
+                        <!-- Link IPMet Oficial e Botão Fechar -->
+                        <div class="flex items-center gap-1 border-l border-white/20 pl-2">
+                            <a href="https://www.ipmetradar.com.br" target="_blank" rel="noopener noreferrer" class="text-[10px] sm:text-[11px] bg-white/10 hover:bg-white/20 px-2 py-1 rounded text-cyan-200 hover:text-white flex items-center gap-1 transition" title="Abrir radar oficial IPMet (Bauru/Prudente)">
+                                <span>📡 IPMet</span>
+                                <span class="text-[9px]">↗</span>
+                            </a>
+                            <button onclick="toggleRadarChuva()" class="text-slate-400 hover:text-white ml-1 p-1 text-xs" title="Fechar Radar">✕</button>
+                        </div>
                     </div>
 
                     <!-- Overlay de Dica de Navegação / Suporte a Toque -->
@@ -3101,6 +3147,212 @@
                 },
                 { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
             );
+        }
+
+        // ================= RADAR METEOROLÓGICO EM TEMPO REAL (IPMET / RAINVIEWER) =================
+        let radarAtivo = false;
+        let radarFrames = [];
+        let radarLayers = {};
+        let radarCurrentIndex = 0;
+        let radarInterval = null;
+        let radarIsPlaying = true;
+        let radarCamadaAtual = null;
+
+        async function toggleRadarChuva() {
+            radarAtivo = !radarAtivo;
+
+            const btnHeader = document.getElementById('btn-radar-chuva');
+            const btnFloating = document.getElementById('btn-radar-floating');
+            const barControle = document.getElementById('radar-control-bar');
+
+            // Garante que o mapa esteja visível e renderizado
+            if (typeof trocarAba === 'function') {
+                trocarAba('mapa');
+            }
+            if (!mapaVoosInstancia && typeof renderizarMapaVoos === 'function') {
+                renderizarMapaVoos();
+            }
+
+            if (!radarAtivo) {
+                // Desativa radar
+                if (radarInterval) {
+                    clearInterval(radarInterval);
+                    radarInterval = null;
+                }
+                if (radarCamadaAtual && mapaVoosInstancia && mapaVoosInstancia.hasLayer(radarCamadaAtual)) {
+                    mapaVoosInstancia.removeLayer(radarCamadaAtual);
+                }
+                Object.values(radarLayers).forEach(layer => {
+                    if (mapaVoosInstancia && mapaVoosInstancia.hasLayer(layer)) {
+                        mapaVoosInstancia.removeLayer(layer);
+                    }
+                });
+
+                if (barControle) barControle.classList.add('hidden');
+                
+                if (btnHeader) {
+                    btnHeader.classList.remove('bg-cyan-600', 'text-white', 'border-cyan-700', 'shadow-md');
+                    btnHeader.classList.add('bg-white', 'text-slate-700', 'border-slate-300');
+                }
+                if (btnFloating) {
+                    btnFloating.classList.remove('bg-cyan-600', 'text-white', 'border-cyan-700');
+                    btnFloating.classList.add('bg-white/95', 'text-cyan-700', 'border-slate-300');
+                }
+                return;
+            }
+
+            // Ativa radar
+            if (btnHeader) {
+                btnHeader.classList.remove('bg-white', 'text-slate-700', 'border-slate-300');
+                btnHeader.classList.add('bg-cyan-600', 'text-white', 'border-cyan-700', 'shadow-md');
+            }
+            if (btnFloating) {
+                btnFloating.classList.remove('bg-white/95', 'text-cyan-700', 'border-slate-300');
+                btnFloating.classList.add('bg-cyan-600', 'text-white', 'border-cyan-700');
+            }
+            if (barControle) barControle.classList.remove('hidden');
+
+            const statusEl = document.getElementById('radar-status-msg');
+            const tsEl = document.getElementById('radar-timestamp');
+            if (tsEl) tsEl.innerText = 'Carregando radar...';
+            if (statusEl) statusEl.innerText = 'Buscando IPMet/Satélite';
+
+            try {
+                const response = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+                const data = await response.json();
+                
+                if (!data || !data.radar || !data.radar.past || data.radar.past.length === 0) {
+                    throw new Error('Sem dados de radar no momento.');
+                }
+
+                radarFrames = data.radar.past;
+                const host = data.host || 'https://tilecache.rainviewer.com';
+
+                // Pré-cria camadas de tile para cada timestamp
+                radarFrames.forEach(f => {
+                    if (!radarLayers[f.time]) {
+                        // colorScheme 2 (Universal dBZ: verde, amarelo, vermelho, magenta)
+                        // smooth 1, snow 1
+                        const tileUrl = `${host}${f.path}/256/{z}/{x}/{y}/2/1_1.png`;
+                        radarLayers[f.time] = L.tileLayer(tileUrl, {
+                            tileSize: 256,
+                            opacity: 0.70,
+                            maxNativeZoom: 7,
+                            maxZoom: 19,
+                            zIndex: 600
+                        });
+                    }
+                });
+
+                // Posiciona no frame mais recente
+                radarCurrentIndex = radarFrames.length - 1;
+                mostrarFrameRadar(radarCurrentIndex);
+
+                // Inicia loop de animação contínua
+                iniciarLoopRadar();
+
+            } catch (err) {
+                console.error('Erro ao carregar radar:', err);
+                if (tsEl) tsEl.innerText = 'Erro ao carregar';
+                if (statusEl) statusEl.innerText = 'Tente novamente';
+                alert('Não foi possível obter os dados do radar meteorológico no momento. Verifique sua conexão com a internet.');
+                toggleRadarChuva();
+            }
+        }
+
+        function mostrarFrameRadar(index) {
+            if (!radarFrames || radarFrames.length === 0 || !mapaVoosInstancia) return;
+            if (index < 0) index = 0;
+            if (index >= radarFrames.length) index = radarFrames.length - 1;
+            radarCurrentIndex = index;
+
+            const frame = radarFrames[index];
+            const novaCamada = radarLayers[frame.time];
+
+            // Troca de camada suave
+            if (radarCamadaAtual && radarCamadaAtual !== novaCamada && mapaVoosInstancia.hasLayer(radarCamadaAtual)) {
+                mapaVoosInstancia.removeLayer(radarCamadaAtual);
+            }
+
+            if (novaCamada && !mapaVoosInstancia.hasLayer(novaCamada)) {
+                novaCamada.addTo(mapaVoosInstancia);
+            }
+            radarCamadaAtual = novaCamada;
+
+            // Formatação do horário do frame
+            const d = new Date(frame.time * 1000);
+            const horaStr = d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const agora = Math.floor(Date.now() / 1000);
+            const minutosAtras = Math.max(0, Math.round((agora - frame.time) / 60));
+
+            const tsEl = document.getElementById('radar-timestamp');
+            const statusEl = document.getElementById('radar-status-msg');
+
+            if (tsEl) {
+                tsEl.innerText = `${horaStr} (${index + 1}/${radarFrames.length})`;
+            }
+            if (statusEl) {
+                if (minutosAtras <= 8) {
+                    statusEl.innerText = `Ao Vivo (há ${minutosAtras} min)`;
+                } else {
+                    statusEl.innerText = `Histórico (há ${minutosAtras} min)`;
+                }
+            }
+        }
+
+        function iniciarLoopRadar() {
+            if (radarInterval) clearInterval(radarInterval);
+            radarIsPlaying = true;
+            atualizarBotaoPlay();
+
+            radarInterval = setInterval(() => {
+                let proximo = radarCurrentIndex + 1;
+                if (proximo >= radarFrames.length) {
+                    proximo = 0; // recomeça ciclo
+                }
+                mostrarFrameRadar(proximo);
+            }, 800);
+        }
+
+        function pausarLoopRadar() {
+            if (radarInterval) {
+                clearInterval(radarInterval);
+                radarInterval = null;
+            }
+            radarIsPlaying = false;
+            atualizarBotaoPlay();
+        }
+
+        function toggleAnimacaoRadar() {
+            if (radarIsPlaying) {
+                pausarLoopRadar();
+            } else {
+                iniciarLoopRadar();
+            }
+        }
+
+        function atualizarBotaoPlay() {
+            const btn = document.getElementById('btn-play-radar');
+            if (!btn) return;
+            if (radarIsPlaying) {
+                btn.innerHTML = '⏸️ <span class="hidden md:inline text-[11px]">Pausar</span>';
+            } else {
+                btn.innerHTML = '▶️ <span class="hidden md:inline text-[11px]">Play</span>';
+            }
+        }
+
+        function voltarFrameRadar() {
+            pausarLoopRadar();
+            let prev = radarCurrentIndex - 1;
+            if (prev < 0) prev = radarFrames.length - 1;
+            mostrarFrameRadar(prev);
+        }
+
+        function avancarFrameRadar() {
+            pausarLoopRadar();
+            let next = radarCurrentIndex + 1;
+            if (next >= radarFrames.length) next = 0;
+            mostrarFrameRadar(next);
         }
 
         // Listener de tecla ESC para sair da Tela Cheia
