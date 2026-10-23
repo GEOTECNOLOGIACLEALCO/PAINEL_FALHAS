@@ -2516,6 +2516,7 @@
                     touchZoom: true,
                     tap: true
                 });
+                window.mapaVoosInstancia = mapaVoosInstancia;
 
                 // Camadas Base
                 const sateliteGoogle = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
@@ -3003,9 +3004,14 @@
                 return;
             }
 
+            // Garante que a aba do mapa esteja ativa
+            if (typeof trocarAba === 'function') {
+                trocarAba('mapa');
+            }
+
             // Se o mapa ainda não foi renderizado, inicializa agora
-            if (!window.mapaVoosInstancia && typeof inicializarOuAtualizarMapaVoos === 'function') {
-                inicializarOuAtualizarMapaVoos();
+            if (!mapaVoosInstancia && typeof renderizarMapaVoos === 'function') {
+                renderizarMapaVoos();
             }
 
             const btns = document.querySelectorAll('#btn-gps-posicao, #btn-gps-floating');
@@ -3022,16 +3028,18 @@
             };
 
             const onSucesso = (pos) => {
-                if (!window.mapaVoosInstancia && typeof inicializarOuAtualizarMapaVoos === 'function') {
-                    inicializarOuAtualizarMapaVoos();
+                if (!mapaVoosInstancia && typeof renderizarMapaVoos === 'function') {
+                    renderizarMapaVoos();
                 }
                 const lat = pos.coords.latitude;
                 const lng = pos.coords.longitude;
                 const accuracy = Math.round(pos.coords.accuracy || 15);
 
-                if (window.mapaVoosInstancia) {
-                    if (marcadorGps) window.mapaVoosInstancia.removeLayer(marcadorGps);
-                    if (circuloGps) window.mapaVoosInstancia.removeLayer(circuloGps);
+                const mapaInst = mapaVoosInstancia || window.mapaVoosInstancia;
+
+                if (mapaInst) {
+                    if (marcadorGps) mapaInst.removeLayer(marcadorGps);
+                    if (circuloGps) mapaInst.removeLayer(circuloGps);
 
                     // Círculo de precisão do GPS
                     circuloGps = L.circle([lat, lng], {
@@ -3040,18 +3048,18 @@
                         fillColor: '#60a5fa',
                         fillOpacity: 0.22,
                         weight: 2
-                    }).addTo(window.mapaVoosInstancia);
+                    }).addTo(mapaInst);
 
                     // Marcador moderno com pulso e anel azul
                     const gpsIcon = L.divIcon({
                         className: 'gps-marker-custom',
-                        html: '<div style="width:18px;height:18px;border-radius:50%;background:#2563eb;border:3px solid #ffffff;box-shadow:0 0 12px rgba(37,99,235,0.9);animation:pulse 2s infinite;"></div>',
-                        iconSize: [18, 18],
-                        iconAnchor: [9, 9]
+                        html: '<div style="width:20px;height:20px;border-radius:50%;background:#2563eb;border:3px solid #ffffff;box-shadow:0 0 14px rgba(37,99,235,0.95);animation:pulse 2s infinite;"></div>',
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
                     });
 
                     marcadorGps = L.marker([lat, lng], { icon: gpsIcon })
-                        .addTo(window.mapaVoosInstancia)
+                        .addTo(mapaInst)
                         .bindPopup(`
                             <div class="p-1.5 text-xs font-sans">
                                 <b class="text-blue-700 text-sm">📍 Sua Posição Atual</b><br>
@@ -3061,36 +3069,37 @@
                         `)
                         .openPopup();
 
-                    window.mapaVoosInstancia.setView([lat, lng], Math.max(window.mapaVoosInstancia.getZoom(), 15));
+                    mapaInst.setView([lat, lng], Math.max(mapaInst.getZoom(), 16));
+                    mapaInst.invalidateSize();
                 }
 
                 restaurarBotoes();
             };
 
-            // Tentativa 1: Alta Precisão (Satélite GPS - timeout 7s)
-            // Se falhar ou expirar timeout por estar coberto/indoor, executa Fallback via Triangulação de Rede / Wi-Fi
+            // Tentativa 1: Alta Precisão com tempo limite maior para satélite em campo (15s)
             navigator.geolocation.getCurrentPosition(
                 onSucesso,
                 (err1) => {
-                    console.warn('Tentativa 1 com alta precisão falhou. Iniciando fallback por rede celular/Wi-Fi...', err1);
+                    console.warn('Tentativa 1 com alta precisão falhou:', err1);
+                    // Tentativa 2: Fallback por rede celular / Wi-Fi
                     navigator.geolocation.getCurrentPosition(
                         onSucesso,
                         (err2) => {
                             restaurarBotoes();
-                            let msg = 'Não foi possível obter sua localização.';
+                            let msg = 'Não foi possível obter sua localização no momento.';
                             if (err2.code === 1) {
-                                msg = 'Permissão de localização negada. Toque no ícone de opções/cadeado ao lado do link e permita o acesso à "Localização" no navegador do celular.';
+                                msg = 'Permissão de localização negada. Toque no ícone do cadeado ou configurações do site no navegador do celular e autorize a "Localização".';
                             } else if (err2.code === 2) {
-                                msg = 'Sinal de GPS/localização indisponível. Verifique se o GPS do celular está ligado nas configurações rápidas do dispositivo.';
+                                msg = 'Sinal de GPS indisponível. Verifique se o GPS/Localização do seu celular está ativado nas configurações rápidas.';
                             } else if (err2.code === 3) {
-                                msg = 'Tempo limite esgotado para sinal GPS. Tente novamente em área aberta ou conecte-se aos dados móveis / Wi-Fi.';
+                                msg = 'Tempo limite esgotado para obter sinal GPS. Certifique-se de estar em área aberta ou conectado à rede.';
                             }
                             alert(msg);
                         },
-                        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
+                        { enableHighAccuracy: false, timeout: 15000, maximumAge: 120000 }
                     );
                 },
-                { enableHighAccuracy: true, timeout: 7000, maximumAge: 30000 }
+                { enableHighAccuracy: true, timeout: 15000, maximumAge: 30000 }
             );
         }
 
