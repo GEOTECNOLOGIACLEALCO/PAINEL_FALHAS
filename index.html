@@ -512,9 +512,6 @@
 
             <!-- Informações de Status e Sincronização -->
             <div class="flex items-center gap-2 sm:gap-3 text-xs flex-shrink-0">
-                <button onclick="acionarInstalacaoApp()" id="topbar-btn-instalar" class="hidden items-center gap-1 px-2 py-1 rounded-lg text-[10px] font-bold bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 shadow-xs transition cursor-pointer" title="Instalar aplicativo na tela inicial">
-                    📲 <span>Instalar App</span>
-                </button>
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300 whitespace-nowrap">
                     ● Base Ativa
                 </span>
@@ -1318,60 +1315,44 @@
     </div>
 
     <!-- MODAL DE INSTALAÇÃO PWA (CELULAR / TABLET / COMPUTADOR) -->
-    <div id="modal-instalar-app" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
-        <div class="bg-white rounded-3xl max-w-md w-full p-5 sm:p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
+    <div id="modal-instalar-app" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-200 relative animate-in fade-in zoom-in-95 duration-200">
             <button onclick="fecharModalInstalar()" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-2xl font-bold p-1 leading-none">&times;</button>
             
-            <div class="flex items-center gap-3.5 mb-4">
-                <img src="icon-192.png" alt="Clealco Voos" class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl shadow-md border border-slate-200 p-1 bg-white flex-shrink-0">
+            <div class="flex items-center gap-4 mb-4">
+                <img src="icon-192.png" alt="Clealco Voos" class="w-16 h-16 rounded-2xl shadow-md border border-slate-100 p-1 bg-white">
                 <div>
-                    <h3 class="text-base sm:text-lg font-black text-slate-900 leading-tight">Instalar Aplicativo Clealco</h3>
-                    <p class="text-[11px] sm:text-xs text-slate-500 font-medium mt-0.5">Acesso rápido em tela cheia no seu Celular e Tablet</p>
+                    <h3 class="text-lg font-black text-slate-900 leading-tight">Instalar Aplicativo Clealco</h3>
+                    <p class="text-xs text-slate-500 font-medium mt-0.5">Painel de Voos & Processamentos no seu Celular e Tablet</p>
                 </div>
             </div>
 
-            <!-- Aviso se estiver no navegador interno do WhatsApp -->
-            <div id="pwa-aviso-whatsapp" class="hidden mb-3.5 p-3 rounded-xl bg-amber-50 border border-amber-300 text-amber-900 text-xs">
-                <b class="flex items-center gap-1.5 text-amber-800">⚠️ Aberto pelo WhatsApp:</b>
-                <p class="mt-1 text-[11px] leading-relaxed">
-                    O WhatsApp não permite instalar direto. Toque nos <b>3 pontos (⋮)</b> no topo direito da tela e escolha <b>"Abrir no Chrome"</b> (ou Safari) para instalar.
-                </p>
-            </div>
-
-            <div class="space-y-2.5 my-3 text-sm text-slate-700 max-h-[55vh] overflow-y-auto pr-0.5">
-                <!-- Caixa Android / Chrome -->
-                <div id="pwa-box-android" class="p-3 bg-slate-50 rounded-2xl border border-slate-200 transition-all">
-                    <p class="font-bold text-slate-900 mb-1 flex items-center justify-between">
-                        <span class="flex items-center gap-1.5"><span>🤖</span> No Android (Google Chrome):</span>
-                        <span class="text-[10px] bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded font-bold">Mais Comum</span>
-                    </p>
-                    <div id="pwa-instrucoes-android" class="text-xs text-slate-600 space-y-1.5 mt-1.5">
-                        <p class="text-[11px] text-slate-600">Se o botão <b>"Instalar Agora"</b> abaixo não abrir a janela do Android automaticamente, faça o passo simples:</p>
-                        <ol class="list-decimal list-inside text-[11px] space-y-1 text-slate-700 bg-white p-2 rounded-xl border border-slate-200">
-                            <li>Toque nos <b>3 pontinhos (⋮)</b> no canto superior direito do Chrome</li>
-                            <li>Toque em <b>"Instalar aplicativo"</b> ou <b>"Adicionar à tela inicial"</b></li>
-                            <li>Confirme tocando em <b>Instalar</b></li>
-                        </ol>
-                    </div>
-                </div>
-
-                <!-- Caixa iPhone / iPad -->
-                <div id="pwa-box-ios" class="p-3 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="space-y-3 my-4 text-sm text-slate-700">
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
                     <p class="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
                         <span>🍎</span> No iPhone ou iPad (Safari):
                     </p>
-                    <ol class="list-decimal list-inside text-[11px] space-y-1 text-slate-700 bg-white p-2 rounded-xl border border-slate-200 mt-1.5">
-                        <li>Toque no botão <b>Compartilhar</b> <span class="text-blue-600 font-bold">⎋</span> (na barra inferior do Safari)</li>
-                        <li>Role as opções e toque em <b>Adicionar à Tela de Início</b> <span class="font-bold">⊞</span></li>
+                    <ol class="list-decimal list-inside text-xs space-y-1.5 text-slate-600">
+                        <li>Toque no botão <b>Compartilhar</b> <span class="text-blue-600 font-bold text-sm">⎋</span> (barra inferior do Safari)</li>
+                        <li>Role a lista para baixo e toque em <b>Adicionar à Tela de Início</b> <span class="font-bold text-sm">⊞</span></li>
                         <li>Toque em <b>Adicionar</b> no canto superior direito</li>
                     </ol>
                 </div>
+
+                <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+                    <p class="font-bold text-slate-900 mb-1 flex items-center gap-1.5">
+                        <span>🤖</span> No Android ou Computador (Chrome/Edge):
+                    </p>
+                    <p class="text-xs text-slate-600">
+                        Clique no botão <b>Instalar Agora</b> abaixo ou abra o menu do navegador (<span class="font-bold">⋮</span>) e selecione <b>Adicionar à tela inicial / Instalar aplicativo</b>.
+                    </p>
+                </div>
             </div>
 
-            <div class="flex gap-2 justify-end mt-4 pt-3 border-t border-slate-100">
-                <button onclick="fecharModalInstalar()" class="px-3.5 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-xl transition">Fechar</button>
-                <button id="btn-confirmar-instalacao" onclick="executarPromptInstalacao()" class="flex-1 sm:flex-initial px-4 py-2.5 text-xs font-bold text-white bg-red-600 hover:bg-red-700 active:scale-95 rounded-xl shadow-md transition flex items-center justify-center gap-1.5 cursor-pointer">
-                    <span>📲</span> <span id="lbl-btn-instalar-acao">Instalar Agora</span>
+            <div class="flex gap-2 justify-end mt-5 pt-3 border-t border-slate-100">
+                <button onclick="fecharModalInstalar()" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-lg transition">Fechar</button>
+                <button id="btn-confirmar-instalacao" onclick="executarPromptInstalacao()" class="px-5 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm transition flex items-center gap-1.5">
+                    📲 Instalar Agora
                 </button>
             </div>
         </div>
@@ -3187,120 +3168,41 @@
         // ================= PWA: INSTALAÇÃO & SERVICE WORKER =================
         let eventoInstalacaoPWA = null;
 
-        // Verifica se já está rodando como aplicativo instalado
-        function verificarSeJaEstaInstalado() {
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                                 window.navigator.standalone === true || 
-                                 document.referrer.includes('android-app://');
-            return isStandalone;
-        }
-
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             eventoInstalacaoPWA = e;
-            console.log('Evento beforeinstallprompt capturado com sucesso!');
-            
-            // Exibe botão de instalação rápida no topo se não estiver em standalone
-            if (!verificarSeJaEstaInstalado()) {
-                const btnTop = document.getElementById('topbar-btn-instalar');
-                if (btnTop) {
-                    btnTop.classList.remove('hidden');
-                    btnTop.classList.add('inline-flex');
-                }
-            }
+            console.log('Evento beforeinstallprompt capturado');
         });
 
         window.addEventListener('appinstalled', () => {
             eventoInstalacaoPWA = null;
             console.log('Clealco Voos instalado com sucesso!');
-            const btnTop = document.getElementById('topbar-btn-instalar');
-            if (btnTop) btnTop.classList.add('hidden');
-            const btnSide = document.getElementById('btn-instalar-app');
-            if (btnSide) btnSide.innerHTML = '<span class="sidebar-icon text-emerald-600">✓</span><span class="sidebar-text truncate">App Instalado</span>';
-            fecharModalInstalar();
         });
 
         function acionarInstalacaoApp() {
-            if (verificarSeJaEstaInstalado()) {
-                alert('✓ O aplicativo Clealco Voos já está instalado e ativo neste dispositivo!');
-                return;
-            }
-
-            const modal = document.getElementById('modal-instalar-app');
-            if (!modal) return;
-
-            // 1. Detectar navegador interno (WhatsApp, Instagram, etc)
-            const ua = navigator.userAgent || '';
-            const isWhatsApp = /WhatsApp|FBAN|FBAV|Instagram/i.test(ua);
-            const avisoWpp = document.getElementById('pwa-aviso-whatsapp');
-            if (avisoWpp) {
-                if (isWhatsApp) avisoWpp.classList.remove('hidden');
-                else avisoWpp.classList.add('hidden');
-            }
-
-            // 2. Detectar se é iOS (iPhone / iPad)
-            const isIOS = /iPhone|iPad|iPod/i.test(ua) && !window.MSStream;
-            const boxAndroid = document.getElementById('pwa-box-android');
-            const boxIOS = document.getElementById('pwa-box-ios');
-            const btnConfirm = document.getElementById('btn-confirmar-instalacao');
-            const lblBtn = document.getElementById('lbl-btn-instalar-acao');
-
-            if (isIOS) {
-                if (boxIOS) boxIOS.classList.add('ring-2', 'ring-red-500', 'bg-red-50/40');
-                if (btnConfirm) btnConfirm.classList.add('hidden');
-            } else {
-                if (btnConfirm) btnConfirm.classList.remove('hidden');
-                if (lblBtn) {
-                    lblBtn.innerText = eventoInstalacaoPWA ? 'Instalar Agora' : 'Instalar no Chrome';
-                }
-            }
-
-            modal.classList.remove('hidden');
-
-            // Se o prompt nativo já estiver pronto no Android/Chrome, dispara direto
             if (eventoInstalacaoPWA) {
-                executarPromptInstalacao();
+                eventoInstalacaoPWA.prompt();
+                eventoInstalacaoPWA.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        eventoInstalacaoPWA = null;
+                    }
+                });
+            } else {
+                // Abre o modal orientativo para iOS Safari e instruções de instalação
+                document.getElementById('modal-instalar-app').classList.remove('hidden');
             }
         }
 
         function executarPromptInstalacao() {
             if (eventoInstalacaoPWA) {
                 eventoInstalacaoPWA.prompt();
-                eventoInstalacaoPWA.userChoice.then((choiceResult) => {
-                    if (choiceResult && choiceResult.outcome === 'accepted') {
-                        eventoInstalacaoPWA = null;
-                        fecharModalInstalar();
-                    }
-                }).catch(err => console.log('Erro no prompt:', err));
-            } else {
-                // Se não houver prompt nativo no momento, destaca os 3 pontinhos do Chrome
-                const boxAndroid = document.getElementById('pwa-box-android');
-                if (boxAndroid) {
-                    boxAndroid.classList.add('ring-4', 'ring-red-500', 'bg-red-50');
-                    setTimeout(() => {
-                        boxAndroid.classList.remove('ring-4', 'ring-red-500', 'bg-red-50');
-                    }, 3500);
-                }
-                const lblBtn = document.getElementById('lbl-btn-instalar-acao');
-                if (lblBtn) lblBtn.innerText = 'Siga os 3 passos acima';
             }
+            fecharModalInstalar();
         }
 
         function fecharModalInstalar() {
-            const modal = document.getElementById('modal-instalar-app');
-            if (modal) modal.classList.add('hidden');
+            document.getElementById('modal-instalar-app').classList.add('hidden');
         }
-
-        // Exibe botão de instalação no topo se não estiver instalado
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!verificarSeJaEstaInstalado()) {
-                const btnTop = document.getElementById('topbar-btn-instalar');
-                if (btnTop) {
-                    btnTop.classList.remove('hidden');
-                    btnTop.classList.add('inline-flex');
-                }
-            }
-        });
 
         // Registrar Service Worker
         if ('serviceWorker' in navigator) {

@@ -1,7 +1,6 @@
 {
   "name": "Clealco - Controle de Voos & Processamentos",
   "short_name": "Clealco Voos",
-  "id": "./",
   "description": "Painel Operacional de Voos, Ortomosaicos, Falhas de Plantio e Backlog da Geotecnologia Clealco",
   "start_url": "./index.html",
   "scope": "./",
@@ -14,25 +13,13 @@
       "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "icon-512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
       "src": "apple-touch-icon.png",
