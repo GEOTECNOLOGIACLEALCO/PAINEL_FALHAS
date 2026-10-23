@@ -233,6 +233,7 @@ try:
         ]
         
         kmls_por_fa = {}
+        pastas_voo_todas = {} # Todas as pastas de voo detectadas (com ou sem KML)
         for base_img in pastas_imagens:
             if not os.path.exists(base_img): continue
             for pasta_faz in os.listdir(base_img):
@@ -241,6 +242,11 @@ try:
                 m = re.match(r'^(\d+)', pasta_faz.strip())
                 fa_code = m.group(1).lstrip('0') if m else None
                 if not fa_code: continue
+                
+                pastas_voo_todas[fa_code] = {
+                    'pasta': pasta_faz,
+                    'revoo': 'terminar' in pasta_faz.lower()
+                }
                 
                 achados = []
                 for arq in os.listdir(caminho_faz):
@@ -264,7 +270,7 @@ try:
                         'revoo': 'terminar' in pasta_faz.lower()
                     }
                     
-        print(f"Varredura de KMLs concluída: {len(kmls_por_fa)} FAs mapeadas a partir das pastas de imagens.")
+        print(f"Varredura concluída: {len(pastas_voo_todas)} pastas de voo ({len(kmls_por_fa)} com KML gerado).")
         
         # 2. Carrega as geometrias dos KMLs
         geoms_por_fa = {}
@@ -300,12 +306,13 @@ try:
                     "semaforo": b.get('status_prazo', '')
                 }
         
-        # Enriquecer com planilhas de vistoria/porte se existirem
+        # Enriquecer com planilhas de vistoria/porte e extrair talhões voados oficiais
         pastas_planilhas = [
             r"M:\10-Planilhas\Voos Pós Plantio - Analise de Falhas\2026\BASES - RECEBIDAS",
             r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\doc_planilhas"
         ]
         
+        talhoes_voados_bases = {} # (fa, tal) voados segundo as bases oficiais de voo (Próprias + Terceiros)
         for pasta in pastas_planilhas:
             if not os.path.exists(pasta): continue
             for arq in os.listdir(pasta):
@@ -331,6 +338,8 @@ try:
                             for r in rows_p[h_idx+1:]:
                                 fa_v = str(r[idx_fa] or '').strip().lstrip('0')
                                 tal_v = str(r[idx_tal] or '').strip().lstrip('0')
+                                if fa_v and tal_v:
+                                    talhoes_voados_bases.setdefault(fa_v, set()).add(tal_v)
                                 k = (fa_v, tal_v)
                                 if k in backlog_dict:
                                     if idx_porte != -1 and r[idx_porte] and not backlog_dict[k]["porte_cm"]:
@@ -392,6 +401,24 @@ try:
                     status_voo = "VOADO"
                     obs_voo = f"Voo Realizado ({int(round(max_frac*100))}% de cobertura KML)"
                 elif kmls_por_fa[faz]['revoo']:
+                    status_voo = "ATENCAO"
+                    obs_voo = "Pendente de Voo / Terminar Outras Partes"
+                elif bk:
+                    matched_keys.add(k)
+                    dias = bk["dias_brota"]
+                    status_voo = "CRITICO" if dias > 90 or "atrasado" in bk["status_prazo"].lower() else ("ATENCAO" if dias >= 60 else "NOPRAZO")
+                else:
+                    continue
+                if bk:
+                    matched_keys.add(k)
+            # Caso 1B: Fazenda possui pasta de Voo mas ainda sem KML (cruza com as Bases Oficiais de Voo)
+            elif faz in pastas_voo_todas:
+                info_p = pastas_voo_todas[faz]
+                tals_voados_faz = talhoes_voados_bases.get(faz, set())
+                if tal in tals_voados_faz:
+                    status_voo = "VOADO"
+                    obs_voo = "Voo Realizado (Confirmado na Base de Voo)"
+                elif info_p['revoo']:
                     status_voo = "ATENCAO"
                     obs_voo = "Pendente de Voo / Terminar Outras Partes"
                 elif bk:
