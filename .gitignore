@@ -1,4 +1,6 @@
+dados.xlsx
 ~$*.xlsx
 ~$*.xls
 *.pyc
 __pycache__/
+Thumbs.db

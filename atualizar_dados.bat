@@ -10,8 +10,8 @@ echo Preparando envio para o GitHub...
 :: 2. Previne conflitos baixando eventuais alteracoes da nuvem primeiro
 git pull --rebase origin main
 
-:: 3. Adiciona apenas os arquivos de dados (ignora lixo temporario)
-git add dados.xlsx dados_injetados.js dados_mapa_voos.js
+:: 3. Adiciona apenas os arquivos de dados CRIPTOGRAFADOS (dados.xlsx fica protegido localmente)
+git add dados_injetados.js dados_mapa_voos.js
 
 :: 4. Verifica se existe algo novo. Se os dados forem iguais, sai silenciosamente sem dar erro de "nothing to commit"
 git diff --cached --quiet
