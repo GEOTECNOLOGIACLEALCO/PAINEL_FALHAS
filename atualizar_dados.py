@@ -1,4 +1,4 @@
-import openpyxl, json, os, base64, math, re, shutil, time
+import openpyxl, json, os, base64, math, re, shutil, time, urllib.parse
 from datetime import datetime
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -606,12 +606,23 @@ def sincronizar_e_catalogar_mapas():
                 
                 if rel_dir == '.':
                     rel_url = f'mapas_safra/{f}'
+                    sp_path = f
                 else:
                     rel_url = f'mapas_safra/{rel_dir}/{f}'
+                    sp_path = f'{rel_dir}/{f}'
                 
+                # Gera URL direta do arquivo no SharePoint / OneDrive corporativo da Clealco
+                encoded_sp_path = '/'.join(urllib.parse.quote(part) for part in sp_path.replace('\\', '/').split('/'))
+                url_sharepoint = f"https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/{encoded_sp_path}?csf=1&web=1"
+                
+                encoded_cat = urllib.parse.quote(categoria)
+                url_pasta_sharepoint = f"https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/{encoded_cat}?csf=1&web=1"
+
                 mapas_catalogo.append({
                     'arquivo': f,
                     'url': rel_url,
+                    'url_sharepoint': url_sharepoint,
+                    'url_pasta_sharepoint': url_pasta_sharepoint,
                     'categoria': categoria,
                     'subpasta': subpasta,
                     'fa': fa,
