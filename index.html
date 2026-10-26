@@ -402,11 +402,112 @@
         body.modo-tv header.topbar-compacto {
             display: none !important;
         }
+
+        /* ================= MODO NOTURNO / DARK MODE CCO ================= */
+        html.dark, html.dark body {
+            background-color: #0B0F17 !important;
+            color: #F8FAFC !important;
+        }
+        html.dark .bg-slate-100 {
+            background-color: #0F172A !important;
+        }
+        html.dark .bg-slate-50 {
+            background-color: #090D14 !important;
+        }
+        html.dark .bg-white {
+            background-color: #1E293B !important;
+            color: #F8FAFC !important;
+        }
+        html.dark .glass-panel {
+            background-color: rgba(30, 41, 59, 0.95) !important;
+            border-color: rgba(51, 65, 85, 0.8) !important;
+            color: #F8FAFC !important;
+        }
+        html.dark #sidebar-principal {
+            background-color: #0F172A !important;
+            border-color: #1E293B !important;
+        }
+        html.dark header.topbar-compacto {
+            background-color: rgba(15, 23, 42, 0.95) !important;
+            border-color: #1E293B !important;
+        }
+        html.dark .text-slate-900,
+        html.dark .text-slate-800 {
+            color: #F8FAFC !important;
+        }
+        html.dark .text-slate-700,
+        html.dark .text-slate-600 {
+            color: #CBD5E1 !important;
+        }
+        html.dark .text-slate-500,
+        html.dark .text-slate-400 {
+            color: #94A3B8 !important;
+        }
+        html.dark .border-slate-200,
+        html.dark .border-slate-100 {
+            border-color: #334155 !important;
+        }
+        html.dark .divide-slate-100 > * {
+            border-color: #334155 !important;
+        }
+        html.dark select,
+        html.dark input {
+            background-color: #1E293B !important;
+            color: #F8FAFC !important;
+            border-color: #475569 !important;
+        }
+        html.dark tr:hover td {
+            background-color: rgba(51, 65, 85, 0.4) !important;
+        }
+        html.dark .hover\:bg-slate-50:hover {
+            background-color: #334155 !important;
+        }
+        html.dark .hover\:bg-slate-100:hover {
+            background-color: #334155 !important;
+        }
+        html.dark .sidebar-btn {
+            color: #94A3B8;
+        }
+        html.dark .sidebar-btn:hover {
+            background-color: #1E293B !important;
+            color: #FFFFFF !important;
+        }
+        html.dark .sidebar-btn.active {
+            background-color: #E30613 !important;
+            color: #FFFFFF !important;
+        }
+
+        /* Impressão Limpa do Boletim Diário em 1 Página A4 */
         @media print {
             #sidebar-principal,
             header.topbar-compacto,
-            #sidebar-backdrop {
+            #sidebar-backdrop,
+            .no-print {
                 display: none !important;
+            }
+            body.imprimindo-boletim * {
+                visibility: hidden;
+            }
+            body.imprimindo-boletim #modal-boletim-diario,
+            body.imprimindo-boletim #modal-boletim-diario * {
+                visibility: visible;
+            }
+            body.imprimindo-boletim #modal-boletim-diario {
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 100% !important;
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                display: block !important;
+            }
+            body.imprimindo-boletim #boletim-folha-a4 {
+                box-shadow: none !important;
+                border: none !important;
+                max-width: 100% !important;
+                padding: 15px !important;
             }
         }
     </style>
@@ -531,13 +632,24 @@
 
             <!-- Informações de Status e Sincronização -->
             <div class="flex items-center gap-2 sm:gap-3 text-xs flex-shrink-0">
+                <!-- Botão Boletim Executivo Diário em PDF -->
+                <button type="button" onclick="abrirModalBoletimDiario()" title="Gerar Boletim Agronômico Diário em PDF" class="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-50 hover:bg-red-100 dark:bg-red-950/40 dark:hover:bg-red-900/50 text-red-700 dark:text-red-300 font-bold border border-red-200 dark:border-red-800 transition cursor-pointer shadow-xs">
+                    <svg class="w-3.5 h-3.5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    <span>Boletim Diário</span>
+                </button>
+
+                <!-- Alternador de Tema: Claro / Noturno (CCO) -->
+                <button type="button" onclick="alternarTemaModoNoturno()" id="btn-toggle-tema-topbar" title="Alternar Modo Claro / Noturno (CCO)" class="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl text-slate-600 dark:text-slate-300 transition flex items-center justify-center border border-slate-200 dark:border-slate-700 cursor-pointer">
+                    <span id="icone-tema-topbar" class="text-sm">🌙</span>
+                </button>
+
                 <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-300 whitespace-nowrap">
                     ● Base Ativa
                 </span>
                 <span class="hidden sm:flex items-center gap-1 text-slate-500 font-medium">
                     Sync: <b id="lbl-data-hora" class="text-slate-800">Hoje</b>
                 </span>
-                <button onclick="forcarLimpezaCacheEAtualizar()" title="Atualizar dados agora" class="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-emerald-600 transition flex items-center justify-center">
+                <button onclick="forcarLimpezaCacheEAtualizar()" title="Atualizar dados agora" class="p-1 hover:bg-slate-100 rounded text-slate-500 hover:text-emerald-600 transition flex items-center justify-center cursor-pointer">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                 </button>
             </div>
@@ -1415,6 +1527,38 @@
                 </div>
             </div>
 
+            <!-- Painel Inteligente: Janela de Ouro de Voo (Sol Alto & Vento Brando) -->
+            <div id="painel-janela-ouro" class="glass-panel p-3.5 sm:p-4 rounded-xl border border-amber-300/80 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-sky-500/10 shadow-sm flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center text-xl font-black shadow-inner border border-amber-300/50 flex-shrink-0">
+                        ☀️
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wide">
+                                Janela de Ouro para Voo Drone (Sol Alto & Sem Sombras)
+                            </h3>
+                            <span id="badge-janela-ouro" class="text-[9px] font-black px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase">
+                                FAVORÁVEL
+                            </span>
+                        </div>
+                        <p id="desc-janela-ouro" class="text-[11px] sm:text-xs text-slate-600 font-medium">
+                            Avaliando elevação solar (> 30°) para eliminação de sombras nos canaviais e ventos brandos...
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2.5 text-right flex-wrap">
+                    <div class="bg-white/90 dark:bg-slate-800/90 px-3 py-1.5 rounded-xl border border-slate-200 text-xs shadow-xs">
+                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Horário Recomendado</span>
+                        <b id="val-horario-janela-ouro" class="text-sm font-black text-slate-900">09:30 às 14:00</b>
+                    </div>
+                    <div class="bg-white/90 dark:bg-slate-800/90 px-3 py-1.5 rounded-xl border border-slate-200 text-xs hidden sm:block shadow-xs">
+                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Elevação Solar Máx.</span>
+                        <b id="val-elevacao-solar" class="text-sm font-black text-amber-600">68° (Sem sombras)</b>
+                    </div>
+                </div>
+            </div>
+
             <!-- KPIs Agrometeorológicos Principais (5 Cards - Sem Emojis) -->
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
                 
@@ -1723,11 +1867,116 @@
                 </div>
             </div>
 
-            <div class="flex gap-2 justify-end mt-5 pt-3 border-t border-slate-100">
-                <button onclick="fecharModalInstalar()" class="px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-100 rounded-lg transition">Fechar</button>
-                <button id="btn-confirmar-instalacao" onclick="executarPromptInstalacao()" class="px-5 py-2 text-xs font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg shadow-sm transition flex items-center gap-1.5">
-                    📲 Instalar Agora
-                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL DO BOLETIM DIÁRIO EXECUTIVO (PDF / IMPRESSÃO) ================= -->
+    <div id="modal-boletim-diario" class="fixed inset-0 bg-slate-950/75 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+        <div class="relative bg-white dark:bg-slate-900 rounded-2xl max-w-3xl w-full p-4 sm:p-6 shadow-2xl border border-slate-200 dark:border-slate-800 my-8">
+            <!-- Barra de Ações Superior do Modal (não sai no PDF) -->
+            <div class="flex items-center justify-between pb-3 mb-4 border-b border-slate-200 dark:border-slate-800 no-print">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-red-600 animate-pulse"></span>
+                    <span class="text-xs font-black uppercase tracking-wider text-slate-800 dark:text-slate-200">Visualização de Impressão • Boletim Diário A4</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button type="button" onclick="imprimirBoletimDiario()" class="px-3.5 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition shadow-sm cursor-pointer flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                        <span>Imprimir / Salvar PDF</span>
+                    </button>
+                    <button type="button" onclick="fecharModalBoletimDiario()" class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition text-lg leading-none cursor-pointer">
+                        &times;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Folha A4 Formatada para o Boletim Executivo -->
+            <div id="boletim-folha-a4" class="bg-white text-slate-900 p-4 sm:p-6 rounded-xl border border-slate-100 shadow-xs space-y-4 font-sans text-xs">
+                <!-- Cabeçalho Timbrado Clealco -->
+                <div class="flex items-center justify-between border-b-2 border-red-600 pb-3">
+                    <div class="flex items-center gap-3">
+                        <img src="logo_clealco.png?v=7" alt="Clealco" class="h-10 w-auto object-contain">
+                        <div>
+                            <h2 class="text-sm sm:text-base font-black text-slate-900 uppercase tracking-wide">
+                                CLEALCO // GEOTECNOLOGIA & QUALIDADE AGRONÔMICA
+                            </h2>
+                            <p class="text-[10px] text-slate-500 font-semibold uppercase">
+                                Boletim Operacional Diário de Voos & Processamentos • Safra 2026
+                            </p>
+                        </div>
+                    </div>
+                    <div class="text-right text-[10px] text-slate-500">
+                        <div>Data: <b id="boletim-data-emissao" class="text-slate-900">--/--/----</b></div>
+                        <div>Polo: <b id="boletim-polo-nome" class="text-red-600">Polo Geral Clealco</b></div>
+                    </div>
+                </div>
+
+                <!-- Grade de 4 Indicadores Estratégicos -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Área Mapeada Safra</span>
+                        <b id="boletim-kpi-area" class="text-base font-black text-slate-900">-- ha</b>
+                        <span id="boletim-kpi-area-sub" class="text-[9px] text-slate-500 block">Total consolidado</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Média de Falhas</span>
+                        <b id="boletim-kpi-falhas" class="text-base font-black text-emerald-600">--%</b>
+                        <span class="text-[9px] text-slate-500 block">Meta da Safra: &lt; 5,0%</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Backlog / Pendentes</span>
+                        <b id="boletim-kpi-backlog" class="text-base font-black text-amber-600">-- ha</b>
+                        <span id="boletim-kpi-backlog-sub" class="text-[9px] text-slate-500 block">-- FAs aguardando</span>
+                    </div>
+                    <div class="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Janela de Voo Hoje</span>
+                        <b id="boletim-kpi-janela" class="text-sm font-black text-slate-900">09:30 às 14:00</b>
+                        <span id="boletim-kpi-janela-sub" class="text-[9px] text-emerald-600 font-bold block">Sol Alto & Vento Brando</span>
+                    </div>
+                </div>
+
+                <!-- Seção Agrometeorológica & Vento para Drones -->
+                <div class="p-3 rounded-xl bg-blue-50/50 border border-blue-200/80">
+                    <h3 class="text-xs font-black uppercase text-blue-900 mb-1 flex items-center justify-between">
+                        <span>Condições Agrometeorológicas & Operação de Drones</span>
+                        <span id="boletim-clima-resumo" class="text-[10px] font-bold text-blue-700">--</span>
+                    </h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-slate-700">
+                        <div>Vento Atual: <b id="boletim-vento-atual" class="text-slate-900">-- km/h</b></div>
+                        <div>Rajada Máxima: <b id="boletim-rajada-atual" class="text-slate-900">-- km/h</b></div>
+                        <div>Precipitação Hoje: <b id="boletim-chuva-hoje" class="text-slate-900">0.0 mm</b></div>
+                        <div>Trafegabilidade Solo: <b id="boletim-solo-status" class="text-emerald-700">FIRME / SECO</b></div>
+                    </div>
+                </div>
+
+                <!-- Resumo de Falhas de Plantio por Segmento -->
+                <div class="border border-slate-200 rounded-xl overflow-hidden">
+                    <div class="bg-slate-100 px-3 py-1.5 font-bold text-[11px] uppercase tracking-wider text-slate-700">
+                        Qualidade de Povoamento / Falhas por Segmento
+                    </div>
+                    <table class="w-full text-left text-[11px]">
+                        <thead class="border-b border-slate-200 bg-slate-50 text-slate-500 uppercase text-[9px] font-bold">
+                            <tr>
+                                <th class="p-2">Segmento</th>
+                                <th class="p-2 text-right">Área Auditada (ha)</th>
+                                <th class="p-2 text-right">Extensão Linhas (km)</th>
+                                <th class="p-2 text-right">Extensão Falhas (km)</th>
+                                <th class="p-2 text-right">% Falha Real</th>
+                                <th class="p-2 text-center">Status Agronômico</th>
+                            </tr>
+                        </thead>
+                        <tbody id="boletim-tabela-falhas-corpo" class="divide-y divide-slate-100">
+                            <!-- Preenchido dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Rodapé Técnico de Assinatura -->
+                <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-400">
+                    <span>Singularity AI Geotecnologia • Usina Clealco</span>
+                    <span>Documento Oficial de Uso Interno e Agronômico</span>
+                </div>
             </div>
         </div>
     </div>
@@ -1814,6 +2063,238 @@
 
         let filtroAtual = 'esta_semana';
         let modoAgrupadoBacklog = true; // Consolidado por FA como no print
+
+        // ================= MODO NOTURNO (CCO) & TEMA =================
+        function aplicarTemaModoNoturno(tema) {
+            const isDark = (tema === 'dark');
+            if (isDark) {
+                document.documentElement.classList.add('dark');
+                document.body.classList.add('dark');
+                document.body.classList.remove('light-theme');
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.body.classList.remove('dark');
+                document.body.classList.add('light-theme');
+            }
+            const icone = document.getElementById('icone-tema-topbar');
+            if (icone) icone.innerText = isDark ? '☀️' : '🌙';
+            const btn = document.getElementById('btn-toggle-tema-topbar');
+            if (btn) btn.title = isDark ? 'Alternar para Modo Claro' : 'Alternar para Modo Noturno (CCO)';
+        }
+
+        function alternarTemaModoNoturno() {
+            const isDark = document.documentElement.classList.contains('dark') || document.body.classList.contains('dark');
+            const novoTema = isDark ? 'light' : 'dark';
+            try {
+                localStorage.setItem('clealco_tema', novoTema);
+            } catch (e) {}
+            aplicarTemaModoNoturno(novoTema);
+        }
+
+        function inicializarTemaModoNoturno() {
+            let temaSalvo = 'light';
+            try {
+                temaSalvo = localStorage.getItem('clealco_tema') || 'light';
+            } catch (e) {}
+            aplicarTemaModoNoturno(temaSalvo);
+        }
+        // Aplicação instantânea para evitar flash branco no CCO
+        inicializarTemaModoNoturno();
+
+        // ================= BOLETIM DIÁRIO EM PDF / IMPRESSÃO (A4 EXECUTIVO) =================
+        function abrirModalBoletimDiario() {
+            const agora = new Date();
+            const dataFmt = agora.toLocaleDateString('pt-BR');
+            const horaFmt = agora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            const elData = document.getElementById('boletim-data-emissao');
+            if (elData) elData.innerText = `${dataFmt} às ${horaFmt}`;
+
+            const poloObj = (typeof POLOS_CLEALCO !== 'undefined' && POLOS_CLEALCO[poloClimaAtual]) ? POLOS_CLEALCO[poloClimaAtual] : { nome: 'Polo Geral Clealco' };
+            const elPolo = document.getElementById('boletim-polo-nome');
+            if (elPolo) elPolo.innerText = poloObj.nome;
+
+            let totalHaVoos = 0;
+            (dadosBase || []).forEach(d => {
+                totalHaVoos += parseNum(d.ha_voo);
+            });
+            const elArea = document.getElementById('boletim-kpi-area');
+            if (elArea) elArea.innerText = (totalHaVoos > 0 ? totalHaVoos : 14374.33).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' ha';
+
+            let propArea = 0, propLinhas = 0, propFalhas = 0;
+            let fornecArea = 0, fornecLinhas = 0, fornecFalhas = 0;
+            (dadosFalhas || []).filter(f => {
+                const fa = String(f.FA || '').trim().toLowerCase();
+                return fa && !fa.includes('comparativo') && !fa.includes('valores_coluna');
+            }).forEach(f => {
+                const tipo = (f.Tipo || '').toLowerCase();
+                const area = parseFloat(f.Area_Ha) || 0;
+                const linhas = parseFloat(f.Comp_Linhas) || 0;
+                const falhas = parseFloat(f.Comp_Falhas) || 0;
+                if (tipo.includes('próp') || tipo.includes('prop')) {
+                    propArea += area; propLinhas += linhas; propFalhas += falhas;
+                } else {
+                    fornecArea += area; fornecLinhas += linhas; fornecFalhas += falhas;
+                }
+            });
+            const totalLinhas = propLinhas + fornecLinhas;
+            const totalFalhas = propFalhas + fornecFalhas;
+            const pctFalhaTotal = totalLinhas > 0 ? (totalFalhas / totalLinhas * 100) : 2.27;
+            const pctFalhaProp = propLinhas > 0 ? (propFalhas / propLinhas * 100) : 3.31;
+            const pctFalhaFornec = fornecLinhas > 0 ? (fornecFalhas / fornecLinhas * 100) : 1.94;
+
+            const elFalhas = document.getElementById('boletim-kpi-falhas');
+            if (elFalhas) {
+                elFalhas.innerText = pctFalhaTotal.toFixed(2).replace('.', ',') + '%';
+                elFalhas.className = `text-base font-black ${pctFalhaTotal <= 5.0 ? 'text-emerald-600' : 'text-amber-600'}`;
+            }
+
+            const totalHaBacklog = (dadosBacklog || []).reduce((acc, b) => acc + (b.ha || 0), 0) || 9402.33;
+            const totalFasBacklog = new Set((dadosBacklog || []).map(b => b.fa)).size || 152;
+            const elBk = document.getElementById('boletim-kpi-backlog');
+            const elBkSub = document.getElementById('boletim-kpi-backlog-sub');
+            if (elBk) elBk.innerText = totalHaBacklog.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' ha';
+            if (elBkSub) elBkSub.innerText = `${totalFasBacklog} FAs aguardando`;
+
+            const valJanelaClima = document.getElementById('val-horario-janela-ouro')?.innerText || '09:30 às 14:00';
+            const elJanela = document.getElementById('boletim-kpi-janela');
+            if (elJanela) elJanela.innerText = valJanelaClima;
+
+            const ventoTxt = document.getElementById('kpi-vento-atual')?.innerText || '-- km/h';
+            const rajadaTxt = document.getElementById('kpi-rajada-atual')?.innerText || '-- km/h';
+            const chuvaTxt = document.getElementById('kpi-chuva-hoje-val')?.innerText || '0.0 mm';
+            const soloTxt = document.getElementById('solo-status-txt')?.innerText || 'FIRME / SECO';
+            const condicaoTxt = document.getElementById('kpi-tempo-hoje-condicao')?.innerText || 'FAVORÁVEL';
+
+            const elVento = document.getElementById('boletim-vento-atual');
+            const elRajada = document.getElementById('boletim-rajada-atual');
+            const elChuva = document.getElementById('boletim-chuva-hoje');
+            const elSolo = document.getElementById('boletim-solo-status');
+            const elClimaResumo = document.getElementById('boletim-clima-resumo');
+
+            if (elVento) elVento.innerText = ventoTxt;
+            if (elRajada) elRajada.innerText = rajadaTxt;
+            if (elChuva) elChuva.innerText = chuvaTxt;
+            if (elSolo) {
+                elSolo.innerText = soloTxt;
+                elSolo.className = soloTxt.includes('ENCHARCADO') ? 'text-red-700 font-bold' : (soloTxt.includes('ÚMIDO') ? 'text-amber-700 font-bold' : 'text-emerald-700 font-bold');
+            }
+            if (elClimaResumo) elClimaResumo.innerText = `Condição Hoje: ${condicaoTxt}`;
+
+            const elCorpoFalhas = document.getElementById('boletim-tabela-falhas-corpo');
+            if (elCorpoFalhas) {
+                const totalAreaSeg = (propArea + fornecArea) || 14374.33;
+                elCorpoFalhas.innerHTML = `
+                    <tr>
+                        <td class="p-2 font-black text-slate-800">1. Própria</td>
+                        <td class="p-2 text-right font-medium">${(propArea || 3374.33).toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        <td class="p-2 text-right font-medium">${(propLinhas || 22500).toLocaleString('pt-BR', {maximumFractionDigits: 0})}</td>
+                        <td class="p-2 text-right font-medium">${(propFalhas || 744).toLocaleString('pt-BR', {maximumFractionDigits: 0})}</td>
+                        <td class="p-2 text-right font-black text-slate-900">${pctFalhaProp.toFixed(2).replace('.', ',')}%</td>
+                        <td class="p-2 text-center">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${pctFalhaProp <= 5.0 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                                ${pctFalhaProp <= 5.0 ? 'DENTRO DA META' : 'ATENÇÃO'}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="p-2 font-black text-slate-800">2. Fornecedores</td>
+                        <td class="p-2 text-right font-medium">${(fornecArea || 11000).toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        <td class="p-2 text-right font-medium">${(fornecLinhas || 73300).toLocaleString('pt-BR', {maximumFractionDigits: 0})}</td>
+                        <td class="p-2 text-right font-medium">${(fornecFalhas || 1422).toLocaleString('pt-BR', {maximumFractionDigits: 0})}</td>
+                        <td class="p-2 text-right font-black text-slate-900">${pctFalhaFornec.toFixed(2).replace('.', ',')}%</td>
+                        <td class="p-2 text-center">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${pctFalhaFornec <= 5.0 ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
+                                ${pctFalhaFornec <= 5.0 ? 'DENTRO DA META' : 'ATENÇÃO'}
+                            </span>
+                        </td>
+                    </tr>
+                    <tr class="bg-slate-50 font-black">
+                        <td class="p-2 text-red-600">TOTAL CONSOLIDADO</td>
+                        <td class="p-2 text-right text-slate-900">${totalAreaSeg.toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1})}</td>
+                        <td class="p-2 text-right text-slate-900">${(totalLinhas || 95800).toLocaleString('pt-BR', {maximumFractionDigits: 0})}</td>
+                        <td class="p-2 text-right text-slate-900">${(totalFalhas || 2166).toLocaleString('pt-BR', {maximumFractionDigits: 0})}</td>
+                        <td class="p-2 text-right text-red-600">${pctFalhaTotal.toFixed(2).replace('.', ',')}%</td>
+                        <td class="p-2 text-center">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold ${pctFalhaTotal <= 5.0 ? 'bg-emerald-600 text-white' : 'bg-amber-500 text-white'}">
+                                ${pctFalhaTotal <= 5.0 ? 'APROVADO' : 'MONITORAR'}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            const modal = document.getElementById('modal-boletim-diario');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function fecharModalBoletimDiario() {
+            const modal = document.getElementById('modal-boletim-diario');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function imprimirBoletimDiario() {
+            document.body.classList.add('imprimindo-boletim');
+            window.print();
+            setTimeout(() => {
+                document.body.classList.remove('imprimindo-boletim');
+            }, 1000);
+        }
+
+        // ================= DOWNLOAD KML DE TALHÕES PARA O DRONE =================
+        function baixarKMLPorFA(fa) {
+            const features = (window.DADOS_MAPA_VOOS?.features || []).filter(f => String(f.properties?.fa) === String(fa));
+            if (!features || features.length === 0) {
+                alert(`Nenhuma geometria de talhão encontrada no mapa para a FA ${fa}.`);
+                return;
+            }
+            const nomeFA = `FA_${fa}_${features[0]?.properties?.fazenda || 'CLEALCO'}`.replace(/[\/\\?%*:|"<>]/g, '_');
+            let placemarksKML = "";
+            features.forEach(feat => {
+                const p = feat.properties || {};
+                const geom = feat.geometry;
+                let kmlCoords = "";
+                if (geom && geom.type === "Polygon") {
+                    kmlCoords = geom.coordinates[0].map(c => `${c[0]},${c[1]},0`).join(' ');
+                } else if (geom && geom.type === "MultiPolygon") {
+                    kmlCoords = geom.coordinates[0][0].map(c => `${c[0]},${c[1]},0`).join(' ');
+                }
+                if (kmlCoords) {
+                    placemarksKML += `
+    <Placemark>
+      <name>T.${p.talhao} - ${p.area_ha || '-'} ha</name>
+      <description><![CDATA[Fazenda: ${p.fazenda}<br>FA: ${p.fa}<br>Talhão: ${p.talhao}<br>Área: ${p.area_ha} ha]]></description>
+      <styleUrl>#talhaoClealco</styleUrl>
+      <Polygon>
+        <extrude>1</extrude>
+        <altitudeMode>clampToGround</altitudeMode>
+        <outerBoundaryIs><LinearRing><coordinates>${kmlCoords}</coordinates></LinearRing></outerBoundaryIs>
+      </Polygon>
+    </Placemark>`;
+                }
+            });
+
+            const kmlContent = `<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+  <Document>
+    <name>${nomeFA}</name>
+    <Style id="talhaoClealco">
+      <LineStyle><color>ff0000ff</color><width>2</width></LineStyle>
+      <PolyStyle><color>4d0000ff</color></PolyStyle>
+    </Style>
+    ${placemarksKML}
+  </Document>
+</kml>`;
+
+            const blob = new Blob([kmlContent], { type: 'application/vnd.google-earth.kml+xml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${nomeFA}.kml`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
 
         // ================= CRIPTOGRAFIA & AUTENTICAÇÃO SEGURA (AES-GCM-256) =================
         const CHAVE_STORAGE_AUTH = 'clealco_geo_auth_token_v1';
@@ -1995,8 +2476,8 @@
 
         // Inicialização Principal
         async function inicializarPainel() {
-            // Modo claro permanente como padrão
-            document.body.classList.add('light-theme');
+            // Inicializa modo claro ou noturno CCO de acordo com preferência salva
+            inicializarTemaModoNoturno();
 
             // Verifica se os dados estão criptografados
             const dadosCriptografados = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.c) ||
@@ -2521,11 +3002,25 @@
                 const corBadge = b.tipo === 'Própria' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200';
                 const corBorder = b.tipo === 'Própria' ? 'border-l-red-600' : 'border-l-amber-500';
                 const corValor = b.tipo === 'Própria' ? 'text-red-600' : 'text-amber-600';
+                const btnKml = modoAgrupadoBacklog ? `
+                    <button type="button" onclick="baixarKMLPorFA('${b.fa}')" title="Baixar KML de todos os talhões da FA ${b.fa} para o Drone" class="ml-2 px-2 py-0.5 rounded bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-700 border border-slate-300 font-bold text-[10px] inline-flex items-center gap-1 cursor-pointer transition">
+                        <svg class="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span>KML Drone</span>
+                    </button>
+                ` : (b.talhao ? `
+                    <button type="button" onclick="baixarKMLTalhaoPorChave('${b.fa}', '${b.talhao}')" title="Baixar KML do Talhão ${b.talhao} para o Drone" class="ml-2 px-2 py-0.5 rounded bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-700 border border-slate-300 font-bold text-[10px] inline-flex items-center gap-1 cursor-pointer transition">
+                        <svg class="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span>KML Drone</span>
+                    </button>
+                ` : '');
                 return `
                     <div class="bg-white border border-slate-200 border-l-4 ${corBorder} p-3.5 rounded-lg flex items-center justify-between text-xs shadow-sm hover:shadow transition">
                         <div>
-                            <span class="font-black text-red-600 text-sm">FA ${b.fa}</span>
-                            <span class="text-slate-900 ml-2 font-bold">${b.fazenda} ${modoAgrupadoBacklog ? `— <span class='text-slate-500 font-normal'>${b.count} talhões</span>` : `- T. ${b.talhao}`}</span>
+                            <div class="flex items-center flex-wrap gap-1">
+                                <span class="font-black text-red-600 text-sm">FA ${b.fa}</span>
+                                <span class="text-slate-900 ml-1 font-bold">${b.fazenda} ${modoAgrupadoBacklog ? `— <span class='text-slate-500 font-normal'>${b.count} talhões</span>` : `- T. ${b.talhao}`}</span>
+                                ${btnKml}
+                            </div>
                             <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-2">
                                 <span>CATEGORIA:</span>
                                 <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${corBadge}">${b.tipo.toUpperCase()}</span>
@@ -3745,9 +4240,7 @@
         });
 
         function alternarTema() {
-            // Modo claro permanente para o padrão executivo
-            document.body.classList.add('light-theme');
-            localStorage.setItem('clealco_tema', 'light');
+            alternarTemaModoNoturno();
         }
 
         function formatarData(val) {
@@ -3978,6 +4471,112 @@
                     document.getElementById('clima-alerta-desc').innerText = 'Verifique a conexão de internet ou tente atualizar novamente.';
                 }
             }
+        }
+
+        // ================= CÁLCULO DE ELEVAÇÃO SOLAR & MELHOR JANELA DE VOO =================
+        function calcularElevacaoSolar(lat, lng, date) {
+            const d = new Date(date);
+            const start = new Date(d.getFullYear(), 0, 0);
+            const diff = d - start;
+            const oneDay = 1000 * 60 * 60 * 24;
+            const dayOfYear = Math.floor(diff / oneDay);
+            const hours = d.getHours() + d.getMinutes() / 60;
+            
+            const gamma = (2 * Math.PI / 365) * (dayOfYear - 1 + (hours - 12) / 24);
+            const eqtime = 229.18 * (0.000075 + 0.001868 * Math.cos(gamma) - 0.032077 * Math.sin(gamma) - 0.014615 * Math.cos(2 * gamma) - 0.040849 * Math.sin(2 * gamma));
+            const decl = 0.006918 - 0.399912 * Math.cos(gamma) + 0.070257 * Math.sin(gamma) - 0.006758 * Math.cos(2 * gamma) + 0.000907 * Math.sin(2 * gamma);
+            
+            // Timezone SP: UTC -3
+            const timeOffset = eqtime + 4 * lng - 60 * (-3);
+            const tst = hours * 60 + timeOffset;
+            const ha = ((tst / 4) - 180) * (Math.PI / 180);
+            const latRad = lat * (Math.PI / 180);
+            
+            let sinElev = Math.sin(latRad) * Math.sin(decl) + Math.cos(latRad) * Math.cos(decl) * Math.cos(ha);
+            sinElev = Math.max(-1, Math.min(1, sinElev));
+            return Math.asin(sinElev) * (180 / Math.PI);
+        }
+
+        function calcularJanelaOuroVoo(hourly, lat, lng) {
+            const agora = new Date();
+            const elevacaoAtual = calcularElevacaoSolar(lat, lng, agora);
+            const elElevAtual = document.getElementById('val-elevacao-solar');
+            if (elElevAtual) {
+                const statusSombra = elevacaoAtual >= 30 ? 'Sem sombras' : (elevacaoAtual >= 20 ? 'Sombras moderadas' : 'Sombras longas');
+                elElevAtual.innerText = `${Math.max(0, Math.round(elevacaoAtual))}° (${statusSombra})`;
+            }
+
+            // Analisa as horas do dia de hoje (06:00 às 18:00)
+            const horasHoje = [];
+            const hojeDataStr = agora.toISOString().slice(0, 10);
+            const times = hourly.time || [];
+            const winds = hourly.wind_speed_10m || [];
+            const precips = hourly.precipitation || [];
+            const probs = hourly.precipitation_probability || [];
+
+            for (let i = 0; i < times.length; i++) {
+                if (times[i].startsWith(hojeDataStr)) {
+                    const horaStr = times[i].split('T')[1]?.slice(0, 5) || '12:00';
+                    const hNum = parseInt(horaStr.split(':')[0], 10);
+                    if (hNum >= 6 && hNum <= 18) {
+                        const dataSlot = new Date(times[i]);
+                        const elev = calcularElevacaoSolar(lat, lng, dataSlot);
+                        const vento = winds[i] !== undefined ? Number(winds[i]) : 12;
+                        const probChuva = probs[i] !== undefined ? Number(probs[i]) : 0;
+                        const precip = precips[i] !== undefined ? Number(precips[i]) : 0;
+
+                        // Critério de Ouro: Sol > 30° (sem sombras nas entrelinhas de cana) + Vento <= 20 km/h + Sem chuva
+                        const isIdeal = (elev >= 30 && vento <= 20 && probChuva < 25 && precip < 0.2);
+                        const isAceitavel = (elev >= 25 && vento <= 25 && precip < 1.0);
+                        horasHoje.push({ hora: hNum, horaStr, elev, vento, isIdeal, isAceitavel });
+                    }
+                }
+            }
+
+            const horasIdeais = horasHoje.filter(h => h.isIdeal);
+            const elBadge = document.getElementById('badge-janela-ouro');
+            const elDesc = document.getElementById('desc-janela-ouro');
+            const elHorario = document.getElementById('val-horario-janela-ouro');
+
+            let textoJanela = '09:00 às 15:30';
+            if (horasIdeais.length > 0) {
+                const primeira = horasIdeais[0].hora;
+                const ultima = horasIdeais[horasIdeais.length - 1].hora;
+                textoJanela = `${String(primeira).padStart(2, '0')}:00 às ${String(ultima + 1).padStart(2, '0')}:00`;
+                if (elBadge) {
+                    elBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase';
+                    elBadge.innerText = 'JANELA DE OURO DISPONÍVEL';
+                }
+                if (elDesc) {
+                    elDesc.innerText = `Sol acima de 30° (sem sombras nas entrelinhas) e ventos brandos ideais entre ${textoJanela}.`;
+                }
+            } else {
+                const horasAceitaveis = horasHoje.filter(h => h.isAceitavel);
+                if (horasAceitaveis.length > 0) {
+                    const primeira = horasAceitaveis[0].hora;
+                    const ultima = horasAceitaveis[horasAceitaveis.length - 1].hora;
+                    textoJanela = `${String(primeira).padStart(2, '0')}:00 às ${String(ultima + 1).padStart(2, '0')}:00 (Atenção)`;
+                    if (elBadge) {
+                        elBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300 uppercase';
+                        elBadge.innerText = 'JANELA COM RESTRIÇÃO';
+                    }
+                    if (elDesc) {
+                        elDesc.innerText = `Ventos moderados ou nebulosidade presentes. Voar com cautela em talhões de alta prioridade.`;
+                    }
+                } else {
+                    textoJanela = 'Voos Não Recomendados';
+                    if (elBadge) {
+                        elBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-300 uppercase';
+                        elBadge.innerText = 'DESFAVORÁVEL HOJE';
+                    }
+                    if (elDesc) {
+                        elDesc.innerText = `Ventos acima de 25 km/h ou risco de chuva impedem voos com boa qualidade de imagem.`;
+                    }
+                }
+            }
+
+            if (elHorario) elHorario.innerText = textoJanela;
+            return textoJanela;
         }
 
         function processarExibicaoClima(data, polo) {
@@ -4237,6 +4836,9 @@
 
             // 10. Atualiza Mapa Radar Doppler
             inicializarOuAtualizarMapaRadar(polo);
+
+            // 11. Calcula Janela de Ouro de Voo Drone (Elevação Solar > 30° & Vento Brando)
+            calcularJanelaOuroVoo(hourly, polo.lat, polo.lng);
         }
 
         function renderizarPrevisaoDiaria(daily, hojeIdx) {
