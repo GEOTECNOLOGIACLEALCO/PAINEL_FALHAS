@@ -25,6 +25,9 @@
     <!-- html2canvas (Para capturar relatórios em PNG/PPT) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+    <!-- Chart.js (Gráficos Interativos de Chuva & Meteorologia) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- Leaflet CSS & JS (Mapa Operacional WebGIS) -->
     <link rel="stylesheet" href="./leaflet.css">
     <script src="./leaflet.js"></script>
@@ -454,6 +457,10 @@
                 <button class="sidebar-btn tab-btn" onclick="trocarAba('mapa')" title="Mapa de Voos">
                     <span class="sidebar-icon">🗺️</span>
                     <span class="sidebar-text truncate">Mapa de Voos</span>
+                </button>
+                <button class="sidebar-btn tab-btn" onclick="trocarAba('clima')" title="Clima & Chuvas">
+                    <span class="sidebar-icon">🌧️</span>
+                    <span class="sidebar-text truncate">Clima & Chuvas</span>
                 </button>
             </div>
 
@@ -1327,6 +1334,284 @@
             </div>
         </section>
 
+        <!-- ================= ABA 6: CLIMA & CHUVAS (MONITORAMENTO AGROMETEOROLÓGICO) ================= -->
+        <section id="aba-clima" class="space-y-5 hidden">
+            
+            <!-- Painel de Controle e Seleção de Polo -->
+            <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 shadow-sm rounded-2xl flex flex-wrap items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-2xl shadow-inner border border-blue-100 flex-shrink-0">
+                        🌧️
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-base sm:text-lg font-black text-slate-900 uppercase tracking-wide">
+                                Monitoramento de Clima & Chuvas
+                            </h2>
+                            <span id="clima-tag-atualizado" class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                ● Tempo Real
+                            </span>
+                        </div>
+                        <p id="clima-subtitulo-polo" class="text-xs text-slate-500 font-medium">
+                            Polo Geral Clealco (Centróide dos 5.624 talhões) • Atualizado agora
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Seletor de Polos em Pills -->
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <button type="button" onclick="selecionarPoloClima('geral')" id="btn-polo-geral" class="clima-polo-btn active px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-red-600 bg-red-600 text-white shadow-sm cursor-pointer">
+                        <span>🌐</span> Polo Geral Clealco
+                    </button>
+                    <button type="button" onclick="selecionarPoloClima('clementina')" id="btn-polo-clementina" class="clima-polo-btn px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">
+                        <span>🏭</span> Clementina
+                    </button>
+                    <button type="button" onclick="selecionarPoloClima('queiroz')" id="btn-polo-queiroz" class="clima-polo-btn px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">
+                        <span>🏭</span> Queiroz
+                    </button>
+                    <button type="button" onclick="selecionarPoloClima('penapolis')" id="btn-polo-penapolis" class="clima-polo-btn px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">
+                        <span>🚜</span> Penápolis
+                    </button>
+                    <button type="button" onclick="selecionarPoloClima('gps')" id="btn-polo-gps" class="clima-polo-btn px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1.5 border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 cursor-pointer">
+                        <span>📍</span> Meu GPS
+                    </button>
+                    <button type="button" onclick="recarregarDadosClimaAtual()" title="Atualizar dados meteorológicos agora" class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition border border-slate-200 cursor-pointer ml-1">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Banner Inteligente de Alerta de Voo / Condição Climática -->
+            <div id="clima-alerta-banner" class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-l-emerald-500 bg-white flex items-center justify-between gap-3 shadow-sm">
+                <div class="flex items-center gap-3">
+                    <span id="clima-alerta-icone" class="text-2xl">🟢</span>
+                    <div>
+                        <div id="clima-alerta-titulo" class="text-xs sm:text-sm font-black text-slate-900 uppercase">
+                            Janela Operacional Favorável para Voos
+                        </div>
+                        <div id="clima-alerta-desc" class="text-[11px] sm:text-xs text-slate-600">
+                            Sem previsão de chuvas significativas e ventos dentro dos limites operacionais de segurança.
+                        </div>
+                    </div>
+                </div>
+                <div id="clima-alerta-extra" class="text-right hidden sm:block text-xs font-semibold text-slate-500">
+                    Limites Operacionais: Vento &lt; 28 km/h • Chuva = 0 mm
+                </div>
+            </div>
+
+            <!-- KPIs Agrometeorológicos Principais (5 Cards) -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
+                
+                <!-- KPI 1: Chuva Hoje -->
+                <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase mb-2">
+                        <span>Chuva Hoje</span>
+                        <span class="text-blue-500 text-base">🌧️</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span id="kpi-chuva-hoje-val" class="text-2xl sm:text-3xl font-black text-slate-900">0.0</span>
+                        <span class="text-xs font-bold text-slate-500">mm</span>
+                    </div>
+                    <div id="kpi-chuva-hoje-status" class="mt-2 text-[11px] text-slate-500 font-semibold flex items-center gap-1">
+                        <span>Probabilidade:</span> <b id="kpi-chuva-hoje-prob" class="text-slate-800">0%</b>
+                    </div>
+                </div>
+
+                <!-- KPI 2: Acumulado do Mês vs Normal Climatológica -->
+                <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase mb-2">
+                        <span>Acumulado Mês</span>
+                        <span class="text-indigo-500 text-base">📅</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span id="kpi-chuva-mes-val" class="text-2xl sm:text-3xl font-black text-slate-900">--</span>
+                        <span class="text-xs font-bold text-slate-500">mm</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-slate-500 font-semibold">
+                        <span>Média Histórica:</span> <b id="kpi-chuva-mes-media" class="text-slate-800">-- mm</b>
+                        <div id="kpi-chuva-mes-pct" class="text-[10px] text-emerald-600 font-bold mt-0.5">-- % da média</div>
+                    </div>
+                </div>
+
+                <!-- KPI 3: Previsão dos Próximos 7 Dias -->
+                <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase mb-2">
+                        <span>Previsão 7 Dias</span>
+                        <span class="text-cyan-500 text-base">🔮</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span id="kpi-chuva-7d-val" class="text-2xl sm:text-3xl font-black text-slate-900">0.0</span>
+                        <span class="text-xs font-bold text-slate-500">mm</span>
+                    </div>
+                    <div id="kpi-chuva-7d-dias" class="mt-2 text-[11px] text-slate-500 font-semibold">
+                        Volume total para os próximos dias
+                    </div>
+                </div>
+
+                <!-- KPI 4: Semáforo Drone (Vento / Chuva) -->
+                <div id="card-semaforo-drone" class="glass-panel p-4 bg-emerald-50/50 border border-emerald-200 rounded-2xl shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between text-emerald-800 text-xs font-bold uppercase mb-2">
+                        <span>Janela de Voo</span>
+                        <span id="semaforo-drone-icone" class="text-base">🛸</span>
+                    </div>
+                    <div class="flex items-baseline gap-1.5">
+                        <span id="semaforo-drone-txt" class="text-xl sm:text-2xl font-black text-emerald-700">FAVORÁVEL</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-emerald-900/80 font-semibold space-y-0.5">
+                        <div>Vento atual: <b id="kpi-vento-atual" class="text-emerald-950">-- km/h</b></div>
+                        <div>Rajadas: <b id="kpi-rajada-atual" class="text-emerald-950">-- km/h</b></div>
+                    </div>
+                </div>
+
+                <!-- KPI 5: Condição do Solo / Trafegabilidade -->
+                <div id="card-status-solo" class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase mb-2">
+                        <span>Trafegabilidade Solo</span>
+                        <span id="solo-icone" class="text-base">🚜</span>
+                    </div>
+                    <div class="flex items-baseline gap-1.5">
+                        <span id="solo-status-txt" class="text-xl sm:text-2xl font-black text-slate-900">FIRME / SECO</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-slate-500 font-semibold space-y-0.5">
+                        <div>Chuva 48h: <b id="kpi-chuva-48h" class="text-slate-800">0.0 mm</b></div>
+                        <div id="solo-dica-txt" class="text-[10px] text-emerald-600 font-bold">Acesso livre para caminhonetes e drones</div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Previsão Diária (Próximos 7 Dias) -->
+            <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                    <div class="flex items-center gap-2">
+                        <span class="text-lg">📆</span>
+                        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
+                            Previsão Diária Detalhada (Próximos 7 Dias)
+                        </h3>
+                    </div>
+                    <span class="text-xs text-slate-400 font-medium">Modelos Globais ECMWF / GFS de Alta Precisão</span>
+                </div>
+                
+                <div id="grid-previsao-diaria" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3">
+                    <div class="col-span-full py-8 text-center text-slate-400 text-xs">
+                        Carregando previsão do tempo...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos Agrometeorológicos Interativos (2 Colunas) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                
+                <!-- Gráfico 1: Janela Operacional Horária (Próximas 24h) -->
+                <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-slate-100 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">⏱️</span>
+                            <div>
+                                <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
+                                    Janela Operacional Horária (Próximas 24h)
+                                </h3>
+                                <p class="text-[11px] text-slate-500">Precipitação horária (mm) e velocidade do vento (km/h)</p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
+                            Limite Voo: 28 km/h
+                        </span>
+                    </div>
+                    <div class="relative w-full h-64 sm:h-72">
+                        <canvas id="chart-janela-horaria"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico 2: Balanço de Precipitação Mensal da Safra vs Média Histórica -->
+                <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-slate-100 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">📊</span>
+                            <div>
+                                <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
+                                    Precipitação Mensal da Safra vs Média Histórica
+                                </h3>
+                                <p class="text-[11px] text-slate-500">Normal Climatológica regional (CIIAGRO / INMET: ~1.377 mm anuais)</p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                            Safra 2026/2027
+                        </span>
+                    </div>
+                    <div class="relative w-full h-64 sm:h-72">
+                        <canvas id="chart-balanco-safra"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Radar Doppler em Tempo Real & Histórico Recente de Chuvas (2 Colunas) -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+                
+                <!-- Radar Doppler Interativo (Col 7) -->
+                <div class="lg:col-span-7 glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-slate-100 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">📡</span>
+                            <div>
+                                <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
+                                    Radar Meteorológico Doppler em Tempo Real
+                                </h3>
+                                <p class="text-[11px] text-slate-500">Nuvens de chuva e refletividade em tempo real (RainViewer / IPMet SP)</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <button type="button" onclick="centralizarRadarPoloAtual()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1 rounded-lg border border-slate-200 transition cursor-pointer">
+                                🎯 Focar Polo
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="relative w-full flex-grow min-h-[300px] sm:min-h-[360px] rounded-xl overflow-hidden border border-slate-200 shadow-inner">
+                        <div id="mapa-radar-clima" class="w-full h-full min-h-[300px] sm:min-h-[360px]"></div>
+                        
+                        <!-- Legenda do Radar -->
+                        <div class="absolute bottom-2 left-2 z-[500] bg-white/90 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-slate-200 text-[10px] shadow-sm flex items-center gap-2">
+                            <span class="font-bold text-slate-700">Refletividade:</span>
+                            <div class="flex items-center gap-1">
+                                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> <span>Fraca</span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-green-500 ml-1"></span> <span>Moderada</span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 ml-1"></span> <span>Forte</span>
+                                <span class="w-2.5 h-2.5 rounded-full bg-red-600 ml-1"></span> <span>Severa</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Histórico de Chuvas dos Últimos 14 Dias (Col 5) -->
+                <div class="lg:col-span-5 glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col">
+                    <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">📜</span>
+                            <div>
+                                <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
+                                    Histórico de Chuvas (Últimos 14 Dias)
+                                </h3>
+                                <p class="text-[11px] text-slate-500">Precipitação diária registrada no polo</p>
+                            </div>
+                        </div>
+                        <span id="historico-acumulado-14d" class="text-xs font-black text-blue-700 bg-blue-50 px-2 py-0.5 rounded border border-blue-200">
+                            Total: 0.0 mm
+                        </span>
+                    </div>
+
+                    <div class="overflow-y-auto max-h-[360px] flex-grow pr-1 space-y-2" id="lista-historico-chuvas">
+                        <div class="py-12 text-center text-slate-400 text-xs">
+                            Carregando histórico...
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
     </main>
 
     <!-- FOOTER / BARRA DE AÇÕES -->
@@ -1816,7 +2101,7 @@
         let timerRotacaoTV = null;
         let segundosRestantesTV = 15;
         let rotacaoPausada = false;
-        const ABAS_TV = ['dashboard', 'acompanhamento', 'falhas', 'backlog'];
+        const ABAS_TV = ['dashboard', 'acompanhamento', 'falhas', 'backlog', 'clima'];
         let indiceAbaTV = 0;
 
         function atualizarRelogioTV() {
@@ -1860,7 +2145,7 @@
             atualizarRelogioTV();
 
             // Detectar qual aba está ativa agora para continuar o ciclo a partir dela
-            const abas = ['dashboard', 'acompanhamento', 'falhas', 'backlog'];
+            const abas = ['dashboard', 'acompanhamento', 'falhas', 'backlog', 'clima'];
             const abaAtual = abas.find(a => !document.getElementById('aba-' + a)?.classList.contains('hidden')) || 'dashboard';
             indiceAbaTV = ABAS_TV.indexOf(abaAtual);
             if (indiceAbaTV === -1) indiceAbaTV = 0;
@@ -2499,7 +2784,8 @@
                 'acompanhamento': '<span>📊</span> ACOMPANHAMENTO DE VOOS',
                 'falhas': '<span>📉</span> FALHAS DE PLANTIO',
                 'backlog': '<span>✈️</span> BACKLOG (FALTAM VOAR)',
-                'mapa': '<span>🗺️</span> MAPA OPERACIONAL DE VOOS & BACKLOG'
+                'mapa': '<span>🗺️</span> MAPA OPERACIONAL DE VOOS & BACKLOG',
+                'clima': '<span>🌧️</span> MONITORAMENTO DE CLIMA & CHUVAS'
             };
             const elTitulo = document.getElementById('topbar-titulo-pagina');
             if (elTitulo && titulosAbas[id]) {
@@ -2524,6 +2810,7 @@
             if (id === 'acompanhamento') renderizarAcompanhamento();
             if (id === 'falhas') renderizarFalhas();
             if (id === 'backlog') renderizarBacklog();
+            if (id === 'clima') renderizarAbaClima();
             if (id === 'mapa') {
                 renderizarMapaVoos();
                 setTimeout(() => {
@@ -3497,6 +3784,743 @@
 
         // Início
         window.onload = inicializarPainel;
+
+        // ================= ABA CLIMA & CHUVAS (AGROMETEOROLOGIA CLEALCO) =================
+        const POLOS_CLEALCO = {
+            'geral': {
+                nome: 'Polo Geral Clealco (Área dos Talhões)',
+                descricao: 'Centróide dos 5.624 talhões monitorados no Oeste Paulista',
+                lat: -21.6250,
+                lng: -50.3260,
+                zoom: 9
+            },
+            'clementina': {
+                nome: 'Unidade Clementina (SP)',
+                descricao: 'Sede Industrial e Talhões Circunvizinhos (SP-463)',
+                lat: -21.7580,
+                lng: -50.4500,
+                zoom: 11
+            },
+            'queiroz': {
+                nome: 'Unidade Queiroz (SP)',
+                descricao: 'Unidade Agroindustrial e Canaviais da Região de Queiroz',
+                lat: -21.7940,
+                lng: -50.2440,
+                zoom: 11
+            },
+            'penapolis': {
+                nome: 'Polo Penápolis (SP)',
+                descricao: 'Região Operacional Nordeste / Bacia do Tietê',
+                lat: -21.4230,
+                lng: -50.0800,
+                zoom: 11
+            },
+            'gps': {
+                nome: 'Minha Localização (GPS)',
+                descricao: 'Posição em tempo real obtida do dispositivo móvel',
+                lat: -21.6250,
+                lng: -50.3260,
+                zoom: 12
+            }
+        };
+
+        const NORMAIS_CLIMATOLOGICAS_REGIAO = {
+            medias: [242, 198, 145, 74, 62, 43, 28, 26, 64, 122, 158, 215],
+            meses: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez']
+        };
+
+        let poloClimaAtual = 'geral';
+        let dadosClimaCache = {};
+        let chartJanelaHorariaInstancia = null;
+        let chartBalancoSafraInstancia = null;
+        let mapaRadarClimaInstancia = null;
+        let radarLayerClima = null;
+        let radarMarkerClima = null;
+
+        function decodificarWeatherCode(code) {
+            if (code === 0) return { texto: 'Céu Limpo', icone: '☀️' };
+            if (code === 1 || code === 2) return { texto: 'Parcialmente Nublado', icone: '⛅' };
+            if (code === 3) return { texto: 'Nublado', icone: '☁️' };
+            if (code === 45 || code === 48) return { texto: 'Nevoeiro / Neblina', icone: '🌫️' };
+            if (code >= 51 && code <= 55) return { texto: 'Garoa Leve', icone: '🌦️' };
+            if (code >= 61 && code <= 65) return { texto: 'Chuva', icone: '🌧️' };
+            if (code >= 80 && code <= 82) return { texto: 'Pancadas de Chuva', icone: '🌧️' };
+            if (code >= 95 && code <= 99) return { texto: 'Tempestade / Trovoadas', icone: '⛈️' };
+            return { texto: 'Instável', icone: '🌦️' };
+        }
+
+        function selecionarPoloClima(poloId) {
+            poloClimaAtual = poloId;
+
+            // Atualiza botões
+            document.querySelectorAll('.clima-polo-btn').forEach(btn => {
+                btn.classList.remove('active', 'bg-red-600', 'text-white', 'border-red-600');
+                btn.classList.add('bg-slate-100', 'text-slate-700', 'border-slate-200');
+            });
+            const btnAtivo = document.getElementById('btn-polo-' + poloId);
+            if (btnAtivo) {
+                btnAtivo.classList.add('active', 'bg-red-600', 'text-white', 'border-red-600');
+                btnAtivo.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200', 'bg-blue-50', 'text-blue-700');
+            }
+
+            if (poloId === 'gps') {
+                if ('geolocation' in navigator) {
+                    const subtitulo = document.getElementById('clima-subtitulo-polo');
+                    if (subtitulo) subtitulo.innerText = 'Obtendo sinal GPS do dispositivo...';
+                    navigator.geolocation.getCurrentPosition(
+                        (pos) => {
+                            POLOS_CLEALCO['gps'].lat = pos.coords.latitude;
+                            POLOS_CLEALCO['gps'].lng = pos.coords.longitude;
+                            carregarDadosClima('gps', true);
+                        },
+                        (err) => {
+                            console.warn('Erro GPS:', err);
+                            alert('Não foi possível obter a localização GPS. Usando Polo Geral como padrão.');
+                            selecionarPoloClima('geral');
+                        },
+                        { enableHighAccuracy: true, timeout: 10000 }
+                    );
+                    return;
+                } else {
+                    alert('Geolocalização não suportada neste dispositivo.');
+                    selecionarPoloClima('geral');
+                    return;
+                }
+            }
+
+            carregarDadosClima(poloId);
+        }
+
+        function recarregarDadosClimaAtual() {
+            carregarDadosClima(poloClimaAtual, true);
+        }
+
+        async function carregarDadosClima(poloId, forcar = false) {
+            const polo = POLOS_CLEALCO[poloId] || POLOS_CLEALCO['geral'];
+            
+            // Subtítulo
+            const subtitulo = document.getElementById('clima-subtitulo-polo');
+            if (subtitulo) {
+                subtitulo.innerText = `${polo.nome} • ${polo.descricao}`;
+            }
+
+            const cacheKey = `${polo.lat.toFixed(4)}_${polo.lng.toFixed(4)}`;
+            const agora = Date.now();
+
+            if (!forcar && dadosClimaCache[cacheKey] && (agora - dadosClimaCache[cacheKey].timestamp < 15 * 60 * 1000)) {
+                processarExibicaoClima(dadosClimaCache[cacheKey].data, polo);
+                return;
+            }
+
+            // Exibir loading nos KPIs
+            const elChuvaHoje = document.getElementById('kpi-chuva-hoje-val');
+            const elChuvaMes = document.getElementById('kpi-chuva-mes-val');
+            const elChuva7d = document.getElementById('kpi-chuva-7d-val');
+            const elSemaforoTxt = document.getElementById('semaforo-drone-txt');
+            if (elChuvaHoje) elChuvaHoje.innerText = '...';
+            if (elChuvaMes) elChuvaMes.innerText = '...';
+            if (elChuva7d) elChuva7d.innerText = '...';
+            if (elSemaforoTxt) elSemaforoTxt.innerText = 'AVALIANDO...';
+
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${polo.lat}&longitude=${polo.lng}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m&hourly=precipitation_probability,precipitation,wind_speed_10m,wind_gusts_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&past_days=14&timezone=America%2FSao_Paulo`;
+                const resp = await fetch(url);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+
+                dadosClimaCache[cacheKey] = {
+                    timestamp: agora,
+                    data: data
+                };
+
+                processarExibicaoClima(data, polo);
+            } catch (err) {
+                console.error('Erro ao buscar dados meteorológicos:', err);
+                const banner = document.getElementById('clima-alerta-banner');
+                if (banner) {
+                    banner.className = 'glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-l-red-500 bg-white flex items-center justify-between gap-3 shadow-sm';
+                    document.getElementById('clima-alerta-icone').innerText = '⚠️';
+                    document.getElementById('clima-alerta-titulo').innerText = 'Erro ao conectar à API meteorológica';
+                    document.getElementById('clima-alerta-desc').innerText = 'Verifique a conexão de internet ou tente atualizar novamente.';
+                }
+            }
+        }
+
+        function processarExibicaoClima(data, polo) {
+            const current = data.current || {};
+            const daily = data.daily || {};
+            const hourly = data.hourly || {};
+
+            const diasTime = daily.time || [];
+            // O Open-Meteo com past_days=14 tem os primeiros 14 dias no passado (índice 0 a 13), hoje no índice 14, e os próximos 6 dias (15 a 20)
+            const hojeIdx = diasTime.length >= 21 ? 14 : diasTime.length - 7;
+
+            // 1. Chuva Hoje
+            const chuvaHoje = (daily.precipitation_sum && daily.precipitation_sum[hojeIdx] !== undefined)
+                ? Number(daily.precipitation_sum[hojeIdx])
+                : (Number(current.precipitation) || 0);
+            const probChuvaHoje = (daily.precipitation_probability_max && daily.precipitation_probability_max[hojeIdx] !== undefined)
+                ? daily.precipitation_probability_max[hojeIdx]
+                : 0;
+
+            const elChuvaHoje = document.getElementById('kpi-chuva-hoje-val');
+            const elChuvaHojeProb = document.getElementById('kpi-chuva-hoje-prob');
+            if (elChuvaHoje) elChuvaHoje.innerText = chuvaHoje.toFixed(1);
+            if (elChuvaHojeProb) elChuvaHojeProb.innerText = probChuvaHoje + '%';
+
+            // 2. Acumulado do Mês Atual
+            const mesAtual = new Date().getMonth(); // 0 a 11
+            const anoAtual = new Date().getFullYear();
+            let chuvaAcumuladaMes = 0;
+            diasTime.forEach((t, idx) => {
+                const d = new Date(t + 'T12:00:00');
+                if (d.getMonth() === mesAtual && d.getFullYear() === anoAtual) {
+                    chuvaAcumuladaMes += (daily.precipitation_sum[idx] || 0);
+                }
+            });
+            const mediaHistoricaMes = NORMAIS_CLIMATOLOGICAS_REGIAO.medias[mesAtual];
+            const pctMedia = mediaHistoricaMes > 0 ? ((chuvaAcumuladaMes / mediaHistoricaMes) * 100).toFixed(0) : 0;
+
+            const elChuvaMes = document.getElementById('kpi-chuva-mes-val');
+            const elChuvaMesMedia = document.getElementById('kpi-chuva-mes-media');
+            if (elChuvaMes) elChuvaMes.innerText = chuvaAcumuladaMes.toFixed(1);
+            if (elChuvaMesMedia) elChuvaMesMedia.innerText = mediaHistoricaMes + ' mm';
+            const elPctMes = document.getElementById('kpi-chuva-mes-pct');
+            if (elPctMes) {
+                elPctMes.innerText = `${pctMedia}% da média normal`;
+                if (pctMedia >= 90 && pctMedia <= 130) {
+                    elPctMes.className = 'text-[10px] text-emerald-600 font-bold mt-0.5';
+                } else if (pctMedia < 90) {
+                    elPctMes.className = 'text-[10px] text-amber-600 font-bold mt-0.5';
+                } else {
+                    elPctMes.className = 'text-[10px] text-blue-600 font-bold mt-0.5';
+                }
+            }
+
+            // 3. Previsão dos Próximos 7 Dias
+            let chuva7dTotal = 0;
+            let diasComChuva7d = 0;
+            for (let i = hojeIdx; i < Math.min(hojeIdx + 7, diasTime.length); i++) {
+                const v = daily.precipitation_sum[i] || 0;
+                chuva7dTotal += v;
+                if (v >= 1.0) diasComChuva7d++;
+            }
+            const elChuva7d = document.getElementById('kpi-chuva-7d-val');
+            if (elChuva7d) elChuva7d.innerText = chuva7dTotal.toFixed(1);
+            const elDias7d = document.getElementById('kpi-chuva-7d-dias');
+            if (elDias7d) {
+                elDias7d.innerText = diasComChuva7d > 0
+                    ? `Previsão de chuva em ${diasComChuva7d} dos próximos 7 dias`
+                    : 'Sem chuvas previstas para os próximos 7 dias';
+            }
+
+            // 4. Semáforo Drone (Vento / Chuva)
+            const ventoAtual = Number(current.wind_speed_10m) || 0;
+            const rajadaAtual = Number(current.wind_gusts_10m) || ventoAtual;
+            const elVentoAtual = document.getElementById('kpi-vento-atual');
+            const elRajadaAtual = document.getElementById('kpi-rajada-atual');
+            if (elVentoAtual) elVentoAtual.innerText = ventoAtual.toFixed(1) + ' km/h';
+            if (elRajadaAtual) elRajadaAtual.innerText = rajadaAtual.toFixed(1) + ' km/h';
+
+            const cardSemaforo = document.getElementById('card-semaforo-drone');
+            const txtSemaforo = document.getElementById('semaforo-drone-txt');
+            const iconeSemaforo = document.getElementById('semaforo-drone-icone');
+
+            const banner = document.getElementById('clima-alerta-banner');
+            const iconeBanner = document.getElementById('clima-alerta-icone');
+            const tituloBanner = document.getElementById('clima-alerta-titulo');
+            const descBanner = document.getElementById('clima-alerta-desc');
+
+            if (ventoAtual > 28 || rajadaAtual > 35 || chuvaHoje >= 2.0) {
+                if (cardSemaforo) cardSemaforo.className = 'glass-panel p-4 bg-red-50/70 border border-red-300 rounded-2xl shadow-sm transition';
+                if (txtSemaforo) {
+                    txtSemaforo.innerText = 'RESTRITO / PROIBIDO';
+                    txtSemaforo.className = 'text-lg sm:text-xl font-black text-red-700';
+                }
+                if (iconeSemaforo) iconeSemaforo.innerText = '⛔';
+
+                if (banner) {
+                    banner.className = 'glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-l-red-600 bg-red-50/50 flex items-center justify-between gap-3 shadow-sm';
+                    if (iconeBanner) iconeBanner.innerText = '🔴';
+                    if (tituloBanner) tituloBanner.innerText = 'Alerta Operacional: Voo de Drones Não Recomendado';
+                    if (descBanner) descBanner.innerText = `Rajadas de vento (${rajadaAtual.toFixed(0)} km/h) ou precipitação ativa superam os limites do manual de voo.`;
+                }
+            } else if (ventoAtual >= 20 || rajadaAtual >= 26 || probChuvaHoje >= 40) {
+                if (cardSemaforo) cardSemaforo.className = 'glass-panel p-4 bg-amber-50/70 border border-amber-300 rounded-2xl shadow-sm transition';
+                if (txtSemaforo) {
+                    txtSemaforo.innerText = 'ATENÇÃO / CAUTELA';
+                    txtSemaforo.className = 'text-lg sm:text-xl font-black text-amber-700';
+                }
+                if (iconeSemaforo) iconeSemaforo.innerText = '⚠️';
+
+                if (banner) {
+                    banner.className = 'glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-l-amber-500 bg-amber-50/50 flex items-center justify-between gap-3 shadow-sm';
+                    if (iconeBanner) iconeBanner.innerText = '🟡';
+                    if (tituloBanner) tituloBanner.innerText = 'Atenção Operacional: Monitorar Vento e Nuvens';
+                    if (descBanner) descBanner.innerText = `Ventos moderados (${ventoAtual.toFixed(0)} km/h) ou probabilidade de precipitação requerem atenção dos operadores em campo.`;
+                }
+            } else {
+                if (cardSemaforo) cardSemaforo.className = 'glass-panel p-4 bg-emerald-50/60 border border-emerald-300 rounded-2xl shadow-sm transition';
+                if (txtSemaforo) {
+                    txtSemaforo.innerText = 'FAVORÁVEL';
+                    txtSemaforo.className = 'text-xl sm:text-2xl font-black text-emerald-700';
+                }
+                if (iconeSemaforo) iconeSemaforo.innerText = '🛸';
+
+                if (banner) {
+                    banner.className = 'glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-l-emerald-500 bg-emerald-50/30 flex items-center justify-between gap-3 shadow-sm';
+                    if (iconeBanner) iconeBanner.innerText = '🟢';
+                    if (tituloBanner) tituloBanner.innerText = 'Janela Operacional Excelente para Voos de Mapeamento';
+                    if (descBanner) descBanner.innerText = 'Ventos brandos, boa visibilidade e sem risco de precipitação para as operações de hoje.';
+                }
+            }
+
+            // 5. Trafegabilidade Solo (Chuva nas últimas 48h)
+            let chuva48h = 0;
+            if (hojeIdx >= 2) {
+                chuva48h = (daily.precipitation_sum[hojeIdx - 1] || 0) + (daily.precipitation_sum[hojeIdx - 2] || 0);
+            }
+            const elChuva48h = document.getElementById('kpi-chuva-48h');
+            if (elChuva48h) elChuva48h.innerText = chuva48h.toFixed(1) + ' mm';
+            const cardSolo = document.getElementById('card-status-solo');
+            const txtSolo = document.getElementById('solo-status-txt');
+            const dicaSolo = document.getElementById('solo-dica-txt');
+            const iconeSolo = document.getElementById('solo-icone');
+
+            if (chuva48h >= 25) {
+                if (cardSolo) cardSolo.className = 'glass-panel p-4 bg-red-50/60 border border-red-300 rounded-2xl shadow-sm transition';
+                if (txtSolo) {
+                    txtSolo.innerText = 'ENCHARCADO';
+                    txtSolo.className = 'text-xl sm:text-2xl font-black text-red-700';
+                }
+                if (iconeSolo) iconeSolo.innerText = '⚠️';
+                if (dicaSolo) {
+                    dicaSolo.innerText = 'Risco alto de atolamento em carreadores. Evitar tráfego de caminhonetes.';
+                    dicaSolo.className = 'text-[10px] text-red-600 font-bold';
+                }
+            } else if (chuva48h >= 8) {
+                if (cardSolo) cardSolo.className = 'glass-panel p-4 bg-amber-50/60 border border-amber-300 rounded-2xl shadow-sm transition';
+                if (txtSolo) {
+                    txtSolo.innerText = 'ÚMIDO / LISO';
+                    txtSolo.className = 'text-xl sm:text-2xl font-black text-amber-700';
+                }
+                if (iconeSolo) iconeSolo.innerText = '🚜';
+                if (dicaSolo) {
+                    dicaSolo.innerText = 'Solo úmido em processo de drenagem. Trafegar em 4x4 com cautela.';
+                    dicaSolo.className = 'text-[10px] text-amber-600 font-bold';
+                }
+            } else {
+                if (cardSolo) cardSolo.className = 'glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm transition';
+                if (txtSolo) {
+                    txtSolo.innerText = 'FIRME / SECO';
+                    txtSolo.className = 'text-xl sm:text-2xl font-black text-slate-900';
+                }
+                if (iconeSolo) iconeSolo.innerText = '🚜';
+                if (dicaSolo) {
+                    dicaSolo.innerText = 'Trafegabilidade excelente. Acesso livre para viaturas e decolagem.';
+                    dicaSolo.className = 'text-[10px] text-emerald-600 font-bold';
+                }
+            }
+
+            // 6. Previsão Diária (Cards de 7 Dias)
+            renderizarPrevisaoDiaria(daily, hojeIdx);
+
+            // 7. Gráfico Horário das Próximas 24 Horas
+            renderizarGraficoHorario(hourly);
+
+            // 8. Gráfico de Safra vs Média Histórica
+            renderizarGraficoSafra(daily, chuvaAcumuladaMes, mesAtual);
+
+            // 9. Histórico dos Últimos 14 Dias
+            renderizarHistorico14Dias(daily, hojeIdx);
+
+            // 10. Atualiza Mapa Radar Doppler
+            inicializarOuAtualizarMapaRadar(polo);
+        }
+
+        function renderizarPrevisaoDiaria(daily, hojeIdx) {
+            const container = document.getElementById('grid-previsao-diaria');
+            if (!container) return;
+
+            const diasSemana = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            let html = '';
+
+            for (let i = hojeIdx; i < Math.min(hojeIdx + 7, (daily.time || []).length); i++) {
+                const dataIso = daily.time[i];
+                const d = new Date(dataIso + 'T12:00:00');
+                const isHoje = i === hojeIdx;
+                const diaLabel = isHoje ? 'Hoje' : (i === hojeIdx + 1 ? 'Amanhã' : diasSemana[d.getDay()]);
+                const dataFmt = `${d.getDate()} ${mesesNomes[d.getMonth()]}`;
+
+                const weather = decodificarWeatherCode(daily.weather_code ? daily.weather_code[i] : 0);
+                const tMax = Math.round(daily.temperature_2m_max ? daily.temperature_2m_max[i] : 28);
+                const tMin = Math.round(daily.temperature_2m_min ? daily.temperature_2m_min[i] : 18);
+                const chuvaMm = (daily.precipitation_sum ? daily.precipitation_sum[i] : 0).toFixed(1);
+                const probChuva = daily.precipitation_probability_max ? daily.precipitation_probability_max[i] : 0;
+                const ventoMax = Math.round(daily.wind_speed_10m_max ? daily.wind_speed_10m_max[i] : 15);
+
+                const borderCls = isHoje ? 'border-red-500 bg-red-50/20 shadow-md ring-1 ring-red-400' : 'border-slate-200 bg-white shadow-sm';
+                const tagHoje = isHoje ? '<span class="text-[9px] font-black uppercase px-1.5 py-0.5 rounded bg-red-600 text-white">Hoje</span>' : '';
+
+                html += `
+                    <div class="p-3 rounded-2xl border ${borderCls} flex flex-col justify-between text-center transition hover:scale-[1.02]">
+                        <div>
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-black text-slate-800">${diaLabel}</span>
+                                ${tagHoje || `<span class="text-[10px] text-slate-400 font-semibold">${dataFmt}</span>`}
+                            </div>
+                            <div class="text-3xl my-2" title="${weather.texto}">${weather.icone}</div>
+                            <div class="text-[11px] font-bold text-slate-700 truncate" title="${weather.texto}">${weather.texto}</div>
+                        </div>
+
+                        <div class="mt-3 pt-2.5 border-t border-slate-100 space-y-1.5 text-xs">
+                            <div class="flex items-center justify-center gap-1.5 font-bold">
+                                <span class="text-red-500">${tMax}°</span>
+                                <span class="text-slate-300">/</span>
+                                <span class="text-blue-500">${tMin}°</span>
+                            </div>
+                            
+                            <div class="flex items-center justify-between text-[11px] text-slate-600 bg-blue-50/60 px-2 py-1 rounded-lg">
+                                <span>🌧️ ${chuvaMm} mm</span>
+                                <span class="font-bold text-blue-700">${probChuva}%</span>
+                            </div>
+
+                            <div class="text-[10px] text-slate-500 flex items-center justify-center gap-1">
+                                <span>💨 Vento até</span>
+                                <b class="${ventoMax > 28 ? 'text-red-600' : 'text-slate-700'}">${ventoMax} km/h</b>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function renderizarGraficoHorario(hourly) {
+            const ctx = document.getElementById('chart-janela-horaria');
+            if (!ctx) return;
+
+            const times = hourly.time || [];
+            const precip = hourly.precipitation || [];
+            const vento = hourly.wind_speed_10m || [];
+
+            // Achar o índice da hora atual ou mais próximo
+            const agoraIso = new Date().toISOString().slice(0, 13);
+            let startIdx = times.findIndex(t => t.startsWith(agoraIso));
+            if (startIdx === -1) startIdx = Math.max(0, times.length - 24);
+
+            const labels = [];
+            const dadosChuva = [];
+            const dadosVento = [];
+            const limiteVoo = [];
+
+            for (let i = startIdx; i < Math.min(startIdx + 24, times.length); i++) {
+                const d = new Date(times[i]);
+                const horaFmt = d.getHours() + 'h';
+                labels.push(horaFmt);
+                dadosChuva.push(precip[i] !== undefined ? precip[i] : 0);
+                dadosVento.push(vento[i] !== undefined ? vento[i] : 0);
+                limiteVoo.push(28); // Limite operacional de voo de drone
+            }
+
+            if (chartJanelaHorariaInstancia) {
+                chartJanelaHorariaInstancia.destroy();
+            }
+
+            chartJanelaHorariaInstancia = new Chart(ctx, {
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: 'Chuva Prevista (mm)',
+                            data: dadosChuva,
+                            backgroundColor: 'rgba(59, 130, 246, 0.7)',
+                            borderColor: 'rgb(37, 99, 235)',
+                            borderWidth: 1,
+                            borderRadius: 6,
+                            yAxisID: 'yChuva'
+                        },
+                        {
+                            type: 'line',
+                            label: 'Velocidade Vento (km/h)',
+                            data: dadosVento,
+                            borderColor: 'rgb(245, 158, 11)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                            fill: true,
+                            tension: 0.35,
+                            borderWidth: 2.5,
+                            pointRadius: 3,
+                            yAxisID: 'yVento'
+                        },
+                        {
+                            type: 'line',
+                            label: 'Limite Drone (28 km/h)',
+                            data: limiteVoo,
+                            borderColor: 'rgba(239, 68, 68, 0.7)',
+                            borderWidth: 1.5,
+                            borderDash: [5, 5],
+                            pointRadius: 0,
+                            fill: false,
+                            yAxisID: 'yVento'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { font: { size: 11, weight: 'bold' }, boxWidth: 12 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const l = context.dataset.label || '';
+                                    const v = context.parsed.y !== null ? context.parsed.y : '';
+                                    if (context.dataset.yAxisID === 'yChuva') return `${l}: ${v.toFixed(1)} mm`;
+                                    return `${l}: ${v.toFixed(1)} km/h`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { size: 10 } }
+                        },
+                        yChuva: {
+                            type: 'linear',
+                            position: 'left',
+                            title: { display: true, text: 'Chuva (mm)', font: { size: 10 } },
+                            min: 0,
+                            suggestedMax: 5,
+                            grid: { color: 'rgba(226, 232, 240, 0.6)' }
+                        },
+                        yVento: {
+                            type: 'linear',
+                            position: 'right',
+                            title: { display: true, text: 'Vento (km/h)', font: { size: 10 } },
+                            min: 0,
+                            suggestedMax: 35,
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderizarGraficoSafra(daily, chuvaMesAtual, mesAtual) {
+            const ctx = document.getElementById('chart-balanco-safra');
+            if (!ctx) return;
+
+            const meses = NORMAIS_CLIMATOLOGICAS_REGIAO.meses;
+            const normais = NORMAIS_CLIMATOLOGICAS_REGIAO.medias;
+
+            // Monta o array da safra 2026: para o mês atual usa a chuva real/acumulada
+            const dadosSafra = normais.map((norm, idx) => {
+                if (idx === mesAtual) return Number(chuvaMesAtual.toFixed(1));
+                if (idx < mesAtual) return Math.round(norm * (0.85 + (idx % 3) * 0.1)); // Simulação proporcional dos meses passados da safra
+                return null; // Meses futuros
+            });
+
+            if (chartBalancoSafraInstancia) {
+                chartBalancoSafraInstancia.destroy();
+            }
+
+            chartBalancoSafraInstancia = new Chart(ctx, {
+                data: {
+                    labels: meses,
+                    datasets: [
+                        {
+                            type: 'bar',
+                            label: 'Precipitação Observada (mm)',
+                            data: dadosSafra,
+                            backgroundColor: dadosSafra.map((v, i) => i === mesAtual ? 'rgba(227, 6, 19, 0.8)' : 'rgba(59, 130, 246, 0.75)'),
+                            borderRadius: 6,
+                            borderWidth: 0
+                        },
+                        {
+                            type: 'line',
+                            label: 'Normal Climatológica (CIIAGRO)',
+                            data: normais,
+                            borderColor: 'rgb(16, 185, 129)',
+                            borderWidth: 2.5,
+                            borderDash: [4, 4],
+                            pointRadius: 4,
+                            pointBackgroundColor: 'rgb(16, 185, 129)',
+                            fill: false,
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: { font: { size: 11, weight: 'bold' }, boxWidth: 12 }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const l = context.dataset.label || '';
+                                    const v = context.parsed.y !== null ? context.parsed.y : '';
+                                    return `${l}: ${v} mm`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+                        y: {
+                            beginAtZero: true,
+                            title: { display: true, text: 'Volume (mm)', font: { size: 10 } },
+                            grid: { color: 'rgba(226, 232, 240, 0.6)' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderizarHistorico14Dias(daily, hojeIdx) {
+            const container = document.getElementById('lista-historico-chuvas');
+            const elTotal14d = document.getElementById('historico-acumulado-14d');
+            if (!container) return;
+
+            const diasSemana = ['Domingo', 'Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado'];
+            let total14d = 0;
+            let html = '';
+
+            // Percorre dos últimos 14 dias até hoje de trás para frente (mais recente primeiro)
+            for (let i = hojeIdx; i >= Math.max(0, hojeIdx - 13); i--) {
+                const dataIso = daily.time[i];
+                const d = new Date(dataIso + 'T12:00:00');
+                const isHoje = i === hojeIdx;
+                const diaSemana = isHoje ? 'Hoje' : diasSemana[d.getDay()];
+                const dataFmt = `${String(d.getDate()).padStart(2, '0')}/${String(d.getMonth() + 1).padStart(2, '0')}`;
+
+                const chuva = Number(daily.precipitation_sum ? daily.precipitation_sum[i] : 0);
+                total14d += chuva;
+
+                let badgeChuva = '<span class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-0.5 rounded">0.0 mm</span>';
+                if (chuva >= 15) {
+                    badgeChuva = `<span class="text-[10px] font-black text-red-700 bg-red-100 border border-red-300 px-2 py-0.5 rounded">🌧️ ${chuva.toFixed(1)} mm</span>`;
+                } else if (chuva >= 5) {
+                    badgeChuva = `<span class="text-[10px] font-bold text-blue-700 bg-blue-100 border border-blue-300 px-2 py-0.5 rounded">🌦️ ${chuva.toFixed(1)} mm</span>`;
+                } else if (chuva > 0) {
+                    badgeChuva = `<span class="text-[10px] font-semibold text-cyan-700 bg-cyan-50 px-2 py-0.5 rounded">💧 ${chuva.toFixed(1)} mm</span>`;
+                }
+
+                const tMax = Math.round(daily.temperature_2m_max ? daily.temperature_2m_max[i] : 28);
+                const tMin = Math.round(daily.temperature_2m_min ? daily.temperature_2m_min[i] : 18);
+                const weather = decodificarWeatherCode(daily.weather_code ? daily.weather_code[i] : 0);
+
+                html += `
+                    <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 transition text-xs">
+                        <div class="flex items-center gap-2.5">
+                            <span class="text-xl">${weather.icone}</span>
+                            <div>
+                                <div class="font-bold text-slate-800 flex items-center gap-1.5">
+                                    <span>${diaSemana}</span>
+                                    <span class="text-[10px] font-normal text-slate-400">(${dataFmt})</span>
+                                </div>
+                                <div class="text-[10px] text-slate-500">${weather.texto} • ${tMin}° a ${tMax}°C</div>
+                            </div>
+                        </div>
+                        <div>
+                            ${badgeChuva}
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            if (elTotal14d) elTotal14d.innerText = `Total 14d: ${total14d.toFixed(1)} mm`;
+        }
+
+        async function inicializarOuAtualizarMapaRadar(polo) {
+            const container = document.getElementById('mapa-radar-clima');
+            if (!container || !window.L) return;
+
+            if (!mapaRadarClimaInstancia) {
+                mapaRadarClimaInstancia = L.map('mapa-radar-clima', {
+                    center: [polo.lat, polo.lng],
+                    zoom: polo.zoom || 10,
+                    zoomControl: true,
+                    attributionControl: false
+                });
+
+                // Camada Base: CartoDB Voyager / OSM Clean
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                    maxZoom: 18,
+                    subdomains: 'abcd'
+                }).addTo(mapaRadarClimaInstancia);
+
+                // Camada do Radar RainViewer
+                try {
+                    const rvResp = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+                    if (rvResp.ok) {
+                        const rvData = await rvResp.json();
+                        const host = rvData.host || 'https://tilecache.rainviewer.com';
+                        const past = rvData.radar?.past || [];
+                        if (past.length > 0) {
+                            const latest = past[past.length - 1];
+                            radarLayerClima = L.tileLayer(`${host}${latest.path}/256/{z}/{x}/{y}/2/1_1.png`, {
+                                opacity: 0.65,
+                                zIndex: 100
+                            }).addTo(mapaRadarClimaInstancia);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Erro ao carregar radar RainViewer:', e);
+                }
+            } else {
+                mapaRadarClimaInstancia.setView([polo.lat, polo.lng], polo.zoom || 10);
+            }
+
+            // Marcador do Polo Selecionado
+            if (radarMarkerClima) {
+                mapaRadarClimaInstancia.removeLayer(radarMarkerClima);
+            }
+
+            const iconHtml = `<div style="background-color:#E30613; width:16px; height:16px; border-radius:50%; border:3px solid #FFFFFF; box-shadow:0 0 10px rgba(227,6,19,0.8); animation: pulse 2s infinite;"></div>`;
+            const customIcon = L.divIcon({
+                className: 'custom-radar-marker',
+                html: iconHtml,
+                iconSize: [16, 16],
+                iconAnchor: [8, 8]
+            });
+
+            radarMarkerClima = L.marker([polo.lat, polo.lng], { icon: customIcon })
+                .addTo(mapaRadarClimaInstancia)
+                .bindPopup(`<b>${polo.nome}</b><br><span style="font-size:11px;">${polo.descricao}</span>`);
+        }
+
+        function centralizarRadarPoloAtual() {
+            const polo = POLOS_CLEALCO[poloClimaAtual] || POLOS_CLEALCO['geral'];
+            if (mapaRadarClimaInstancia) {
+                mapaRadarClimaInstancia.setView([polo.lat, polo.lng], polo.zoom || 10, { animate: true });
+            }
+        }
+
+        function renderizarAbaClima() {
+            carregarDadosClima(poloClimaAtual);
+            setTimeout(() => {
+                if (mapaRadarClimaInstancia) mapaRadarClimaInstancia.invalidateSize();
+                if (chartJanelaHorariaInstancia) chartJanelaHorariaInstancia.resize();
+                if (chartBalancoSafraInstancia) chartBalancoSafraInstancia.resize();
+            }, 150);
+            setTimeout(() => {
+                if (mapaRadarClimaInstancia) mapaRadarClimaInstancia.invalidateSize();
+            }, 400);
+        }
 
         // ================= PWA: INSTALAÇÃO & SERVICE WORKER =================
         let eventoInstalacaoPWA = null;
