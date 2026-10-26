@@ -1710,34 +1710,33 @@
                 
                 <!-- Radar Doppler Interativo (Col 7) -->
                 <div class="lg:col-span-7 glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-slate-100 pb-2">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 border-b border-slate-100 pb-3">
                         <div>
-                            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
-                                Radar Meteorológico Doppler em Tempo Real
-                            </h3>
-                            <p class="text-[11px] text-slate-500 flex items-center gap-2 flex-wrap">
-                                <span>Nuvens de chuva e refletividade em tempo real (RainViewer / IPMet SP)</span>
-                                <span id="badge-radar-timestamp" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                    ● Radar Online • Varredura Ativa
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
+                                    Radar Meteorológico Doppler em Tempo Real
+                                </h3>
+                                <span id="badge-radar-timestamp" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs inline-flex items-center gap-1">
+                                    ● Radar Ativo • Varredura: Atualizando...
                                 </span>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-0.5">
+                                Monitoramento de chuva e refletividade em tempo real (RainViewer / IPMet SP)
                             </p>
                         </div>
                         <div class="flex items-center flex-wrap gap-2">
-                            <button type="button" onclick="alternarPlayAnimacaoRadar()" id="btn-play-radar" title="Iniciar ou pausar animação do radar" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1 cursor-pointer">
+                            <button type="button" onclick="alternarPlayAnimacaoRadar()" id="btn-play-radar" title="Iniciar ou pausar animação do radar" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer">
                                 <span id="icone-play-radar">▶</span>
-                                <span id="lbl-play-radar">Animar</span>
+                                <span id="lbl-play-radar">Animar Radar</span>
                             </button>
                             <button type="button" onclick="alternarCamadaRadar()" id="btn-toggle-radar-nuvens" title="Ligar ou desligar sobreposição de chuva no radar" class="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition cursor-pointer">
-                                <span id="lbl-status-radar">Chuva Radar: ON</span>
+                                <span id="lbl-status-radar">Chuva: ON</span>
                             </button>
-                            <button type="button" onclick="alternarTipoMapaRadar()" id="btn-toggle-camada-radar" title="Alternar entre Satélite e Mapa de Ruas" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer">
+                            <button type="button" onclick="alternarTipoMapaRadar()" id="btn-toggle-camada-radar" title="Alternar entre Satélite e Mapa de Ruas" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer shadow-xs">
                                 <span id="lbl-tipo-mapa-radar">Satélite</span>
                             </button>
-                            <button type="button" onclick="alternarVisaoRegionalRadar()" id="btn-visao-regional" title="Alternar entre visão aproximada do polo e visão do Estado de SP" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer">
-                                <span id="lbl-visao-radar">Visão SP</span>
-                            </button>
-                            <button type="button" onclick="centralizarRadarPoloAtual()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer">
-                                Focar Polo
+                            <button type="button" onclick="alternarVisaoRegionalRadar()" id="btn-visao-regional" title="Alternar entre visão aproximada do polo e visão ampla do Estado de SP" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer shadow-xs">
+                                <span id="lbl-visao-radar">🔭 Visão Estado SP</span>
                             </button>
                         </div>
                     </div>
@@ -5261,16 +5260,16 @@
             const btn = document.getElementById('btn-toggle-radar-nuvens');
             if (radarLayerClima && mapaRadarClimaInstancia.hasLayer(radarLayerClima)) {
                 mapaRadarClimaInstancia.removeLayer(radarLayerClima);
-                if (lbl) lbl.innerText = 'Chuva Radar: OFF';
+                if (lbl) lbl.innerText = 'Chuva: OFF';
                 if (btn) {
-                    btn.className = 'text-xs bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer';
+                    btn.className = 'text-xs bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer shadow-xs';
                 }
             } else if (radarLayerClima) {
                 radarLayerClima.addTo(mapaRadarClimaInstancia);
                 radarLayerClima.bringToFront();
-                if (lbl) lbl.innerText = 'Chuva Radar: ON';
+                if (lbl) lbl.innerText = 'Chuva: ON';
                 if (btn) {
-                    btn.className = 'text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition cursor-pointer';
+                    btn.className = 'text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition cursor-pointer shadow-xs';
                 }
             }
         }
@@ -5284,11 +5283,11 @@
             if (isVisaoRegional) {
                 // Visão ampliada do Estado de SP / Bacia do Rio Tietê (zoom 7)
                 mapaRadarClimaInstancia.setView([-22.0, -49.8], 7, { animate: true });
-                if (lbl) lbl.innerText = 'Focar Polo';
+                if (lbl) lbl.innerText = '🎯 Focar Polo';
             } else {
                 // Visão aproximada dos talhões do polo selecionado
                 mapaRadarClimaInstancia.setView([polo.lat, polo.lng], polo.zoom || 10, { animate: true });
-                if (lbl) lbl.innerText = 'Visão SP';
+                if (lbl) lbl.innerText = '🔭 Visão Estado SP';
             }
         }
 
@@ -5303,8 +5302,8 @@
 
             const badge = document.getElementById('badge-radar-timestamp');
             if (badge) {
-                badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
-                badge.innerText = `● Radar Ativo • Varredura: ${horaFmt} (Frame ${index + 1}/${radarFramesClima.length})`;
+                badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs inline-flex items-center gap-1';
+                badge.innerText = `● Radar Ativo • Varredura: ${horaFmt} (${index + 1}/${radarFramesClima.length})`;
             }
 
             if (radarLayerClima && mapaRadarClimaInstancia.hasLayer(radarLayerClima)) {
@@ -5344,7 +5343,7 @@
                 console.warn('Radar RainViewer indisponível:', err);
                 const badge = document.getElementById('badge-radar-timestamp');
                 if (badge) {
-                    badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200';
+                    badge.className = 'px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200 shadow-xs inline-flex items-center gap-1';
                     badge.innerText = '● Radar Conectado • Modo Céu Limpo (Sem ecos)';
                 }
             }
@@ -5359,15 +5358,15 @@
                 clearInterval(radarAnimacaoTimer);
                 radarAnimacaoTimer = null;
                 if (btnIcon) btnIcon.innerText = '▶';
-                if (btnLbl) btnLbl.innerText = 'Animar';
-                if (btn) btn.className = 'text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1 cursor-pointer';
+                if (btnLbl) btnLbl.innerText = 'Animar Radar';
+                if (btn) btn.className = 'text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer';
             } else {
                 if (!radarFramesClima || radarFramesClima.length === 0) {
                     carregarFramesRadarRainViewer();
                 }
                 if (btnIcon) btnIcon.innerText = '⏸';
                 if (btnLbl) btnLbl.innerText = 'Pausar';
-                if (btn) btn.className = 'text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1 cursor-pointer';
+                if (btn) btn.className = 'text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer';
 
                 radarAnimacaoTimer = setInterval(() => {
                     if (!radarFramesClima || radarFramesClima.length === 0) return;
@@ -5434,6 +5433,9 @@
 
         function centralizarRadarPoloAtual() {
             const polo = POLOS_CLEALCO[poloClimaAtual] || POLOS_CLEALCO['geral'];
+            isVisaoRegional = false;
+            const lbl = document.getElementById('lbl-visao-radar');
+            if (lbl) lbl.innerText = '🔭 Visão Estado SP';
             if (mapaRadarClimaInstancia) {
                 mapaRadarClimaInstancia.setView([polo.lat, polo.lng], polo.zoom || 10, { animate: true });
             }
