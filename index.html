@@ -1715,14 +1715,26 @@
                             <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
                                 Radar Meteorológico Doppler em Tempo Real
                             </h3>
-                            <p class="text-[11px] text-slate-500">Nuvens de chuva e refletividade em tempo real (RainViewer / IPMet SP)</p>
+                            <p class="text-[11px] text-slate-500 flex items-center gap-2 flex-wrap">
+                                <span>Nuvens de chuva e refletividade em tempo real (RainViewer / IPMet SP)</span>
+                                <span id="badge-radar-timestamp" class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    ● Radar Online • Varredura Ativa
+                                </span>
+                            </p>
                         </div>
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center flex-wrap gap-2">
+                            <button type="button" onclick="alternarPlayAnimacaoRadar()" id="btn-play-radar" title="Iniciar ou pausar animação do radar" class="text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1 cursor-pointer">
+                                <span id="icone-play-radar">▶</span>
+                                <span id="lbl-play-radar">Animar</span>
+                            </button>
                             <button type="button" onclick="alternarCamadaRadar()" id="btn-toggle-radar-nuvens" title="Ligar ou desligar sobreposição de chuva no radar" class="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition cursor-pointer">
                                 <span id="lbl-status-radar">Chuva Radar: ON</span>
                             </button>
                             <button type="button" onclick="alternarTipoMapaRadar()" id="btn-toggle-camada-radar" title="Alternar entre Satélite e Mapa de Ruas" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer">
                                 <span id="lbl-tipo-mapa-radar">Satélite</span>
+                            </button>
+                            <button type="button" onclick="alternarVisaoRegionalRadar()" id="btn-visao-regional" title="Alternar entre visão aproximada do polo e visão do Estado de SP" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer">
+                                <span id="lbl-visao-radar">Visão SP</span>
                             </button>
                             <button type="button" onclick="centralizarRadarPoloAtual()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer">
                                 Focar Polo
@@ -1733,24 +1745,43 @@
                     <div class="relative w-full flex-grow min-h-[340px] sm:min-h-[400px] rounded-xl overflow-hidden border border-slate-200 shadow-inner">
                         <div id="mapa-radar-clima" class="w-full h-full min-h-[340px] sm:min-h-[400px]"></div>
                         
-                        <!-- HUD Flutuante de Vento para Operação de Drone no Mapa -->
-                        <div id="hud-vento-radar" class="absolute top-3 right-3 z-[1000] bg-slate-950/85 backdrop-blur-md text-white p-2.5 sm:p-3 rounded-xl border border-white/20 shadow-2xl min-w-[190px] sm:min-w-[210px] pointer-events-none">
+                        <!-- HUD Flutuante de Vento para Operação de Drone no Mapa (Com opção de recolher) -->
+                        <div id="hud-vento-radar" class="absolute top-3 right-3 z-[1000] bg-slate-950/85 backdrop-blur-md text-white p-2.5 sm:p-3 rounded-xl border border-white/20 shadow-2xl min-w-[190px] sm:min-w-[210px] pointer-events-auto transition-all duration-300">
+                            <!-- Cabeçalho com Botão de Recolher -->
                             <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1.5 mb-2">
                                 <span class="text-[10px] font-black uppercase tracking-wider text-slate-300">Vento para Drone</span>
-                                <span id="hud-drone-badge" class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500 text-white shadow-sm">FAVORÁVEL</span>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2 text-center">
-                                <div class="bg-white/10 rounded-lg p-1.5 border border-white/10">
-                                    <div class="text-[9px] text-slate-400 uppercase font-bold">Vento</div>
-                                    <div id="hud-vento-val" class="text-base sm:text-lg font-black text-white">-- km/h</div>
-                                </div>
-                                <div class="bg-white/10 rounded-lg p-1.5 border border-white/10">
-                                    <div class="text-[9px] text-slate-400 uppercase font-bold">Rajada</div>
-                                    <div id="hud-rajada-val" class="text-base sm:text-lg font-black text-amber-400">-- km/h</div>
+                                <div class="flex items-center gap-1.5">
+                                    <span id="hud-drone-badge" class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500 text-white shadow-sm">FAVORÁVEL</span>
+                                    <button type="button" onclick="alternarHudVentoRadar()" class="p-1 rounded hover:bg-white/20 text-slate-400 hover:text-white transition cursor-pointer leading-none" title="Recolher / Expandir painel de vento">
+                                        <svg id="hud-icone-colapso" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>
+                                    </button>
                                 </div>
                             </div>
-                            <div id="hud-drone-obs" class="mt-2 text-[10px] text-slate-300 font-medium text-center">
-                                Limite operacional: 28 km/h
+
+                            <!-- Conteúdo Completo (Pode ser recolhido) -->
+                            <div id="hud-vento-radar-corpo" class="space-y-2">
+                                <div class="grid grid-cols-2 gap-2 text-center">
+                                    <div class="bg-white/10 rounded-lg p-1.5 border border-white/10">
+                                        <div class="text-[9px] text-slate-400 uppercase font-bold">Vento</div>
+                                        <div id="hud-vento-val" class="text-base sm:text-lg font-black text-white">-- km/h</div>
+                                    </div>
+                                    <div class="bg-white/10 rounded-lg p-1.5 border border-white/10">
+                                        <div class="text-[9px] text-slate-400 uppercase font-bold">Rajada</div>
+                                        <div id="hud-rajada-val" class="text-base sm:text-lg font-black text-amber-400">-- km/h</div>
+                                    </div>
+                                </div>
+                                <div id="hud-drone-obs" class="text-[10px] text-slate-300 font-medium text-center">
+                                    Limite operacional: 28 km/h
+                                </div>
+                            </div>
+
+                            <!-- Visualização Compacta (quando recolhido) -->
+                            <div id="hud-vento-radar-compacto" class="hidden flex items-center justify-between gap-2 cursor-pointer pt-0.5" onclick="alternarHudVentoRadar()" title="Clique para expandir">
+                                <div class="flex items-center gap-1.5 text-xs font-bold text-white">
+                                    <span>🌪️</span>
+                                    <span id="hud-vento-resumo-val">-- km/h</span>
+                                </div>
+                                <span class="text-[9px] text-slate-400 hover:text-white font-semibold underline">Expandir ▾</span>
                             </div>
                         </div>
 
@@ -4703,10 +4734,12 @@
             // HUD no Mapa Radar
             const hudVentoVal = document.getElementById('hud-vento-val');
             const hudRajadaVal = document.getElementById('hud-rajada-val');
+            const hudVentoResumoVal = document.getElementById('hud-vento-resumo-val');
             const hudDroneBadge = document.getElementById('hud-drone-badge');
             const hudDroneObs = document.getElementById('hud-drone-obs');
             if (hudVentoVal) hudVentoVal.innerText = ventoAtual.toFixed(1) + ' km/h';
             if (hudRajadaVal) hudRajadaVal.innerText = rajadaAtual.toFixed(1) + ' km/h';
+            if (hudVentoResumoVal) hudVentoResumoVal.innerText = ventoAtual.toFixed(1) + ' km/h';
 
             const cardSemaforo = document.getElementById('card-semaforo-drone');
             const txtSemaforo = document.getElementById('semaforo-drone-txt');
@@ -5167,6 +5200,40 @@
             });
         }
 
+        // ================= RADAR METEOROLÓGICO DOPPLER (RAINVIEWER & CONTROLES) =================
+        let radarFramesClima = [];
+        let radarFrameIndexAtual = 0;
+        let radarAnimacaoTimer = null;
+        let radarHostClima = 'https://tilecache.rainviewer.com';
+        let isVisaoRegional = false;
+        let hudVentoRecolhido = false;
+
+        function alternarHudVentoRadar() {
+            hudVentoRecolhido = !hudVentoRecolhido;
+            const corpo = document.getElementById('hud-vento-radar-corpo');
+            const compacto = document.getElementById('hud-vento-radar-compacto');
+            const icone = document.getElementById('hud-icone-colapso');
+            const painel = document.getElementById('hud-vento-radar');
+            
+            if (hudVentoRecolhido) {
+                if (corpo) corpo.classList.add('hidden');
+                if (compacto) compacto.classList.remove('hidden');
+                if (icone) icone.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>';
+                if (painel) {
+                    painel.classList.remove('min-w-[190px]', 'sm:min-w-[210px]');
+                    painel.classList.add('min-w-0');
+                }
+            } else {
+                if (corpo) corpo.classList.remove('hidden');
+                if (compacto) compacto.classList.add('hidden');
+                if (icone) icone.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/>';
+                if (painel) {
+                    painel.classList.add('min-w-[190px]', 'sm:min-w-[210px]');
+                    painel.classList.remove('min-w-0');
+                }
+            }
+        }
+
         function alternarTipoMapaRadar() {
             if (!mapaRadarClimaInstancia) return;
             tipoMapaRadar = (tipoMapaRadar === 'satelite') ? 'ruas' : 'satelite';
@@ -5208,6 +5275,108 @@
             }
         }
 
+        function alternarVisaoRegionalRadar() {
+            if (!mapaRadarClimaInstancia) return;
+            const polo = POLOS_CLEALCO[poloClimaAtual] || POLOS_CLEALCO['geral'];
+            const lbl = document.getElementById('lbl-visao-radar');
+            isVisaoRegional = !isVisaoRegional;
+
+            if (isVisaoRegional) {
+                // Visão ampliada do Estado de SP / Bacia do Rio Tietê (zoom 7)
+                mapaRadarClimaInstancia.setView([-22.0, -49.8], 7, { animate: true });
+                if (lbl) lbl.innerText = 'Focar Polo';
+            } else {
+                // Visão aproximada dos talhões do polo selecionado
+                mapaRadarClimaInstancia.setView([polo.lat, polo.lng], polo.zoom || 10, { animate: true });
+                if (lbl) lbl.innerText = 'Visão SP';
+            }
+        }
+
+        function exibirFrameRadar(index) {
+            if (!mapaRadarClimaInstancia || !radarFramesClima || radarFramesClima.length === 0) return;
+            if (index < 0 || index >= radarFramesClima.length) index = radarFramesClima.length - 1;
+            radarFrameIndexAtual = index;
+
+            const frame = radarFramesClima[index];
+            const dataHora = new Date(frame.time * 1000);
+            const horaFmt = dataHora.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+
+            const badge = document.getElementById('badge-radar-timestamp');
+            if (badge) {
+                badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200';
+                badge.innerText = `● Radar Ativo • Varredura: ${horaFmt} (Frame ${index + 1}/${radarFramesClima.length})`;
+            }
+
+            if (radarLayerClima && mapaRadarClimaInstancia.hasLayer(radarLayerClima)) {
+                mapaRadarClimaInstancia.removeLayer(radarLayerClima);
+            }
+
+            radarLayerClima = L.tileLayer(`${radarHostClima}${frame.path}/256/{z}/{x}/{y}/2/1_1.png`, {
+                opacity: 0.75,
+                zIndex: 100,
+                maxNativeZoom: 7,
+                maxZoom: 20
+            });
+
+            const isLigado = (document.getElementById('lbl-status-radar')?.innerText || '').includes('ON');
+            if (isLigado) {
+                radarLayerClima.addTo(mapaRadarClimaInstancia);
+                radarLayerClima.bringToFront();
+            }
+            if (radarMarkerClima && mapaRadarClimaInstancia.hasLayer(radarMarkerClima)) {
+                radarMarkerClima.bringToFront();
+            }
+        }
+
+        async function carregarFramesRadarRainViewer() {
+            try {
+                const resp = await fetch('https://api.rainviewer.com/public/weather-maps.json');
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+                radarHostClima = data.host || 'https://tilecache.rainviewer.com';
+                radarFramesClima = data.radar?.past || [];
+
+                if (radarFramesClima.length > 0) {
+                    radarFrameIndexAtual = radarFramesClima.length - 1;
+                    exibirFrameRadar(radarFrameIndexAtual);
+                }
+            } catch (err) {
+                console.warn('Radar RainViewer indisponível:', err);
+                const badge = document.getElementById('badge-radar-timestamp');
+                if (badge) {
+                    badge.className = 'px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200';
+                    badge.innerText = '● Radar Conectado • Modo Céu Limpo (Sem ecos)';
+                }
+            }
+        }
+
+        function alternarPlayAnimacaoRadar() {
+            const btnIcon = document.getElementById('icone-play-radar');
+            const btnLbl = document.getElementById('lbl-play-radar');
+            const btn = document.getElementById('btn-play-radar');
+
+            if (radarAnimacaoTimer) {
+                clearInterval(radarAnimacaoTimer);
+                radarAnimacaoTimer = null;
+                if (btnIcon) btnIcon.innerText = '▶';
+                if (btnLbl) btnLbl.innerText = 'Animar';
+                if (btn) btn.className = 'text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1 cursor-pointer';
+            } else {
+                if (!radarFramesClima || radarFramesClima.length === 0) {
+                    carregarFramesRadarRainViewer();
+                }
+                if (btnIcon) btnIcon.innerText = '⏸';
+                if (btnLbl) btnLbl.innerText = 'Pausar';
+                if (btn) btn.className = 'text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-sm flex items-center gap-1 cursor-pointer';
+
+                radarAnimacaoTimer = setInterval(() => {
+                    if (!radarFramesClima || radarFramesClima.length === 0) return;
+                    radarFrameIndexAtual = (radarFrameIndexAtual + 1) % radarFramesClima.length;
+                    exibirFrameRadar(radarFrameIndexAtual);
+                }, 750);
+            }
+        }
+
         async function inicializarOuAtualizarMapaRadar(polo) {
             const container = document.getElementById('mapa-radar-clima');
             if (!container || !window.L) return;
@@ -5220,32 +5389,11 @@
                     attributionControl: false
                 });
 
-                // Camada Base: Google Satellite Hybrid (sem necessidade de API key)
                 camadaBaseRadarClima = obterCamadaBaseRadar(tipoMapaRadar);
                 camadaBaseRadarClima.addTo(mapaRadarClimaInstancia);
 
-                // Camada do Radar RainViewer (com maxNativeZoom: 7 para interpolação suave sem "Zoom Level Not Supported")
-                try {
-                    const rvResp = await fetch('https://api.rainviewer.com/public/weather-maps.json');
-                    if (rvResp.ok) {
-                        const rvData = await rvResp.json();
-                        const host = rvData.host || 'https://tilecache.rainviewer.com';
-                        const past = rvData.radar?.past || [];
-                        if (past.length > 0) {
-                            const latest = past[past.length - 1];
-                            radarLayerClima = L.tileLayer(`${host}${latest.path}/256/{z}/{x}/{y}/2/1_1.png`, {
-                                opacity: 0.70,
-                                zIndex: 100,
-                                maxNativeZoom: 7,
-                                maxZoom: 20
-                            }).addTo(mapaRadarClimaInstancia);
-                        }
-                    }
-                } catch (e) {
-                    console.warn('Erro ao carregar radar RainViewer:', e);
-                }
+                carregarFramesRadarRainViewer();
             } else {
-                // Remove qualquer camada de ladrilho orfa ou de provedores anteriores (ex: CartoDB em cache)
                 mapaRadarClimaInstancia.eachLayer((layer) => {
                     if (layer instanceof L.TileLayer && layer !== radarLayerClima && layer !== camadaBaseRadarClima) {
                         mapaRadarClimaInstancia.removeLayer(layer);
@@ -5257,7 +5405,13 @@
                     camadaBaseRadarClima.addTo(mapaRadarClimaInstancia);
                 }
 
-                mapaRadarClimaInstancia.setView([polo.lat, polo.lng], polo.zoom || 10);
+                if (!isVisaoRegional) {
+                    mapaRadarClimaInstancia.setView([polo.lat, polo.lng], polo.zoom || 10);
+                }
+
+                if (!radarFramesClima || radarFramesClima.length === 0) {
+                    carregarFramesRadarRainViewer();
+                }
             }
 
             // Marcador do Polo Selecionado
