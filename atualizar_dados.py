@@ -611,13 +611,13 @@ def sincronizar_e_catalogar_mapas():
                     rel_url = f'mapas_safra/{rel_dir}/{f}'
                     sp_path = f'{rel_dir}/{f}'
                 
-                # Gera URL com o link de acesso livre/convidado (sem necessidade de login corporativo)
-                token_guest_base = "https://clealco-my.sharepoint.com/:f:/g/personal/fabiano_castro_clealco_com_br/IgCSHZ5yRz0xQ4PYlEqfB59jATIXumbfQOUSQbrvpRYwANk"
-                encoded_id_cat = urllib.parse.quote(f"/personal/fabiano_castro_clealco_com_br/Documents/Mapas/{categoria}")
-                url_pasta_sharepoint = f"{token_guest_base}?id={encoded_id_cat}&e=adZ905"
+                # URL oficial direta do arquivo PDF no visualizador do SharePoint/OneDrive (:b:/r/ com web=1 abre o PDF)
+                encoded_sp_path = urllib.parse.quote(sp_path)
+                url_sharepoint = f"https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/{encoded_sp_path}?csf=1&web=1"
                 
-                encoded_id_file = urllib.parse.quote(f"/personal/fabiano_castro_clealco_com_br/Documents/Mapas/{sp_path}")
-                url_sharepoint = f"{token_guest_base}?id={encoded_id_file}&e=adZ905"
+                # URL oficial da pasta da categoria no SharePoint/OneDrive (:f:/r/ com web=1)
+                encoded_cat_path = urllib.parse.quote(categoria)
+                url_pasta_sharepoint = f"https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/{encoded_cat_path}?csf=1&web=1"
 
                 mapas_catalogo.append({
                     'arquivo': f,
