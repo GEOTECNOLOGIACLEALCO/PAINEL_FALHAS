@@ -1755,56 +1755,57 @@
                         <!-- Canvas com animação de partículas e rajadas de vento (Estilo Windy) -->
                         <canvas id="canvas-animacao-vento" class="absolute inset-0 pointer-events-none z-[400] w-full h-full"></canvas>
                         
-                        <!-- HUD Flutuante de Vento para Operação de Drone no Mapa (Com opção de recolher) -->
-                        <div id="hud-vento-radar" class="absolute top-3 right-3 z-[1000] bg-slate-950/85 backdrop-blur-md text-white p-2.5 sm:p-3 rounded-xl border border-white/20 shadow-2xl min-w-[190px] sm:min-w-[210px] pointer-events-auto transition-all duration-300">
+                        <!-- HUD Flutuante de Vento para Operação de Drone no Mapa (Compacto e de Alto Contraste) -->
+                        <div id="hud-vento-radar" class="absolute top-2.5 right-2.5 z-[1000] bg-slate-950/92 backdrop-blur-md text-white p-2 sm:p-2.5 rounded-xl border border-slate-700/80 shadow-2xl max-w-[205px] pointer-events-auto transition-all duration-300 select-none">
                             <!-- Cabeçalho com Botão de Recolher -->
-                            <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1.5 mb-2">
-                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-300 flex items-center gap-1">
+                            <div class="flex items-center justify-between gap-1.5 border-b border-white/10 pb-1 mb-1.5">
+                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-200 flex items-center gap-1">
                                     <span>🌪️</span> Vento & Rajadas
                                 </span>
-                                <div class="flex items-center gap-1.5">
-                                    <span id="hud-drone-badge" class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500 text-white shadow-sm">FAVORÁVEL</span>
-                                    <button type="button" onclick="alternarHudVentoRadar()" class="p-1 rounded hover:bg-white/20 text-slate-400 hover:text-white transition cursor-pointer leading-none" title="Recolher / Expandir painel de vento">
-                                        <svg id="hud-icone-colapso" class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>
+                                <div class="flex items-center gap-1">
+                                    <span id="hud-drone-badge" class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-emerald-500 text-white shadow-sm">FAVORÁVEL</span>
+                                    <button type="button" onclick="alternarHudVentoRadar()" class="p-0.5 rounded hover:bg-white/20 text-slate-300 hover:text-white transition cursor-pointer leading-none" title="Recolher / Expandir painel de vento">
+                                        <svg id="hud-icone-colapso" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 15l7-7 7 7"/></svg>
                                     </button>
                                 </div>
                             </div>
 
                             <!-- Conteúdo Completo (Pode ser recolhido) -->
-                            <div id="hud-vento-radar-corpo" class="space-y-2">
-                                <div class="grid grid-cols-2 gap-2 text-center">
-                                    <div class="bg-white/10 rounded-lg p-1.5 border border-white/10">
-                                        <div class="text-[9px] text-slate-400 uppercase font-bold">Vento</div>
-                                        <div id="hud-vento-val" class="text-base sm:text-lg font-black text-white">-- km/h</div>
+                            <div id="hud-vento-radar-corpo" class="space-y-1.5">
+                                <div class="grid grid-cols-2 gap-1.5 text-center">
+                                    <div class="bg-slate-800/90 rounded-lg py-1 px-1 border border-slate-700/80">
+                                        <div class="text-[8px] text-slate-300 uppercase font-black tracking-wider">Vento</div>
+                                        <div id="hud-vento-val" class="text-xs sm:text-sm font-black text-white leading-tight">-- km/h</div>
                                     </div>
-                                    <div class="bg-white/10 rounded-lg p-1.5 border border-white/10">
-                                        <div class="text-[9px] text-slate-400 uppercase font-bold">Rajada</div>
-                                        <div id="hud-rajada-val" class="text-base sm:text-lg font-black text-amber-400">-- km/h</div>
-                                    </div>
-                                </div>
-                                <div class="flex items-center justify-between bg-white/10 rounded-lg px-2.5 py-1.5 border border-white/10 text-xs">
-                                    <div class="flex items-center gap-1.5">
-                                        <span class="text-slate-400 text-[9px] font-bold uppercase">Soprando:</span>
-                                        <span id="hud-direcao-nome" class="font-black text-white text-[11px]">--</span>
-                                    </div>
-                                    <div class="flex items-center gap-1.5">
-                                        <span id="hud-direcao-graus" class="text-slate-300 font-mono text-[10px]">--°</span>
-                                        <span id="hud-seta-direcao" class="inline-block transform transition-transform duration-500 text-amber-400 text-xs font-black">⬆</span>
+                                    <div class="bg-slate-800/90 rounded-lg py-1 px-1 border border-slate-700/80">
+                                        <div class="text-[8px] text-amber-300 uppercase font-black tracking-wider">Rajada</div>
+                                        <div id="hud-rajada-val" class="text-xs sm:text-sm font-black text-amber-400 leading-tight">-- km/h</div>
                                     </div>
                                 </div>
-                                <div id="hud-drone-obs" class="text-[10px] text-slate-300 font-medium text-center">
+                                <div class="flex items-center justify-between bg-slate-800/90 rounded-lg px-2 py-1 border border-slate-700/80 text-[10px]">
+                                    <div class="flex items-center gap-1">
+                                        <span class="text-slate-400 text-[8px] font-bold uppercase">Vem de:</span>
+                                        <span id="hud-direcao-nome" class="font-black text-amber-300 text-[10px]">--</span>
+                                    </div>
+                                    <div class="flex items-center gap-1 border-l border-white/10 pl-1.5">
+                                        <span class="text-slate-400 text-[8px] font-bold uppercase">Sopra:</span>
+                                        <span id="hud-direcao-rumo" class="font-black text-emerald-400 text-[10px]">--</span>
+                                        <span id="hud-seta-direcao" class="inline-block transform transition-transform duration-500 text-emerald-400 text-xs font-black">⬆</span>
+                                    </div>
+                                </div>
+                                <div id="hud-drone-obs" class="text-[9px] text-slate-200 font-semibold text-center leading-tight">
                                     Limite operacional: 28 km/h
                                 </div>
                             </div>
 
                             <!-- Visualização Compacta (quando recolhido) -->
-                            <div id="hud-vento-radar-compacto" class="hidden flex items-center justify-between gap-2 cursor-pointer pt-0.5" onclick="alternarHudVentoRadar()" title="Clique para expandir">
-                                <div class="flex items-center gap-1.5 text-xs font-bold text-white">
+                            <div id="hud-vento-radar-compacto" class="hidden flex items-center justify-between gap-1.5 cursor-pointer pt-0.5" onclick="alternarHudVentoRadar()" title="Clique para expandir">
+                                <div class="flex items-center gap-1 text-[11px] font-bold text-white">
                                     <span>🌪️</span>
                                     <span id="hud-vento-resumo-val">-- km/h</span>
-                                    <span id="hud-seta-direcao-compacto" class="text-amber-400 text-xs font-black inline-block">⬆</span>
+                                    <span id="hud-seta-direcao-compacto" class="text-emerald-400 text-xs font-black inline-block">⬆</span>
                                 </div>
-                                <span class="text-[9px] text-slate-400 hover:text-white font-semibold underline">Expandir ▾</span>
+                                <span class="text-[9px] text-slate-300 hover:text-white font-semibold underline">Expandir ▾</span>
                             </div>
                         </div>
 
@@ -5761,18 +5762,20 @@
 
             // Atualiza HUD e Seta de Direção
             const elCardeal = document.getElementById('hud-direcao-nome');
-            const elGraus = document.getElementById('hud-direcao-graus');
+            const elRumo = document.getElementById('hud-direcao-rumo');
             const elSeta = document.getElementById('hud-seta-direcao');
             const elSetaCompacto = document.getElementById('hud-seta-direcao-compacto');
-            const nomeCardeal = decodificarPontoCardeal(dadosVentoAtuais.direcao);
-
-            if (elCardeal) elCardeal.innerText = nomeCardeal;
-            if (elGraus) elGraus.innerText = `${Math.round(dadosVentoAtuais.direcao)}°`;
             
-            // Seta aponta na direção em que o vento sopra
-            const anguloSeta = Math.round(dadosVentoAtuais.direcao + 180);
-            if (elSeta) elSeta.style.transform = `rotate(${anguloSeta}deg)`;
-            if (elSetaCompacto) elSetaCompacto.style.transform = `rotate(${anguloSeta}deg)`;
+            const nomeCardealOrigem = decodificarPontoCardeal(dadosVentoAtuais.direcao);
+            const anguloRumo = (dadosVentoAtuais.direcao + 180) % 360;
+            const nomeCardealRumo = decodificarPontoCardeal(anguloRumo);
+
+            if (elCardeal) elCardeal.innerText = `${nomeCardealOrigem} ${Math.round(dadosVentoAtuais.direcao)}°`;
+            if (elRumo) elRumo.innerText = nomeCardealRumo;
+            
+            // Seta aponta no sentido exato em que o vento sopra (rumo)
+            if (elSeta) elSeta.style.transform = `rotate(${Math.round(anguloRumo)}deg)`;
+            if (elSetaCompacto) elSetaCompacto.style.transform = `rotate(${Math.round(anguloRumo)}deg)`;
         }
 
         function iniciarLoopAnimacaoVento() {
