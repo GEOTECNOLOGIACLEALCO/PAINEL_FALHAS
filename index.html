@@ -18,6 +18,11 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        };
+    </script>
     
     <!-- SheetJS (Leitura direta e exportação de planilhas Excel) -->
     <script src="https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js"></script>
@@ -1527,16 +1532,16 @@
                 </div>
             </div>
 
-            <!-- Painel Inteligente: Janela de Ouro de Voo (Sol Alto & Vento Brando) -->
+            <!-- Painel Inteligente: Janela para Voo Drone (Sol Alto & Vento Brando) -->
             <div id="painel-janela-ouro" class="glass-panel p-3.5 sm:p-4 rounded-xl border border-amber-300/80 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-sky-500/10 shadow-sm flex flex-wrap items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 dark:text-amber-400 flex items-center justify-center text-xl font-black shadow-inner border border-amber-300/50 flex-shrink-0">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center text-xl font-black shadow-inner border border-amber-300/50 flex-shrink-0">
                         ☀️
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
                             <h3 class="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wide">
-                                Janela de Ouro para Voo Drone (Sol Alto & Sem Sombras)
+                                Janela para Voo Drone (Sol Alto & Sem Sombras)
                             </h3>
                             <span id="badge-janela-ouro" class="text-[9px] font-black px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase">
                                 FAVORÁVEL
@@ -1548,13 +1553,13 @@
                     </div>
                 </div>
                 <div class="flex items-center gap-2.5 text-right flex-wrap">
-                    <div class="bg-white/90 dark:bg-slate-800/90 px-3 py-1.5 rounded-xl border border-slate-200 text-xs shadow-xs">
-                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Horário Recomendado</span>
-                        <b id="val-horario-janela-ouro" class="text-sm font-black text-slate-900">09:30 às 14:00</b>
+                    <div class="bg-white/95 px-3.5 py-2 rounded-xl border border-slate-200 text-xs shadow-sm">
+                        <span class="text-[9px] uppercase font-bold text-slate-500 block">Horário Recomendado</span>
+                        <b id="val-horario-janela-ouro" class="text-sm font-black text-slate-900">08:00 às 17:00</b>
                     </div>
-                    <div class="bg-white/90 dark:bg-slate-800/90 px-3 py-1.5 rounded-xl border border-slate-200 text-xs hidden sm:block shadow-xs">
-                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Elevação Solar Máx.</span>
-                        <b id="val-elevacao-solar" class="text-sm font-black text-amber-600">68° (Sem sombras)</b>
+                    <div class="bg-white/95 px-3.5 py-2 rounded-xl border border-slate-200 text-xs hidden sm:block shadow-sm">
+                        <span class="text-[9px] uppercase font-bold text-slate-500 block">Elevação Solar Máx.</span>
+                        <b id="val-elevacao-solar" class="text-sm font-black text-amber-600">59° (Sem sombras)</b>
                     </div>
                 </div>
             </div>
@@ -4545,7 +4550,7 @@
                 textoJanela = `${String(primeira).padStart(2, '0')}:00 às ${String(ultima + 1).padStart(2, '0')}:00`;
                 if (elBadge) {
                     elBadge.className = 'text-[9px] font-black px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase';
-                    elBadge.innerText = 'JANELA DE OURO DISPONÍVEL';
+                    elBadge.innerText = 'JANELA DISPONÍVEL';
                 }
                 if (elDesc) {
                     elDesc.innerText = `Sol acima de 30° (sem sombras nas entrelinhas) e ventos brandos ideais entre ${textoJanela}.`;
