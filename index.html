@@ -5613,6 +5613,20 @@
                 camadaBaseRadarClima = obterCamadaBaseRadar(tipoMapaRadar);
                 camadaBaseRadarClima.addTo(mapaRadarClimaInstancia);
 
+                mapaRadarClimaInstancia.on('moveend zoomend resize', () => {
+                    if (animacaoVentoAtiva) {
+                        const canvas = document.getElementById('canvas-animacao-vento');
+                        if (canvas) {
+                            const rect = canvas.getBoundingClientRect();
+                            if (rect.width > 0 && rect.height > 0) {
+                                canvas.width = Math.floor(rect.width);
+                                canvas.height = Math.floor(rect.height);
+                                inicializarParticulasVento(canvas.width, canvas.height);
+                            }
+                        }
+                    }
+                });
+
                 carregarFramesRadarRainViewer();
             } else {
                 mapaRadarClimaInstancia.eachLayer((layer) => {
@@ -5681,13 +5695,13 @@
         let animacaoVentoAtiva = true;
         let animacaoVentoRafId = null;
         let ventoParticulas = [];
-        const NUM_PARTICULAS_VENTO = 230;
+        const NUM_PARTICULAS_VENTO = 280;
         let dadosVentoAtuais = {
             velocidade: 12,
             rajada: 18,
             direcao: 120,
-            vx: 0.5,
-            vy: 0.5
+            vx: -0.866,
+            vy: -0.5
         };
 
         function decodificarPontoCardeal(graus) {
@@ -5696,27 +5710,34 @@
             return direcoes[idx];
         }
 
-        function criarParticulaVento(largura, altura, aleatorio) {
-            const x = aleatorio ? Math.random() * largura : (dadosVentoAtuais.vx > 0 ? -10 : (dadosVentoAtuais.vx < 0 ? largura + 10 : Math.random() * largura));
-            const y = aleatorio ? Math.random() * altura : (dadosVentoAtuais.vy > 0 ? -10 : (dadosVentoAtuais.vy < 0 ? altura + 10 : Math.random() * altura));
+        // Gera partícula distribuída aleatoriamente por TODA a área visível do mapa
+        function criarParticulaVento(largura, altura) {
+            const w = largura > 0 ? largura : 800;
+            const h = altura > 0 ? altura : 500;
+            const x = Math.random() * w;
+            const y = Math.random() * h;
             const isRajada = Math.random() < 0.28;
-            const maxAge = Math.floor(45 + Math.random() * 55);
+            const maxAge = Math.floor(40 + Math.random() * 50);
 
             return {
                 x: x,
                 y: y,
                 history: [],
-                age: aleatorio ? Math.floor(Math.random() * maxAge) : 0,
+                age: 0,
                 maxAge: maxAge,
                 isRajada: isRajada,
-                speedFactor: 0.75 + Math.random() * 0.5
+                speedFactor: 0.75 + Math.random() * 0.5,
+                phase: Math.random() * Math.PI * 2
             };
         }
 
         function inicializarParticulasVento(largura, altura) {
             ventoParticulas = [];
             for (let i = 0; i < NUM_PARTICULAS_VENTO; i++) {
-                ventoParticulas.push(criarParticulaVento(largura, altura, true));
+                const p = criarParticulaVento(largura, altura);
+                // Escalonamento de idade para que renovem de forma contínua e homogênea
+                p.age = Math.floor(Math.random() * p.maxAge);
+                ventoParticulas.push(p);
             }
         }
 
@@ -5727,8 +5748,14 @@
 
             // Em meteorologia, direção é de onde o vento vem.
             // Para onde ele sopra: (direcao + 180) % 360.
-            const radParaOndeSopra = (dadosVentoAtuais.direcao + 180) * Math.PI / 180;
-            // No canvas: X+ para a direita, Y+ para baixo
+            const anguloSoprando = (dadosVentoAtuais.direcao + 180) % 360;
+            const radParaOndeSopra = anguloSoprando * Math.PI / 180;
+            
+            // No canvas do mapa:
+            // 0° Norte: sopra para o Sul (+Y)
+            // 90° Leste: sopra para o Oeste (-X)
+            // 180° Sul: sopra para o Norte (-Y)
+            // 270° Oeste: sopra para o Leste (+X)
             dadosVentoAtuais.vx = Math.sin(radParaOndeSopra);
             dadosVentoAtuais.vy = -Math.cos(radParaOndeSopra);
 
@@ -5783,47 +5810,52 @@
                     return;
                 }
 
-                // Limpa completamente o quadro para manter transparência perfeita sobre o mapa
+                // Limpa completamente o quadro para manter transparência nítida sobre o satélite
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // Pulso de rajada periódico a cada ~4 segundos
+                // Pulso de rajada periódico suave a cada ~4 segundos
                 const tempoDecorrido = (agora - inicioTempo) / 1000;
                 const cicloRajada = tempoDecorrido % 4.5;
-                const pulsoRajadaAtivo = cicloRajada < 1.4; // 1.4s de rajada intensa
-                const fatorPulso = pulsoRajadaAtivo ? 1.45 : 1.0;
+                const pulsoRajadaAtivo = cicloRajada < 1.4;
+                const fatorPulso = pulsoRajadaAtivo ? 1.4 : 1.0;
 
-                const baseSpeed = Math.min(Math.max(dadosVentoAtuais.velocidade * 0.13, 1.2), 6.5) * fatorPulso;
+                const baseSpeed = Math.min(Math.max(dadosVentoAtuais.velocidade * 0.14, 1.2), 6.5) * fatorPulso;
                 const gustBonus = ((dadosVentoAtuais.rajada - dadosVentoAtuais.velocidade) * 0.10) * fatorPulso;
 
                 const len = ventoParticulas.length;
                 for (let i = 0; i < len; i++) {
                     const p = ventoParticulas[i];
 
-                    // Guarda histórico para desenhar o rastro (trail)
+                    // Guarda histórico para desenhar o rastro (streamline)
                     p.history.push({ x: p.x, y: p.y });
-                    const maxTrail = p.isRajada ? 7 : 5;
+                    const maxTrail = p.isRajada ? 8 : 6;
                     if (p.history.length > maxTrail) {
                         p.history.shift();
                     }
 
+                    // Leve curvatura aerodinâmica orgânica para não ser uma linha mecânica
+                    const turbulencia = Math.sin((p.x + p.y) * 0.008 + p.phase) * 0.12;
+                    const vxEfetivo = dadosVentoAtuais.vx + dadosVentoAtuais.vy * turbulencia;
+                    const vyEfetivo = dadosVentoAtuais.vy - dadosVentoAtuais.vx * turbulencia;
+
                     const speed = (p.isRajada ? (baseSpeed + gustBonus) : baseSpeed) * p.speedFactor;
-                    p.x += dadosVentoAtuais.vx * speed;
-                    p.y += dadosVentoAtuais.vy * speed;
+                    p.x += vxEfetivo * speed;
+                    p.y += vyEfetivo * speed;
                     p.age++;
 
-                    // Se expirou a vida ou saiu da tela, recria
-                    if (p.age >= p.maxAge || p.x < -30 || p.x > canvas.width + 30 || p.y < -30 || p.y > canvas.height + 30) {
-                        ventoParticulas[i] = criarParticulaVento(canvas.width, canvas.height, false);
+                    // Se expirou o ciclo de vida ou saiu da tela, renova em ponto ALEATÓRIO da tela
+                    if (p.age >= p.maxAge || p.x < -20 || p.x > canvas.width + 20 || p.y < -20 || p.y > canvas.height + 20) {
+                        ventoParticulas[i] = criarParticulaVento(canvas.width, canvas.height);
                         continue;
                     }
 
                     if (p.history.length < 2) continue;
 
-                    // Curva de opacidade com fade-in e fade-out suave
+                    // Curva de opacidade com fade-in e fade-out elegante
                     const progress = p.age / p.maxAge;
                     let alpha = Math.sin(progress * Math.PI) * (p.isRajada ? 0.95 : 0.75);
 
-                    // Cor do vento de acordo com a intensidade e rajada
+                    // Cor de acordo com o vento e rajadas
                     let corStroke, corHead;
                     if (p.isRajada && (dadosVentoAtuais.rajada >= 28 || pulsoRajadaAtivo)) {
                         corStroke = `rgba(239, 68, 68, ${alpha * 0.85})`;
@@ -5836,9 +5868,9 @@
                         corHead = `rgba(209, 250, 229, ${alpha})`;
                     }
 
-                    // Desenha o rastro suave
+                    // Desenha o rastro (streamline)
                     ctx.strokeStyle = corStroke;
-                    ctx.lineWidth = p.isRajada ? 2.2 : 1.5;
+                    ctx.lineWidth = p.isRajada ? 2.0 : 1.4;
                     ctx.lineCap = 'round';
                     ctx.lineJoin = 'round';
 
@@ -5850,7 +5882,7 @@
                     ctx.lineTo(p.x, p.y);
                     ctx.stroke();
 
-                    // Desenha o ponto/cabeça da partícula
+                    // Ponto da frente da partícula
                     ctx.fillStyle = corHead;
                     ctx.beginPath();
                     ctx.arc(p.x, p.y, p.isRajada ? 1.8 : 1.2, 0, Math.PI * 2);
