@@ -1340,8 +1340,8 @@
             <!-- Painel de Controle e Seleção de Polo -->
             <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 shadow-sm rounded-2xl flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center gap-3">
-                    <div id="clima-icone-principal-box" class="w-10 h-10 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center shadow-inner border border-slate-200 flex-shrink-0 transition-all">
-                        <span id="clima-icone-principal" class="text-sm font-black">TEMPO</span>
+                    <div id="clima-icone-principal-box" class="w-11 h-11 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center text-2xl shadow-inner border border-slate-200 flex-shrink-0 transition-all">
+                        <span id="clima-icone-principal">⛅</span>
                     </div>
                     <div>
                         <div class="flex items-center gap-2">
@@ -1424,7 +1424,8 @@
                         <span>Tempo Hoje</span>
                         <span id="kpi-tempo-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">HOJE</span>
                     </div>
-                    <div class="flex items-baseline gap-1.5">
+                    <div class="flex items-center gap-2.5">
+                        <span id="kpi-tempo-hoje-icone" class="text-3xl leading-none">⛅</span>
                         <span id="kpi-tempo-hoje-condicao" class="text-lg sm:text-xl font-black text-slate-900 uppercase truncate">NUBLADO</span>
                     </div>
                     <div class="mt-2 text-[11px] text-slate-500 font-semibold space-y-0.5">
@@ -1568,6 +1569,9 @@
                             <p class="text-[11px] text-slate-500">Nuvens de chuva e refletividade em tempo real (RainViewer / IPMet SP)</p>
                         </div>
                         <div class="flex items-center gap-2">
+                            <button type="button" onclick="alternarCamadaRadar()" id="btn-toggle-radar-nuvens" title="Ligar ou desligar sobreposição de chuva no radar" class="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition cursor-pointer">
+                                <span id="lbl-status-radar">Chuva Radar: ON</span>
+                            </button>
                             <button type="button" onclick="alternarTipoMapaRadar()" id="btn-toggle-camada-radar" title="Alternar entre Satélite e Mapa de Ruas" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer">
                                 <span id="lbl-tipo-mapa-radar">Satélite</span>
                             </button>
@@ -3867,15 +3871,15 @@
         let tipoMapaRadar = 'satelite'; // 'satelite' ou 'ruas'
 
         function decodificarWeatherCode(code) {
-            if (code === 0) return { texto: 'Ensolarado', corBg: 'bg-amber-50', corBorda: 'border-amber-200', corTexto: 'text-amber-600' };
-            if (code === 1 || code === 2) return { texto: 'Sol com Nuvens', corBg: 'bg-sky-50', corBorda: 'border-sky-200', corTexto: 'text-sky-600' };
-            if (code === 3) return { texto: 'Nublado', corBg: 'bg-slate-100', corBorda: 'border-slate-300', corTexto: 'text-slate-700' };
-            if (code === 45 || code === 48) return { texto: 'Nevoeiro / Neblina', corBg: 'bg-slate-100', corBorda: 'border-slate-300', corTexto: 'text-slate-600' };
-            if (code >= 51 && code <= 55) return { texto: 'Garoa Leve', corBg: 'bg-blue-50', corBorda: 'border-blue-200', corTexto: 'text-blue-600' };
-            if (code >= 61 && code <= 65) return { texto: 'Chuva', corBg: 'bg-blue-100', corBorda: 'border-blue-300', corTexto: 'text-blue-700' };
-            if (code >= 80 && code <= 82) return { texto: 'Pancadas de Chuva', corBg: 'bg-blue-100', corBorda: 'border-blue-300', corTexto: 'text-blue-700' };
-            if (code >= 95 && code <= 99) return { texto: 'Tempestade', corBg: 'bg-purple-50', corBorda: 'border-purple-200', corTexto: 'text-purple-700' };
-            return { texto: 'Instável', corBg: 'bg-slate-50', corBorda: 'border-slate-200', corTexto: 'text-slate-600' };
+            if (code === 0) return { texto: 'Ensolarado', icone: '☀️', corBg: 'bg-amber-50', corBorda: 'border-amber-200', corTexto: 'text-amber-600' };
+            if (code === 1 || code === 2) return { texto: 'Sol com Nuvens', icone: '⛅', corBg: 'bg-sky-50', corBorda: 'border-sky-200', corTexto: 'text-sky-600' };
+            if (code === 3) return { texto: 'Nublado', icone: '☁️', corBg: 'bg-slate-100', corBorda: 'border-slate-300', corTexto: 'text-slate-700' };
+            if (code === 45 || code === 48) return { texto: 'Nevoeiro / Neblina', icone: '🌫️', corBg: 'bg-slate-100', corBorda: 'border-slate-300', corTexto: 'text-slate-600' };
+            if (code >= 51 && code <= 55) return { texto: 'Garoa Leve', icone: '🌦️', corBg: 'bg-blue-50', corBorda: 'border-blue-200', corTexto: 'text-blue-600' };
+            if (code >= 61 && code <= 65) return { texto: 'Chuva', icone: '🌧️', corBg: 'bg-blue-100', corBorda: 'border-blue-300', corTexto: 'text-blue-700' };
+            if (code >= 80 && code <= 82) return { texto: 'Pancadas de Chuva', icone: '🌧️', corBg: 'bg-blue-100', corBorda: 'border-blue-300', corTexto: 'text-blue-700' };
+            if (code >= 95 && code <= 99) return { texto: 'Tempestade', icone: '⛈️', corBg: 'bg-purple-50', corBorda: 'border-purple-200', corTexto: 'text-purple-700' };
+            return { texto: 'Instável', icone: '🌦️', corBg: 'bg-slate-50', corBorda: 'border-slate-200', corTexto: 'text-slate-600' };
         }
 
         function selecionarPoloClima(poloId) {
@@ -3994,18 +3998,18 @@
             const tMaxHoje = Math.round(daily.temperature_2m_max && daily.temperature_2m_max[hojeIdx] !== undefined ? daily.temperature_2m_max[hojeIdx] : 28);
             const tMinHoje = Math.round(daily.temperature_2m_min && daily.temperature_2m_min[hojeIdx] !== undefined ? daily.temperature_2m_min[hojeIdx] : 18);
 
-            // Atualiza o Badge Principal no Cabeçalho
+            // Atualiza o Ícone Principal no Cabeçalho
             const elIconePrincipal = document.getElementById('clima-icone-principal');
             const elIconePrincipalBox = document.getElementById('clima-icone-principal-box');
-            if (elIconePrincipal) elIconePrincipal.innerText = weatherHoje.texto.toUpperCase();
+            if (elIconePrincipal) elIconePrincipal.innerText = weatherHoje.icone;
             if (elIconePrincipalBox) {
-                elIconePrincipalBox.className = `w-auto px-2.5 h-10 rounded-xl ${weatherHoje.corBg} ${weatherHoje.corTexto} flex items-center justify-center font-black text-xs shadow-inner border ${weatherHoje.corBorda} flex-shrink-0 transition-all`;
+                elIconePrincipalBox.className = `w-11 h-11 rounded-xl ${weatherHoje.corBg} ${weatherHoje.corTexto} flex items-center justify-center text-2xl shadow-inner border ${weatherHoje.corBorda} flex-shrink-0 transition-all`;
             }
 
             // Atualiza o subtítulo com a previsão dinâmica de hoje
             const subtitulo = document.getElementById('clima-subtitulo-polo');
             if (subtitulo) {
-                subtitulo.innerText = `${polo.nome} • Previsão Hoje: ${weatherHoje.texto} (${tMinHoje}° a ${tMaxHoje}°C)`;
+                subtitulo.innerText = `${polo.nome} • Hoje: ${weatherHoje.icone} ${weatherHoje.texto} (${tMinHoje}° a ${tMaxHoje}°C)`;
             }
 
             // 1. Card 1: Tempo & Chuva Hoje
@@ -4016,11 +4020,13 @@
                 ? daily.precipitation_probability_max[hojeIdx]
                 : 0;
 
+            const elTempoHojeIcone = document.getElementById('kpi-tempo-hoje-icone');
             const elTempoHojeCondicao = document.getElementById('kpi-tempo-hoje-condicao');
             const elTempoHojeTemp = document.getElementById('kpi-tempo-hoje-temp');
             const elChuvaHoje = document.getElementById('kpi-chuva-hoje-val');
             const elChuvaHojeProb = document.getElementById('kpi-chuva-hoje-prob');
 
+            if (elTempoHojeIcone) elTempoHojeIcone.innerText = weatherHoje.icone;
             if (elTempoHojeCondicao) {
                 elTempoHojeCondicao.innerText = weatherHoje.texto.toUpperCase();
                 elTempoHojeCondicao.className = `text-lg sm:text-xl font-black ${weatherHoje.corTexto} uppercase truncate`;
@@ -4261,13 +4267,12 @@
                 html += `
                     <div class="p-3 rounded-2xl border ${borderCls} flex flex-col justify-between text-center transition hover:scale-[1.02]">
                         <div>
-                            <div class="flex items-center justify-between mb-2">
+                            <div class="flex items-center justify-between mb-1">
                                 <span class="text-xs font-black text-slate-800">${diaLabel}</span>
                                 ${tagHoje || `<span class="text-[10px] text-slate-400 font-semibold">${dataFmt}</span>`}
                             </div>
-                            <div class="my-2 py-1 px-2 rounded-lg ${weather.corBg} ${weather.corTexto} border ${weather.corBorda} text-xs font-black tracking-wide uppercase truncate" title="${weather.texto}">
-                                ${weather.texto}
-                            </div>
+                            <div class="text-3xl my-1.5" title="${weather.texto}">${weather.icone}</div>
+                            <div class="text-[11px] font-bold text-slate-700 truncate" title="${weather.texto}">${weather.texto}</div>
                         </div>
 
                         <div class="mt-2.5 pt-2 border-t border-slate-100 space-y-1.5 text-xs">
@@ -4521,13 +4526,13 @@
                 html += `
                     <div class="flex items-center justify-between p-2.5 rounded-xl border border-slate-100 hover:bg-slate-50 transition text-xs">
                         <div class="flex items-center gap-2.5">
-                            <span class="px-2 py-1 rounded-md text-[10px] font-extrabold uppercase ${weather.corBg} ${weather.corTexto} border ${weather.corBorda}">${weather.texto}</span>
+                            <span class="text-2xl">${weather.icone}</span>
                             <div>
                                 <div class="font-bold text-slate-800 flex items-center gap-1.5">
                                     <span>${diaSemana}</span>
                                     <span class="text-[10px] font-normal text-slate-400">(${dataFmt})</span>
                                 </div>
-                                <div class="text-[10px] text-slate-500">${tMin}° a ${tMax}°C</div>
+                                <div class="text-[10px] text-slate-500">${weather.texto} • ${tMin}° a ${tMax}°C</div>
                             </div>
                         </div>
                         <div>
@@ -4576,6 +4581,26 @@
             }
         }
 
+        function alternarCamadaRadar() {
+            if (!mapaRadarClimaInstancia) return;
+            const lbl = document.getElementById('lbl-status-radar');
+            const btn = document.getElementById('btn-toggle-radar-nuvens');
+            if (radarLayerClima && mapaRadarClimaInstancia.hasLayer(radarLayerClima)) {
+                mapaRadarClimaInstancia.removeLayer(radarLayerClima);
+                if (lbl) lbl.innerText = 'Chuva Radar: OFF';
+                if (btn) {
+                    btn.className = 'text-xs bg-slate-100 text-slate-600 hover:bg-slate-200 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer';
+                }
+            } else if (radarLayerClima) {
+                radarLayerClima.addTo(mapaRadarClimaInstancia);
+                radarLayerClima.bringToFront();
+                if (lbl) lbl.innerText = 'Chuva Radar: ON';
+                if (btn) {
+                    btn.className = 'text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition cursor-pointer';
+                }
+            }
+        }
+
         async function inicializarOuAtualizarMapaRadar(polo) {
             const container = document.getElementById('mapa-radar-clima');
             if (!container || !window.L) return;
@@ -4592,7 +4617,7 @@
                 camadaBaseRadarClima = obterCamadaBaseRadar(tipoMapaRadar);
                 camadaBaseRadarClima.addTo(mapaRadarClimaInstancia);
 
-                // Camada do Radar RainViewer
+                // Camada do Radar RainViewer (com maxNativeZoom: 7 para interpolação suave sem "Zoom Level Not Supported")
                 try {
                     const rvResp = await fetch('https://api.rainviewer.com/public/weather-maps.json');
                     if (rvResp.ok) {
@@ -4603,7 +4628,9 @@
                             const latest = past[past.length - 1];
                             radarLayerClima = L.tileLayer(`${host}${latest.path}/256/{z}/{x}/{y}/2/1_1.png`, {
                                 opacity: 0.70,
-                                zIndex: 100
+                                zIndex: 100,
+                                maxNativeZoom: 7,
+                                maxZoom: 20
                             }).addTo(mapaRadarClimaInstancia);
                         }
                     }
