@@ -4,3 +4,6 @@ dados.xlsx
 *.pyc
 __pycache__/
 Thumbs.db
+mapas_safra/
+*.pdf
+
