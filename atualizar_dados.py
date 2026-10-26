@@ -535,8 +535,13 @@ def sincronizar_e_catalogar_mapas():
     origem = r"F:\Mapas\01 - Mapas Safra"
     destino = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\mapas_safra"
     
+    # Identifica a pasta local do OneDrive da Clealco (Documents/Mapas)
+    onedrive_base = os.environ.get('OneDriveCommercial') or os.environ.get('OneDrive')
+    destino_onedrive = os.path.join(onedrive_base, 'Mapas') if onedrive_base else None
+    
     novos_copiados = 0
     atualizados_copiados = 0
+    onedrive_copiados = 0
     
     # Sincronização 100% segura (Apenas LEITURA de F:)
     if os.path.exists(origem):
@@ -546,29 +551,72 @@ def sincronizar_e_catalogar_mapas():
                 target_dir = os.path.join(destino, rel_path)
                 if not os.path.exists(target_dir):
                     os.makedirs(target_dir, exist_ok=True)
+                    
+                target_onedrive_dir = os.path.join(destino_onedrive, rel_path) if destino_onedrive else None
+                if target_onedrive_dir and not os.path.exists(target_onedrive_dir):
+                    os.makedirs(target_onedrive_dir, exist_ok=True)
+                    
                 for f in files:
                     if not f.lower().endswith('.pdf'): continue
                     src_f = os.path.join(root, f)
                     dst_f = os.path.join(target_dir, f)
+                    src_stat = os.stat(src_f)
                     
+                    # 1. Copia para mapas_safra local (cache do site)
                     if not os.path.exists(dst_f):
                         shutil.copy2(src_f, dst_f)
                         novos_copiados += 1
                     else:
-                        src_stat = os.stat(src_f)
                         dst_stat = os.stat(dst_f)
-                        # Copia se data for mais recente ou tamanho diferente
                         if src_stat.st_mtime > dst_stat.st_mtime + 2 or src_stat.st_size != dst_stat.st_size:
                             shutil.copy2(src_f, dst_f)
                             atualizados_copiados += 1
-            if novos_copiados > 0 or atualizados_copiados > 0:
-                print(f"[MAPAS] Sincronização: {novos_copiados} novos mapas, {atualizados_copiados} mapas atualizados de F:.")
+                            
+                    # 2. Copia para o OneDrive local (para envio automático à nuvem da Clealco)
+                    if target_onedrive_dir:
+                        dst_od_f = os.path.join(target_onedrive_dir, f)
+                        if not os.path.exists(dst_od_f):
+                            shutil.copy2(src_f, dst_od_f)
+                            onedrive_copiados += 1
+                        else:
+                            od_stat = os.stat(dst_od_f)
+                            if src_stat.st_mtime > od_stat.st_mtime + 2 or src_stat.st_size != od_stat.st_size:
+                                shutil.copy2(src_f, dst_od_f)
+                                onedrive_copiados += 1
+                                
+            if novos_copiados > 0 or atualizados_copiados > 0 or onedrive_copiados > 0:
+                print(f"[MAPAS] Sincronização: {novos_copiados} novos mapas, {atualizados_copiados} mapas atualizados de F: ({onedrive_copiados} sincronizados no OneDrive).")
             else:
-                print("[MAPAS] Todos os mapas já estão sincronizados com a pasta oficial F:.")
+                print("[MAPAS] Todos os mapas já estão 100% sincronizados com F: e OneDrive.")
         except Exception as ex_sync:
             print(f"[MAPAS] Aviso durante sincronização de F:: {ex_sync}")
     else:
         print("[MAPAS] Disco F: não acessível no momento. Utilizando mapas locais da pasta mapas_safra.")
+        # Se F: não estiver acessível, garante que novos mapas em mapas_safra também vão para o OneDrive
+        if destino_onedrive and os.path.exists(destino):
+            try:
+                for root, dirs, files in os.walk(destino):
+                    rel_path = os.path.relpath(root, destino)
+                    target_od = os.path.join(destino_onedrive, rel_path)
+                    if not os.path.exists(target_od):
+                        os.makedirs(target_od, exist_ok=True)
+                    for f in files:
+                        if not f.lower().endswith('.pdf'): continue
+                        src_f = os.path.join(root, f)
+                        dst_f = os.path.join(target_od, f)
+                        if not os.path.exists(dst_f):
+                            shutil.copy2(src_f, dst_f)
+                            onedrive_copiados += 1
+                        else:
+                            src_st = os.stat(src_f)
+                            dst_st = os.stat(dst_f)
+                            if src_st.st_mtime > dst_st.st_mtime + 2 or src_st.st_size != dst_st.st_size:
+                                shutil.copy2(src_f, dst_f)
+                                onedrive_copiados += 1
+                if onedrive_copiados > 0:
+                    print(f"[MAPAS] {onedrive_copiados} mapas locais sincronizados para a pasta do OneDrive.")
+            except Exception as ex_od:
+                print(f"[MAPAS] Aviso durante sincronização local com OneDrive: {ex_od}")
         
     mapas_catalogo = []
     agora = time.time()
