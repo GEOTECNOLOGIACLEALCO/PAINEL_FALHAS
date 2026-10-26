@@ -1562,6 +1562,9 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
+                            <button type="button" onclick="alternarTipoMapaRadar()" id="btn-toggle-camada-radar" title="Alternar entre Satélite e Mapa de Ruas" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1 rounded-lg border border-slate-200 transition cursor-pointer flex items-center gap-1">
+                                🛰️ <span id="lbl-tipo-mapa-radar">Satélite</span>
+                            </button>
                             <button type="button" onclick="centralizarRadarPoloAtual()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-2.5 py-1 rounded-lg border border-slate-200 transition cursor-pointer">
                                 🎯 Focar Polo
                             </button>
@@ -3836,6 +3839,8 @@
         let mapaRadarClimaInstancia = null;
         let radarLayerClima = null;
         let radarMarkerClima = null;
+        let camadaBaseRadarClima = null;
+        let tipoMapaRadar = 'satelite'; // 'satelite' ou 'ruas'
 
         function decodificarWeatherCode(code) {
             if (code === 0) return { texto: 'Céu Limpo', icone: '☀️' };
@@ -4445,6 +4450,41 @@
             if (elTotal14d) elTotal14d.innerText = `Total 14d: ${total14d.toFixed(1)} mm`;
         }
 
+        function obterCamadaBaseRadar(tipo) {
+            if (tipo === 'ruas') {
+                return L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '© OpenStreetMap'
+                });
+            }
+            // Padrão: Satélite Híbrido Google oficial com estradas e limites
+            return L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                maxZoom: 20,
+                attribution: '© Google Satellite'
+            });
+        }
+
+        function alternarTipoMapaRadar() {
+            if (!mapaRadarClimaInstancia) return;
+            tipoMapaRadar = (tipoMapaRadar === 'satelite') ? 'ruas' : 'satelite';
+
+            const lbl = document.getElementById('lbl-tipo-mapa-radar');
+            if (lbl) lbl.innerText = (tipoMapaRadar === 'satelite') ? 'Satélite' : 'Ruas';
+
+            if (camadaBaseRadarClima) {
+                mapaRadarClimaInstancia.removeLayer(camadaBaseRadarClima);
+            }
+            camadaBaseRadarClima = obterCamadaBaseRadar(tipoMapaRadar);
+            camadaBaseRadarClima.addTo(mapaRadarClimaInstancia);
+
+            if (radarLayerClima && mapaRadarClimaInstancia.hasLayer(radarLayerClima)) {
+                radarLayerClima.bringToFront();
+            }
+            if (radarMarkerClima && mapaRadarClimaInstancia.hasLayer(radarMarkerClima)) {
+                radarMarkerClima.bringToFront();
+            }
+        }
+
         async function inicializarOuAtualizarMapaRadar(polo) {
             const container = document.getElementById('mapa-radar-clima');
             if (!container || !window.L) return;
@@ -4457,11 +4497,9 @@
                     attributionControl: false
                 });
 
-                // Camada Base: CartoDB Voyager / OSM Clean
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                    maxZoom: 18,
-                    subdomains: 'abcd'
-                }).addTo(mapaRadarClimaInstancia);
+                // Camada Base: Google Satellite Hybrid (sem necessidade de API key)
+                camadaBaseRadarClima = obterCamadaBaseRadar(tipoMapaRadar);
+                camadaBaseRadarClima.addTo(mapaRadarClimaInstancia);
 
                 // Camada do Radar RainViewer
                 try {
@@ -4473,7 +4511,7 @@
                         if (past.length > 0) {
                             const latest = past[past.length - 1];
                             radarLayerClima = L.tileLayer(`${host}${latest.path}/256/{z}/{x}/{y}/2/1_1.png`, {
-                                opacity: 0.65,
+                                opacity: 0.70,
                                 zIndex: 100
                             }).addTo(mapaRadarClimaInstancia);
                         }
