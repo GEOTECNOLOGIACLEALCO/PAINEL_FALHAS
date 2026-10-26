@@ -1737,6 +1737,10 @@
                             <button type="button" onclick="alternarCamadaRadar()" id="btn-toggle-radar-nuvens" title="Ligar ou desligar sobreposição de chuva no radar" class="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition cursor-pointer">
                                 <span id="lbl-status-radar">Chuva: ON</span>
                             </button>
+                            <button type="button" onclick="alternarAnimacaoVentoRadar()" id="btn-toggle-vento-animado" title="Ligar ou desligar animação de rajadas de vento no mapa" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                <span id="icone-vento-animado">💨</span>
+                                <span id="lbl-status-vento-animado">Rajadas: ON</span>
+                            </button>
                             <button type="button" onclick="alternarTipoMapaRadar()" id="btn-toggle-camada-radar" title="Alternar entre Satélite e Mapa de Ruas" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer shadow-xs">
                                 <span id="lbl-tipo-mapa-radar">Satélite</span>
                             </button>
@@ -1748,12 +1752,16 @@
                     
                     <div class="relative w-full flex-grow min-h-[340px] sm:min-h-[400px] rounded-xl overflow-hidden border border-slate-200 shadow-inner">
                         <div id="mapa-radar-clima" class="w-full h-full min-h-[340px] sm:min-h-[400px]"></div>
+                        <!-- Canvas com animação de partículas e rajadas de vento (Estilo Windy) -->
+                        <canvas id="canvas-animacao-vento" class="absolute inset-0 pointer-events-none z-[400] w-full h-full"></canvas>
                         
                         <!-- HUD Flutuante de Vento para Operação de Drone no Mapa (Com opção de recolher) -->
                         <div id="hud-vento-radar" class="absolute top-3 right-3 z-[1000] bg-slate-950/85 backdrop-blur-md text-white p-2.5 sm:p-3 rounded-xl border border-white/20 shadow-2xl min-w-[190px] sm:min-w-[210px] pointer-events-auto transition-all duration-300">
                             <!-- Cabeçalho com Botão de Recolher -->
                             <div class="flex items-center justify-between gap-2 border-b border-white/10 pb-1.5 mb-2">
-                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-300">Vento para Drone</span>
+                                <span class="text-[10px] font-black uppercase tracking-wider text-slate-300 flex items-center gap-1">
+                                    <span>🌪️</span> Vento & Rajadas
+                                </span>
                                 <div class="flex items-center gap-1.5">
                                     <span id="hud-drone-badge" class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500 text-white shadow-sm">FAVORÁVEL</span>
                                     <button type="button" onclick="alternarHudVentoRadar()" class="p-1 rounded hover:bg-white/20 text-slate-400 hover:text-white transition cursor-pointer leading-none" title="Recolher / Expandir painel de vento">
@@ -1774,6 +1782,16 @@
                                         <div id="hud-rajada-val" class="text-base sm:text-lg font-black text-amber-400">-- km/h</div>
                                     </div>
                                 </div>
+                                <div class="flex items-center justify-between bg-white/10 rounded-lg px-2.5 py-1.5 border border-white/10 text-xs">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="text-slate-400 text-[9px] font-bold uppercase">Soprando:</span>
+                                        <span id="hud-direcao-nome" class="font-black text-white text-[11px]">--</span>
+                                    </div>
+                                    <div class="flex items-center gap-1.5">
+                                        <span id="hud-direcao-graus" class="text-slate-300 font-mono text-[10px]">--°</span>
+                                        <span id="hud-seta-direcao" class="inline-block transform transition-transform duration-500 text-amber-400 text-xs font-black">⬆</span>
+                                    </div>
+                                </div>
                                 <div id="hud-drone-obs" class="text-[10px] text-slate-300 font-medium text-center">
                                     Limite operacional: 28 km/h
                                 </div>
@@ -1784,19 +1802,26 @@
                                 <div class="flex items-center gap-1.5 text-xs font-bold text-white">
                                     <span>🌪️</span>
                                     <span id="hud-vento-resumo-val">-- km/h</span>
+                                    <span id="hud-seta-direcao-compacto" class="text-amber-400 text-xs font-black inline-block">⬆</span>
                                 </div>
                                 <span class="text-[9px] text-slate-400 hover:text-white font-semibold underline">Expandir ▾</span>
                             </div>
                         </div>
 
-                        <!-- Legenda do Radar -->
-                        <div class="absolute bottom-2 left-2 z-[500] bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-slate-200 text-[10px] shadow-sm flex items-center gap-2">
-                            <span class="font-bold text-slate-700">Refletividade:</span>
+                        <!-- Legenda do Radar e Vento -->
+                        <div class="absolute bottom-2 left-2 z-[500] bg-white/95 backdrop-blur-md px-2.5 py-1.5 rounded-lg border border-slate-200 text-[10px] shadow-sm flex items-center gap-2 flex-wrap">
+                            <span class="font-bold text-slate-700">Chuva:</span>
                             <div class="flex items-center gap-1">
-                                <span class="w-2.5 h-2.5 rounded-full bg-cyan-400"></span> <span>Fraca</span>
-                                <span class="w-2.5 h-2.5 rounded-full bg-green-500 ml-1"></span> <span>Moderada</span>
-                                <span class="w-2.5 h-2.5 rounded-full bg-yellow-400 ml-1"></span> <span>Forte</span>
-                                <span class="w-2.5 h-2.5 rounded-full bg-red-600 ml-1"></span> <span>Severa</span>
+                                <span class="w-2 h-2 rounded-full bg-cyan-400"></span> <span>Fraca</span>
+                                <span class="w-2 h-2 rounded-full bg-yellow-400 ml-1"></span> <span>Moderada</span>
+                                <span class="w-2 h-2 rounded-full bg-red-600 ml-1"></span> <span>Forte</span>
+                            </div>
+                            <span class="text-slate-300">|</span>
+                            <span class="font-bold text-slate-700">Rajadas:</span>
+                            <div class="flex items-center gap-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500"></span> <span>&lt;15</span>
+                                <span class="w-2 h-2 rounded-full bg-amber-400 ml-1"></span> <span>15-28</span>
+                                <span class="w-2 h-2 rounded-full bg-red-600 ml-1"></span> <span>&gt;28 km/h</span>
                             </div>
                         </div>
                     </div>
@@ -4674,7 +4699,7 @@
             if (elSemaforoTxt) elSemaforoTxt.innerText = 'AVALIANDO...';
 
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${polo.lat}&longitude=${polo.lng}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m&hourly=precipitation_probability,precipitation,wind_speed_10m,wind_gusts_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&past_days=14&timezone=America%2FSao_Paulo`;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${polo.lat}&longitude=${polo.lng}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m&hourly=precipitation_probability,precipitation,wind_speed_10m,wind_gusts_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&past_days=14&timezone=America%2FSao_Paulo`;
                 const resp = await fetch(url);
                 if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                 const data = await resp.json();
@@ -5064,7 +5089,14 @@
             // 10. Atualiza Mapa Radar Doppler
             inicializarOuAtualizarMapaRadar(polo);
 
-            // 11. Calcula Janela de Ouro de Voo Drone (Elevação Solar > 30° & Vento Brando)
+            // 11. Atualiza Motor de Animação de Rajadas de Vento (Estilo Windy)
+            const direcaoVentoAtual = Number(current.wind_direction_10m) || 0;
+            atualizarDadosVentoMotor(ventoAtual, rajadaAtual, direcaoVentoAtual);
+            if (animacaoVentoAtiva) {
+                iniciarLoopAnimacaoVento();
+            }
+
+            // 12. Calcula Janela de Ouro de Voo Drone (Elevação Solar > 30° & Vento Brando)
             calcularJanelaOuroVoo(hourly, polo.lat, polo.lng);
         }
 
@@ -5637,10 +5669,219 @@
                 if (mapaRadarClimaInstancia) mapaRadarClimaInstancia.invalidateSize();
                 if (chartJanelaHorariaInstancia) chartJanelaHorariaInstancia.resize();
                 if (chartBalancoSafraInstancia) chartBalancoSafraInstancia.resize();
+                if (animacaoVentoAtiva) iniciarLoopAnimacaoVento();
             }, 150);
             setTimeout(() => {
                 if (mapaRadarClimaInstancia) mapaRadarClimaInstancia.invalidateSize();
+                if (animacaoVentoAtiva) iniciarLoopAnimacaoVento();
             }, 400);
+        }
+
+        // ================= MOTOR DE ANIMAÇÃO DE RAJADAS DE VENTO (ESTILO WINDY) =================
+        let animacaoVentoAtiva = true;
+        let animacaoVentoRafId = null;
+        let ventoParticulas = [];
+        const NUM_PARTICULAS_VENTO = 230;
+        let dadosVentoAtuais = {
+            velocidade: 12,
+            rajada: 18,
+            direcao: 120,
+            vx: 0.5,
+            vy: 0.5
+        };
+
+        function decodificarPontoCardeal(graus) {
+            const direcoes = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+            const idx = Math.round(graus / 22.5) % 16;
+            return direcoes[idx];
+        }
+
+        function criarParticulaVento(largura, altura, aleatorio) {
+            const x = aleatorio ? Math.random() * largura : (dadosVentoAtuais.vx > 0 ? -10 : (dadosVentoAtuais.vx < 0 ? largura + 10 : Math.random() * largura));
+            const y = aleatorio ? Math.random() * altura : (dadosVentoAtuais.vy > 0 ? -10 : (dadosVentoAtuais.vy < 0 ? altura + 10 : Math.random() * altura));
+            const isRajada = Math.random() < 0.28;
+            const maxAge = Math.floor(45 + Math.random() * 55);
+
+            return {
+                x: x,
+                y: y,
+                history: [],
+                age: aleatorio ? Math.floor(Math.random() * maxAge) : 0,
+                maxAge: maxAge,
+                isRajada: isRajada,
+                speedFactor: 0.75 + Math.random() * 0.5
+            };
+        }
+
+        function inicializarParticulasVento(largura, altura) {
+            ventoParticulas = [];
+            for (let i = 0; i < NUM_PARTICULAS_VENTO; i++) {
+                ventoParticulas.push(criarParticulaVento(largura, altura, true));
+            }
+        }
+
+        function atualizarDadosVentoMotor(velocidade, rajada, direcao) {
+            dadosVentoAtuais.velocidade = Math.max(1, Number(velocidade) || 12);
+            dadosVentoAtuais.rajada = Math.max(dadosVentoAtuais.velocidade, Number(rajada) || dadosVentoAtuais.velocidade);
+            dadosVentoAtuais.direcao = Number(direcao) || 0;
+
+            // Em meteorologia, direção é de onde o vento vem.
+            // Para onde ele sopra: (direcao + 180) % 360.
+            const radParaOndeSopra = (dadosVentoAtuais.direcao + 180) * Math.PI / 180;
+            // No canvas: X+ para a direita, Y+ para baixo
+            dadosVentoAtuais.vx = Math.sin(radParaOndeSopra);
+            dadosVentoAtuais.vy = -Math.cos(radParaOndeSopra);
+
+            // Atualiza HUD e Seta de Direção
+            const elCardeal = document.getElementById('hud-direcao-nome');
+            const elGraus = document.getElementById('hud-direcao-graus');
+            const elSeta = document.getElementById('hud-seta-direcao');
+            const elSetaCompacto = document.getElementById('hud-seta-direcao-compacto');
+            const nomeCardeal = decodificarPontoCardeal(dadosVentoAtuais.direcao);
+
+            if (elCardeal) elCardeal.innerText = nomeCardeal;
+            if (elGraus) elGraus.innerText = `${Math.round(dadosVentoAtuais.direcao)}°`;
+            
+            // Seta aponta na direção em que o vento sopra
+            const anguloSeta = Math.round(dadosVentoAtuais.direcao + 180);
+            if (elSeta) elSeta.style.transform = `rotate(${anguloSeta}deg)`;
+            if (elSetaCompacto) elSetaCompacto.style.transform = `rotate(${anguloSeta}deg)`;
+        }
+
+        function iniciarLoopAnimacaoVento() {
+            const canvas = document.getElementById('canvas-animacao-vento');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) return;
+
+            function redimensionarCanvas() {
+                const rect = canvas.getBoundingClientRect();
+                if (rect.width > 0 && rect.height > 0 && (canvas.width !== Math.floor(rect.width) || canvas.height !== Math.floor(rect.height))) {
+                    canvas.width = Math.floor(rect.width);
+                    canvas.height = Math.floor(rect.height);
+                    inicializarParticulasVento(canvas.width, canvas.height);
+                }
+            }
+            redimensionarCanvas();
+
+            if (ventoParticulas.length === 0 && canvas.width > 0) {
+                inicializarParticulasVento(canvas.width, canvas.height);
+            }
+
+            let inicioTempo = performance.now();
+
+            function renderizarQuadro(agora) {
+                if (!animacaoVentoAtiva) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    animacaoVentoRafId = null;
+                    return;
+                }
+
+                redimensionarCanvas();
+                if (canvas.width === 0 || canvas.height === 0) {
+                    animacaoVentoRafId = requestAnimationFrame(renderizarQuadro);
+                    return;
+                }
+
+                // Limpa completamente o quadro para manter transparência perfeita sobre o mapa
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Pulso de rajada periódico a cada ~4 segundos
+                const tempoDecorrido = (agora - inicioTempo) / 1000;
+                const cicloRajada = tempoDecorrido % 4.5;
+                const pulsoRajadaAtivo = cicloRajada < 1.4; // 1.4s de rajada intensa
+                const fatorPulso = pulsoRajadaAtivo ? 1.45 : 1.0;
+
+                const baseSpeed = Math.min(Math.max(dadosVentoAtuais.velocidade * 0.13, 1.2), 6.5) * fatorPulso;
+                const gustBonus = ((dadosVentoAtuais.rajada - dadosVentoAtuais.velocidade) * 0.10) * fatorPulso;
+
+                const len = ventoParticulas.length;
+                for (let i = 0; i < len; i++) {
+                    const p = ventoParticulas[i];
+
+                    // Guarda histórico para desenhar o rastro (trail)
+                    p.history.push({ x: p.x, y: p.y });
+                    const maxTrail = p.isRajada ? 7 : 5;
+                    if (p.history.length > maxTrail) {
+                        p.history.shift();
+                    }
+
+                    const speed = (p.isRajada ? (baseSpeed + gustBonus) : baseSpeed) * p.speedFactor;
+                    p.x += dadosVentoAtuais.vx * speed;
+                    p.y += dadosVentoAtuais.vy * speed;
+                    p.age++;
+
+                    // Se expirou a vida ou saiu da tela, recria
+                    if (p.age >= p.maxAge || p.x < -30 || p.x > canvas.width + 30 || p.y < -30 || p.y > canvas.height + 30) {
+                        ventoParticulas[i] = criarParticulaVento(canvas.width, canvas.height, false);
+                        continue;
+                    }
+
+                    if (p.history.length < 2) continue;
+
+                    // Curva de opacidade com fade-in e fade-out suave
+                    const progress = p.age / p.maxAge;
+                    let alpha = Math.sin(progress * Math.PI) * (p.isRajada ? 0.95 : 0.75);
+
+                    // Cor do vento de acordo com a intensidade e rajada
+                    let corStroke, corHead;
+                    if (p.isRajada && (dadosVentoAtuais.rajada >= 28 || pulsoRajadaAtivo)) {
+                        corStroke = `rgba(239, 68, 68, ${alpha * 0.85})`;
+                        corHead = `rgba(254, 202, 202, ${alpha})`;
+                    } else if (dadosVentoAtuais.velocidade >= 20 || (p.isRajada && dadosVentoAtuais.rajada >= 20)) {
+                        corStroke = `rgba(245, 158, 11, ${alpha * 0.85})`;
+                        corHead = `rgba(254, 240, 138, ${alpha})`;
+                    } else {
+                        corStroke = `rgba(52, 211, 153, ${alpha * 0.80})`;
+                        corHead = `rgba(209, 250, 229, ${alpha})`;
+                    }
+
+                    // Desenha o rastro suave
+                    ctx.strokeStyle = corStroke;
+                    ctx.lineWidth = p.isRajada ? 2.2 : 1.5;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+
+                    ctx.beginPath();
+                    ctx.moveTo(p.history[0].x, p.history[0].y);
+                    for (let h = 1; h < p.history.length; h++) {
+                        ctx.lineTo(p.history[h].x, p.history[h].y);
+                    }
+                    ctx.lineTo(p.x, p.y);
+                    ctx.stroke();
+
+                    // Desenha o ponto/cabeça da partícula
+                    ctx.fillStyle = corHead;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.isRajada ? 1.8 : 1.2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                animacaoVentoRafId = requestAnimationFrame(renderizarQuadro);
+            }
+
+            if (animacaoVentoRafId) cancelAnimationFrame(animacaoVentoRafId);
+            animacaoVentoRafId = requestAnimationFrame(renderizarQuadro);
+        }
+
+        function alternarAnimacaoVentoRadar() {
+            animacaoVentoAtiva = !animacaoVentoAtiva;
+            const btn = document.getElementById('btn-toggle-vento-animado');
+            const lbl = document.getElementById('lbl-status-vento-animado');
+
+            if (animacaoVentoAtiva) {
+                if (btn) btn.className = 'text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer';
+                if (lbl) lbl.innerText = 'Rajadas: ON';
+                iniciarLoopAnimacaoVento();
+            } else {
+                if (btn) btn.className = 'text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer shadow-xs flex items-center gap-1.5';
+                if (lbl) lbl.innerText = 'Rajadas: OFF';
+                const canvas = document.getElementById('canvas-animacao-vento');
+                if (canvas) {
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
         }
 
         // ================= BIBLIOTECA DE MAPAS DE SAFRA (PDF) =================
