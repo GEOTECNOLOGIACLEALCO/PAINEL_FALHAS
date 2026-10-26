@@ -1,4 +1,4 @@
-import openpyxl, json, os, base64, math, re
+import openpyxl, json, os, base64, math, re, shutil, time
 from datetime import datetime
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
@@ -527,4 +527,118 @@ try:
         print(f"Aviso: Shapefile {caminho_shp} não encontrado.")
 except Exception as e:
     print(f"Aviso: Erro ao gerar dados_mapa_voos.js: {e}")
+
+# -------------------------------------------------------------
+# 5. SINCRONIZAÇÃO E CATALOGAÇÃO AUTOMÁTICA DE MAPAS DE SAFRA (PDF)
+# -------------------------------------------------------------
+def sincronizar_e_catalogar_mapas():
+    origem = r"F:\Mapas\01 - Mapas Safra"
+    destino = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\mapas_safra"
+    
+    novos_copiados = 0
+    atualizados_copiados = 0
+    
+    # Sincronização 100% segura (Apenas LEITURA de F:)
+    if os.path.exists(origem):
+        try:
+            for root, dirs, files in os.walk(origem):
+                rel_path = os.path.relpath(root, origem)
+                target_dir = os.path.join(destino, rel_path)
+                if not os.path.exists(target_dir):
+                    os.makedirs(target_dir, exist_ok=True)
+                for f in files:
+                    if not f.lower().endswith('.pdf'): continue
+                    src_f = os.path.join(root, f)
+                    dst_f = os.path.join(target_dir, f)
+                    
+                    if not os.path.exists(dst_f):
+                        shutil.copy2(src_f, dst_f)
+                        novos_copiados += 1
+                    else:
+                        src_stat = os.stat(src_f)
+                        dst_stat = os.stat(dst_f)
+                        # Copia se data for mais recente ou tamanho diferente
+                        if src_stat.st_mtime > dst_stat.st_mtime + 2 or src_stat.st_size != dst_stat.st_size:
+                            shutil.copy2(src_f, dst_f)
+                            atualizados_copiados += 1
+            if novos_copiados > 0 or atualizados_copiados > 0:
+                print(f"[MAPAS] Sincronização: {novos_copiados} novos mapas, {atualizados_copiados} mapas atualizados de F:.")
+            else:
+                print("[MAPAS] Todos os mapas já estão sincronizados com a pasta oficial F:.")
+        except Exception as ex_sync:
+            print(f"[MAPAS] Aviso durante sincronização de F:: {ex_sync}")
+    else:
+        print("[MAPAS] Disco F: não acessível no momento. Utilizando mapas locais da pasta mapas_safra.")
+        
+    mapas_catalogo = []
+    agora = time.time()
+    
+    if os.path.exists(destino):
+        for root, dirs, files in os.walk(destino):
+            rel_dir = os.path.relpath(root, destino).replace('\\', '/')
+            partes = rel_dir.split('/')
+            categoria = partes[0] if partes and partes[0] != '.' else 'Geral'
+            subpasta = partes[1] if len(partes) > 1 else ''
+            
+            for f in files:
+                if not f.lower().endswith('.pdf'): continue
+                f_path = os.path.join(root, f)
+                stat = os.stat(f_path)
+                mtime = stat.st_mtime
+                dias = (agora - mtime) / 86400.0
+                dt_str = datetime.fromtimestamp(mtime).strftime('%d/%m/%Y %H:%M')
+                
+                nome_sem_ext = f[:-4].strip()
+                fa = ''
+                fazenda = nome_sem_ext
+                prop = ''
+                
+                m = re.match(r'^([0-9A-Za-z\s]+?)\s*-\s*(.+)$', nome_sem_ext)
+                if m:
+                    fa = m.group(1).strip()
+                    resto = m.group(2).strip()
+                    m_prop = re.search(r'\((.+?)\)$', resto)
+                    if m_prop:
+                        prop = m_prop.group(1).strip()
+                        fazenda = resto[:m_prop.start()].strip()
+                    else:
+                        fazenda = resto
+                
+                if rel_dir == '.':
+                    rel_url = f'mapas_safra/{f}'
+                else:
+                    rel_url = f'mapas_safra/{rel_dir}/{f}'
+                
+                mapas_catalogo.append({
+                    'arquivo': f,
+                    'url': rel_url,
+                    'categoria': categoria,
+                    'subpasta': subpasta,
+                    'fa': fa,
+                    'fazenda': fazenda,
+                    'proprietario': prop,
+                    'data_modificacao': dt_str,
+                    'timestamp': int(mtime),
+                    'tamanho_kb': round(stat.st_size / 1024, 1),
+                    'dias_atras': round(dias, 1),
+                    'is_novo': dias <= 7,
+                    'is_hoje': dias <= 1
+                })
+                
+    mapas_catalogo.sort(key=lambda x: x['timestamp'], reverse=True)
+    
+    caminho_js_mapas = os.path.join(os.path.dirname(destino), "dados_mapas_safra.js")
+    with open(caminho_js_mapas, "w", encoding="utf-8") as f_out:
+        agora_str = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+        f_out.write("// Catalogo Automatico de Mapas de Safra em PDF\n")
+        f_out.write(f"// Gerado em: {agora_str}\n")
+        f_out.write(f"// Total de Mapas: {len(mapas_catalogo)}\n")
+        f_out.write("window.DADOS_MAPAS_SAFRA = ")
+        json.dump(mapas_catalogo, f_out, ensure_ascii=False, indent=2)
+        f_out.write(";\n")
+        
+    novos = [m for m in mapas_catalogo if m['is_novo']]
+    print(f"[MAPAS] Catálogo atualizado em dados_mapas_safra.js: {len(mapas_catalogo)} mapas ({len(novos)} novos/atualizados nos últimos 7 dias).")
+
+sincronizar_e_catalogar_mapas()
 

@@ -40,6 +40,7 @@
     <!-- Dados Embarcados da Planilha dados.xlsx e Mapa de Voos -->
     <script src="dados_injetados.js"></script>
     <script src="dados_mapa_voos.js"></script>
+    <script src="dados_mapas_safra.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -567,6 +568,11 @@
                 <button class="sidebar-btn tab-btn" onclick="trocarAba('clima')" title="Clima & Chuvas">
                     <span class="sidebar-icon">🌧️</span>
                     <span class="sidebar-text truncate">Clima & Chuvas</span>
+                </button>
+                <button class="sidebar-btn tab-btn" onclick="trocarAba('mapas_safra')" title="Mapas de Safra em PDF">
+                    <span class="sidebar-icon">📑</span>
+                    <span class="sidebar-text truncate">Mapas Safra (PDF)</span>
+                    <span id="badge-nav-mapas-novos" class="hidden ml-auto text-[10px] bg-emerald-500 text-white font-black px-1.5 py-0.5 rounded-full shadow-xs"></span>
                 </button>
             </div>
 
@@ -1822,6 +1828,137 @@
 
         </section>
 
+        <!-- ================= ABA 7: BIBLIOTECA DE MAPAS DE SAFRA (PDF) ================= -->
+        <section id="aba-mapas_safra" class="space-y-6 hidden">
+            <!-- Cabeçalho Executivo da Biblioteca -->
+            <div class="glass-panel p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-xl">📑</span>
+                        <h2 class="text-lg font-black text-slate-900 tracking-tight">Biblioteca de Mapas de Safra em PDF</h2>
+                        <span id="badge-mapas-total-topo" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-slate-100 text-slate-700 border border-slate-200 shadow-xs">
+                            1.319 Mapas
+                        </span>
+                        <span id="badge-mapas-novos-topo" class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs inline-flex items-center gap-1">
+                            ● Novos / Atualizados
+                        </span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">
+                        Consulta, pré-visualização em alta resolução e download dos croquis operacionais da Clealco, Acionistas, Terceiros e Spot.
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2 flex-wrap w-full md:w-auto">
+                    <button type="button" onclick="filtrarMapasRecentes()" id="btn-filtro-rapido-novos" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold px-3 py-2 rounded-xl border border-amber-200 transition cursor-pointer flex items-center gap-1.5 shadow-xs">
+                        <span>🔥</span>
+                        <span>Ver Recentes (7 dias)</span>
+                    </button>
+                    <button type="button" onclick="renderizarAbaMapasSafra(true)" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-bold px-3.5 py-2 rounded-xl transition cursor-pointer flex items-center gap-1.5 shadow-xs" title="Atualizar lista de mapas">
+                        <span>🔄</span>
+                        <span>Atualizar Lista</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- KPIs dos Mapas -->
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+                <div class="glass-panel p-3.5 bg-white border border-slate-200 rounded-xl shadow-xs text-center cursor-pointer hover:border-slate-400 transition" onclick="selecionarCategoriaMapas('todos')">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block">Total Geral</span>
+                    <span class="text-xl font-black text-slate-900" id="kpi-mapas-total">0</span>
+                    <span class="text-[10px] text-slate-500 block mt-0.5">Todos os Croquis</span>
+                </div>
+                <div class="glass-panel p-3.5 bg-emerald-50/50 border border-emerald-200 rounded-xl shadow-xs text-center cursor-pointer hover:bg-emerald-50 transition" onclick="selecionarCategoriaMapas('Clealco')">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block">Clealco</span>
+                    <span class="text-xl font-black text-emerald-800" id="kpi-mapas-clealco">0</span>
+                    <span class="text-[10px] text-emerald-600 block mt-0.5">Áreas Próprias</span>
+                </div>
+                <div class="glass-panel p-3.5 bg-purple-50/50 border border-purple-200 rounded-xl shadow-xs text-center cursor-pointer hover:bg-purple-50 transition" onclick="selecionarCategoriaMapas('Acionista')">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-purple-700 block">Acionistas</span>
+                    <span class="text-xl font-black text-purple-800" id="kpi-mapas-acionista">0</span>
+                    <span class="text-[10px] text-purple-600 block mt-0.5">Grupos Familiares</span>
+                </div>
+                <div class="glass-panel p-3.5 bg-blue-50/50 border border-blue-200 rounded-xl shadow-xs text-center cursor-pointer hover:bg-blue-50 transition" onclick="selecionarCategoriaMapas('Terceiros')">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-blue-700 block">Terceiros</span>
+                    <span class="text-xl font-black text-blue-800" id="kpi-mapas-terceiros">0</span>
+                    <span class="text-[10px] text-blue-600 block mt-0.5">Parcerias Agrícolas</span>
+                </div>
+                <div class="glass-panel p-3.5 bg-amber-50/50 border border-amber-200 rounded-xl shadow-xs text-center cursor-pointer hover:bg-amber-50 transition" onclick="selecionarCategoriaMapas('Spot')">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700 block">Spot / Fornec.</span>
+                    <span class="text-xl font-black text-amber-800" id="kpi-mapas-spot">0</span>
+                    <span class="text-[10px] text-amber-600 block mt-0.5">Fornecedores Spot</span>
+                </div>
+                <div class="glass-panel p-3.5 bg-red-50/50 border border-red-200 rounded-xl shadow-xs text-center cursor-pointer hover:bg-red-50 transition" onclick="filtrarMapasRecentes()">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-red-700 block">Atualizados</span>
+                    <span class="text-xl font-black text-red-800" id="kpi-mapas-novos">0</span>
+                    <span class="text-[10px] text-red-600 block mt-0.5">Últimos 7 dias</span>
+                </div>
+            </div>
+
+            <!-- Barra de Filtros, Categorias e Pesquisa -->
+            <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-3">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-3">
+                    <!-- Abas de Categoria -->
+                    <div class="flex items-center gap-1.5 flex-wrap w-full md:w-auto" id="botoes-categorias-mapas">
+                        <button type="button" onclick="selecionarCategoriaMapas('todos')" data-cat="todos" class="btn-cat-mapa active px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-900 text-white shadow-xs">
+                            Todos
+                        </button>
+                        <button type="button" onclick="selecionarCategoriaMapas('Clealco')" data-cat="Clealco" class="btn-cat-mapa px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700">
+                            🚜 Clealco (Próprias)
+                        </button>
+                        <button type="button" onclick="selecionarCategoriaMapas('Acionista')" data-cat="Acionista" class="btn-cat-mapa px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700">
+                            🏛️ Acionistas
+                        </button>
+                        <button type="button" onclick="selecionarCategoriaMapas('Terceiros')" data-cat="Terceiros" class="btn-cat-mapa px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700">
+                            🤝 Terceiros
+                        </button>
+                        <button type="button" onclick="selecionarCategoriaMapas('Spot')" data-cat="Spot" class="btn-cat-mapa px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700">
+                            🌾 Spot
+                        </button>
+                    </div>
+
+                    <!-- Ordenação e Filtro Temporal -->
+                    <div class="flex items-center gap-2 w-full md:w-auto justify-end flex-wrap">
+                        <select id="select-filtro-periodo-mapas" onchange="aplicarFiltrosMapas()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                            <option value="todos">Todos os Períodos</option>
+                            <option value="hoje">Modificados Hoje</option>
+                            <option value="7dias">Últimos 7 dias (Novos)</option>
+                            <option value="30dias">Últimos 30 dias</option>
+                        </select>
+                        <select id="select-ordem-mapas" onchange="aplicarFiltrosMapas()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                            <option value="recentes">Mais Recentes Primeiro</option>
+                            <option value="fa_asc">Código FA (0 → 9)</option>
+                            <option value="fazenda_asc">Fazenda (A → Z)</option>
+                            <option value="tamanho_desc">Maior Tamanho</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Campo de Busca em Tempo Real -->
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">🔍</span>
+                    <input type="text" id="input-busca-mapas" oninput="aplicarFiltrosMapas()" placeholder="Pesquise por Código FA (ex: 100265), Nome da Fazenda, Proprietário ou Arquivo..." class="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-emerald-500 text-slate-800 placeholder-slate-400 transition">
+                    <button type="button" onclick="limparBuscaMapas()" id="btn-limpar-busca-mapas" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 text-sm cursor-pointer" title="Limpar pesquisa">✕</button>
+                </div>
+            </div>
+
+            <!-- Informações de Resultados e Paginação Superior -->
+            <div class="flex items-center justify-between text-xs text-slate-600 px-1">
+                <span id="info-contagem-mapas">Carregando mapas...</span>
+                <div class="flex items-center gap-1.5" id="paginacao-mapas-top"></div>
+            </div>
+
+            <!-- Grid de Cartões dos Mapas -->
+            <div id="grid-mapas-safra" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                <!-- Preenchido via JavaScript -->
+            </div>
+
+            <!-- Paginação Inferior -->
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-xs text-slate-600 border-t border-slate-200">
+                <span id="info-contagem-mapas-bottom"></span>
+                <div class="flex items-center gap-1.5" id="paginacao-mapas-bottom"></div>
+            </div>
+        </section>
+
     </main>
 
     <!-- FOOTER / BARRA DE AÇÕES -->
@@ -2012,6 +2149,49 @@
                     <span>Singularity AI Geotecnologia • Usina Clealco</span>
                     <span>Documento Oficial de Uso Interno e Agronômico</span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL DO VISUALIZADOR DE PDF DE MAPAS DE SAFRA ================= -->
+    <div id="modal-viewer-pdf-mapa" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-[9999] hidden flex flex-col items-center justify-center p-2 sm:p-4 animate-in fade-in duration-200">
+        <div class="relative bg-slate-900 border border-slate-700 rounded-2xl w-full max-w-6xl h-[92vh] flex flex-col shadow-2xl overflow-hidden">
+            <!-- Barra Superior do Visualizador -->
+            <div class="bg-slate-950 px-4 py-3 border-b border-slate-800 flex items-center justify-between gap-3 text-white flex-shrink-0">
+                <div class="flex items-center gap-2.5 overflow-hidden">
+                    <span class="text-xl flex-shrink-0">🗺️</span>
+                    <div class="truncate">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h3 id="pdf-viewer-titulo" class="text-sm font-black text-white truncate leading-tight">Mapa de Safra</h3>
+                            <span id="pdf-viewer-badge-cat" class="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 flex-shrink-0">Clealco</span>
+                            <span id="pdf-viewer-badge-data" class="hidden sm:inline-block px-2 py-0.5 rounded text-[10px] font-mono text-slate-400 bg-slate-800 flex-shrink-0">--/--/----</span>
+                        </div>
+                        <p id="pdf-viewer-subtitulo" class="text-[11px] text-slate-400 truncate mt-0.5"></p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2 flex-shrink-0">
+                    <a id="btn-pdf-nova-aba" href="#" target="_blank" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center gap-1.5 cursor-pointer" title="Abrir em nova aba cheia do navegador">
+                        <span>↗</span>
+                        <span class="hidden sm:inline">Nova Aba</span>
+                    </a>
+                    <a id="btn-pdf-download" href="#" download class="text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="Baixar PDF no dispositivo">
+                        <span>⬇</span>
+                        <span class="hidden sm:inline">Baixar PDF</span>
+                    </a>
+                    <button type="button" onclick="fecharModalViewerPDF()" class="text-slate-400 hover:text-white bg-slate-800/80 hover:bg-red-600/80 p-1.5 rounded-lg transition text-base leading-none cursor-pointer" title="Fechar visualizador (Esc)">
+                        ✕
+                    </button>
+                </div>
+            </div>
+
+            <!-- Área Central com o Iframe/Embed do PDF -->
+            <div class="relative w-full flex-grow bg-slate-950 overflow-hidden flex items-center justify-center">
+                <div id="pdf-viewer-loading" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 gap-3 z-10 bg-slate-950 pointer-events-none transition-opacity duration-300">
+                    <div class="w-8 h-8 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-xs font-medium">Carregando mapa em alta definição...</span>
+                </div>
+                <iframe id="iframe-viewer-pdf" src="" class="w-full h-full border-0 rounded-b-2xl bg-white" onload="document.getElementById('pdf-viewer-loading').classList.add('opacity-0')"></iframe>
             </div>
         </div>
     </div>
@@ -2506,6 +2686,11 @@
             // Se o mapa já estiver na aba ativa, atualiza
             if (typeof aplicarFiltrosMapa === 'function' && window.DADOS_MAPA_VOOS) {
                 aplicarFiltrosMapa();
+            }
+
+            // Atualiza indicadores e badge de novidades da Biblioteca de Mapas de Safra
+            if (typeof atualizarKpisEBadgesMapas === 'function') {
+                atualizarKpisEBadgesMapas();
             }
         }
 
@@ -3346,7 +3531,8 @@
                 'falhas': '<span>📉</span> FALHAS DE PLANTIO',
                 'backlog': '<span>✈️</span> BACKLOG (FALTAM VOAR)',
                 'mapa': '<span>🗺️</span> MAPA OPERACIONAL DE VOOS & BACKLOG',
-                'clima': '<span>🌧️</span> MONITORAMENTO DE CLIMA & CHUVAS'
+                'clima': '<span>🌧️</span> MONITORAMENTO DE CLIMA & CHUVAS',
+                'mapas_safra': '<span>📑</span> BIBLIOTECA DE MAPAS DE SAFRA (PDF)'
             };
             const elTitulo = document.getElementById('topbar-titulo-pagina');
             if (elTitulo && titulosAbas[id]) {
@@ -3372,6 +3558,7 @@
             if (id === 'falhas') renderizarFalhas();
             if (id === 'backlog') renderizarBacklog();
             if (id === 'clima') renderizarAbaClima();
+            if (id === 'mapas_safra') renderizarAbaMapasSafra();
             if (id === 'mapa') {
                 renderizarMapaVoos();
                 setTimeout(() => {
@@ -5452,6 +5639,333 @@
                 if (mapaRadarClimaInstancia) mapaRadarClimaInstancia.invalidateSize();
             }, 400);
         }
+
+        // ================= BIBLIOTECA DE MAPAS DE SAFRA (PDF) =================
+        let catMapasAtiva = 'todos';
+        let periodoMapasAtivo = 'todos';
+        let termoBuscaMapas = '';
+        let ordemMapasAtiva = 'recentes';
+        let paginaMapasAtual = 1;
+        const MAPAS_POR_PAGINA = 24;
+
+        function renderizarAbaMapasSafra(forcarRecarregar = false) {
+            atualizarKpisEBadgesMapas();
+            aplicarFiltrosMapas();
+        }
+
+        function atualizarKpisEBadgesMapas() {
+            const lista = window.DADOS_MAPAS_SAFRA || [];
+            const total = lista.length;
+            const clealco = lista.filter(m => m.categoria === 'Clealco').length;
+            const acionista = lista.filter(m => m.categoria === 'Acionista').length;
+            const terceiros = lista.filter(m => m.categoria === 'Terceiros').length;
+            const spot = lista.filter(m => m.categoria === 'Spot').length;
+            const novos = lista.filter(m => m.is_novo).length;
+
+            const elTotal = document.getElementById('kpi-mapas-total');
+            const elClealco = document.getElementById('kpi-mapas-clealco');
+            const elAcionista = document.getElementById('kpi-mapas-acionista');
+            const elTerceiros = document.getElementById('kpi-mapas-terceiros');
+            const elSpot = document.getElementById('kpi-mapas-spot');
+            const elNovos = document.getElementById('kpi-mapas-novos');
+            const elBadgeTopo = document.getElementById('badge-mapas-total-topo');
+            const elBadgeNovosTopo = document.getElementById('badge-mapas-novos-topo');
+            const elBadgeNav = document.getElementById('badge-nav-mapas-novos');
+
+            if (elTotal) elTotal.innerText = total.toLocaleString('pt-BR');
+            if (elClealco) elClealco.innerText = clealco.toLocaleString('pt-BR');
+            if (elAcionista) elAcionista.innerText = acionista.toLocaleString('pt-BR');
+            if (elTerceiros) elTerceiros.innerText = terceiros.toLocaleString('pt-BR');
+            if (elSpot) elSpot.innerText = spot.toLocaleString('pt-BR');
+            if (elNovos) elNovos.innerText = novos.toLocaleString('pt-BR');
+            if (elBadgeTopo) elBadgeTopo.innerText = `${total.toLocaleString('pt-BR')} Mapas`;
+            
+            if (elBadgeNovosTopo) {
+                if (novos > 0) {
+                    elBadgeNovosTopo.classList.remove('hidden');
+                    elBadgeNovosTopo.innerText = `● ${novos} Novos / Atualizados`;
+                } else {
+                    elBadgeNovosTopo.classList.add('hidden');
+                }
+            }
+
+            if (elBadgeNav) {
+                if (novos > 0) {
+                    elBadgeNav.classList.remove('hidden');
+                    elBadgeNav.innerText = `${novos} novos`;
+                } else {
+                    elBadgeNav.classList.add('hidden');
+                }
+            }
+        }
+
+        function selecionarCategoriaMapas(cat) {
+            catMapasAtiva = cat;
+            paginaMapasAtual = 1;
+
+            document.querySelectorAll('#botoes-categorias-mapas .btn-cat-mapa').forEach(btn => {
+                const bCat = btn.getAttribute('data-cat');
+                if (bCat === cat) {
+                    btn.className = 'btn-cat-mapa active px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-900 text-white shadow-xs';
+                } else {
+                    btn.className = 'btn-cat-mapa px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-slate-100 hover:bg-slate-200 text-slate-700';
+                }
+            });
+
+            aplicarFiltrosMapas();
+        }
+
+        function filtrarMapasRecentes() {
+            selecionarCategoriaMapas('todos');
+            const selectPer = document.getElementById('select-filtro-periodo-mapas');
+            if (selectPer) selectPer.value = '7dias';
+            const selectOrd = document.getElementById('select-ordem-mapas');
+            if (selectOrd) selectOrd.value = 'recentes';
+            paginaMapasAtual = 1;
+            aplicarFiltrosMapas();
+        }
+
+        function limparBuscaMapas() {
+            const input = document.getElementById('input-busca-mapas');
+            if (input) {
+                input.value = '';
+                input.focus();
+            }
+            aplicarFiltrosMapas();
+        }
+
+        function aplicarFiltrosMapas() {
+            const input = document.getElementById('input-busca-mapas');
+            const btnLimpar = document.getElementById('btn-limpar-busca-mapas');
+            const selectPer = document.getElementById('select-filtro-periodo-mapas');
+            const selectOrd = document.getElementById('select-ordem-mapas');
+
+            termoBuscaMapas = (input?.value || '').trim().toLowerCase();
+            if (btnLimpar) {
+                if (termoBuscaMapas) btnLimpar.classList.remove('hidden');
+                else btnLimpar.classList.add('hidden');
+            }
+
+            if (selectPer) periodoMapasAtivo = selectPer.value;
+            if (selectOrd) ordemMapasAtiva = selectOrd.value;
+
+            const todosMapas = window.DADOS_MAPAS_SAFRA || [];
+
+            // 1. Filtro por Categoria
+            let filtrados = todosMapas.filter(m => {
+                if (catMapasAtiva === 'todos') return true;
+                return m.categoria === catMapasAtiva;
+            });
+
+            // 2. Filtro Temporal (Novidades / Atualizações)
+            if (periodoMapasAtivo === 'hoje') {
+                filtrados = filtrados.filter(m => m.is_hoje);
+            } else if (periodoMapasAtivo === '7dias') {
+                filtrados = filtrados.filter(m => m.is_novo);
+            } else if (periodoMapasAtivo === '30dias') {
+                filtrados = filtrados.filter(m => (m.dias_atras || 999) <= 30);
+            }
+
+            // 3. Filtro por Termo de Busca
+            if (termoBuscaMapas) {
+                filtrados = filtrados.filter(m => {
+                    const txt = `${m.fa} ${m.fazenda} ${m.proprietario} ${m.categoria} ${m.arquivo}`.toLowerCase();
+                    return txt.includes(termoBuscaMapas);
+                });
+            }
+
+            // 4. Ordenação
+            if (ordemMapasAtiva === 'recentes') {
+                filtrados.sort((a, b) => b.timestamp - a.timestamp);
+            } else if (ordemMapasAtiva === 'fa_asc') {
+                filtrados.sort((a, b) => {
+                    const faA = parseInt(a.fa, 10) || 0;
+                    const faB = parseInt(b.fa, 10) || 0;
+                    return faA - faB;
+                });
+            } else if (ordemMapasAtiva === 'fazenda_asc') {
+                filtrados.sort((a, b) => (a.fazenda || '').localeCompare(b.fazenda || ''));
+            } else if (ordemMapasAtiva === 'tamanho_desc') {
+                filtrados.sort((a, b) => (b.tamanho_kb || 0) - (a.tamanho_kb || 0));
+            }
+
+            // Renderizar Grid e Paginação
+            renderizarGridMapas(filtrados);
+        }
+
+        function renderizarGridMapas(mapas) {
+            const container = document.getElementById('grid-mapas-safra');
+            const infoTop = document.getElementById('info-contagem-mapas');
+            const infoBottom = document.getElementById('info-contagem-mapas-bottom');
+            const pagTop = document.getElementById('paginacao-mapas-top');
+            const pagBottom = document.getElementById('paginacao-mapas-bottom');
+
+            if (!container) return;
+
+            const total = mapas.length;
+            if (total === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-16 text-center text-slate-400 glass-panel bg-white border border-slate-200 rounded-2xl p-8">
+                        <div class="text-4xl mb-3">🔍</div>
+                        <h4 class="text-base font-bold text-slate-700">Nenhum mapa encontrado</h4>
+                        <p class="text-xs text-slate-500 mt-1">Tente ajustar o termo de pesquisa ou selecionar outra categoria.</p>
+                        <button type="button" onclick="limparBuscaMapas(); selecionarCategoriaMapas('todos');" class="mt-4 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl transition cursor-pointer">
+                            Limpar Filtros e Ver Todos
+                        </button>
+                    </div>
+                `;
+                if (infoTop) infoTop.innerText = '0 mapas encontrados';
+                if (infoBottom) infoBottom.innerText = '';
+                if (pagTop) pagTop.innerHTML = '';
+                if (pagBottom) pagBottom.innerHTML = '';
+                return;
+            }
+
+            const totalPaginas = Math.ceil(total / MAPAS_POR_PAGINA);
+            if (paginaMapasAtual > totalPaginas) paginaMapasAtual = totalPaginas;
+            if (paginaMapasAtual < 1) paginaMapasAtual = 1;
+
+            const inicio = (paginaMapasAtual - 1) * MAPAS_POR_PAGINA;
+            const fim = Math.min(inicio + MAPAS_POR_PAGINA, total);
+            const itensPagina = mapas.slice(inicio, fim);
+
+            const textoContagem = `Exibindo <b>${inicio + 1}</b> a <b>${fim}</b> de <b>${total.toLocaleString('pt-BR')}</b> mapas`;
+            if (infoTop) infoTop.innerHTML = textoContagem;
+            if (infoBottom) infoBottom.innerHTML = textoContagem;
+
+            // HTML da Paginação
+            const gerarHtmlPaginacao = () => `
+                <button type="button" onclick="mudarPaginaMapas(${paginaMapasAtual - 1})" ${paginaMapasAtual <= 1 ? 'disabled' : ''} class="px-2.5 py-1 rounded-lg border border-slate-200 bg-white font-bold text-xs text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer shadow-xs">
+                    ◀ Ant
+                </button>
+                <span class="px-2 font-mono text-xs font-bold text-slate-700">Pág. ${paginaMapasAtual} de ${totalPaginas}</span>
+                <button type="button" onclick="mudarPaginaMapas(${paginaMapasAtual + 1})" ${paginaMapasAtual >= totalPaginas ? 'disabled' : ''} class="px-2.5 py-1 rounded-lg border border-slate-200 bg-white font-bold text-xs text-slate-700 hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition cursor-pointer shadow-xs">
+                    Próx ▶
+                </button>
+            `;
+            if (pagTop) pagTop.innerHTML = totalPaginas > 1 ? gerarHtmlPaginacao() : '';
+            if (pagBottom) pagBottom.innerHTML = totalPaginas > 1 ? gerarHtmlPaginacao() : '';
+
+            // Cores das Categorias
+            const configCat = {
+                'Clealco': { badge: 'bg-emerald-50 text-emerald-800 border-emerald-200', dot: 'bg-emerald-500', rotulo: 'Clealco (Própria)' },
+                'Acionista': { badge: 'bg-purple-50 text-purple-800 border-purple-200', dot: 'bg-purple-500', rotulo: 'Acionista' },
+                'Terceiros': { badge: 'bg-blue-50 text-blue-800 border-blue-200', dot: 'bg-blue-500', rotulo: 'Terceiros' },
+                'Spot': { badge: 'bg-amber-50 text-amber-800 border-amber-200', dot: 'bg-amber-500', rotulo: 'Spot / Fornec.' }
+            };
+
+            container.innerHTML = itensPagina.map(m => {
+                const catCfg = configCat[m.categoria] || { badge: 'bg-slate-100 text-slate-700 border-slate-200', dot: 'bg-slate-400', rotulo: m.categoria };
+                const isRecente = m.is_novo;
+                const isHoje = m.is_hoje;
+
+                let badgeRecenteHtml = '';
+                if (isHoje) {
+                    badgeRecenteHtml = `<span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-red-500 text-white shadow-xs animate-pulse">NOVO HOJE</span>`;
+                } else if (isRecente) {
+                    badgeRecenteHtml = `<span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-600 text-white shadow-xs">NOVO</span>`;
+                }
+
+                const urlEncoded = encodeURI(m.url);
+                const tituloMapa = `${m.fa ? m.fa + ' - ' : ''}${m.fazenda}`;
+
+                return `
+                    <div class="glass-panel p-4 bg-white border border-slate-200 hover:border-emerald-300 rounded-2xl shadow-xs hover:shadow-md transition-all flex flex-col justify-between group">
+                        <div>
+                            <!-- Header do Card -->
+                            <div class="flex items-center justify-between gap-1.5 mb-2.5">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold border ${catCfg.badge} inline-flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full ${catCfg.dot}"></span>
+                                    <span>${catCfg.rotulo}</span>
+                                </span>
+                                ${badgeRecenteHtml}
+                            </div>
+
+                            <!-- Código FA e Nome da Fazenda -->
+                            <div class="mb-2">
+                                ${m.fa ? `<span class="text-[11px] font-mono font-black text-slate-400 group-hover:text-emerald-700 transition">FA #${m.fa}</span>` : ''}
+                                <h3 class="text-sm font-black text-slate-900 leading-snug line-clamp-2 mt-0.5" title="${tituloMapa}">
+                                    ${m.fazenda || m.arquivo}
+                                </h3>
+                                ${m.proprietario ? `<p class="text-[11px] text-slate-500 line-clamp-1 mt-0.5 flex items-center gap-1" title="${m.proprietario}"><span class="text-slate-400">👤</span> ${m.proprietario}</p>` : ''}
+                            </div>
+                        </div>
+
+                        <!-- Rodapé com Metadados e Ações -->
+                        <div class="pt-3 border-t border-slate-100 mt-2">
+                            <div class="flex items-center justify-between text-[10px] text-slate-400 mb-2.5 font-medium">
+                                <span>📄 ${m.tamanho_kb} KB</span>
+                                <span title="Data de atualização do arquivo">🕒 ${m.data_modificacao}</span>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2">
+                                <button type="button" onclick="abrirModalViewerPDF('${urlEncoded}', '${tituloMapa.replace(/'/g, "\\'")}', '${m.categoria}', '${m.data_modificacao}', '${(m.proprietario || '').replace(/'/g, "\\'")}')" class="w-full text-xs bg-slate-900 hover:bg-emerald-600 text-white font-bold py-2 px-2.5 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer shadow-xs">
+                                    <span>👁️</span>
+                                    <span>Visualizar</span>
+                                </button>
+                                <a href="${urlEncoded}" download="${m.arquivo}" class="w-full text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-2.5 rounded-xl transition flex items-center justify-center gap-1 cursor-pointer text-center">
+                                    <span>⬇️</span>
+                                    <span>Baixar</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function mudarPaginaMapas(novaPagina) {
+            paginaMapasAtual = novaPagina;
+            aplicarFiltrosMapas();
+            const sec = document.getElementById('aba-mapas_safra');
+            if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // ================= VISUALIZADOR MODAL DE PDF =================
+        function abrirModalViewerPDF(url, titulo, categoria, dataMod, proprietario) {
+            const modal = document.getElementById('modal-viewer-pdf-mapa');
+            const iframe = document.getElementById('iframe-viewer-pdf');
+            const elTitulo = document.getElementById('pdf-viewer-titulo');
+            const elBadgeCat = document.getElementById('pdf-viewer-badge-cat');
+            const elBadgeData = document.getElementById('pdf-viewer-badge-data');
+            const elSubtitulo = document.getElementById('pdf-viewer-subtitulo');
+            const btnNovaAba = document.getElementById('btn-pdf-nova-aba');
+            const btnDownload = document.getElementById('btn-pdf-download');
+            const loading = document.getElementById('pdf-viewer-loading');
+
+            if (!modal || !iframe) return;
+
+            if (elTitulo) elTitulo.innerText = titulo;
+            if (elBadgeCat) elBadgeCat.innerText = categoria;
+            if (elBadgeData) elBadgeData.innerText = `Atualizado: ${dataMod}`;
+            if (elSubtitulo) elSubtitulo.innerText = proprietario ? `Proprietário: ${proprietario}` : '';
+            if (btnNovaAba) btnNovaAba.href = url;
+            if (btnDownload) {
+                btnDownload.href = url;
+                btnDownload.setAttribute('download', titulo + '.pdf');
+            }
+
+            if (loading) loading.classList.remove('opacity-0');
+            iframe.src = url;
+
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharModalViewerPDF() {
+            const modal = document.getElementById('modal-viewer-pdf-mapa');
+            const iframe = document.getElementById('iframe-viewer-pdf');
+            if (modal) modal.classList.add('hidden');
+            if (iframe) iframe.src = '';
+            document.body.style.overflow = '';
+        }
+
+        // Fechar modal ao pressionar ESC
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                fecharModalViewerPDF();
+            }
+        });
 
         // ================= PWA: INSTALAÇÃO & SERVICE WORKER =================
         let eventoInstalacaoPWA = null;

@@ -571,6 +571,7 @@
         <a href="#passo-4-fechamento" class="nav-link">📊 4.4 Fechamento Diário (BD)</a>
         <a href="#passo-5-github" class="nav-link">🌐 4.5 GitHub Pages & Cron 30 min</a>
         <a href="#passo-6-mapa-radar" class="nav-link">🌧️ 4.6 Mapa, Radar IPMet & GPS</a>
+        <a href="#passo-7-mapas-safra" class="nav-link">📑 4.7 Mapas Safra em PDF</a>
 
         <div class="nav-categoria">Regras de Negócio</div>
         <a href="#regras-ouro" class="nav-link">⚖️ 5. Regras Críticas & Blindagem</a>
@@ -1099,6 +1100,60 @@ flowchart LR
                                 <strong>Dica Operacional de Voo:</strong><br>
                                 Antes de decolar os drones nas fazendas de Clementina ou Queiroz, abra a aba Mapa e ative o botão <strong>🌧️ Radar</strong>. Se houver manchas amarelas ou vermelhas se aproximando num raio de 40 km, aguarde a passagem da instabilidade para evitar perda de sinal de rádio ou danos aos equipamentos fotogramétricos.
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 7: BIBLIOTECA DE MAPAS DE SAFRA (PDF) -->
+                <div class="step-card" id="passo-7-mapas-safra">
+                    <div class="step-num-col" style="background: rgba(142, 36, 170, 0.15);">
+                        <div class="step-num" style="color: #ab47bc;">07</div>
+                        <div class="step-num-lbl">Croquis & PDFs</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Biblioteca de Mapas de Safra em PDF & Sincronização Inteligente</span>
+                            <span class="step-tag tag-auto">1.319 Mapas</span>
+                        </div>
+                        <p>
+                            A aba <strong>📑 MAPAS SAFRA (PDF)</strong> centraliza mais de 1.300 croquis operacionais de alta precisão divididos por categorias, com visualizador em tela cheia e controle de mapas recém-atualizados:
+                        </p>
+
+                        <div class="grid-4">
+                            <div class="card card-verde">
+                                <b style="color:var(--verde-claro);">🚜 Clealco (Próprias)</b>
+                                <p style="font-size:0.8rem; margin-top:5px; color:var(--texto-sec);">
+                                    Croquis das fazendas e sítios com gestão direta da Usina Clealco.
+                                </p>
+                            </div>
+                            <div class="card card-destaque">
+                                <b style="color:var(--ouro);">🏛️ Acionistas</b>
+                                <p style="font-size:0.8rem; margin-top:5px; color:var(--texto-sec);">
+                                    Propriedades organizadas por grupos familiares e cooperados acionistas.
+                                </p>
+                            </div>
+                            <div class="card card-plasma">
+                                <b style="color:var(--plasma);">🤝 Terceiros</b>
+                                <p style="font-size:0.8rem; margin-top:5px; color:var(--texto-sec);">
+                                    Parcerias agrícolas e arrendamentos com dados completos de proprietários.
+                                </p>
+                            </div>
+                            <div class="card card-carmesim">
+                                <b style="color:#ff8a80;">🌾 Spot (Fornecedores)</b>
+                                <p style="font-size:0.8rem; margin-top:5px; color:var(--texto-sec);">
+                                    Áreas de fornecedores spot para planejamento de corte e transporte.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-top:15px; border-left:4px solid var(--ouro);">
+                            <b style="color:var(--ouro);">🛡️ Como Funciona a Sincronização Segura & Detecção de Atualizações:</b>
+                            <ul style="font-size:0.85rem; color:var(--texto-sec); margin:10px 0 0 20px; line-height:1.7;">
+                                <li><strong>Blindagem do Disco Original:</strong> O script Python lê a pasta oficial <code>F:\Mapas\01 - Mapas Safra</code> em <strong>MODO 100% LEITURA</strong>. Nenhum arquivo original jamais é modificado ou deletado.</li>
+                                <li><strong>Detecção Automática de Novos/Modificados:</strong> A cada execução do <code>atualizar_dados.bat</code>, o sistema compara as datas de modificação (<code>mtime</code>) e copia para o projeto apenas mapas novos ou que sofreram alterações.</li>
+                                <li><strong>Filtro de Recência (Últimos 7 dias):</strong> Mapas criados ou atualizados recentemente recebem um selo visual <code>[NOVO]</code> ou <code>[NOVO HOJE]</code> e podem ser filtrados instantaneamente com 1 clique no botão <code>🔥 Ver Recentes</code>.</li>
+                                <li><strong>Visualizador Nativo em Tela Cheia:</strong> Permite consultar o mapa, dar zoom e analisar os talhões diretamente dentro do navegador ou no celular, sem necessidade de baixar o arquivo previamente.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
