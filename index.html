@@ -1480,8 +1480,13 @@
                     </div>
                 </div>
 
-                <!-- Badge de Telemetria de Vento no Topo para o Piloto de Drone -->
+                <!-- Badge de Telemetria de Vento e Temperatura no Topo para o Piloto de Drone -->
                 <div id="badge-vento-topbar" class="hidden md:flex items-center gap-3 px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="flex items-center gap-1.5 text-xs">
+                        <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Temp:</span>
+                        <b id="lbl-temp-topbar" class="text-amber-700 font-extrabold text-sm">--°C</b>
+                    </div>
+                    <span class="text-slate-300">|</span>
                     <div class="flex items-center gap-1.5 text-xs">
                         <span class="text-[10px] font-bold uppercase tracking-wider text-slate-500">Vento:</span>
                         <b id="lbl-vento-topbar" class="text-slate-900 font-extrabold text-sm">-- km/h</b>
@@ -4700,7 +4705,7 @@
             if (elSemaforoTxt) elSemaforoTxt.innerText = 'AVALIANDO...';
 
             try {
-                const url = `https://api.open-meteo.com/v1/forecast?latitude=${polo.lat}&longitude=${polo.lng}&current=temperature_2m,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m&hourly=precipitation_probability,precipitation,wind_speed_10m,wind_gusts_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&past_days=14&timezone=America%2FSao_Paulo`;
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${polo.lat}&longitude=${polo.lng}&current=temperature_2m,apparent_temperature,relative_humidity_2m,precipitation,weather_code,wind_speed_10m,wind_gusts_10m,wind_direction_10m&hourly=precipitation_probability,precipitation,wind_speed_10m,wind_gusts_10m,wind_direction_10m&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_speed_10m_max&past_days=14&timezone=America%2FSao_Paulo`;
                 const resp = await fetch(url);
                 if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                 const data = await resp.json();
@@ -4848,6 +4853,16 @@
             const tMaxHoje = Math.round(daily.temperature_2m_max && daily.temperature_2m_max[hojeIdx] !== undefined ? daily.temperature_2m_max[hojeIdx] : 28);
             const tMinHoje = Math.round(daily.temperature_2m_min && daily.temperature_2m_min[hojeIdx] !== undefined ? daily.temperature_2m_min[hojeIdx] : 18);
 
+            // Temperatura Real (Atual) e Sensação Térmica
+            const tempRealVal = (current.temperature_2m !== undefined && current.temperature_2m !== null)
+                ? Number(current.temperature_2m)
+                : null;
+            const tempRealStr = tempRealVal !== null ? `${tempRealVal.toFixed(1)}°C` : `${tMinHoje}°C`;
+            const sensacaoVal = (current.apparent_temperature !== undefined && current.apparent_temperature !== null)
+                ? Number(current.apparent_temperature)
+                : null;
+            const sensacaoBadge = sensacaoVal !== null ? ` <span class="text-slate-400 font-normal text-[11px]">(Sensação ${sensacaoVal.toFixed(1)}°C)</span>` : '';
+
             // Atualiza o Ícone Principal no Cabeçalho
             const elIconePrincipal = document.getElementById('clima-icone-principal');
             const elIconePrincipalBox = document.getElementById('clima-icone-principal-box');
@@ -4856,10 +4871,10 @@
                 elIconePrincipalBox.className = `w-11 h-11 rounded-xl ${weatherHoje.corBg} ${weatherHoje.corTexto} flex items-center justify-center text-2xl shadow-inner border ${weatherHoje.corBorda} flex-shrink-0 transition-all`;
             }
 
-            // Atualiza o subtítulo com a previsão dinâmica de hoje
+            // Atualiza o subtítulo com a Temperatura Real em destaque e a previsão do dia
             const subtitulo = document.getElementById('clima-subtitulo-polo');
             if (subtitulo) {
-                subtitulo.innerText = `${polo.nome} • Hoje: ${weatherHoje.icone} ${weatherHoje.texto} (${tMinHoje}° a ${tMaxHoje}°C)`;
+                subtitulo.innerHTML = `<span class="font-bold text-slate-800">${polo.nome}</span> • <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-900 border border-amber-300 font-black text-xs shadow-xs">🌡️ ${tempRealStr} Real</span>${sensacaoBadge} • Hoje: ${weatherHoje.icone} ${weatherHoje.texto} (${tMinHoje}° a ${tMaxHoje}°C)`;
             }
 
             // 1. Card 1: Tempo & Chuva Hoje
@@ -4881,7 +4896,9 @@
                 elTempoHojeCondicao.innerText = weatherHoje.texto.toUpperCase();
                 elTempoHojeCondicao.className = `text-lg sm:text-xl font-black ${weatherHoje.corTexto} uppercase truncate`;
             }
-            if (elTempoHojeTemp) elTempoHojeTemp.innerText = `${tMinHoje}° / ${tMaxHoje}°C`;
+            if (elTempoHojeTemp) {
+                elTempoHojeTemp.innerHTML = `<span class="text-slate-900 font-black">${tempRealStr} Real</span> <span class="text-slate-400 font-medium text-[10px]">(${tMinHoje}° / ${tMaxHoje}°C)</span>`;
+            }
             if (elChuvaHoje) elChuvaHoje.innerText = chuvaHoje.toFixed(1) + ' mm';
             if (elChuvaHojeProb) elChuvaHojeProb.innerText = probChuvaHoje + '%';
 
@@ -4939,10 +4956,12 @@
             if (elVentoAtual) elVentoAtual.innerText = ventoAtual.toFixed(1) + ' km/h';
             if (elRajadaAtual) elRajadaAtual.innerText = rajadaAtual.toFixed(1) + ' km/h';
 
-            // Topbar de Vento
+            // Topbar de Vento e Temperatura
+            const lblTempTopbar = document.getElementById('lbl-temp-topbar');
             const lblVentoTopbar = document.getElementById('lbl-vento-topbar');
             const lblRajadaTopbar = document.getElementById('lbl-rajada-topbar');
             const badgeStatusVooTopbar = document.getElementById('badge-status-voo-topbar');
+            if (lblTempTopbar) lblTempTopbar.innerText = tempRealStr;
             if (lblVentoTopbar) lblVentoTopbar.innerText = ventoAtual.toFixed(1) + ' km/h';
             if (lblRajadaTopbar) lblRajadaTopbar.innerText = rajadaAtual.toFixed(1) + ' km/h';
 
