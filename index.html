@@ -1996,11 +1996,10 @@
                     <span id="info-contagem-mapas-bottom"></span>
                     <div class="flex items-center gap-1.5" id="paginacao-mapas-bottom"></div>
                 </div>
-            </div>
         </section>
 
         <!-- ================= ABA 8: HISTÓRICO DE FALHAS DE PLANTIO (2024 - 2026) ================= -->
-        <section id="aba-historico-falhas" class="hidden space-y-6">
+        <section id="aba-historico_falhas" class="hidden space-y-6">
             <!-- Cabeçalho Executivo e Seletor de Safra -->
             <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
@@ -2299,7 +2298,6 @@
                 </div>
             </div>
 
-            </div>
         </div>
     </div>
 
@@ -2944,19 +2942,20 @@
                 }
             }
 
-            renderizarDashboard();
-            renderizarBacklog();
-            renderizarAcompanhamento();
-            renderizarFalhas();
+            try { renderizarDashboard(); } catch(e) { console.error("Erro renderizarDashboard:", e); }
+            try { renderizarBacklog(); } catch(e) { console.error("Erro renderizarBacklog:", e); }
+            try { renderizarAcompanhamento(); } catch(e) { console.error("Erro renderizarAcompanhamento:", e); }
+            try { renderizarFalhas(); } catch(e) { console.error("Erro renderizarFalhas:", e); }
+            try { if (typeof renderizarHistoricoFalhas === 'function') renderizarHistoricoFalhas(); } catch(e) { console.error("Erro renderizarHistoricoFalhas:", e); }
 
             // Se o mapa já estiver na aba ativa, atualiza
             if (typeof aplicarFiltrosMapa === 'function' && window.DADOS_MAPA_VOOS) {
-                aplicarFiltrosMapa();
+                try { aplicarFiltrosMapa(); } catch(e) { console.error("Erro aplicarFiltrosMapa:", e); }
             }
 
             // Atualiza indicadores e badge de novidades da Biblioteca de Mapas de Safra
             if (typeof atualizarKpisEBadgesMapas === 'function') {
-                atualizarKpisEBadgesMapas();
+                try { atualizarKpisEBadgesMapas(); } catch(e) { console.error("Erro atualizarKpisEBadgesMapas:", e); }
             }
         }
 
@@ -3790,7 +3789,9 @@
             document.querySelectorAll('section[id^="aba-"]').forEach(s => s.classList.add('hidden'));
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             
-            const targetSection = document.getElementById('aba-' + id);
+            const targetSection = document.getElementById('aba-' + id) ||
+                                  document.getElementById('aba-' + id.replace(/_/g, '-')) ||
+                                  document.getElementById('aba-' + id.replace(/-/g, '_'));
             if (targetSection) targetSection.classList.remove('hidden');
 
             const btnAtivo = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick')?.includes(id));
@@ -6678,6 +6679,7 @@
         }
 
         function renderizarGraficosHistorico() {
+            if (typeof Chart === 'undefined') return;
             const data = window.DADOS_HISTORICO_FALHAS;
             if (!data || !data.resumo_anos) return;
 
@@ -6837,10 +6839,11 @@
                                     boxWidth: 14,
                                     font: { size: 11, weight: 'bold', family: 'Inter' },
                                     generateLabels: function(chart) {
-                                        const orig = Chart.overrides.doughnut.plugins.legend.labels.generateLabels(chart);
+                                        const fn = Chart.defaults?.plugins?.legend?.labels?.generateLabels;
+                                        const orig = typeof fn === 'function' ? fn(chart) : [];
                                         const total = totAceit + totAten + totCrit;
                                         orig.forEach(item => {
-                                            const val = chart.data.datasets[0].data[item.index];
+                                            const val = chart.data?.datasets?.[0]?.data?.[item.index] || 0;
                                             const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
                                             item.text = `${item.text}: ${val} (${pct}%)`;
                                         });
