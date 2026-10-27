@@ -810,10 +810,21 @@ def compilar_historico_falhas():
             if len(rows) < 2:
                 continue
 
+            header = [h.strip() for h in rows[0]]
+            if 'Porc_Falha' not in header:
+                continue
+
+            col_ha = header.index('A_Liq') if 'A_Liq' in header else 4
+            col_pct = header.index('Porc_Falha') if 'Porc_Falha' in header else 5
+            col_nf = header.index('Num_Falhas') if 'Num_Falhas' in header else 6
+            col_cf = header.index('Comp_Falhas') if 'Comp_Falhas' in header else 7
+            col_cl = header.index('Comp_Linhas') if 'Comp_Linhas' in header else 8
+            col_nl = header.index('Num_Linhas') if 'Num_Linhas' in header else 9
+
             summary_row = None
             talhoes_rows = []
             for r in rows[1:]:
-                if not r or len(r) < 10: continue
+                if not r or len(r) <= max(col_ha, col_pct, col_nf, col_cf, col_cl, col_nl): continue
                 prog_id = r[0].strip()
                 if prog_id == '0':
                     summary_row = r
@@ -830,19 +841,12 @@ def compilar_historico_falhas():
             if not summary_row:
                 continue
 
-            # Mapeamento oficial de colunas:
-            # 4: A_Liq (ha)
-            # 5: Porc_Falha (%)
-            # 6: Num_Falhas (qtd)
-            # 7: Comp_Falhas (metros -> km)
-            # 8: Comp_Linhas (metros -> km)
-            # 9: Num_Linhas (qtd)
-            ha = pnum(summary_row[4])
-            pct = pnum(summary_row[5])
-            nf = int(pnum(summary_row[6]))
-            cf = pnum(summary_row[7]) / 1000.0
-            cl = pnum(summary_row[8]) / 1000.0
-            nl = int(pnum(summary_row[9]))
+            ha = pnum(summary_row[col_ha])
+            pct = pnum(summary_row[col_pct])
+            nf = int(pnum(summary_row[col_nf]))
+            cf = pnum(summary_row[col_cf]) / 1000.0
+            cl = pnum(summary_row[col_cl]) / 1000.0
+            nl = int(pnum(summary_row[col_nl]))
 
             st = classificar_status(pct, tipo)
             status_contagem[st] += 1
@@ -856,12 +860,12 @@ def compilar_historico_falhas():
             lista_t = []
             for tr in talhoes_rows:
                 user_id = tr[1].strip() or tr[0].strip()
-                t_ha = pnum(tr[4])
-                t_pct = pnum(tr[5])
-                t_nf = int(pnum(tr[6]))
-                t_cf = pnum(tr[7]) / 1000.0
-                t_cl = pnum(tr[8]) / 1000.0
-                t_nl = int(pnum(tr[9]))
+                t_ha = pnum(tr[col_ha])
+                t_pct = pnum(tr[col_pct])
+                t_nf = int(pnum(tr[col_nf]))
+                t_cf = pnum(tr[col_cf]) / 1000.0
+                t_cl = pnum(tr[col_cl]) / 1000.0
+                t_nl = int(pnum(tr[col_nl]))
                 t_st = classificar_status(t_pct, tipo)
                 lista_t.append({
                     't': user_id,
