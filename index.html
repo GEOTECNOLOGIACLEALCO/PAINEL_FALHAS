@@ -1503,7 +1503,7 @@
 
                 <!-- Seletor de Polos em Pills (Sem Emojis) -->
                 <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
-                    <button type="button" onclick="selecionarPoloClima('geral')" id="btn-polo-geral" class="clima-polo-btn active px-3.5 py-1.5 rounded-xl text-xs font-bold transition border border-red-600 bg-red-600 text-white shadow-sm cursor-pointer">
+                    <button type="button" onclick="selecionarPoloClima('geral')" id="btn-polo-geral" class="clima-polo-btn active px-3.5 py-1.5 rounded-xl text-xs font-black transition border border-red-300 bg-red-50 text-red-700 ring-1 ring-red-400/60 shadow-xs cursor-pointer">
                         Polo Geral Clealco
                     </button>
                     <button type="button" onclick="selecionarPoloClima('clementina')" id="btn-polo-clementina" class="clima-polo-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">
@@ -1515,7 +1515,7 @@
                     <button type="button" onclick="selecionarPoloClima('penapolis')" id="btn-polo-penapolis" class="clima-polo-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">
                         Penápolis
                     </button>
-                    <button type="button" onclick="selecionarPoloClima('gps')" id="btn-polo-gps" class="clima-polo-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition border border-blue-200 bg-blue-50 hover:bg-blue-100 text-blue-700 cursor-pointer">
+                    <button type="button" onclick="selecionarPoloClima('gps')" id="btn-polo-gps" class="clima-polo-btn px-3.5 py-1.5 rounded-xl text-xs font-bold transition border border-slate-200 bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer">
                         Meu GPS
                     </button>
                     <button type="button" onclick="recarregarDadosClimaAtual()" title="Atualizar dados meteorológicos agora" class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition border border-slate-200 cursor-pointer ml-1">
@@ -1742,7 +1742,7 @@
                             <button type="button" onclick="alternarCamadaRadar()" id="btn-toggle-radar-nuvens" title="Ligar ou desligar sobreposição de chuva no radar" class="text-xs bg-blue-50 text-blue-700 hover:bg-blue-100 font-bold px-3 py-1.5 rounded-lg border border-blue-200 transition cursor-pointer">
                                 <span id="lbl-status-radar">Chuva: ON</span>
                             </button>
-                            <button type="button" onclick="alternarAnimacaoVentoRadar()" id="btn-toggle-vento-animado" title="Ligar ou desligar animação de rajadas de vento no mapa" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                            <button type="button" onclick="alternarAnimacaoVentoRadar()" id="btn-toggle-vento-animado" title="Ligar ou desligar animação de rajadas de vento no mapa" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold px-3 py-1.5 rounded-lg border border-amber-300 transition shadow-xs flex items-center gap-1.5 cursor-pointer">
                                 <span id="icone-vento-animado">💨</span>
                                 <span id="lbl-status-vento-animado">Vento: ON</span>
                             </button>
@@ -4634,15 +4634,15 @@
         function selecionarPoloClima(poloId) {
             poloClimaAtual = poloId;
 
-            // Atualiza botões
+            // Atualiza botões com cor suave/leve quando selecionado
             document.querySelectorAll('.clima-polo-btn').forEach(btn => {
-                btn.classList.remove('active', 'bg-red-600', 'text-white', 'border-red-600');
-                btn.classList.add('bg-slate-100', 'text-slate-700', 'border-slate-200');
+                btn.classList.remove('active', 'bg-red-50', 'text-red-700', 'border-red-300', 'ring-1', 'ring-red-400/60', 'font-black', 'bg-red-600', 'text-white', 'border-red-600');
+                btn.classList.add('bg-slate-100', 'text-slate-700', 'border-slate-200', 'font-bold');
             });
             const btnAtivo = document.getElementById('btn-polo-' + poloId);
             if (btnAtivo) {
-                btnAtivo.classList.add('active', 'bg-red-600', 'text-white', 'border-red-600');
-                btnAtivo.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200', 'bg-blue-50', 'text-blue-700');
+                btnAtivo.classList.add('active', 'bg-red-50', 'text-red-700', 'border-red-300', 'ring-1', 'ring-red-400/60', 'font-black');
+                btnAtivo.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-200', 'font-bold', 'bg-blue-50', 'text-blue-700');
             }
 
             if (poloId === 'gps') {
@@ -5943,12 +5943,12 @@
             const lbl = document.getElementById('lbl-status-vento-animado');
 
             if (animacaoVentoAtiva) {
-                if (btn) btn.className = 'text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer';
+                if (btn) btn.className = 'text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold px-3 py-1.5 rounded-lg border border-amber-300 transition shadow-xs flex items-center gap-1.5 cursor-pointer';
                 if (lbl) lbl.innerText = 'Vento: ON';
                 iniciarLoopAnimacaoVento();
             } else {
                 if (btn) btn.className = 'text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer shadow-xs flex items-center gap-1.5';
-                if (lbl) lbl.innerText = 'Rajadas: OFF';
+                if (lbl) lbl.innerText = 'Vento: OFF';
                 const canvas = document.getElementById('canvas-animacao-vento');
                 if (canvas) {
                     const ctx = canvas.getContext('2d');
