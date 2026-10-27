@@ -2061,39 +2061,46 @@
         <!-- ================= ABA 8: HISTÓRICO DE FALHAS DE PLANTIO (2021 - 2026) ================= -->
         <section id="aba-historico_falhas" class="hidden space-y-6">
             <!-- Cabeçalho Executivo e Seletor de Safra -->
-            <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div>
-                    <div class="flex items-center gap-2">
+            <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-3.5">
+                <!-- Linha 1: Título e Descrição -->
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <span class="text-2xl">📊</span>
                         <h2 class="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-tight">Histórico de Falhas de Plantio (2021 - 2026)</h2>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">6 SAFRAS</span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono">6 SAFRAS CONSECUTIVAS</span>
                     </div>
-                    <p class="text-xs text-slate-500 mt-1">Evolução multi-safra, auditoria métrica de linhas vs falhas, semáforo corporativo e raio-x detalhado por talhão.</p>
+                    <p class="text-xs text-slate-500">Auditoria métrica de linhas vs falhas, semáforo corporativo e raio-x detalhado por talhão.</p>
                 </div>
 
-                <!-- Seletor de Safra (Pills com estilo sutil e suave) -->
-                <div class="flex items-center gap-1.5 flex-wrap bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner" id="pills-safra-historico">
-                    <button type="button" onclick="selecionarSafraHistorico('todas')" data-safra="todas" class="pill-safra-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-red-50 text-red-700 border border-red-300 ring-1 ring-red-400/60 shadow-xs">
-                        Todas as Safras
-                    </button>
-                    <button type="button" onclick="selecionarSafraHistorico('2026')" data-safra="2026" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
-                        🌱 Safra 2026
-                    </button>
-                    <button type="button" onclick="selecionarSafraHistorico('2025')" data-safra="2025" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
-                        🌾 Safra 2025
-                    </button>
-                    <button type="button" onclick="selecionarSafraHistorico('2024')" data-safra="2024" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
-                        🚜 Safra 2024
-                    </button>
-                    <button type="button" onclick="selecionarSafraHistorico('2023')" data-safra="2023" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
-                        🛰️ Safra 2023
-                    </button>
-                    <button type="button" onclick="selecionarSafraHistorico('2022')" data-safra="2022" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
-                        📈 Safra 2022
-                    </button>
-                    <button type="button" onclick="selecionarSafraHistorico('2021')" data-safra="2021" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
-                        📁 Safra 2021
-                    </button>
+                <!-- Linha 2: Seletor de Safras em Barra Única e Perfeitamente Organizada -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-0.5">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Filtrar por Safra:</span>
+                    </div>
+                    <div class="inline-flex items-center gap-1.5 overflow-x-auto p-1 bg-slate-100/90 rounded-xl border border-slate-200 shadow-inner max-w-full" id="pills-safra-historico">
+                        <button type="button" onclick="selecionarSafraHistorico('todas')" data-safra="todas" class="pill-safra-btn active px-3.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-red-50 text-red-700 border border-red-300 ring-1 ring-red-400/60 shadow-xs whitespace-nowrap">
+                            Todas as Safras
+                        </button>
+                        <div class="h-4 w-px bg-slate-300 mx-0.5 shrink-0 hidden sm:block"></div>
+                        <button type="button" onclick="selecionarSafraHistorico('2026')" data-safra="2026" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 whitespace-nowrap">
+                            🌱 Safra 2026
+                        </button>
+                        <button type="button" onclick="selecionarSafraHistorico('2025')" data-safra="2025" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 whitespace-nowrap">
+                            🌾 Safra 2025
+                        </button>
+                        <button type="button" onclick="selecionarSafraHistorico('2024')" data-safra="2024" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 whitespace-nowrap">
+                            🚜 Safra 2024
+                        </button>
+                        <button type="button" onclick="selecionarSafraHistorico('2023')" data-safra="2023" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 whitespace-nowrap">
+                            🛰️ Safra 2023
+                        </button>
+                        <button type="button" onclick="selecionarSafraHistorico('2022')" data-safra="2022" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 whitespace-nowrap">
+                            📈 Safra 2022
+                        </button>
+                        <button type="button" onclick="selecionarSafraHistorico('2021')" data-safra="2021" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 whitespace-nowrap">
+                            📁 Safra 2021
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -6673,10 +6680,12 @@
 
             // Atualiza visual dos botões (Pills sutis)
             document.querySelectorAll('#pills-safra-historico .pill-safra-btn').forEach(btn => {
+                const isTodas = btn.getAttribute('data-safra') === 'todas';
+                const px = isTodas ? 'px-3.5' : 'px-3';
                 if (btn.getAttribute('data-safra') === safra) {
-                    btn.className = "pill-safra-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-red-50 text-red-700 border border-red-300 ring-1 ring-red-400/60 shadow-xs";
+                    btn.className = `pill-safra-btn active ${px} py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-red-50 text-red-700 border border-red-300 ring-1 ring-red-400/60 shadow-xs whitespace-nowrap`;
                 } else {
-                    btn.className = "pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200";
+                    btn.className = `pill-safra-btn ${px} py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-slate-200 whitespace-nowrap`;
                 }
             });
 
