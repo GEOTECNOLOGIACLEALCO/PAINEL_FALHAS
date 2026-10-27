@@ -702,3 +702,246 @@ def sincronizar_e_catalogar_mapas():
 
 sincronizar_e_catalogar_mapas()
 
+def compilar_historico_falhas():
+    print("[HISTORICO FALHAS] Iniciando compilação 2024, 2025, 2026...")
+    import csv, glob
+    from osgeo import ogr
+    
+    # 1. Mapeamento de nomes e zonas de fazendas do SHP e Excel
+    info_por_fa = {}
+    shp_path = r"W:\11-SHAPES TEMATICOS\09-SHP ATUALIZADO\SHP_CLEALCO.shp"
+    if os.path.exists(shp_path):
+        try:
+            ds = ogr.Open(shp_path)
+            if ds:
+                layer = ds.GetLayer()
+                for feat in layer:
+                    faz = str(feat.GetField('FAZENDA') or '').strip().lstrip('0')
+                    nome = str(feat.GetField('NOME_FAZ') or '').strip().upper()
+                    zona = str(feat.GetField('ZONA') or '').strip()
+                    if faz and faz not in info_por_fa:
+                        info_por_fa[faz] = {'nome': nome, 'zona': zona}
+        except Exception as e:
+            print(f"[HISTORICO FALHAS] Aviso ao ler SHP: {e}")
+
+    # Complementar com dados.xlsx
+    excel_path = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados.xlsx"
+    if os.path.exists(excel_path):
+        try:
+            wb_temp = openpyxl.load_workbook(excel_path, data_only=True)
+            for sname in ['BASE_PROCESSAMENTOS', 'FALHAS_PLANTIO']:
+                if sname in wb_temp.sheetnames:
+                    s = wb_temp[sname]
+                    for row in s.iter_rows(values_only=True):
+                        fa = str(row[0] or '').strip().lstrip('0')
+                        nome = str(row[1] or '').strip()
+                        if fa and nome and nome != 'NÃO INFORMADO':
+                            if fa not in info_por_fa:
+                                info_por_fa[fa] = {'nome': nome, 'zona': ''}
+                            elif not info_por_fa[fa]['nome']:
+                                info_por_fa[fa]['nome'] = nome
+        except Exception as e:
+            print(f"[HISTORICO FALHAS] Aviso ao ler dados.xlsx: {e}")
+
+    base_dirs = {
+        '2024': r"W:\01-DRONE\08-BANCO DE DADOS\2024\Falhas",
+        '2025': r"W:\01-DRONE\08-BANCO DE DADOS\2025\Falhas",
+        '2026': r"W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas"
+    }
+
+    def classificar_status(pct, tipo):
+        if tipo == 'Própria':
+            if pct <= 8.0: return 'Aceitável'
+            elif pct <= 10.0: return 'Atenção'
+            else: return 'Crítico'
+        else:
+            if pct <= 5.0: return 'Aceitável'
+            elif pct <= 10.0: return 'Atenção'
+            else: return 'Crítico'
+
+    def pnum(s):
+        try: return float(str(s).strip().replace(',', '.'))
+        except: return 0.0
+
+    fazendas_todas = []
+    resumo_anos = {}
+
+    for ano, pasta in base_dirs.items():
+        if not os.path.exists(pasta):
+            print(f"[HISTORICO FALHAS] Pasta não encontrada: {pasta}")
+            continue
+        
+        csvs = glob.glob(os.path.join(pasta, "*.csv"))
+        ha_ano = 0.0
+        km_l_ano = 0.0
+        km_f_ano = 0.0
+        num_f_ano = 0
+        status_contagem = {'Aceitável': 0, 'Atenção': 0, 'Crítico': 0}
+
+        for c in csvs:
+            basename = os.path.splitext(os.path.basename(c))[0]
+            fa = basename.split()[0].strip()
+            fa_clean = fa.lstrip('0')
+            
+            # Tipo de parceria
+            is_propria = fa.startswith('20') and len(fa) == 6
+            tipo = 'Própria' if is_propria else 'Terceiro'
+
+            info = info_por_fa.get(fa, info_por_fa.get(fa_clean, {}))
+            nome_faz = info.get('nome', '')
+            zona = info.get('zona', '')
+            if not nome_faz:
+                partes = basename.split(maxsplit=1)
+                nome_faz = partes[1].strip() if len(partes) > 1 else f"FAZENDA FA {fa}"
+
+            # Ler CSV com delimitador vírgula
+            rows = []
+            try:
+                with open(c, 'r', encoding='latin1') as f:
+                    rows = list(csv.reader(f, delimiter=','))
+            except Exception:
+                try:
+                    with open(c, 'r', encoding='utf-8') as f:
+                        rows = list(csv.reader(f, delimiter=','))
+                except Exception as e:
+                    print(f"Erro lendo {c}: {e}")
+                    continue
+
+            if len(rows) < 2:
+                continue
+
+            summary_row = None
+            talhoes_rows = []
+            for r in rows[1:]:
+                if not r or len(r) < 10: continue
+                prog_id = r[0].strip()
+                if prog_id == '0':
+                    summary_row = r
+                else:
+                    try:
+                        if float(prog_id) > 0:
+                            talhoes_rows.append(r)
+                    except:
+                        pass
+
+            if not summary_row and talhoes_rows:
+                summary_row = talhoes_rows[0]
+
+            if not summary_row:
+                continue
+
+            # Mapeamento oficial de colunas:
+            # 4: A_Liq (ha)
+            # 5: Porc_Falha (%)
+            # 6: Num_Falhas (qtd)
+            # 7: Comp_Falhas (metros -> km)
+            # 8: Comp_Linhas (metros -> km)
+            # 9: Num_Linhas (qtd)
+            ha = pnum(summary_row[4])
+            pct = pnum(summary_row[5])
+            nf = int(pnum(summary_row[6]))
+            cf = pnum(summary_row[7]) / 1000.0
+            cl = pnum(summary_row[8]) / 1000.0
+            nl = int(pnum(summary_row[9]))
+
+            st = classificar_status(pct, tipo)
+            status_contagem[st] += 1
+
+            ha_ano += ha
+            km_l_ano += cl
+            km_f_ano += cf
+            num_f_ano += nf
+
+            # Talhões detalhados
+            lista_t = []
+            for tr in talhoes_rows:
+                user_id = tr[1].strip() or tr[0].strip()
+                t_ha = pnum(tr[4])
+                t_pct = pnum(tr[5])
+                t_nf = int(pnum(tr[6]))
+                t_cf = pnum(tr[7]) / 1000.0
+                t_cl = pnum(tr[8]) / 1000.0
+                t_nl = int(pnum(tr[9]))
+                t_st = classificar_status(t_pct, tipo)
+                lista_t.append({
+                    't': user_id,
+                    'ha': round(t_ha, 2),
+                    'cl': round(t_cl, 2),
+                    'cf': round(t_cf, 2),
+                    'pct': round(t_pct, 2),
+                    'nf': t_nf,
+                    'nl': t_nl,
+                    'st': t_st
+                })
+
+            fazendas_todas.append({
+                'ano': ano,
+                'fa': fa,
+                'faz': nome_faz,
+                'tipo': tipo,
+                'zona': zona,
+                'ha': round(ha, 2),
+                'pct': round(pct, 2),
+                'cf': round(cf, 2),
+                'cl': round(cl, 2),
+                'nf': nf,
+                'nl': nl,
+                'st': st,
+                'qtd_t': len(lista_t),
+                'talhoes': lista_t
+            })
+
+        media_pond = round((km_f_ano / km_l_ano * 100), 2) if km_l_ano > 0 else 0.0
+        resumo_anos[ano] = {
+            'ha_total': round(ha_ano, 2),
+            'km_linhas': round(km_l_ano, 2),
+            'km_falhas': round(km_f_ano, 2),
+            'num_falhas': num_f_ano,
+            'media_ponderada_pct': media_pond,
+            'qtd_fazendas': len([f for f in fazendas_todas if f['ano'] == ano]),
+            'status_contagem': status_contagem
+        }
+        print(f"[HISTORICO FALHAS] Safra {ano}: {resumo_anos[ano]['qtd_fazendas']} fazendas, {ha_ano:.1f} ha, Média Ponderada: {media_pond}%")
+
+    # Mapear histórico multi-safra para fazendas repetidas
+    fa_map = {}
+    for item in fazendas_todas:
+        fa = item['fa']
+        if fa not in fa_map:
+            fa_map[fa] = []
+        fa_map[fa].append({
+            'ano': item['ano'],
+            'pct': item['pct'],
+            'ha': item['ha'],
+            'st': item['st']
+        })
+
+    for item in fazendas_todas:
+        item['hist_anos'] = sorted(fa_map.get(item['fa'], []), key=lambda x: x['ano'])
+
+    # Ordenar por ano desc, depois por pct desc
+    fazendas_todas.sort(key=lambda x: (x['ano'], x['pct']), reverse=True)
+
+    payload = {
+        'resumo_anos': resumo_anos,
+        'fazendas': fazendas_todas,
+        'data_atualizacao': datetime.now().strftime('%d/%m/%Y %H:%M')
+    }
+
+    payload_str = json.dumps(payload, ensure_ascii=False)
+    encrypted = criptografar_payload(payload_str)
+
+    output_path = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_historico_falhas.js"
+    with open(output_path, "w", encoding="utf-8") as f_out:
+        f_out.write("// Histórico Consolidado de Falhas de Plantio (2024 - 2026)\n")
+        f_out.write(f"// Gerado em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
+        f_out.write("// Payload criptografado AES-GCM (Clealco)\n")
+        f_out.write("window.DADOS_HISTORICO_FALHAS = ")
+        json.dump(encrypted, f_out, ensure_ascii=False)
+        f_out.write(";\n")
+
+    print(f"[HISTORICO FALHAS] Arquivo gravado com sucesso: {output_path} ({len(fazendas_todas)} registros compilados).")
+
+compilar_historico_falhas()
+
+

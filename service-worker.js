@@ -1,4 +1,4 @@
-const CACHE_NAME = 'clealco-voos-v57';
+const CACHE_NAME = 'clealco-voos-v58';
 const ASSETS_ESTATICOS = [
     './',
     './index.html',
@@ -6,6 +6,7 @@ const ASSETS_ESTATICOS = [
     './dados_injetados.js',
     './dados_mapa_voos.js',
     './dados_mapas_safra.js',
+    './dados_historico_falhas.js',
     './leaflet.css',
     './leaflet.js',
     './logo_clealco.png',
@@ -47,6 +48,8 @@ self.addEventListener('fetch', (event) => {
     const isDynamicData = url.includes('dados.xlsx') ||
                           url.includes('dados_injetados.js') ||
                           url.includes('dados_mapa_voos.js') ||
+                          url.includes('dados_historico_falhas.js') ||
+                          url.includes('dados_mapas_safra.js') ||
                           url.includes('index.html') ||
                           event.request.mode === 'navigate';
 

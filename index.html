@@ -41,6 +41,7 @@
     <script src="dados_injetados.js"></script>
     <script src="dados_mapa_voos.js"></script>
     <script src="dados_mapas_safra.js"></script>
+    <script src="dados_historico_falhas.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -556,6 +557,10 @@
                 <button class="sidebar-btn tab-btn" onclick="trocarAba('falhas')" title="Falhas de Plantio">
                     <span class="sidebar-icon">📉</span>
                     <span class="sidebar-text truncate">Falhas de Plantio</span>
+                </button>
+                <button class="sidebar-btn tab-btn" onclick="trocarAba('historico_falhas')" title="Histórico de Falhas (2024 - 2026)">
+                    <span class="sidebar-icon">📊</span>
+                    <span class="sidebar-text truncate">Histórico Falhas</span>
                 </button>
                 <button class="sidebar-btn tab-btn" onclick="trocarAba('backlog')" title="Backlog (Faltam Voar)">
                     <span class="sidebar-icon">✈️</span>
@@ -1986,10 +1991,231 @@
                 <!-- Preenchido via JavaScript -->
             </div>
 
-            <!-- Paginação Inferior -->
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-xs text-slate-600 border-t border-slate-200">
-                <span id="info-contagem-mapas-bottom"></span>
-                <div class="flex items-center gap-1.5" id="paginacao-mapas-bottom"></div>
+                <!-- Paginação Inferior -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2 text-xs text-slate-600 border-t border-slate-200">
+                    <span id="info-contagem-mapas-bottom"></span>
+                    <div class="flex items-center gap-1.5" id="paginacao-mapas-bottom"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= ABA 8: HISTÓRICO DE FALHAS DE PLANTIO (2024 - 2026) ================= -->
+        <section id="aba-historico-falhas" class="hidden space-y-6">
+            <!-- Cabeçalho Executivo e Seletor de Safra -->
+            <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-2xl">📊</span>
+                        <h2 class="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-tight">Histórico de Falhas de Plantio (2024 - 2026)</h2>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">3 SAFRAS</span>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-1">Evolução multi-safra, auditoria métrica de linhas vs falhas, semáforo corporativo e raio-x detalhado por talhão.</p>
+                </div>
+
+                <!-- Seletor de Safra (Pills com estilo sutil e suave) -->
+                <div class="flex items-center gap-1.5 flex-wrap bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-inner" id="pills-safra-historico">
+                    <button type="button" onclick="selecionarSafraHistorico('todas')" data-safra="todas" class="pill-safra-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-red-50 text-red-700 border border-red-300 ring-1 ring-red-400/60 shadow-xs">
+                        Todas as Safras
+                    </button>
+                    <button type="button" onclick="selecionarSafraHistorico('2026')" data-safra="2026" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
+                        🌱 Safra 2026
+                    </button>
+                    <button type="button" onclick="selecionarSafraHistorico('2025')" data-safra="2025" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
+                        🌾 Safra 2025
+                    </button>
+                    <button type="button" onclick="selecionarSafraHistorico('2024')" data-safra="2024" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
+                        🚜 Safra 2024
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid de KPIs Executivos (4 Cards) -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+                <!-- KPI 1: Área Monitorada -->
+                <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase mb-1.5">
+                        <span>Área Monitorada</span>
+                        <span id="hist-kpi-badge-fazendas" class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">366 FAZENDAS</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span id="hist-kpi-area" class="text-2xl sm:text-3xl font-black text-slate-900">--</span>
+                        <span class="text-xs font-bold text-slate-500">ha</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-slate-500 font-semibold" id="hist-kpi-talhoes-total">
+                        Total de talhões auditados
+                    </div>
+                </div>
+
+                <!-- KPI 2: Linhas vs Falhas -->
+                <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase mb-1.5">
+                        <span>Extensão de Linhas</span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">AUDITORIA</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span id="hist-kpi-linhas" class="text-2xl sm:text-3xl font-black text-slate-900">--</span>
+                        <span class="text-xs font-bold text-slate-500">km</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-slate-500 font-semibold flex items-center justify-between">
+                        <span>Falhas (km): <b id="hist-kpi-km-falhas" class="text-amber-600">-- km</b></span>
+                    </div>
+                </div>
+
+                <!-- KPI 3: Média Ponderada (%) -->
+                <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase mb-1.5">
+                        <span>Média Ponderada</span>
+                        <span id="hist-kpi-trend-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">EVOLUÇÃO</span>
+                    </div>
+                    <div class="flex items-baseline gap-1">
+                        <span id="hist-kpi-media-pct" class="text-2xl sm:text-3xl font-black text-emerald-600">--</span>
+                        <span class="text-xs font-bold text-slate-500">%</span>
+                    </div>
+                    <div class="mt-2 text-[11px] text-slate-500 font-semibold" id="hist-kpi-meta-comparativo">
+                        Qtd total de vazios: <b id="hist-kpi-qtd-falhas" class="text-slate-800">--</b>
+                    </div>
+                </div>
+
+                <!-- KPI 4: Semáforo Executivo -->
+                <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition">
+                    <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase mb-1.5">
+                        <span>Semáforo de Risco</span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">FAIXAS</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-1 text-center mt-1">
+                        <div class="bg-emerald-50/70 border border-emerald-200/80 rounded-lg p-1.5">
+                            <span class="text-[9px] font-bold uppercase text-emerald-700 block">Aceitável</span>
+                            <b id="hist-kpi-qtd-aceitavel" class="text-sm font-black text-emerald-800">0</b>
+                        </div>
+                        <div class="bg-amber-50/70 border border-amber-200/80 rounded-lg p-1.5">
+                            <span class="text-[9px] font-bold uppercase text-amber-700 block">Atenção</span>
+                            <b id="hist-kpi-qtd-atencao" class="text-sm font-black text-amber-800">0</b>
+                        </div>
+                        <div class="bg-red-50/70 border border-red-200/80 rounded-lg p-1.5">
+                            <span class="text-[9px] font-bold uppercase text-red-700 block">Crítico</span>
+                            <b id="hist-kpi-qtd-critico" class="text-sm font-black text-red-800">0</b>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-[10px] text-slate-400 font-medium text-center">
+                        Própria: ≤8% | Terceiro: ≤5%
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos Interativos (2 Colunas) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <!-- Gráfico 1: Evolução Histórica das Médias por Safra -->
+                <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <div>
+                            <h3 class="text-sm font-black text-slate-900 uppercase flex items-center gap-1.5">
+                                <span>📈</span> Evolução Multi-Safra (2024 vs 2025 vs 2026)
+                            </h3>
+                            <p class="text-[11px] text-slate-500">Média ponderada de falha (%) por safra agrícola</p>
+                        </div>
+                        <span class="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">REDUÇÃO DE FALHAS</span>
+                    </div>
+                    <div class="relative h-64 sm:h-72 w-full">
+                        <canvas id="chart-historico-evolucao"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico 2: Distribuição por Nível de Risco (Semáforo) -->
+                <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                        <div>
+                            <h3 class="text-sm font-black text-slate-900 uppercase flex items-center gap-1.5">
+                                <span>🎯</span> Classificação por Faixa de Risco (Semáforo)
+                            </h3>
+                            <p class="text-[11px] text-slate-500">Distribuição percentual das fazendas auditadas</p>
+                        </div>
+                        <span class="text-[10px] font-black px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">DISTRIBUIÇÃO</span>
+                    </div>
+                    <div class="relative h-64 sm:h-72 w-full">
+                        <canvas id="chart-historico-semaforo"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Barra de Filtros, Ordenação e Pesquisa -->
+            <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-3">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-3">
+                    <!-- Filtros Rápidos -->
+                    <div class="flex items-center gap-2 flex-wrap w-full md:w-auto">
+                        <select id="select-hist-tipo" onchange="aplicarFiltrosHistorico()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-400 cursor-pointer">
+                            <option value="todos">Todas as Parcerias</option>
+                            <option value="Própria">🚜 Somente Própria (Clealco)</option>
+                            <option value="Terceiro">🤝 Somente Terceiro / Outros</option>
+                        </select>
+
+                        <select id="select-hist-status" onchange="aplicarFiltrosHistorico()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-400 cursor-pointer">
+                            <option value="todos">Todos os Status</option>
+                            <option value="Aceitável">🟢 Aceitável (Dentro do Padrão)</option>
+                            <option value="Atenção">🟡 Atenção (Alerta Moderado)</option>
+                            <option value="Crítico">🔴 Crítico (Requer Replantio / Intervenção)</option>
+                        </select>
+
+                        <select id="select-hist-ordem" onchange="aplicarFiltrosHistorico()" class="text-xs bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-red-400 cursor-pointer">
+                            <option value="pct_desc">Maior Falha % (Críticas Primeiro)</option>
+                            <option value="pct_asc">Menor Falha % (Melhores Primeiro)</option>
+                            <option value="ha_desc">Maior Área (ha)</option>
+                            <option value="fa_asc">Código FA (Crescente)</option>
+                            <option value="ano_desc">Safra Mais Recente</option>
+                        </select>
+                    </div>
+
+                    <!-- Botão Exportar Excel -->
+                    <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                        <button type="button" onclick="exportarHistoricoExcel()" class="px-3.5 py-2 rounded-xl text-xs font-bold transition cursor-pointer bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center gap-1.5" title="Exportar tabela completa com talhões para o Excel">
+                            <span>📥</span>
+                            <span>Exportar Excel (XLSX)</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Campo de Pesquisa em Tempo Real -->
+                <div class="relative w-full">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 text-sm">🔍</span>
+                    <input type="text" id="input-busca-historico" oninput="aplicarFiltrosHistorico()" placeholder="Pesquise por Código FA (ex: 100397), Nome da Fazenda ou Zona..." class="w-full pl-10 pr-10 py-2.5 text-xs sm:text-sm bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:bg-white focus:ring-2 focus:ring-red-400 text-slate-800 placeholder-slate-400 transition">
+                    <button type="button" onclick="limparBuscaHistorico()" id="btn-limpar-busca-hist" class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 text-sm cursor-pointer" title="Limpar pesquisa">✕</button>
+                </div>
+            </div>
+
+            <!-- Tabela com Detalhamento por Fazenda e Talhões -->
+            <div class="glass-panel bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                <div class="p-3.5 border-b border-slate-100 flex items-center justify-between text-xs text-slate-600 bg-slate-50/50">
+                    <span id="info-contagem-historico" class="font-bold text-slate-800">Carregando dados...</span>
+                    <div class="flex items-center gap-1.5" id="paginacao-historico-top"></div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse text-xs">
+                        <thead class="bg-slate-100/80 text-slate-600 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+                            <tr>
+                                <th class="py-3 px-3 w-10 text-center">Talhões</th>
+                                <th class="py-3 px-2 text-center">Safra</th>
+                                <th class="py-3 px-3">FA / Fazenda</th>
+                                <th class="py-3 px-2">Tipo / Zona</th>
+                                <th class="py-3 px-2 text-right">Área (ha)</th>
+                                <th class="py-3 px-2 text-right">Linhas (km)</th>
+                                <th class="py-3 px-2 text-right">Falhas (km)</th>
+                                <th class="py-3 px-2 text-right">Qtd Falhas</th>
+                                <th class="py-3 px-3 text-right">Falha (%)</th>
+                                <th class="py-3 px-3 text-center">Status</th>
+                                <th class="py-3 px-3 text-center">Multi-Safra</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-historico-falhas" class="divide-y divide-slate-100 font-medium">
+                            <!-- Preenchido via JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginação Inferior -->
+                <div class="p-3.5 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-600 bg-slate-50/50">
+                    <span id="info-contagem-historico-bottom"></span>
+                    <div class="flex items-center gap-1.5" id="paginacao-historico-bottom"></div>
+                </div>
             </div>
         </section>
 
@@ -2672,9 +2898,15 @@
                     mapaDecifrado = await descriptografarPayload(window.DADOS_MAPA_VOOS, senha);
                 }
 
+                let histDecifrado = window.DADOS_HISTORICO_FALHAS;
+                if (window.DADOS_HISTORICO_FALHAS && window.DADOS_HISTORICO_FALHAS.c) {
+                    histDecifrado = await descriptografarPayload(window.DADOS_HISTORICO_FALHAS, senha);
+                }
+
                 // Se chegou aqui, a senha está correta!
                 window.DADOS_CLEALCO_EMBARCADOS = dadosDecifrados;
                 window.DADOS_MAPA_VOOS = mapaDecifrado;
+                window.DADOS_HISTORICO_FALHAS = histDecifrado;
 
                 if (lembrar) {
                     try {
@@ -2735,7 +2967,8 @@
 
             // Verifica se os dados estão criptografados
             const dadosCriptografados = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.c) ||
-                                       (window.DADOS_MAPA_VOOS && window.DADOS_MAPA_VOOS.c);
+                                       (window.DADOS_MAPA_VOOS && window.DADOS_MAPA_VOOS.c) ||
+                                       (window.DADOS_HISTORICO_FALHAS && window.DADOS_HISTORICO_FALHAS.c);
 
             if (!dadosCriptografados) {
                 // Modo aberto legado (sem criptografia)
@@ -2765,8 +2998,13 @@
 
                     let dadosDecifrados = await descriptografarPayload(window.DADOS_CLEALCO_EMBARCADOS, senhaSalva);
                     let mapaDecifrado = await descriptografarPayload(window.DADOS_MAPA_VOOS, senhaSalva);
+                    let histDecifrado = window.DADOS_HISTORICO_FALHAS;
+                    if (window.DADOS_HISTORICO_FALHAS && window.DADOS_HISTORICO_FALHAS.c) {
+                        histDecifrado = await descriptografarPayload(window.DADOS_HISTORICO_FALHAS, senhaSalva);
+                    }
                     window.DADOS_CLEALCO_EMBARCADOS = dadosDecifrados;
                     window.DADOS_MAPA_VOOS = mapaDecifrado;
+                    window.DADOS_HISTORICO_FALHAS = histDecifrado;
 
                     animarSplashEExibirPainel(() => {
                         carregarDadosEmbarcadosERenderizar();
@@ -3563,6 +3801,7 @@
                 'dashboard': '<span>🛸</span> VISÃO GERAL',
                 'acompanhamento': '<span>📊</span> ACOMPANHAMENTO DE VOOS',
                 'falhas': '<span>📉</span> FALHAS DE PLANTIO',
+                'historico_falhas': '<span>📊</span> HISTÓRICO DE FALHAS (2024 - 2026)',
                 'backlog': '<span>✈️</span> BACKLOG (FALTAM VOAR)',
                 'mapa': '<span>🗺️</span> MAPA OPERACIONAL DE VOOS & BACKLOG',
                 'clima': '<span>🌧️</span> MONITORAMENTO DE CLIMA & CHUVAS',
@@ -3590,6 +3829,7 @@
 
             if (id === 'acompanhamento') renderizarAcompanhamento();
             if (id === 'falhas') renderizarFalhas();
+            if (id === 'historico_falhas') renderizarHistoricoFalhas();
             if (id === 'backlog') renderizarBacklog();
             if (id === 'clima') renderizarAbaClima();
             if (id === 'mapas_safra') renderizarAbaMapasSafra();
@@ -6302,6 +6542,688 @@
                 fecharModalViewerPDF();
             }
         });
+
+        // ================= HISTÓRICO DE FALHAS DE PLANTIO (2024 - 2026) =================
+        let safraHistoricoAtiva = 'todas';
+        let paginaAtualHistorico = 1;
+        const itensPorPaginaHistorico = 25;
+        let drawerTalhoesAbertos = new Set();
+        let graficoHistoricoEvolucao = null;
+        let graficoHistoricoSemaforo = null;
+
+        function renderizarHistoricoFalhas() {
+            if (!window.DADOS_HISTORICO_FALHAS || window.DADOS_HISTORICO_FALHAS.c) {
+                console.warn("[HISTÓRICO FALHAS] Dados ainda não carregados ou não decifrados.");
+                return;
+            }
+
+            atualizarKpisHistorico();
+            renderizarGraficosHistorico();
+            aplicarFiltrosHistorico();
+        }
+
+        function selecionarSafraHistorico(safra) {
+            safraHistoricoAtiva = safra;
+            paginaAtualHistorico = 1;
+
+            // Atualiza visual dos botões (Pills sutis)
+            document.querySelectorAll('#pills-safra-historico .pill-safra-btn').forEach(btn => {
+                if (btn.getAttribute('data-safra') === safra) {
+                    btn.className = "pill-safra-btn active px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-red-50 text-red-700 border border-red-300 ring-1 ring-red-400/60 shadow-xs";
+                } else {
+                    btn.className = "pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200";
+                }
+            });
+
+            atualizarKpisHistorico();
+            aplicarFiltrosHistorico();
+        }
+
+        function atualizarKpisHistorico() {
+            const data = window.DADOS_HISTORICO_FALHAS;
+            if (!data || !data.resumo_anos) return;
+
+            let haTotal = 0, kmLinhas = 0, kmFalhas = 0, numFalhas = 0, qtdFazendas = 0;
+            let qtdAceitavel = 0, qtdAtencao = 0, qtdCritico = 0;
+            let totalTalhoes = 0;
+
+            const fazendas = data.fazendas || [];
+
+            if (safraHistoricoAtiva === 'todas') {
+                for (const ano in data.resumo_anos) {
+                    const r = data.resumo_anos[ano];
+                    haTotal += r.ha_total || 0;
+                    kmLinhas += r.km_linhas || 0;
+                    kmFalhas += r.km_falhas || 0;
+                    numFalhas += r.num_falhas || 0;
+                    qtdFazendas += r.qtd_fazendas || 0;
+                    if (r.status_contagem) {
+                        qtdAceitavel += r.status_contagem['Aceitável'] || 0;
+                        qtdAtencao += r.status_contagem['Atenção'] || 0;
+                        qtdCritico += r.status_contagem['Crítico'] || 0;
+                    }
+                }
+                fazendas.forEach(f => totalTalhoes += (f.qtd_t || 0));
+            } else {
+                const r = data.resumo_anos[safraHistoricoAtiva];
+                if (r) {
+                    haTotal = r.ha_total || 0;
+                    kmLinhas = r.km_linhas || 0;
+                    kmFalhas = r.km_falhas || 0;
+                    numFalhas = r.num_falhas || 0;
+                    qtdFazendas = r.qtd_fazendas || 0;
+                    if (r.status_contagem) {
+                        qtdAceitavel = r.status_contagem['Aceitável'] || 0;
+                        qtdAtencao = r.status_contagem['Atenção'] || 0;
+                        qtdCritico = r.status_contagem['Crítico'] || 0;
+                    }
+                }
+                fazendas.filter(f => f.ano === safraHistoricoAtiva).forEach(f => totalTalhoes += (f.qtd_t || 0));
+            }
+
+            const mediaPond = kmLinhas > 0 ? (kmFalhas / kmLinhas * 100) : 0;
+
+            const elArea = document.getElementById('hist-kpi-area');
+            if (elArea) elArea.innerText = haTotal.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+
+            const elBadgeFaz = document.getElementById('hist-kpi-badge-fazendas');
+            if (elBadgeFaz) elBadgeFaz.innerText = `${qtdFazendas} FAZENDAS`;
+
+            const elTalhoes = document.getElementById('hist-kpi-talhoes-total');
+            if (elTalhoes) elTalhoes.innerHTML = `Total de <b>${totalTalhoes.toLocaleString('pt-BR')}</b> talhões auditados`;
+
+            const elLinhas = document.getElementById('hist-kpi-linhas');
+            if (elLinhas) elLinhas.innerText = Math.round(kmLinhas).toLocaleString('pt-BR');
+
+            const elKmFalhas = document.getElementById('hist-kpi-km-falhas');
+            if (elKmFalhas) elKmFalhas.innerText = kmFalhas.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' km';
+
+            const elMedia = document.getElementById('hist-kpi-media-pct');
+            if (elMedia) {
+                elMedia.innerText = mediaPond.toFixed(2).replace('.', ',');
+                if (mediaPond <= 5.0) {
+                    elMedia.className = "text-2xl sm:text-3xl font-black text-emerald-600";
+                } else if (mediaPond <= 8.0) {
+                    elMedia.className = "text-2xl sm:text-3xl font-black text-amber-600";
+                } else {
+                    elMedia.className = "text-2xl sm:text-3xl font-black text-red-600";
+                }
+            }
+
+            const elQtdFalhas = document.getElementById('hist-kpi-qtd-falhas');
+            if (elQtdFalhas) elQtdFalhas.innerText = numFalhas.toLocaleString('pt-BR');
+
+            const elAceitavel = document.getElementById('hist-kpi-qtd-aceitavel');
+            if (elAceitavel) elAceitavel.innerText = qtdAceitavel;
+
+            const elAtencao = document.getElementById('hist-kpi-qtd-atencao');
+            if (elAtencao) elAtencao.innerText = qtdAtencao;
+
+            const elCritico = document.getElementById('hist-kpi-qtd-critico');
+            if (elCritico) elCritico.innerText = qtdCritico;
+
+            const elTrendBadge = document.getElementById('hist-kpi-trend-badge');
+            if (elTrendBadge) {
+                if (safraHistoricoAtiva === '2026') {
+                    elTrendBadge.innerText = "-0,64% vs 2025";
+                    elTrendBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300";
+                } else if (safraHistoricoAtiva === '2025') {
+                    elTrendBadge.innerText = "-0,84% vs 2024";
+                    elTrendBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300";
+                } else {
+                    elTrendBadge.innerText = "EVOLUÇÃO";
+                    elTrendBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200";
+                }
+            }
+        }
+
+        function renderizarGraficosHistorico() {
+            const data = window.DADOS_HISTORICO_FALHAS;
+            if (!data || !data.resumo_anos) return;
+
+            const anos = ['2024', '2025', '2026'];
+            const mediasConsolidadas = anos.map(ano => data.resumo_anos[ano]?.media_ponderada_pct || 0);
+
+            // Calcular médias para Próprias e Terceiros por safra
+            const mediasProprias = [];
+            const mediasTerceiros = [];
+            anos.forEach(ano => {
+                const fs = (data.fazendas || []).filter(f => f.ano === ano);
+                const prop = fs.filter(f => f.tipo === 'Própria');
+                const terc = fs.filter(f => f.tipo === 'Terceiro');
+
+                const kmLProp = prop.reduce((acc, f) => acc + (f.cl || 0), 0);
+                const kmFProp = prop.reduce((acc, f) => acc + (f.cf || 0), 0);
+                mediasProprias.push(kmLProp > 0 ? +(kmFProp / kmLProp * 100).toFixed(2) : 0);
+
+                const kmLTerc = terc.reduce((acc, f) => acc + (f.cl || 0), 0);
+                const kmFTerc = terc.reduce((acc, f) => acc + (f.cf || 0), 0);
+                mediasTerceiros.push(kmLTerc > 0 ? +(kmFTerc / kmLTerc * 100).toFixed(2) : 0);
+            });
+
+            // 1. Gráfico de Evolução (Barras Agrupadas + Linha de Tendência)
+            const ctxEvolucao = document.getElementById('chart-historico-evolucao')?.getContext('2d');
+            if (ctxEvolucao) {
+                if (graficoHistoricoEvolucao) {
+                    graficoHistoricoEvolucao.destroy();
+                }
+
+                graficoHistoricoEvolucao = new Chart(ctxEvolucao, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Safra 2024', 'Safra 2025', 'Safra 2026'],
+                        datasets: [
+                            {
+                                label: 'Consolidado Global (%)',
+                                data: mediasConsolidadas,
+                                backgroundColor: 'rgba(227, 6, 19, 0.85)',
+                                borderColor: '#E30613',
+                                borderWidth: 1.5,
+                                borderRadius: 6,
+                                order: 2
+                            },
+                            {
+                                label: 'Própria Clealco (%)',
+                                data: mediasProprias,
+                                backgroundColor: 'rgba(16, 185, 129, 0.75)',
+                                borderColor: '#10B981',
+                                borderWidth: 1.5,
+                                borderRadius: 6,
+                                order: 3
+                            },
+                            {
+                                label: 'Parcerias Terceiros (%)',
+                                data: mediasTerceiros,
+                                backgroundColor: 'rgba(59, 130, 246, 0.75)',
+                                borderColor: '#3B82F6',
+                                borderWidth: 1.5,
+                                borderRadius: 6,
+                                order: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    boxWidth: 12,
+                                    font: { size: 11, weight: 'bold', family: 'Inter' }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) {
+                                        return `${ctx.dataset.label}: ${ctx.raw.toFixed(2)}%`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Média de Falha (%)',
+                                    font: { size: 10, weight: 'bold' }
+                                },
+                                ticks: {
+                                    callback: v => `${v}%`,
+                                    font: { size: 10 }
+                                },
+                                grid: { color: 'rgba(226, 232, 240, 0.6)' }
+                            },
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 11, weight: 'bold' } }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // 2. Gráfico de Semáforo de Risco (Doughnut)
+            let totAceit = 0, totAten = 0, totCrit = 0;
+            if (safraHistoricoAtiva === 'todas') {
+                for (const ano in data.resumo_anos) {
+                    const st = data.resumo_anos[ano]?.status_contagem || {};
+                    totAceit += st['Aceitável'] || 0;
+                    totAten += st['Atenção'] || 0;
+                    totCrit += st['Crítico'] || 0;
+                }
+            } else {
+                const st = data.resumo_anos[safraHistoricoAtiva]?.status_contagem || {};
+                totAceit = st['Aceitável'] || 0;
+                totAten = st['Atenção'] || 0;
+                totCrit = st['Crítico'] || 0;
+            }
+
+            const ctxSemaforo = document.getElementById('chart-historico-semaforo')?.getContext('2d');
+            if (ctxSemaforo) {
+                if (graficoHistoricoSemaforo) {
+                    graficoHistoricoSemaforo.destroy();
+                }
+
+                graficoHistoricoSemaforo = new Chart(ctxSemaforo, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Aceitável', 'Atenção', 'Crítico'],
+                        datasets: [{
+                            data: [totAceit, totAten, totCrit],
+                            backgroundColor: [
+                                '#10B981', // Verde esmeralda
+                                '#F59E0B', // Amarelo âmbar
+                                '#EF4444'  // Vermelho
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#ffffff',
+                            hoverOffset: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '68%',
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    boxWidth: 14,
+                                    font: { size: 11, weight: 'bold', family: 'Inter' },
+                                    generateLabels: function(chart) {
+                                        const orig = Chart.overrides.doughnut.plugins.legend.labels.generateLabels(chart);
+                                        const total = totAceit + totAten + totCrit;
+                                        orig.forEach(item => {
+                                            const val = chart.data.datasets[0].data[item.index];
+                                            const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                                            item.text = `${item.text}: ${val} (${pct}%)`;
+                                        });
+                                        return orig;
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(ctx) {
+                                        const total = totAceit + totAten + totCrit;
+                                        const pct = total > 0 ? ((ctx.raw / total) * 100).toFixed(1) : 0;
+                                        return `${ctx.label}: ${ctx.raw} fazendas (${pct}%)`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function aplicarFiltrosHistorico() {
+            const data = window.DADOS_HISTORICO_FALHAS;
+            if (!data || !data.fazendas) return;
+
+            const tipo = document.getElementById('select-hist-tipo')?.value || 'todos';
+            const status = document.getElementById('select-hist-status')?.value || 'todos';
+            const ordem = document.getElementById('select-hist-ordem')?.value || 'pct_desc';
+            const busca = (document.getElementById('input-busca-historico')?.value || '').toLowerCase().trim();
+
+            const btnLimpar = document.getElementById('btn-limpar-busca-hist');
+            if (btnLimpar) {
+                if (busca) btnLimpar.classList.remove('hidden');
+                else btnLimpar.classList.add('hidden');
+            }
+
+            let filtradas = data.fazendas.filter(f => {
+                if (safraHistoricoAtiva !== 'todas' && f.ano !== safraHistoricoAtiva) return false;
+                if (tipo !== 'todos' && f.tipo !== tipo) return false;
+                if (status !== 'todos' && f.st !== status) return false;
+                if (busca) {
+                    const matchFA = (f.fa || '').toLowerCase().includes(busca);
+                    const matchFaz = (f.faz || '').toLowerCase().includes(busca);
+                    const matchZona = (f.zona || '').toLowerCase().includes(busca);
+                    if (!matchFA && !matchFaz && !matchZona) return false;
+                }
+                return true;
+            });
+
+            // Ordenação
+            filtradas.sort((a, b) => {
+                if (ordem === 'pct_desc') return b.pct - a.pct;
+                if (ordem === 'pct_asc') return a.pct - b.pct;
+                if (ordem === 'ha_desc') return b.ha - a.ha;
+                if (ordem === 'fa_asc') return a.fa.localeCompare(b.fa, undefined, { numeric: true });
+                if (ordem === 'ano_desc') return b.ano.localeCompare(a.ano) || b.pct - a.pct;
+                return 0;
+            });
+
+            renderizarTabelaHistorico(filtradas);
+        }
+
+        function limparBuscaHistorico() {
+            const input = document.getElementById('input-busca-historico');
+            if (input) {
+                input.value = '';
+                aplicarFiltrosHistorico();
+                input.focus();
+            }
+        }
+
+        function renderizarTabelaHistorico(lista) {
+            const tbody = document.getElementById('tbody-historico-falhas');
+            const infoTop = document.getElementById('info-contagem-historico');
+            const infoBottom = document.getElementById('info-contagem-historico-bottom');
+            if (!tbody) return;
+
+            const total = lista.length;
+            const totalPaginas = Math.max(1, Math.ceil(total / itensPorPaginaHistorico));
+            if (paginaAtualHistorico > totalPaginas) paginaAtualHistorico = totalPaginas;
+
+            const inicio = (paginaAtualHistorico - 1) * itensPorPaginaHistorico;
+            const fim = Math.min(inicio + itensPorPaginaHistorico, total);
+            const itensPagina = lista.slice(inicio, fim);
+
+            const textoContagem = total === 0 ? "Nenhuma fazenda encontrada com os filtros selecionados" :
+                `Exibindo ${inicio + 1} a ${fim} de ${total} registros`;
+            if (infoTop) infoTop.innerText = textoContagem;
+            if (infoBottom) infoBottom.innerText = textoContagem;
+
+            renderizarControlesPaginacaoHistorico(totalPaginas);
+
+            if (itensPagina.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="11" class="py-12 text-center text-slate-400">
+                            <span class="text-3xl block mb-2">🔍</span>
+                            <span class="font-bold">Nenhum registro encontrado.</span>
+                            <p class="text-[11px] text-slate-500 mt-1">Tente remover filtros ou pesquisar outro termo.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            itensPagina.forEach(f => {
+                const rowKey = `${f.fa}_${f.ano}`;
+                const isOpen = drawerTalhoesAbertos.has(rowKey);
+
+                // Badge do Ano
+                let badgeAnoClass = "bg-slate-100 text-slate-700 border-slate-200";
+                if (f.ano === '2026') badgeAnoClass = "bg-emerald-50 text-emerald-800 border-emerald-300";
+                else if (f.ano === '2025') badgeAnoClass = "bg-blue-50 text-blue-800 border-blue-300";
+                else if (f.ano === '2024') badgeAnoClass = "bg-amber-50 text-amber-800 border-amber-300";
+
+                // Badge de Status
+                let badgeStatusClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                let bolinhaColor = "bg-emerald-500";
+                if (f.st === 'Atenção') {
+                    badgeStatusClass = "bg-amber-50 text-amber-800 border-amber-300";
+                    bolinhaColor = "bg-amber-500";
+                } else if (f.st === 'Crítico') {
+                    badgeStatusClass = "bg-red-50 text-red-800 border-red-300";
+                    bolinhaColor = "bg-red-500";
+                }
+
+                // Chips de histórico multi-safra
+                let chipsMultiSafra = '';
+                if (f.hist_anos && f.hist_anos.length > 1) {
+                    chipsMultiSafra = f.hist_anos.map(h => {
+                        let stChip = "bg-slate-100 text-slate-700 border-slate-200";
+                        if (h.st === 'Aceitável') stChip = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                        else if (h.st === 'Atenção') stChip = "bg-amber-50 text-amber-700 border-amber-200";
+                        else if (h.st === 'Crítico') stChip = "bg-red-50 text-red-700 border-red-200";
+
+                        const isCurrent = h.ano === f.ano;
+                        return `<span class="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold border ${stChip} ${isCurrent ? 'ring-1 ring-slate-400 font-black' : 'opacity-85'}" title="Safra ${h.ano}: ${h.pct}% (${h.st})">${h.ano}: ${h.pct}%</span>`;
+                    }).join(' ');
+                } else {
+                    chipsMultiSafra = `<span class="text-slate-400 text-[10px]">Safra única</span>`;
+                }
+
+                html += `
+                    <tr class="hover:bg-slate-50/80 transition-colors cursor-pointer group" onclick="toggleDrawerTalhoes('${f.fa}', '${f.ano}')">
+                        <td class="py-3 px-3 text-center">
+                            <button type="button" class="w-6 h-6 rounded-md bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold flex items-center justify-center transition leading-none text-xs" title="Ver talhões detalhados">
+                                ${isOpen ? '▼' : '▶'}
+                            </button>
+                        </td>
+                        <td class="py-3 px-2 text-center">
+                            <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${badgeAnoClass}">${f.ano}</span>
+                        </td>
+                        <td class="py-3 px-3">
+                            <div class="font-bold text-slate-900 group-hover:text-red-700 transition-colors flex items-center gap-1.5">
+                                <span>${f.faz}</span>
+                            </div>
+                            <div class="text-[10px] text-slate-500 font-mono">FA: <b>${f.fa}</b></div>
+                        </td>
+                        <td class="py-3 px-2">
+                            <div class="font-semibold text-slate-700">${f.tipo}</div>
+                            <div class="text-[10px] text-slate-400 font-medium">${f.zona ? 'Zona ' + f.zona : '-'}</div>
+                        </td>
+                        <td class="py-3 px-2 text-right font-semibold text-slate-800">${f.ha.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</td>
+                        <td class="py-3 px-2 text-right font-medium text-slate-600">${Math.round(f.cl).toLocaleString('pt-BR')}</td>
+                        <td class="py-3 px-2 text-right font-semibold text-amber-700">${f.cf.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</td>
+                        <td class="py-3 px-2 text-right text-slate-500">${f.nf.toLocaleString('pt-BR')}</td>
+                        <td class="py-3 px-3 text-right">
+                            <span class="text-sm font-black ${f.st === 'Aceitável' ? 'text-emerald-700' : f.st === 'Atenção' ? 'text-amber-700' : 'text-red-700'}">
+                                ${f.pct.toFixed(2).replace('.', ',')}%
+                            </span>
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold border ${badgeStatusClass}">
+                                <span class="w-1.5 h-1.5 rounded-full ${bolinhaColor}"></span>
+                                <span>${f.st}</span>
+                            </span>
+                        </td>
+                        <td class="py-3 px-3 text-center">
+                            <div class="flex items-center justify-center gap-1 flex-wrap">
+                                ${chipsMultiSafra}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+
+                // Linha expansível de talhões
+                if (isOpen) {
+                    const talhoes = f.talhoes || [];
+                    let talhoesHtml = '';
+
+                    if (talhoes.length === 0) {
+                        talhoesHtml = `<tr><td colspan="7" class="py-4 text-center text-slate-400">Nenhum talhão individual registrado no arquivo de falhas.</td></tr>`;
+                    } else {
+                        talhoes.forEach(t => {
+                            let tBadge = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                            if (t.st === 'Atenção') tBadge = "bg-amber-50 text-amber-800 border-amber-300";
+                            else if (t.st === 'Crítico') tBadge = "bg-red-50 text-red-800 border-red-300";
+
+                            talhoesHtml += `
+                                <tr class="hover:bg-white/80 transition-colors">
+                                    <td class="py-1.5 px-3 font-bold text-slate-800">Talhão ${t.t}</td>
+                                    <td class="py-1.5 px-2 text-right font-medium text-slate-700">${t.ha.toFixed(2)}</td>
+                                    <td class="py-1.5 px-2 text-right text-slate-600">${t.cl.toFixed(2)}</td>
+                                    <td class="py-1.5 px-2 text-right font-semibold text-amber-700">${t.cf.toFixed(2)}</td>
+                                    <td class="py-1.5 px-2 text-right text-slate-500">${t.nf.toLocaleString('pt-BR')}</td>
+                                    <td class="py-1.5 px-3 text-right font-black ${t.st === 'Aceitável' ? 'text-emerald-700' : t.st === 'Atenção' ? 'text-amber-700' : 'text-red-700'}">
+                                        ${t.pct.toFixed(2).replace('.', ',')}%
+                                    </td>
+                                    <td class="py-1.5 px-3 text-center">
+                                        <span class="px-2 py-0.5 rounded text-[9px] font-bold border ${tBadge}">${t.st}</span>
+                                    </td>
+                                </tr>
+                            `;
+                        });
+                    }
+
+                    html += `
+                        <tr class="bg-slate-50/90 border-y border-slate-200/80">
+                            <td colspan="11" class="p-3 sm:p-4">
+                                <div class="bg-white rounded-xl border border-slate-200 shadow-xs overflow-hidden">
+                                    <div class="px-4 py-2.5 bg-slate-100/90 border-b border-slate-200 flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-sm">🌱</span>
+                                            <span class="font-bold text-xs text-slate-800 uppercase tracking-wide">Talhões Auditados: ${f.faz} (FA ${f.fa}) - Safra ${f.ano}</span>
+                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-200 text-slate-700">${talhoes.length} TALHÕES</span>
+                                        </div>
+                                        <span class="text-[11px] text-slate-500 font-medium">Área Total: <b>${f.ha.toFixed(1)} ha</b> | Média Ponderada: <b class="text-slate-800">${f.pct.toFixed(2)}%</b></span>
+                                    </div>
+                                    <div class="overflow-x-auto max-h-72">
+                                        <table class="w-full text-left text-xs border-collapse">
+                                            <thead class="bg-slate-50 text-slate-500 text-[10px] font-bold uppercase tracking-wider sticky top-0 border-b border-slate-200">
+                                                <tr>
+                                                    <th class="py-2 px-3">Talhão</th>
+                                                    <th class="py-2 px-2 text-right">Área (ha)</th>
+                                                    <th class="py-2 px-2 text-right">Linhas (km)</th>
+                                                    <th class="py-2 px-2 text-right">Falhas (km)</th>
+                                                    <th class="py-2 px-2 text-right">Qtd Falhas</th>
+                                                    <th class="py-2 px-3 text-right">Falha (%)</th>
+                                                    <th class="py-2 px-3 text-center">Classificação</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100">
+                                                ${talhoesHtml}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }
+            });
+
+            tbody.innerHTML = html;
+        }
+
+        function toggleDrawerTalhoes(fa, ano) {
+            const key = `${fa}_${ano}`;
+            if (drawerTalhoesAbertos.has(key)) {
+                drawerTalhoesAbertos.delete(key);
+            } else {
+                drawerTalhoesAbertos.add(key);
+            }
+            aplicarFiltrosHistorico();
+        }
+
+        function renderizarControlesPaginacaoHistorico(totalPaginas) {
+            const containers = [
+                document.getElementById('paginacao-historico-top'),
+                document.getElementById('paginacao-historico-bottom')
+            ];
+
+            containers.forEach(container => {
+                if (!container) return;
+                if (totalPaginas <= 1) {
+                    container.innerHTML = '';
+                    return;
+                }
+
+                let html = `
+                    <button type="button" onclick="mudarPaginaHistorico(${paginaAtualHistorico - 1})" ${paginaAtualHistorico === 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-200"'} class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-bold transition text-xs">
+                        ◀ Anterior
+                    </button>
+                    <span class="px-2 text-xs font-bold text-slate-700">Pág. ${paginaAtualHistorico} de ${totalPaginas}</span>
+                    <button type="button" onclick="mudarPaginaHistorico(${paginaAtualHistorico + 1})" ${paginaAtualHistorico === totalPaginas ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-200"'} class="px-2 py-1 rounded bg-slate-100 text-slate-700 font-bold transition text-xs">
+                        Próxima ▶
+                    </button>
+                `;
+                container.innerHTML = html;
+            });
+        }
+
+        function mudarPaginaHistorico(novaPagina) {
+            paginaAtualHistorico = Math.max(1, novaPagina);
+            aplicarFiltrosHistorico();
+        }
+
+        function exportarHistoricoExcel() {
+            const data = window.DADOS_HISTORICO_FALHAS;
+            if (!data || !data.fazendas || typeof XLSX === 'undefined') {
+                alert("Dados indisponíveis para exportação.");
+                return;
+            }
+
+            const wb = XLSX.utils.book_new();
+
+            // Aba 1: Fazendas
+            const rowsFaz = [
+                ["Safra", "Código FA", "Nome da Fazenda", "Tipo de Parceria", "Zona", "Área (ha)", "Linhas (km)", "Falhas (km)", "Qtd Falhas", "Qtd Linhas", "Falha (%)", "Classificação", "Qtd Talhões"]
+            ];
+            data.fazendas.forEach(f => {
+                rowsFaz.push([
+                    f.ano,
+                    f.fa,
+                    f.faz,
+                    f.tipo,
+                    f.zona || "",
+                    f.ha,
+                    f.cl,
+                    f.cf,
+                    f.nf,
+                    f.nl,
+                    f.pct,
+                    f.st,
+                    f.qtd_t
+                ]);
+            });
+            const wsFaz = XLSX.utils.aoa_to_sheet(rowsFaz);
+            XLSX.utils.book_append_sheet(wb, wsFaz, "Fazendas");
+
+            // Aba 2: Talhões Detalhados
+            const rowsTal = [
+                ["Safra", "Código FA", "Nome da Fazenda", "Tipo de Parceria", "Talhão", "Área (ha)", "Linhas (km)", "Falhas (km)", "Qtd Falhas", "Qtd Linhas", "Falha (%)", "Classificação"]
+            ];
+            data.fazendas.forEach(f => {
+                (f.talhoes || []).forEach(t => {
+                    rowsTal.push([
+                        f.ano,
+                        f.fa,
+                        f.faz,
+                        f.tipo,
+                        t.t,
+                        t.ha,
+                        t.cl,
+                        t.cf,
+                        t.nf,
+                        t.nl,
+                        t.pct,
+                        t.st
+                    ]);
+                });
+            });
+            const wsTal = XLSX.utils.aoa_to_sheet(rowsTal);
+            XLSX.utils.book_append_sheet(wb, wsTal, "Talhões");
+
+            // Aba 3: Resumo por Safra
+            const rowsRes = [
+                ["Safra", "Área Monitorada (ha)", "Extensão de Linhas (km)", "Extensão de Falhas (km)", "Qtd de Vazios", "Média Ponderada (%)", "Qtd Fazendas", "Aceitável", "Atenção", "Crítico"]
+            ];
+            for (const ano of ['2024', '2025', '2026']) {
+                const r = data.resumo_anos[ano];
+                if (r) {
+                    rowsRes.push([
+                        ano,
+                        r.ha_total,
+                        r.km_linhas,
+                        r.km_falhas,
+                        r.num_falhas,
+                        r.media_ponderada_pct,
+                        r.qtd_fazendas,
+                        r.status_contagem?.['Aceitável'] || 0,
+                        r.status_contagem?.['Atenção'] || 0,
+                        r.status_contagem?.['Crítico'] || 0
+                    ]);
+                }
+            }
+            const wsRes = XLSX.utils.aoa_to_sheet(rowsRes);
+            XLSX.utils.book_append_sheet(wb, wsRes, "Resumo Safras");
+
+            XLSX.writeFile(wb, `Historico_Falhas_Clealco_2024_2026.xlsx`);
+        }
 
         // ================= PWA: INSTALAÇÃO & SERVICE WORKER =================
         let eventoInstalacaoPWA = null;
