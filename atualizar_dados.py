@@ -703,7 +703,7 @@ def sincronizar_e_catalogar_mapas():
 sincronizar_e_catalogar_mapas()
 
 def compilar_historico_falhas():
-    print("[HISTORICO FALHAS] Iniciando compilação 2024, 2025, 2026...")
+    print("[HISTORICO FALHAS] Iniciando compilação 2021, 2022, 2023, 2024, 2025, 2026...")
     import csv, glob
     from osgeo import ogr
     
@@ -744,6 +744,9 @@ def compilar_historico_falhas():
             print(f"[HISTORICO FALHAS] Aviso ao ler dados.xlsx: {e}")
 
     base_dirs = {
+        '2021': r"W:\01-DRONE\08-BANCO DE DADOS\2021\Falhas",
+        '2022': r"W:\01-DRONE\08-BANCO DE DADOS\2022\Falhas",
+        '2023': r"W:\01-DRONE\08-BANCO DE DADOS\2023\Falhas",
         '2024': r"W:\01-DRONE\08-BANCO DE DADOS\2024\Falhas",
         '2025': r"W:\01-DRONE\08-BANCO DE DADOS\2025\Falhas",
         '2026': r"W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas"

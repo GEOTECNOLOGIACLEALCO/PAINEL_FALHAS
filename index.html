@@ -558,7 +558,7 @@
                     <span class="sidebar-icon">📉</span>
                     <span class="sidebar-text truncate">Falhas de Plantio</span>
                 </button>
-                <button class="sidebar-btn tab-btn" onclick="trocarAba('historico_falhas')" title="Histórico de Falhas (2024 - 2026)">
+                <button class="sidebar-btn tab-btn" onclick="trocarAba('historico_falhas')" title="Histórico de Falhas (2021 - 2026)">
                     <span class="sidebar-icon">📊</span>
                     <span class="sidebar-text truncate">Histórico Falhas</span>
                 </button>
@@ -2058,15 +2058,15 @@
                 </div>
         </section>
 
-        <!-- ================= ABA 8: HISTÓRICO DE FALHAS DE PLANTIO (2024 - 2026) ================= -->
+        <!-- ================= ABA 8: HISTÓRICO DE FALHAS DE PLANTIO (2021 - 2026) ================= -->
         <section id="aba-historico_falhas" class="hidden space-y-6">
             <!-- Cabeçalho Executivo e Seletor de Safra -->
             <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div>
                     <div class="flex items-center gap-2">
                         <span class="text-2xl">📊</span>
-                        <h2 class="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-tight">Histórico de Falhas de Plantio (2024 - 2026)</h2>
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">3 SAFRAS</span>
+                        <h2 class="text-lg sm:text-xl font-black text-slate-900 uppercase tracking-tight">Histórico de Falhas de Plantio (2021 - 2026)</h2>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">6 SAFRAS</span>
                     </div>
                     <p class="text-xs text-slate-500 mt-1">Evolução multi-safra, auditoria métrica de linhas vs falhas, semáforo corporativo e raio-x detalhado por talhão.</p>
                 </div>
@@ -2084,6 +2084,15 @@
                     </button>
                     <button type="button" onclick="selecionarSafraHistorico('2024')" data-safra="2024" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
                         🚜 Safra 2024
+                    </button>
+                    <button type="button" onclick="selecionarSafraHistorico('2023')" data-safra="2023" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
+                        🛰️ Safra 2023
+                    </button>
+                    <button type="button" onclick="selecionarSafraHistorico('2022')" data-safra="2022" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
+                        📈 Safra 2022
+                    </button>
+                    <button type="button" onclick="selecionarSafraHistorico('2021')" data-safra="2021" class="pill-safra-btn px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer bg-white text-slate-600 hover:text-slate-900 border border-slate-200">
+                        📁 Safra 2021
                     </button>
                 </div>
             </div>
@@ -2168,7 +2177,7 @@
                     <div class="flex items-center justify-between border-b border-slate-100 pb-2">
                         <div>
                             <h3 class="text-sm font-black text-slate-900 uppercase flex items-center gap-1.5">
-                                <span>📈</span> Evolução Multi-Safra (2024 vs 2025 vs 2026)
+                                <span>📈</span> Evolução Multi-Safra (2021 a 2026)
                             </h3>
                             <p class="text-[11px] text-slate-500">Média ponderada de falha (%) por safra agrícola</p>
                         </div>
@@ -3897,7 +3906,7 @@
                 'dashboard': '<span>🛸</span> VISÃO GERAL',
                 'acompanhamento': '<span>📊</span> ACOMPANHAMENTO DE VOOS',
                 'falhas': '<span>📉</span> FALHAS DE PLANTIO',
-                'historico_falhas': '<span>📊</span> HISTÓRICO DE FALHAS (2024 - 2026)',
+                'historico_falhas': '<span>📊</span> HISTÓRICO DE FALHAS (2021 - 2026)',
                 'backlog': '<span>✈️</span> BACKLOG (FALTAM VOAR)',
                 'mapa': '<span>🗺️</span> MAPA OPERACIONAL DE VOOS & BACKLOG',
                 'clima': '<span>🌧️</span> MONITORAMENTO DE CLIMA & CHUVAS',
@@ -6760,15 +6769,24 @@
 
             const elTrendBadge = document.getElementById('hist-kpi-trend-badge');
             if (elTrendBadge) {
-                if (safraHistoricoAtiva === '2026') {
-                    elTrendBadge.innerText = "-0,64% vs 2025";
-                    elTrendBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300";
-                } else if (safraHistoricoAtiva === '2025') {
-                    elTrendBadge.innerText = "-0,84% vs 2024";
-                    elTrendBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300";
-                } else {
-                    elTrendBadge.innerText = "EVOLUÇÃO";
+                const todosAnos = Object.keys(data.resumo_anos).sort();
+                const idx = todosAnos.indexOf(safraHistoricoAtiva);
+                if (idx > 0) {
+                    const anoAnt = todosAnos[idx - 1];
+                    const pctAtual = data.resumo_anos[safraHistoricoAtiva]?.media_ponderada_pct || 0;
+                    const pctAnt = data.resumo_anos[anoAnt]?.media_ponderada_pct || 0;
+                    const diff = (pctAtual - pctAnt).toFixed(2);
+                    const sinal = diff > 0 ? '+' : '';
+                    elTrendBadge.innerText = `${sinal}${diff.replace('.', ',')}% vs ${anoAnt}`;
+                    elTrendBadge.className = diff <= 0
+                        ? "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300"
+                        : "text-[10px] font-bold px-2 py-0.5 rounded bg-red-100 text-red-800 border border-red-300";
+                } else if (safraHistoricoAtiva === 'todas') {
+                    elTrendBadge.innerText = "6 SAFRAS (2021-2026)";
                     elTrendBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200";
+                } else {
+                    elTrendBadge.innerText = "SAFRA " + safraHistoricoAtiva;
+                    elTrendBadge.className = "text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200";
                 }
             }
         }
@@ -6778,7 +6796,7 @@
             const data = window.DADOS_HISTORICO_FALHAS;
             if (!data || !data.resumo_anos) return;
 
-            const anos = ['2024', '2025', '2026'];
+            const anos = Object.keys(data.resumo_anos).sort();
             const mediasConsolidadas = anos.map(ano => data.resumo_anos[ano]?.media_ponderada_pct || 0);
 
             // Calcular médias para Próprias e Terceiros por safra
@@ -6808,7 +6826,7 @@
                 graficoHistoricoEvolucao = new Chart(ctxEvolucao, {
                     type: 'bar',
                     data: {
-                        labels: ['Safra 2024', 'Safra 2025', 'Safra 2026'],
+                        labels: anos.map(a => 'Safra ' + a),
                         datasets: [
                             {
                                 label: 'Consolidado Global (%)',
@@ -6934,15 +6952,20 @@
                                     boxWidth: 14,
                                     font: { size: 11, weight: 'bold', family: 'Inter' },
                                     generateLabels: function(chart) {
-                                        const fn = Chart.defaults?.plugins?.legend?.labels?.generateLabels;
-                                        const orig = typeof fn === 'function' ? fn(chart) : [];
+                                        const dataset = chart.data?.datasets?.[0];
+                                        if (!dataset) return [];
                                         const total = totAceit + totAten + totCrit;
-                                        orig.forEach(item => {
-                                            const val = chart.data?.datasets?.[0]?.data?.[item.index] || 0;
+                                        return (chart.data.labels || []).map((lbl, idx) => {
+                                            const val = dataset.data?.[idx] || 0;
                                             const pct = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
-                                            item.text = `${item.text}: ${val} (${pct}%)`;
+                                            return {
+                                                text: `${lbl}: ${val} (${pct}%)`,
+                                                fillStyle: dataset.backgroundColor?.[idx] || '#64748B',
+                                                strokeStyle: dataset.borderColor || '#ffffff',
+                                                lineWidth: 1,
+                                                index: idx
+                                            };
                                         });
-                                        return orig;
                                     }
                                 }
                             },
