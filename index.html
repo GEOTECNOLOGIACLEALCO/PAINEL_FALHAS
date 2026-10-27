@@ -1744,7 +1744,7 @@
                             </button>
                             <button type="button" onclick="alternarAnimacaoVentoRadar()" id="btn-toggle-vento-animado" title="Ligar ou desligar animação de rajadas de vento no mapa" class="text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer">
                                 <span id="icone-vento-animado">💨</span>
-                                <span id="lbl-status-vento-animado">Rajadas: ON</span>
+                                <span id="lbl-status-vento-animado">Vento: ON</span>
                             </button>
                             <button type="button" onclick="alternarTipoMapaRadar()" id="btn-toggle-camada-radar" title="Alternar entre Satélite e Mapa de Ruas" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer shadow-xs">
                                 <span id="lbl-tipo-mapa-radar">Satélite</span>
@@ -5715,7 +5715,7 @@
         let animacaoVentoAtiva = true;
         let animacaoVentoRafId = null;
         let ventoParticulas = [];
-        const NUM_PARTICULAS_VENTO = 280;
+        const NUM_PARTICULAS_VENTO = 360; // Densidade suave e elegante cobrindo todo o mapa
         let dadosVentoAtuais = {
             velocidade: 12,
             rajada: 18,
@@ -5730,33 +5730,53 @@
             return direcoes[idx];
         }
 
-        // Gera partícula distribuída aleatoriamente por TODA a área visível do mapa
-        function criarParticulaVento(largura, altura) {
+        // Gera partícula (streamline) com histórico suave distribuída aleatoriamente por toda a extensão do mapa
+        function criarParticulaVento(largura, altura, preencherHistorico = false) {
             const w = largura > 0 ? largura : 800;
             const h = altura > 0 ? altura : 500;
             const x = Math.random() * w;
             const y = Math.random() * h;
-            const isRajada = Math.random() < 0.28;
-            const maxAge = Math.floor(40 + Math.random() * 50);
+            const isRajada = Math.random() < 0.22;
+            const maxAge = Math.floor(180 + Math.random() * 140); // Vida longa para movimento calmo e gracioso
+            const speedFactor = 0.85 + Math.random() * 0.30;
+            const streakLength = Math.floor(16 + Math.random() * 16); // Comprimento elegante do rastro (16 a 32px)
+            const lineWidth = isRajada ? 1.6 : 1.2;
+            const phase = Math.random() * Math.PI * 2;
 
-            return {
+            const p = {
                 x: x,
                 y: y,
                 history: [],
                 age: 0,
                 maxAge: maxAge,
                 isRajada: isRajada,
-                speedFactor: 0.75 + Math.random() * 0.5,
-                phase: Math.random() * Math.PI * 2
+                speedFactor: speedFactor,
+                streakLength: streakLength,
+                lineWidth: lineWidth,
+                phase: phase
             };
+
+            if (preencherHistorico) {
+                p.age = Math.floor(Math.random() * maxAge);
+                const numPontos = Math.floor(14 + Math.random() * 10);
+                const step = streakLength / numPontos;
+                const vx = dadosVentoAtuais.vx || 0.7;
+                const vy = dadosVentoAtuais.vy || -0.7;
+                for (let k = numPontos; k >= 0; k--) {
+                    p.history.push({
+                        x: x - vx * (k * step),
+                        y: y - vy * (k * step)
+                    });
+                }
+            }
+
+            return p;
         }
 
         function inicializarParticulasVento(largura, altura) {
             ventoParticulas = [];
             for (let i = 0; i < NUM_PARTICULAS_VENTO; i++) {
-                const p = criarParticulaVento(largura, altura);
-                // Escalonamento de idade para que renovem de forma contínua e homogênea
-                p.age = Math.floor(Math.random() * p.maxAge);
+                const p = criarParticulaVento(largura, altura, true);
                 ventoParticulas.push(p);
             }
         }
@@ -5771,11 +5791,7 @@
             const anguloSoprando = (dadosVentoAtuais.direcao + 180) % 360;
             const radParaOndeSopra = anguloSoprando * Math.PI / 180;
             
-            // No canvas do mapa:
-            // 0° Norte: sopra para o Sul (+Y)
-            // 90° Leste: sopra para o Oeste (-X)
-            // 180° Sul: sopra para o Norte (-Y)
-            // 270° Oeste: sopra para o Leste (+X)
+            // Vetores de direção no plano do canvas:
             dadosVentoAtuais.vx = Math.sin(radParaOndeSopra);
             dadosVentoAtuais.vy = -Math.cos(radParaOndeSopra);
 
@@ -5792,7 +5808,6 @@
             if (elCardeal) elCardeal.innerText = `${nomeCardealOrigem} ${Math.round(dadosVentoAtuais.direcao)}°`;
             if (elRumo) elRumo.innerText = nomeCardealRumo;
             
-            // Seta aponta no sentido exato em que o vento sopra (rumo)
             if (elSeta) elSeta.style.transform = `rotate(${Math.round(anguloRumo)}deg)`;
             if (elSetaCompacto) elSetaCompacto.style.transform = `rotate(${Math.round(anguloRumo)}deg)`;
         }
@@ -5817,8 +5832,6 @@
                 inicializarParticulasVento(canvas.width, canvas.height);
             }
 
-            let inicioTempo = performance.now();
-
             function renderizarQuadro(agora) {
                 if (!animacaoVentoAtiva) {
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -5832,82 +5845,88 @@
                     return;
                 }
 
-                // Limpa completamente o quadro para manter transparência nítida sobre o satélite
+                // Limpa o canvas a cada quadro mantendo total nitidez sobre o mapa
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // Pulso de rajada periódico suave a cada ~4 segundos
-                const tempoDecorrido = (agora - inicioTempo) / 1000;
-                const cicloRajada = tempoDecorrido % 4.5;
-                const pulsoRajadaAtivo = cicloRajada < 1.4;
-                const fatorPulso = pulsoRajadaAtivo ? 1.4 : 1.0;
-
-                const baseSpeed = Math.min(Math.max(dadosVentoAtuais.velocidade * 0.14, 1.2), 6.5) * fatorPulso;
-                const gustBonus = ((dadosVentoAtuais.rajada - dadosVentoAtuais.velocidade) * 0.10) * fatorPulso;
+                // Calibração de velocidade BEM DEVAGAR (fluxo calmo e suave estilo Windy)
+                // Velocidade em pixels por quadro: tipicamente 0.22 a 0.50 px/frame
+                const baseSpeed = Math.min(Math.max(dadosVentoAtuais.velocidade * 0.022, 0.22), 0.50);
+                const gustBonus = ((dadosVentoAtuais.rajada - dadosVentoAtuais.velocidade) * 0.012);
 
                 const len = ventoParticulas.length;
                 for (let i = 0; i < len; i++) {
                     const p = ventoParticulas[i];
 
-                    // Guarda histórico para desenhar o rastro (streamline)
+                    // Guarda a posição atual no histórico para formar o traço (streamline)
                     p.history.push({ x: p.x, y: p.y });
-                    const maxTrail = p.isRajada ? 8 : 6;
-                    if (p.history.length > maxTrail) {
+
+                    // Limita o histórico ao tamanho do rastro (streakLength) em pixels
+                    const currentSpeed = (p.isRajada ? (baseSpeed + gustBonus) : baseSpeed) * p.speedFactor;
+                    const maxPontosHistorico = Math.max(10, Math.min(35, Math.round(p.streakLength / Math.max(currentSpeed, 0.2))));
+                    if (p.history.length > maxPontosHistorico) {
                         p.history.shift();
                     }
 
-                    // Leve curvatura aerodinâmica orgânica para não ser uma linha mecânica
-                    const turbulencia = Math.sin((p.x + p.y) * 0.008 + p.phase) * 0.12;
+                    // Leve curvatura aerodinâmica natural das correntes de ar
+                    const turbulencia = Math.sin((p.x + p.y) * 0.005 + p.phase) * 0.07;
                     const vxEfetivo = dadosVentoAtuais.vx + dadosVentoAtuais.vy * turbulencia;
                     const vyEfetivo = dadosVentoAtuais.vy - dadosVentoAtuais.vx * turbulencia;
 
-                    const speed = (p.isRajada ? (baseSpeed + gustBonus) : baseSpeed) * p.speedFactor;
-                    p.x += vxEfetivo * speed;
-                    p.y += vyEfetivo * speed;
+                    p.x += vxEfetivo * currentSpeed;
+                    p.y += vyEfetivo * currentSpeed;
                     p.age++;
 
-                    // Se expirou o ciclo de vida ou saiu da tela, renova em ponto ALEATÓRIO da tela
-                    if (p.age >= p.maxAge || p.x < -20 || p.x > canvas.width + 20 || p.y < -20 || p.y > canvas.height + 20) {
-                        ventoParticulas[i] = criarParticulaVento(canvas.width, canvas.height);
+                    // Se expirou a vida ou saiu muito da tela, reinicia em posição aleatória
+                    if (p.age >= p.maxAge || p.x < -30 || p.x > canvas.width + 30 || p.y < -30 || p.y > canvas.height + 30) {
+                        ventoParticulas[i] = criarParticulaVento(canvas.width, canvas.height, false);
                         continue;
                     }
 
                     if (p.history.length < 2) continue;
 
-                    // Curva de opacidade com fade-in e fade-out elegante
+                    // Curva de opacidade com entrada e saída suaves (fade in / fade out)
                     const progress = p.age / p.maxAge;
-                    let alpha = Math.sin(progress * Math.PI) * (p.isRajada ? 0.95 : 0.75);
+                    const alpha = Math.sin(progress * Math.PI) * (p.isRajada ? 0.90 : 0.75);
 
-                    // Cor de acordo com o vento e rajadas
-                    let corStroke, corHead;
-                    if (p.isRajada && (dadosVentoAtuais.rajada >= 28 || pulsoRajadaAtivo)) {
-                        corStroke = `rgba(239, 68, 68, ${alpha * 0.85})`;
-                        corHead = `rgba(254, 202, 202, ${alpha})`;
-                    } else if (dadosVentoAtuais.velocidade >= 20 || (p.isRajada && dadosVentoAtuais.rajada >= 20)) {
-                        corStroke = `rgba(245, 158, 11, ${alpha * 0.85})`;
-                        corHead = `rgba(254, 240, 138, ${alpha})`;
+                    const tail = p.history[0];
+                    const head = { x: p.x, y: p.y };
+
+                    // Desenha o streamline com gradiente da cauda transparente até a cabeça brilhante
+                    // Estilo exatamente como no print do usuário (traços finos e elegantes esbranquiçados/ciano)
+                    const grad = ctx.createLinearGradient(tail.x, tail.y, head.x, head.y);
+                    
+                    if (dadosVentoAtuais.rajada >= 28 && p.isRajada) {
+                        // Alerta de vento forte para drone: tom suavemente âmbar/coral
+                        grad.addColorStop(0, 'rgba(254, 215, 170, 0)');
+                        grad.addColorStop(0.6, `rgba(254, 215, 170, ${(alpha * 0.40).toFixed(2)})`);
+                        grad.addColorStop(1, `rgba(254, 202, 202, ${(alpha * 0.95).toFixed(2)})`);
+                        ctx.strokeStyle = grad;
                     } else {
-                        corStroke = `rgba(52, 211, 153, ${alpha * 0.80})`;
-                        corHead = `rgba(209, 250, 229, ${alpha})`;
+                        // Vento normal/brando: traço branco translúcido com brilho ciano suave
+                        grad.addColorStop(0, 'rgba(255, 255, 255, 0)');
+                        grad.addColorStop(0.5, `rgba(224, 242, 254, ${(alpha * 0.35).toFixed(2)})`);
+                        grad.addColorStop(1, `rgba(255, 255, 255, ${(alpha * 0.90).toFixed(2)})`);
+                        ctx.strokeStyle = grad;
                     }
 
-                    // Desenha o rastro (streamline)
-                    ctx.strokeStyle = corStroke;
-                    ctx.lineWidth = p.isRajada ? 2.0 : 1.4;
+                    ctx.lineWidth = p.lineWidth;
                     ctx.lineCap = 'round';
                     ctx.lineJoin = 'round';
 
                     ctx.beginPath();
-                    ctx.moveTo(p.history[0].x, p.history[0].y);
+                    ctx.moveTo(tail.x, tail.y);
                     for (let h = 1; h < p.history.length; h++) {
                         ctx.lineTo(p.history[h].x, p.history[h].y);
                     }
-                    ctx.lineTo(p.x, p.y);
+                    ctx.lineTo(head.x, head.y);
                     ctx.stroke();
 
-                    // Ponto da frente da partícula
-                    ctx.fillStyle = corHead;
+                    // Ponto brilhante sutil na cabeça do streamline
+                    ctx.fillStyle = dadosVentoAtuais.rajada >= 28 && p.isRajada
+                        ? `rgba(254, 240, 138, ${(alpha * 0.95).toFixed(2)})`
+                        : `rgba(255, 255, 255, ${(alpha * 0.95).toFixed(2)})`;
                     ctx.beginPath();
-                    ctx.arc(p.x, p.y, p.isRajada ? 1.8 : 1.2, 0, Math.PI * 2);
+                    ctx.arc(head.x, head.y, p.isRajada ? 1.2 : 0.9, 0, Math.PI * 2);
                     ctx.fill();
                 }
 
@@ -5925,7 +5944,7 @@
 
             if (animacaoVentoAtiva) {
                 if (btn) btn.className = 'text-xs bg-amber-500 hover:bg-amber-600 text-white font-bold px-3 py-1.5 rounded-lg transition shadow-xs flex items-center gap-1.5 cursor-pointer';
-                if (lbl) lbl.innerText = 'Rajadas: ON';
+                if (lbl) lbl.innerText = 'Vento: ON';
                 iniciarLoopAnimacaoVento();
             } else {
                 if (btn) btn.className = 'text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer shadow-xs flex items-center gap-1.5';
