@@ -805,40 +805,100 @@
 
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 my-auto">
                         <!-- Próprias -->
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-red-600 shadow-sm">
-                            <span class="text-xs text-slate-600 font-bold">PRÓPRIAS (Meta: 3.374,33 ha)</span>
-                            <div class="text-2xl font-black text-red-600 mt-1" id="val-meta-prop">1.152,77 ha</div>
-                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-3">
-                                <div id="bar-meta-prop" class="bg-red-600 h-full rounded-full transition-all duration-700" style="width: 34.2%;"></div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-red-600 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between text-xs text-slate-700 font-bold mb-1">
+                                    <span>PRÓPRIAS</span>
+                                    <span class="text-[11px] text-slate-500 font-medium" id="lbl-meta-prop-meta">Meta: 3.374,33 ha</span>
+                                </div>
+                                <div class="flex items-end justify-between gap-2 mt-2">
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-tight">Realizado</span>
+                                        <div class="text-2xl font-black text-red-600 leading-tight" id="val-meta-prop">1.152,77 ha</div>
+                                    </div>
+                                    <div class="text-right bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs">
+                                        <span class="text-[10px] uppercase font-bold text-slate-500 block tracking-tight">Falta Fazer</span>
+                                        <div class="text-sm font-black text-red-700 leading-tight" id="val-falta-prop">2.221,56 ha</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-right text-[11px] text-slate-600 font-semibold mt-1" id="pct-meta-prop">34,2% atingido</div>
+
+                            <div class="mt-3">
+                                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                    <div id="bar-meta-prop" class="bg-red-600 h-full rounded-full transition-all duration-700" style="width: 34.2%;"></div>
+                                </div>
+                                <div class="flex items-center justify-between text-[11px] font-semibold mt-1.5">
+                                    <span class="text-slate-500" id="pct-falta-prop">Falta 65,8%</span>
+                                    <span class="text-red-700 font-bold" id="pct-meta-prop">34,2% atingido</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Terceiros -->
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-amber-500 shadow-sm">
-                            <span class="text-xs text-slate-600 font-bold">TERCEIROS (Meta: 11.000 ha)</span>
-                            <div class="text-2xl font-black text-amber-600 mt-1" id="val-meta-terc">3.363,42 ha</div>
-                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-3">
-                                <div id="bar-meta-terc" class="bg-amber-500 h-full rounded-full transition-all duration-700" style="width: 30.6%;"></div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-amber-500 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between text-xs text-slate-700 font-bold mb-1">
+                                    <span>TERCEIROS</span>
+                                    <span class="text-[11px] text-slate-500 font-medium" id="lbl-meta-terc-meta">Meta: 11.000 ha</span>
+                                </div>
+                                <div class="flex items-end justify-between gap-2 mt-2">
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-tight">Realizado</span>
+                                        <div class="text-2xl font-black text-amber-600 leading-tight" id="val-meta-terc">3.447,37 ha</div>
+                                    </div>
+                                    <div class="text-right bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs">
+                                        <span class="text-[10px] uppercase font-bold text-slate-500 block tracking-tight">Falta Fazer</span>
+                                        <div class="text-sm font-black text-amber-700 leading-tight" id="val-falta-terc">7.552,63 ha</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-right text-[11px] text-slate-600 font-semibold mt-1" id="pct-meta-terc">30,6% atingido</div>
+
+                            <div class="mt-3">
+                                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                    <div id="bar-meta-terc" class="bg-amber-500 h-full rounded-full transition-all duration-700" style="width: 31.3%;"></div>
+                                </div>
+                                <div class="flex items-center justify-between text-[11px] font-semibold mt-1.5">
+                                    <span class="text-slate-500" id="pct-falta-terc">Falta 68,7%</span>
+                                    <span class="text-amber-700 font-bold" id="pct-meta-terc">31,3% atingido</span>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Consolidado -->
-                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-emerald-600 shadow-sm">
-                            <span class="text-xs text-slate-600 font-bold">CONSOLIDADO (Meta: 14.374,33 ha)</span>
-                            <div class="text-2xl font-black text-emerald-600 mt-1" id="val-meta-geral">4.516,19 ha</div>
-                            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-3">
-                                <div id="bar-meta-geral" class="bg-emerald-600 h-full rounded-full transition-all duration-700" style="width: 31.4%;"></div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 border-l-4 border-l-emerald-600 shadow-sm flex flex-col justify-between">
+                            <div>
+                                <div class="flex items-center justify-between text-xs text-slate-700 font-bold mb-1">
+                                    <span>CONSOLIDADO</span>
+                                    <span class="text-[11px] text-slate-500 font-medium" id="lbl-meta-geral-meta">Meta: 14.374,33 ha</span>
+                                </div>
+                                <div class="flex items-end justify-between gap-2 mt-2">
+                                    <div>
+                                        <span class="text-[10px] uppercase font-bold text-slate-400 block tracking-tight">Realizado</span>
+                                        <div class="text-2xl font-black text-emerald-600 leading-tight" id="val-meta-geral">4.600,14 ha</div>
+                                    </div>
+                                    <div class="text-right bg-white px-2.5 py-1 rounded-lg border border-slate-200 shadow-xs">
+                                        <span class="text-[10px] uppercase font-bold text-slate-500 block tracking-tight">Falta Fazer</span>
+                                        <div class="text-sm font-black text-emerald-700 leading-tight" id="val-falta-geral">9.774,19 ha</div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="text-right text-[11px] text-slate-600 font-semibold mt-1" id="pct-meta-geral">31,4% atingido</div>
+
+                            <div class="mt-3">
+                                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                                    <div id="bar-meta-geral" class="bg-emerald-600 h-full rounded-full transition-all duration-700" style="width: 32.0%;"></div>
+                                </div>
+                                <div class="flex items-center justify-between text-[11px] font-semibold mt-1.5">
+                                    <span class="text-slate-500" id="pct-falta-geral">Falta 68,0%</span>
+                                    <span class="text-emerald-700 font-bold" id="pct-meta-geral">32,0% atingido</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="mt-4 pt-3 border-t border-white/10 flex flex-wrap justify-between items-center text-xs text-gray-400">
+                    <div class="mt-4 pt-3 border-t border-slate-200/80 flex flex-wrap justify-between items-center text-xs text-slate-500">
                         <span>Fórmula: Realizado = Linhas Extraídas na safra</span>
                         <div class="flex gap-2">
-                            <button onclick="trocarAba('falhas')" class="text-red-400 hover:underline font-semibold">Ver Falhas de Plantio →</button>
+                            <button onclick="trocarAba('falhas')" class="text-red-600 hover:text-red-700 hover:underline font-semibold cursor-pointer">Ver Falhas de Plantio →</button>
                         </div>
                     </div>
                 </div>
@@ -3348,18 +3408,53 @@
             document.getElementById('bar-exportacao').style.width = pctExp + '%';
 
             // Metas
-            const metaProp = 3374.33;
-            const metaTerc = 11000.0;
+            const metaConfig = (typeof dadosMetas !== 'undefined' && dadosMetas && dadosMetas['2026']) ? dadosMetas['2026'] : {};
+            const metaProp = (typeof parseNum === 'function' ? parseNum(metaConfig.acompanhamento_propria) : 0) || 3374.33;
+            const metaTerc = (typeof parseNum === 'function' ? parseNum(metaConfig.acompanhamento_terceiros) : 0) || 11000.0;
             const metaGeral = metaProp + metaTerc;
 
-            document.getElementById('val-meta-prop').innerText = haProp.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' ha';
-            document.getElementById('val-meta-terc').innerText = haTerc.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' ha';
-            document.getElementById('val-meta-geral').innerText = haGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' ha';
+            const faltaProp = Math.max(0, metaProp - haProp);
+            const faltaTerc = Math.max(0, metaTerc - haTerc);
+            const faltaGeral = Math.max(0, metaGeral - haGeral);
 
             const pctP = Math.min((haProp / metaProp) * 100, 100).toFixed(1);
             const pctT = Math.min((haTerc / metaTerc) * 100, 100).toFixed(1);
             const pctG = Math.min((haGeral / metaGeral) * 100, 100).toFixed(1);
 
+            const pctFaltaP = Math.max(0, 100 - parseFloat(pctP)).toFixed(1);
+            const pctFaltaT = Math.max(0, 100 - parseFloat(pctT)).toFixed(1);
+            const pctFaltaG = Math.max(0, 100 - parseFloat(pctG)).toFixed(1);
+
+            // Atualiza Metas nos cabeçalhos dos cards
+            const elMetaProp = document.getElementById('lbl-meta-prop-meta');
+            if (elMetaProp) elMetaProp.innerText = 'Meta: ' + metaProp.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ha';
+            const elMetaTerc = document.getElementById('lbl-meta-terc-meta');
+            if (elMetaTerc) elMetaTerc.innerText = 'Meta: ' + metaTerc.toLocaleString('pt-BR', {minimumFractionDigits: 0, maximumFractionDigits: 2}) + ' ha';
+            const elMetaGeral = document.getElementById('lbl-meta-geral-meta');
+            if (elMetaGeral) elMetaGeral.innerText = 'Meta: ' + metaGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ha';
+
+            // Realizado
+            document.getElementById('val-meta-prop').innerText = haProp.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ha';
+            document.getElementById('val-meta-terc').innerText = haTerc.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ha';
+            document.getElementById('val-meta-geral').innerText = haGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ha';
+
+            // Falta Fazer (Hectares)
+            const elFaltaProp = document.getElementById('val-falta-prop');
+            if (elFaltaProp) elFaltaProp.innerText = faltaProp.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ha';
+            const elFaltaTerc = document.getElementById('val-falta-terc');
+            if (elFaltaTerc) elFaltaTerc.innerText = faltaTerc.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ha';
+            const elFaltaGeral = document.getElementById('val-falta-geral');
+            if (elFaltaGeral) elFaltaGeral.innerText = faltaGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' ha';
+
+            // Falta Fazer (%)
+            const elPctFaltaProp = document.getElementById('pct-falta-prop');
+            if (elPctFaltaProp) elPctFaltaProp.innerText = 'Falta ' + pctFaltaP.replace('.', ',') + '%';
+            const elPctFaltaTerc = document.getElementById('pct-falta-terc');
+            if (elPctFaltaTerc) elPctFaltaTerc.innerText = 'Falta ' + pctFaltaT.replace('.', ',') + '%';
+            const elPctFaltaGeral = document.getElementById('pct-falta-geral');
+            if (elPctFaltaGeral) elPctFaltaGeral.innerText = 'Falta ' + pctFaltaG.replace('.', ',') + '%';
+
+            // Barras e Percentuais Atingidos
             document.getElementById('bar-meta-prop').style.width = pctP + '%';
             document.getElementById('pct-meta-prop').innerText = pctP.replace('.', ',') + '% atingido';
 
