@@ -940,7 +940,7 @@ def compilar_historico_falhas():
 
     output_path = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_historico_falhas.js"
     with open(output_path, "w", encoding="utf-8") as f_out:
-        f_out.write("// Histórico Consolidado de Falhas de Plantio (2024 - 2026)\n")
+        f_out.write("// Histórico Consolidado de Falhas de Plantio (2021 - 2026)\n")
         f_out.write(f"// Gerado em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
         f_out.write("// Payload criptografado AES-GCM (Clealco)\n")
         f_out.write("window.DADOS_HISTORICO_FALHAS = ")
@@ -950,5 +950,29 @@ def compilar_historico_falhas():
     print(f"[HISTORICO FALHAS] Arquivo gravado com sucesso: {output_path} ({len(fazendas_todas)} registros compilados).")
 
 compilar_historico_falhas()
+
+def incrementar_versao_service_worker():
+    sw_path = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\service-worker.js"
+    if not os.path.exists(sw_path):
+        return
+    try:
+        with open(sw_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        import re
+        match = re.search(r"const CACHE_NAME = 'clealco-voos-v(\d+)';", content)
+        if match:
+            v_atual = int(match.group(1))
+            novo_v = v_atual + 1
+            novo_content = re.sub(r"const CACHE_NAME = 'clealco-voos-v\d+';", f"const CACHE_NAME = 'clealco-voos-v{novo_v}';", content)
+            with open(sw_path, 'w', encoding='utf-8') as f:
+                f.write(novo_content)
+            print(f"[SERVICE WORKER] Cache PWA atualizado com sucesso para: clealco-voos-v{novo_v}")
+        else:
+            print("[SERVICE WORKER] Aviso: Padrão de CACHE_NAME não encontrado no service-worker.js.")
+    except Exception as e:
+        print(f"[SERVICE WORKER] Erro ao incrementar versão do cache: {e}")
+
+incrementar_versao_service_worker()
+
 
 
