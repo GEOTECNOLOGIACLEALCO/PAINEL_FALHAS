@@ -572,6 +572,8 @@
         <a href="#passo-5-github" class="nav-link">🌐 4.5 GitHub Pages & Cron 30 min</a>
         <a href="#passo-6-mapa-radar" class="nav-link">🌧️ 4.6 Mapa, Radar IPMet & GPS</a>
         <a href="#passo-7-mapas-safra" class="nav-link">📑 4.7 Mapas Safra em PDF</a>
+        <a href="#passo-8-historico-falhas" class="nav-link">📊 4.8 Histórico de Falhas (2021-2026)</a>
+        <a href="#passo-9-kpis-metas" class="nav-link">🎯 4.9 Gestão de Metas & Falta Fazer</a>
 
         <div class="nav-categoria">Regras de Negócio</div>
         <a href="#regras-ouro" class="nav-link">⚖️ 5. Regras Críticas & Blindagem</a>
@@ -1154,6 +1156,99 @@ flowchart LR
                                 <li><strong>Filtro de Recência (Últimos 7 dias):</strong> Mapas criados ou atualizados recentemente recebem um selo visual <code>[NOVO]</code> ou <code>[NOVO HOJE]</code> e podem ser filtrados instantaneamente com 1 clique no botão <code>🔥 Ver Recentes</code>.</li>
                                 <li><strong>Visualizador Nativo em Tela Cheia:</strong> Permite consultar o mapa, dar zoom e analisar os talhões diretamente dentro do navegador ou no celular, sem necessidade de baixar o arquivo previamente.</li>
                             </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 8: HISTÓRICO MULTI-SAFRA DE FALHAS (2021 A 2026) -->
+                <div class="step-card" id="passo-8-historico-falhas">
+                    <div class="step-num-col" style="background: rgba(46, 125, 50, 0.15);">
+                        <div class="step-num" style="color: #66bb6a;">08</div>
+                        <div class="step-num-lbl">Falhas 6 Anos</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Auditoria Multi-Safra de Falhas de Plantio (2021 a 2026)</span>
+                            <span class="step-tag tag-auto">6 Safras &bull; 630 Fazendas</span>
+                        </div>
+                        <p>
+                            A aba <strong>📊 HISTÓRICO FALHAS</strong> consolida a série histórica de 6 safras consecutivas (2021 a 2026) auditando mais de <strong>53.978 hectares</strong>, <strong>344.560 km de linhas</strong> e <strong>4,45 milhões de metros de falhas</strong> em 5.298 talhões.
+                        </p>
+
+                        <div class="grid-3" style="margin-top:15px;">
+                            <div class="card card-destaque">
+                                <b style="color:var(--ouro);">1. 🗄️ Mineração Inteligente na Rede</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    O robô lê automaticamente as bases de falhas em <code>W:\01-DRONE\08-BANCO DE DADOS\</code> de 2021 a 2026. Possui filtro inteligente de cabeçalho (<code>Porc_Falha</code>), descartando planilhas de pisoteio ou linhas sem falha.
+                                </p>
+                            </div>
+                            <div class="card card-verde">
+                                <b style="color:var(--verde-claro);">2. 🚦 Semáforo Corporativo de Risco</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    Classificação automática conforme o tipo de parceria:<br>
+                                    &bull; <strong>Própria:</strong> Aceitável &le;8% | Atenção 8,01%-12% | Crítico &gt;12%<br>
+                                    &bull; <strong>Terceiros:</strong> Aceitável &le;5% | Atenção 5,01%-10% | Crítico &gt;10%
+                                </p>
+                            </div>
+                            <div class="card card-plasma">
+                                <b style="color:var(--plasma);">3. 📂 Seletor Retrátil & Dinâmico</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    Interface retrátil que preserva a visibilidade dos cards de indicadores, com botões sutis por safra e indicador dinâmico da safra ativa no topo.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-top:15px; border-left:4px solid var(--verde);">
+                            <b style="color:var(--verde-claro);">🔒 Segurança e Criptografia AES-GCM:</b>
+                            <p style="font-size:0.85rem; color:var(--texto-sec); margin-top:5px; line-height:1.7;">
+                                Toda a base histórica é compilada no arquivo <code>dados_historico_falhas.js</code> e criptografada com algoritmo militar <strong>AES-GCM (256 bits)</strong> via senha mestra corporativa. Nenhum dado aberto ou CSV confidencial trafega ou fica exposto no repositório público do GitHub.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 9: GESTÃO DE METAS GLOBAIS & INDICADOR 'FALTA FAZER' -->
+                <div class="step-card" id="passo-9-kpis-metas">
+                    <div class="step-num-col" style="background: rgba(33, 150, 243, 0.15);">
+                        <div class="step-num" style="color: #42a5f5;">09</div>
+                        <div class="step-num-lbl">Metas & Saldo</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Gestão de Metas da Safra & Indicador de "Falta Fazer"</span>
+                            <span class="step-tag tag-auto">Hectares e % Restantes</span>
+                        </div>
+                        <p>
+                            Os cards executivos de metas da safra (Área Própria Clealco, Área Parcerias/Terceiros e Consolidado Geral) possuem acompanhamento de atingimento e saldo pendente em tempo real:
+                        </p>
+
+                        <div class="grid-3" style="margin-top:15px;">
+                            <div class="card card-verde">
+                                <b style="color:var(--verde-claro);">🚜 Área Própria Clealco</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    Meta definida na aba <code>METAS_GLOBAIS</code>. Monitora hectares voados vs meta estipulada, calculando o saldo faltante e percentual em aberto.
+                                </p>
+                            </div>
+                            <div class="card card-plasma">
+                                <b style="color:var(--plasma);">🤝 Parcerias & Terceiros</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    Acompanhamento dedicado para fornecedores parceiros, permitindo direcionar as frentes de voo com antecedência.
+                                </p>
+                            </div>
+                            <div class="card card-destaque">
+                                <b style="color:var(--ouro);">🌐 Consolidado Geral</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    Soma agregada de todas as áreas. Exibe badge comemorativo <code>META BATIDA</code> em verde quando o saldo restante é zerado.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="card" style="margin-top:15px; border-left:4px solid var(--azul);">
+                            <b style="color:var(--azul);">📊 Fórmula de Cálculo do Saldo Pendente:</b>
+                            <p style="font-size:0.85rem; color:var(--texto-sec); margin-top:5px; font-family:monospace;">
+                                Saldo Restante (ha) = Math.max(0, Meta (ha) - Realizado (ha))<br>
+                                % Restante = (Saldo Restante / Meta) &times; 100
+                            </p>
                         </div>
                     </div>
                 </div>
