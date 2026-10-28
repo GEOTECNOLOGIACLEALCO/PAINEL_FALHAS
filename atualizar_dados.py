@@ -372,6 +372,7 @@ try:
                 "feat": feat
             })
             
+        fas_com_talhao_voado = set()
         for item in shp_itens:
             faz = item["fa"]
             tal = item["tal"]
@@ -397,8 +398,9 @@ try:
                                 f_area = inter.GetArea() / tg_area
                                 if f_area > max_frac:
                                     max_frac = f_area
-                if max_frac >= 0.15:
+                if max_frac >= 0.05:
                     status_voo = "VOADO"
+                    fas_com_talhao_voado.add(faz)
                     obs_voo = f"Voo Realizado ({int(round(max_frac*100))}% de cobertura KML)"
                 elif kmls_por_fa[faz]['revoo']:
                     status_voo = "ATENCAO"
@@ -417,6 +419,7 @@ try:
                 tals_voados_faz = talhoes_voados_bases.get(faz, set())
                 if tal in tals_voados_faz:
                     status_voo = "VOADO"
+                    fas_com_talhao_voado.add(faz)
                     obs_voo = "Voo Realizado (Confirmado na Base de Voo)"
                 elif info_p['revoo']:
                     status_voo = "ATENCAO"
@@ -466,9 +469,9 @@ try:
                 "geometry": geojson_geom
             })
             
-        # Inserção direta de KMLs para fazendas que NÃO constam no SHP cadastral (ex: FA 200 Terra Nova II, 106, 240, 285)
+        # Inserção direta de KMLs para fazendas que NÃO constam no SHP cadastral ou cujo KML não intersectou o SHP
         for fa_fora, info_fora in kmls_por_fa.items():
-            if fa_fora not in fas_no_shp:
+            if fa_fora not in fas_no_shp or fa_fora not in fas_com_talhao_voado:
                 # Se houver arquivo consolidado com o prefixo da FA (ex: '200 - talhao.kml'), prioriza ele para não duplicar subpartes
                 kmls_validos = info_fora['kmls']
                 consolidado = [k for k in kmls_validos if os.path.basename(k).startswith(fa_fora) and 'parte' not in os.path.basename(os.path.dirname(k)).lower()]
@@ -481,6 +484,8 @@ try:
                         if ds_direct:
                             lyr_direct = ds_direct.GetLayer()
                             faz_nome_limpo = info_fora['pasta'].split('-')[1].strip() if '-' in info_fora['pasta'] else info_fora['pasta']
+                            is_prop = fa_fora.startswith('20') and len(fa_fora) == 6 or fa_fora in ['200', '106', '240', '285']
+                            tipo_f = "Própria" if is_prop else "Terceiro"
                             print(f"Inserindo {lyr_direct.GetFeatureCount()} talhões diretos do KML: {faz_nome_limpo} (FA {fa_fora})")
                             for idx_d, feat_d in enumerate(lyr_direct):
                                 g_d = feat_d.GetGeometryRef()
@@ -498,7 +503,7 @@ try:
                                         "talhao": str(nome_tal_d),
                                         "area_ha": area_ha_d,
                                         "status": "VOADO",
-                                        "tipo": "Própria",
+                                        "tipo": tipo_f,
                                         "dias_brota": 0,
                                         "porte_cm": "",
                                         "variedade": "",
