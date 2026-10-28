@@ -113,10 +113,12 @@ for r in rows_bk[1:]:
 sheet_f = wb['FALHAS_PLANTIO']
 rows_f = list(sheet_f.iter_rows(values_only=True))
 falhas = []
+fas_em_falhas = set()
 for r in rows_f[1:]:
     fa = str(r[0] or '').strip()
     if not fa or 'comparativo' in fa.lower() or 'valores_coluna' in fa.lower():
         continue
+    fas_em_falhas.add(fa)
     falhas.append({
         "FA": fa,
         "Fazenda": str(r[1] or '').strip(),
@@ -127,6 +129,71 @@ for r in rows_f[1:]:
         "Porc_Falha": parse_num(r[6]),
         "Indice_Falha": str(r[7] or 'Aceitável')
     })
+
+# Complementa em tempo real com arquivos do BD Falhas e consolida partes adicionais (_P2, etc.)
+dir_falhas_live = r"W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas"
+if os.path.exists(dir_falhas_live):
+    mapa_faz_nome = {item["fa"]: item["fazenda"] for item in base_proc}
+    mapa_falhas_por_fa = {f["FA"]: f for f in falhas}
+    for f_csv in glob.glob(os.path.join(dir_falhas_live, "*.csv")):
+        b_name = os.path.basename(f_csv).replace('.csv', '').replace('.CSV', '').strip()
+        if not re.match(r'^\d+', b_name) or 'comparativo' in b_name.lower() or 'valores' in b_name.lower():
+            continue
+        
+        m_base = re.match(r'^(\d+)', b_name)
+        b_fa = m_base.group(1) if m_base else b_name
+        is_subpart = (b_name != b_fa)
+
+        num_clean = re.sub(r'\D', '', b_fa)
+        tipo_calc = "Própria" if (num_clean.startswith('20') and len(num_clean) == 6) else "Terceiro"
+        nome_f = mapa_faz_nome.get(b_fa, "N/D")
+        
+        ha_val, comp_l, comp_f = 0.0, 0.0, 0.0
+        try:
+            with open(f_csv, 'r', encoding='latin1', errors='ignore') as fp:
+                r_all = list(csv.reader(fp))
+                if len(r_all) > 1 and len(r_all[1]) > 2:
+                    ha_val = float(r_all[1][2].strip().replace(',', '.'))
+                c_hdr = [str(c).strip().upper() for c in r_all[0]]
+                i_l = next((i for i, c in enumerate(c_hdr) if 'COMP_LINHAS' in c or 'COMP LINHAS' in c), None)
+                i_f = next((i for i, c in enumerate(c_hdr) if 'COMP_FALHAS' in c or 'COMP FALHAS' in c), None)
+                if i_l is not None and i_f is not None:
+                    for row_l in r_all[1:]:
+                        if len(row_l) > max(i_l, i_f):
+                            try:
+                                comp_l += float(str(row_l[i_l]).replace(',', '.'))
+                                comp_f += float(str(row_l[i_f]).replace(',', '.'))
+                            except: pass
+
+            if b_fa in mapa_falhas_por_fa:
+                if is_subpart:
+                    # É uma parte adicional (ex: _P2), soma na fazenda já cadastrada
+                    item_existente = mapa_falhas_por_fa[b_fa]
+                    item_existente["Area_Ha"] = round(item_existente["Area_Ha"] + ha_val, 2)
+                    item_existente["Comp_Linhas"] = round(item_existente["Comp_Linhas"] + comp_l, 2)
+                    item_existente["Comp_Falhas"] = round(item_existente["Comp_Falhas"] + comp_f, 2)
+                    if item_existente["Comp_Linhas"] > 0:
+                        item_existente["Porc_Falha"] = round((item_existente["Comp_Falhas"] / item_existente["Comp_Linhas"]) * 100, 2)
+                    lim_verde = 8.0 if item_existente["Tipo"] == "Própria" else 5.0
+                    item_existente["Indice_Falha"] = 'Aceitável' if item_existente["Porc_Falha"] <= lim_verde else ('Atenção' if item_existente["Porc_Falha"] <= 10.0 else 'Crítico')
+            else:
+                p_falha = round((comp_f / comp_l) * 100, 2) if comp_l > 0 else 0.0
+                lim_verde = 8.0 if tipo_calc == "Própria" else 5.0
+                ind = 'Aceitável' if p_falha <= lim_verde else ('Atenção' if p_falha <= 10.0 else 'Crítico')
+                novo_item = {
+                    "FA": b_fa,
+                    "Fazenda": nome_f,
+                    "Tipo": tipo_calc,
+                    "Area_Ha": round(ha_val, 2),
+                    "Comp_Linhas": round(comp_l, 2),
+                    "Comp_Falhas": round(comp_f, 2),
+                    "Porc_Falha": p_falha,
+                    "Indice_Falha": ind
+                }
+                falhas.append(novo_item)
+                mapa_falhas_por_fa[b_fa] = novo_item
+        except Exception as e:
+            pass
 
 # 4. METAS_GLOBAIS
 sheet_m = wb['METAS_GLOBAIS']
@@ -336,10 +403,15 @@ try:
                 fa_code = m.group(1).lstrip('0') if m else None
                 if not fa_code: continue
                 
-                pastas_voo_todas[fa_code] = {
-                    'pasta': pasta_faz,
-                    'revoo': 'terminar' in pasta_faz.lower()
-                }
+                if fa_code not in pastas_voo_todas:
+                    pastas_voo_todas[fa_code] = {
+                        'pasta': pasta_faz,
+                        'revoo': 'terminar' in pasta_faz.lower()
+                    }
+                else:
+                    # Se uma das pastas já não tem 'terminar', não marca mais como revoo
+                    if 'terminar' not in pasta_faz.lower():
+                        pastas_voo_todas[fa_code]['revoo'] = False
                 
                 achados = []
                 for arq in os.listdir(caminho_faz):
@@ -357,15 +429,23 @@ try:
                                     if sub_sub_arq.lower().endswith('.kml') and ('talhao' in sub_sub_arq.lower() or 'talho' in sub_sub_arq.lower()):
                                         achados.append(os.path.join(p_arq, sub_sub_arq))
                 if achados:
-                    kmls_por_fa[fa_code] = {
-                        'pasta': pasta_faz,
-                        'kmls': achados,
-                        'revoo': 'terminar' in pasta_faz.lower()
-                    }
+                    if fa_code not in kmls_por_fa:
+                        kmls_por_fa[fa_code] = {
+                            'pasta': pasta_faz,
+                            'kmls': list(set(achados)),
+                            'revoo': 'terminar' in pasta_faz.lower()
+                        }
+                    else:
+                        # Acumula KMLs da Parte 2 (sem duplicar caminhos)
+                        for kml_item in achados:
+                            if kml_item not in kmls_por_fa[fa_code]['kmls']:
+                                kmls_por_fa[fa_code]['kmls'].append(kml_item)
+                        if 'terminar' not in pasta_faz.lower():
+                            kmls_por_fa[fa_code]['revoo'] = False
                     
         print(f"Varredura concluída: {len(pastas_voo_todas)} pastas de voo ({len(kmls_por_fa)} com KML gerado).")
         
-        # 2. Carrega as geometrias dos KMLs
+        # 2. Carrega as geometrias dos KMLs com Bounding Box pré-calculado
         geoms_por_fa = {}
         for fa_c, info in kmls_por_fa.items():
             geoms_por_fa[fa_c] = []
@@ -376,7 +456,7 @@ try:
                         lyr_k = ds_k.GetLayer()
                         for f_k in lyr_k:
                             g_k = f_k.GetGeometryRef()
-                            if g_k: geoms_por_fa[fa_c].append(g_k.Clone())
+                            if g_k: geoms_por_fa[fa_c].append((g_k.Clone(), g_k.GetEnvelope()))
                 except: pass
         
         # Dicionário do Backlog indexado por (FA, Talhao)
@@ -449,44 +529,37 @@ try:
         features_geojson = []
         matched_keys = set()
         fas_no_shp = set()
+        fas_com_talhao_voado = set()
         
-        shp_itens = []
         for feat in layer:
             geom = feat.GetGeometryRef()
             if not geom: continue
-            faz_code = str(feat.GetField('FAZENDA') or '').strip().lstrip('0')
-            tal_code = str(feat.GetField('TALHAO') or '').strip().lstrip('0')
-            nome_f = str(feat.GetField('NOME_FAZ') or '').strip().upper()
-            fas_no_shp.add(faz_code)
-            shp_itens.append({
-                "fa": faz_code,
-                "tal": tal_code,
-                "nome": nome_f,
-                "feat": feat
-            })
-            
-        fas_com_talhao_voado = set()
-        for item in shp_itens:
-            faz = item["fa"]
-            tal = item["tal"]
-            nome = item["nome"]
-            feat = item["feat"]
+            faz = str(feat.GetField('FAZENDA') or '').strip().lstrip('0')
+            fas_no_shp.add(faz)
+            tal = str(feat.GetField('TALHAO') or '').strip().lstrip('0')
             
             k = (faz, tal)
             bk = backlog_dict.get(k)
             
+            # Filtro rápido de relevância: se não tem voo e não está no backlog, ignora imediatamente
+            if faz not in geoms_por_fa and faz not in pastas_voo_todas and not bk:
+                continue
+
             status_voo = "OUTRO"
             obs_voo = ""
             
             # Caso 1: Fazenda possui KML de voo (cruza espacialmente com o SHP)
             if faz in geoms_por_fa and geoms_por_fa[faz]:
-                geom_item = feat.GetGeometryRef()
-                tg_area = geom_item.GetArea() if geom_item else 0.0
+                tg_area = geom.GetArea()
                 max_frac = 0.0
                 if tg_area > 0:
-                    for kg in geoms_por_fa[faz]:
-                        if geom_item.Intersects(kg):
-                            inter = geom_item.Intersection(kg)
+                    env_i = geom.GetEnvelope() # (minX, maxX, minY, maxY)
+                    for kg, env_k in geoms_por_fa[faz]:
+                        # Bounding box filter ultrarrápido (evita cálculo pesado GEOS)
+                        if env_i[0] > env_k[1] or env_i[1] < env_k[0] or env_i[2] > env_k[3] or env_i[3] < env_k[2]:
+                            continue
+                        if geom.Intersects(kg):
+                            inter = geom.Intersection(kg)
                             if inter and not inter.IsEmpty():
                                 f_area = inter.GetArea() / tg_area
                                 if f_area > max_frac:
@@ -803,13 +876,13 @@ sincronizar_e_catalogar_mapas()
 def compilar_historico_falhas():
     print("[HISTORICO FALHAS] Iniciando compilação 2021, 2022, 2023, 2024, 2025, 2026...")
     import csv, glob
-    from osgeo import ogr
     
     # 1. Mapeamento de nomes e zonas de fazendas do SHP e Excel
     info_por_fa = {}
     shp_path = r"W:\11-SHAPES TEMATICOS\09-SHP ATUALIZADO\SHP_CLEALCO.shp"
     if os.path.exists(shp_path):
         try:
+            from osgeo import ogr
             ds = ogr.Open(shp_path)
             if ds:
                 layer = ds.GetLayer()
@@ -820,7 +893,7 @@ def compilar_historico_falhas():
                     if faz and faz not in info_por_fa:
                         info_por_fa[faz] = {'nome': nome, 'zona': zona}
         except Exception as e:
-            print(f"[HISTORICO FALHAS] Aviso ao ler SHP: {e}")
+            print(f"[HISTORICO FALHAS] Aviso ao ler SHP (osgeo/ogr opcional): {e}")
 
     # Complementar com dados.xlsx
     excel_path = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados.xlsx"

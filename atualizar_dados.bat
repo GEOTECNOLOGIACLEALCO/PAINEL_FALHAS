@@ -5,8 +5,11 @@ cd /d "%~dp0"
 git pull --rebase origin main >nul 2>&1
 
 echo Atualizando dados locais...
-:: 2. Executa o Python e corta o fluxo imediatamente se houver erro de script
-python atualizar_dados.py || exit /b 1
+:: 2. Prioriza o interpretador Python do QGIS (com suporte a osgeo/ogr e shapefiles) com fallback para python padrao
+set "PY_EXE=C:\Program Files\QGIS 4.2.1\apps\Python312\python.exe"
+if not exist "%PY_EXE%" set "PY_EXE=python"
+
+"%PY_EXE%" atualizar_dados.py || exit /b 1
 echo.
 
 echo Preparando envio para o GitHub...
