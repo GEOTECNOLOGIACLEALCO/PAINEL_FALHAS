@@ -1,5 +1,5 @@
-import openpyxl, json, os, base64, math, re, shutil, time, urllib.parse
-from datetime import datetime
+import openpyxl, json, os, base64, math, re, shutil, time, urllib.parse, glob, csv
+from datetime import datetime, timedelta
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
@@ -157,6 +157,99 @@ if 'ACOMPANHAMENTO' in wb.sheetnames:
             "Semana": parse_num(r[5]),
             "Mes": parse_num(r[6])
         })
+
+# 🛡️ RECALCULO DINÂMICO EM TEMPO REAL: Falhas no plantio (2026)
+# Garante que qualquer novo CSV em W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas entre imediatamente na conta!
+dir_bd_falhas_2026 = r"W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas"
+if os.path.exists(dir_bd_falhas_2026):
+    try:
+        hoje_now = datetime.now()
+        mes_atual = hoje_now.month
+        ano_atual = hoje_now.year
+        inicio_sem = hoje_now - timedelta(days=hoje_now.weekday())
+        inicio_sem = inicio_sem.replace(hour=0, minute=0, second=0, microsecond=0)
+        fim_sem = inicio_sem + timedelta(days=6, hours=23, minutes=59, seconds=59)
+
+        # Mapa de datas a partir das pastas de imagens de voo
+        mapa_datas_voos = {}
+        for d_base in [r"W:\01-DRONE\01-IMAGENS VOO\2026\2 - Falhas e Linhas", r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados"]:
+            if os.path.exists(d_base):
+                for pasta in os.listdir(d_base):
+                    c_pasta = os.path.join(d_base, pasta)
+                    if os.path.isdir(c_pasta):
+                        m_fa = re.search(r'(\d+)', pasta)
+                        if m_fa:
+                            fa_k = m_fa.group(1).lstrip('0')
+                            t_max = os.path.getmtime(c_pasta)
+                            try:
+                                for arq_sub in os.listdir(c_pasta):
+                                    c_sub = os.path.join(c_pasta, arq_sub)
+                                    if os.path.isfile(c_sub):
+                                        u_sub = arq_sub.upper()
+                                        if 'LINHA' in u_sub or u_sub.endswith('.CSV') or u_sub.endswith('.KML'):
+                                            t_arq = os.path.getmtime(c_sub)
+                                            if t_arq > t_max: t_max = t_arq
+                            except: pass
+                            if fa_k not in mapa_datas_voos or t_max > mapa_datas_voos[fa_k]:
+                                mapa_datas_voos[fa_k] = t_max
+
+        falhas_calc = {
+            'Própria': {'r': 0.0, 's': 0.0, 'm': 0.0},
+            'Fornecedores': {'r': 0.0, 's': 0.0, 'm': 0.0}
+        }
+
+        for arq_csv in glob.glob(os.path.join(dir_bd_falhas_2026, "*.csv")):
+            b_name = os.path.basename(arq_csv).replace('.csv', '').replace('.CSV', '').strip()
+            num_fa = re.sub(r'\D', '', b_name)
+            k_fa = num_fa.lstrip('0')
+            is_prop = (num_fa.startswith('20') and len(num_fa) == 6)
+            seg_chave = 'Própria' if is_prop else 'Fornecedores'
+
+            area_ha = 0.0
+            try:
+                with open(arq_csv, 'r', encoding='latin1', errors='ignore') as f_csv:
+                    rdr = csv.reader(f_csv)
+                    _ = next(rdr, None)
+                    r2 = next(rdr, None)
+                    if r2 and len(r2) > 2:
+                        area_ha = float(r2[2].strip().replace(',', '.'))
+            except:
+                continue
+
+            # Data de realização
+            dt_r = None
+            if k_fa in mapa_datas_voos:
+                dt_r = datetime.fromtimestamp(mapa_datas_voos[k_fa])
+            else:
+                try: dt_r = datetime.fromtimestamp(os.path.getmtime(arq_csv))
+                except: pass
+
+            falhas_calc[seg_chave]['r'] += area_ha
+            if dt_r:
+                if dt_r.year == ano_atual and dt_r.month == mes_atual:
+                    falhas_calc[seg_chave]['m'] += area_ha
+                if inicio_sem <= dt_r <= fim_sem:
+                    falhas_calc[seg_chave]['s'] += area_ha
+
+        # Atualiza ou insere as linhas de Falhas no plantio no acomp
+        norm_txt = lambda s: str(s or '').lower().replace('ó', 'o').replace('ô', 'o').replace('í', 'i').replace('ã', 'a').strip()
+        for item in acomp:
+            if str(item.get("Ano", "")).strip() == '2026' and norm_txt(item.get("Categoria", "")) == 'falhas no plantio':
+                seg_it = item.get("Segmento", "")
+                if 'prop' in norm_txt(seg_it):
+                    item["Realizado"] = round(falhas_calc['Própria']['r'], 2)
+                    item["Semana"] = round(falhas_calc['Própria']['s'], 2)
+                    item["Mes"] = round(falhas_calc['Própria']['m'], 2)
+                elif 'fornec' in norm_txt(seg_it):
+                    item["Realizado"] = round(falhas_calc['Fornecedores']['r'], 2)
+                    item["Semana"] = round(falhas_calc['Fornecedores']['s'], 2)
+                    item["Mes"] = round(falhas_calc['Fornecedores']['m'], 2)
+                elif 'consol' in norm_txt(seg_it):
+                    item["Realizado"] = round(falhas_calc['Própria']['r'] + falhas_calc['Fornecedores']['r'], 2)
+                    item["Semana"] = round(falhas_calc['Própria']['s'] + falhas_calc['Fornecedores']['s'], 2)
+                    item["Mes"] = round(falhas_calc['Própria']['m'] + falhas_calc['Fornecedores']['m'], 2)
+    except Exception as e:
+        print(f"⚠️ Aviso no recálculo dinâmico de falhas: {e}")
 
 # 6. CONFIGURAÇÕES ADICIONAIS (Créditos Inforow e Senha de Acesso)
 creditos_dinamicos = 0.0
