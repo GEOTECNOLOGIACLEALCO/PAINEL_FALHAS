@@ -3443,6 +3443,27 @@
             const metaTerc = (typeof parseNum === 'function' ? parseNum(metaConfig.acompanhamento_terceiros) : 0) || 11000.0;
             const metaGeral = metaProp + metaTerc;
 
+            // Sincroniza o realizado dos Cards com o Acompanhamento Oficial (Falhas de Plantio)
+            let acompProp = 0, acompTerc = 0;
+            if (typeof dadosAcompanhamento !== 'undefined' && Array.isArray(dadosAcompanhamento)) {
+                dadosAcompanhamento.forEach(item => {
+                    const cat = (item.Categoria || '').toLowerCase();
+                    const seg = (item.Segmento || '').toLowerCase();
+                    const ano = String(item.Ano || '');
+                    if ((ano === '2026' || !ano) && cat.includes('falhas')) {
+                        const r = parseNum(item.Realizado);
+                        if (seg.includes('pr')) acompProp = r;
+                        else if (seg.includes('fornec') || seg.includes('terc')) acompTerc = r;
+                    }
+                });
+            }
+
+            if (acompProp > 0 || acompTerc > 0) {
+                haProp = acompProp;
+                haTerc = acompTerc;
+                haGeral = haProp + haTerc;
+            }
+
             const faltaProp = Math.max(0, metaProp - haProp);
             const faltaTerc = Math.max(0, metaTerc - haTerc);
             const faltaGeral = Math.max(0, metaGeral - haGeral);
