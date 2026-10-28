@@ -479,6 +479,20 @@ try:
                     "semaforo": b.get('status_prazo', '')
                 }
         
+        # 🔄 Dicionário de REVOO (Talhões ou Fazendas marcados para voar novamente)
+        custom_revoo_dict = {}
+        if 'REVOO' in wb.sheetnames:
+            try:
+                ws_rev = wb['REVOO']
+                for r_rev in list(ws_rev.iter_rows(values_only=True))[1:]:
+                    fa_r = str(r_rev[0] or '').strip().lstrip('0')
+                    tal_r = str(r_rev[1] or '').strip().lstrip('0').upper()
+                    motivo_r = str(r_rev[2] or 'Voar novamente').strip()
+                    if fa_r:
+                        custom_revoo_dict[(fa_r, tal_r)] = motivo_r
+            except Exception as e_rev:
+                print(f"Aviso ao ler aba REVOO: {e_rev}")
+        
         # Enriquecer com planilhas de vistoria/porte e extrair talhões voados oficiais
         pastas_planilhas = [
             r"M:\10-Planilhas\Voos Pós Plantio - Analise de Falhas\2026\BASES - RECEBIDAS",
@@ -610,6 +624,15 @@ try:
                     status_voo = "NOPRAZO"
             else:
                 continue
+
+            # 🔄 REGRA DE RE-VOO / SEM PORTE (Prioridade Máxima):
+            # Se a fazenda ou talhão específico foi marcado para voar novamente (ex: 202807 sem porte)
+            motivo_revoo = custom_revoo_dict.get((faz, tal)) or custom_revoo_dict.get((faz, 'TODOS'))
+            if motivo_revoo:
+                status_voo = "REVOO"
+                obs_voo = f"🔁 Voar Novamente ({motivo_revoo})"
+                if faz in fas_com_talhao_voado and (faz, 'TODOS') in custom_revoo_dict:
+                    fas_com_talhao_voado.discard(faz)
                 
             geom = feat.GetGeometryRef()
             geom_simpl = geom.Simplify(0.00004) # ~4m de precisao para manter arquivo leve
@@ -661,6 +684,12 @@ try:
                                 area_ha_d = round(g_d.GetArea() * (111319.0 ** 2) * math.cos(math.radians(lat_mid_d)) / 10000.0, 2)
                                 nome_tal_d = feat_d.GetField("Name") or f"{idx_d + 1}"
                                 g_simpl_d = g_d.Simplify(0.00004)
+                                st_direct = "VOADO"
+                                obs_direct = f"Voo Realizado ({os.path.basename(kml_f)})"
+                                m_rev_d = custom_revoo_dict.get((fa_fora, str(nome_tal_d).lstrip('0'))) or custom_revoo_dict.get((fa_fora, 'TODOS'))
+                                if m_rev_d:
+                                    st_direct = "REVOO"
+                                    obs_direct = f"🔁 Voar Novamente ({m_rev_d})"
                                 features_geojson.append({
                                     "type": "Feature",
                                     "properties": {
@@ -668,13 +697,13 @@ try:
                                         "fazenda": faz_nome_limpo,
                                         "talhao": str(nome_tal_d),
                                         "area_ha": area_ha_d,
-                                        "status": "VOADO",
+                                        "status": st_direct,
                                         "tipo": tipo_f,
                                         "dias_brota": 0,
                                         "porte_cm": "",
                                         "variedade": "",
                                         "data_plantio": "",
-                                        "obs": f"Voo Realizado ({os.path.basename(kml_f)})"
+                                        "obs": obs_direct
                                     },
                                     "geometry": json.loads(g_simpl_d.ExportToJson())
                                 })

@@ -1381,6 +1381,7 @@
                         <select id="mapa-filtro-status" onchange="aplicarFiltrosMapa()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:border-red-500 shadow-sm cursor-pointer">
                             <option value="TODOS">🚦 Todos os Status</option>
                             <option value="BACKLOG_TODOS">Somente Backlog (A Voar)</option>
+                            <option value="REVOO">🔁 Voar Novamente / Sem Porte</option>
                             <option value="CRITICO">🔴 Crítico / Porte Alto (&gt; 90 dias)</option>
                             <option value="ATENCAO">🟡 Atenção (60 a 90 dias)</option>
                             <option value="NOPRAZO">🔵 No Prazo (&lt; 60 dias)</option>
@@ -1415,7 +1416,14 @@
                     <!-- Legenda Visual com Contadores -->
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2 text-xs">
                         <span class="text-[10px] uppercase font-bold text-slate-500 block">Legenda Operacional</span>
-                        <div class="grid grid-cols-2 gap-2">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                            <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-purple-200 col-span-2 sm:col-span-1">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded bg-purple-600 border border-purple-700 flex-shrink-0"></span>
+                                    <span class="text-purple-900 font-bold">Voar Novamente</span>
+                                </span>
+                                <b class="text-purple-900 font-black ml-2" id="legenda-count-revoo">0</b>
+                            </div>
                             <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
                                 <span class="flex items-center gap-2">
                                     <span class="w-3.5 h-3.5 rounded bg-red-600 border border-red-700 flex-shrink-0"></span>
@@ -4045,12 +4053,17 @@
                 }, null, { position: 'topright' }).addTo(mapaVoosInstancia);
             }
 
+            // Aplica marcações salvas de re-voo
+            aplicarRevoosSalvosNasFeatures();
+
             // Atualiza KPIs e desenha polígonos
             aplicarFiltrosMapa();
         }
 
         function getEstiloTalhao(status) {
             switch(status) {
+                case 'REVOO':
+                    return { fillColor: '#9333ea', color: '#6b21a8', weight: 2.0, fillOpacity: 0.70 };
                 case 'CRITICO':
                     return { fillColor: '#dc2626', color: '#991b1b', weight: 1.5, fillOpacity: 0.65 };
                 case 'ATENCAO':
@@ -4078,6 +4091,7 @@
             let totalAten = 0, areaAten = 0;
             let totalPrazo = 0, areaPrazo = 0;
             let totalVoado = 0, areaVoado = 0;
+            let totalRevoo = 0, areaRevoo = 0;
             const topFazendasMap = {};
 
             features.forEach(f => {
@@ -4086,13 +4100,14 @@
                 const ha = parseFloat(p.area_ha) || 0;
                 const faz = p.fazenda || 'Outra';
 
-                if (st === 'CRITICO' || st === 'ATENCAO' || st === 'NOPRAZO') {
+                if (st === 'CRITICO' || st === 'ATENCAO' || st === 'NOPRAZO' || st === 'REVOO') {
                     totalBk++;
                     areaBk += ha;
                     topFazendasMap[faz] = (topFazendasMap[faz] || 0) + ha;
                 }
 
-                if (st === 'CRITICO') { totalCrit++; areaCrit += ha; }
+                if (st === 'REVOO') { totalRevoo++; areaRevoo += ha; }
+                else if (st === 'CRITICO') { totalCrit++; areaCrit += ha; }
                 else if (st === 'ATENCAO') { totalAten++; areaAten += ha; }
                 else if (st === 'NOPRAZO') { totalPrazo++; areaPrazo += ha; }
                 else if (st === 'VOADO') { totalVoado++; areaVoado += ha; }
@@ -4162,6 +4177,7 @@
                 setTxt('mapa-kpi-area-voado', areaVoado.toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' ha');
             }
 
+            setTxt('legenda-count-revoo', totalRevoo);
             setTxt('legenda-count-critico', totalCrit);
             setTxt('legenda-count-atencao', totalAten);
             setTxt('legenda-count-noprazo', totalPrazo);
@@ -4185,7 +4201,7 @@
                 
                 // Filtro Status
                 if (filtroStatus === 'BACKLOG_TODOS') {
-                    if (p.status !== 'CRITICO' && p.status !== 'ATENCAO' && p.status !== 'NOPRAZO') return false;
+                    if (p.status !== 'CRITICO' && p.status !== 'ATENCAO' && p.status !== 'NOPRAZO' && p.status !== 'REVOO') return false;
                 } else if (filtroStatus !== 'TODOS' && p.status !== filtroStatus) {
                     return false;
                 }
@@ -4215,12 +4231,13 @@
                     // Tooltip no hover
                     layer.bindTooltip(`
                         <b>${p.fazenda}</b> - T${p.talhao}<br>
-                        Área: ${p.area_ha} ha | Status: ${p.status}
-                        ${p.obs ? `<br><span style="color:#d97706;font-weight:bold;">⚠️ ${p.obs}</span>` : ''}
+                        Área: ${p.area_ha} ha | Status: ${p.status === 'REVOO' ? '🔁 Voar Novamente' : p.status}
+                        ${p.obs ? `<br><span style="color:#7e22ce;font-weight:bold;">⚠️ ${p.obs}</span>` : ''}
                     `, { sticky: true, className: 'leaflet-tooltip-clealco' });
 
                     // Popup no clique
-                    const statusBadge = p.status === 'CRITICO' ? '<span class="px-2 py-0.5 bg-red-100 text-red-700 font-bold rounded text-[10px]">🔴 CRÍTICO (> 90d)</span>' :
+                    const statusBadge = p.status === 'REVOO' ? '<span class="px-2 py-0.5 bg-purple-100 text-purple-800 font-black rounded text-[10px] border border-purple-300">🔁 VOAR NOVAMENTE</span>' :
+                                       p.status === 'CRITICO' ? '<span class="px-2 py-0.5 bg-red-100 text-red-700 font-bold rounded text-[10px]">🔴 CRÍTICO (> 90d)</span>' :
                                        p.status === 'ATENCAO' ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-700 font-bold rounded text-[10px]">🟡 ATENÇÃO</span>' :
                                        p.status === 'NOPRAZO' ? '<span class="px-2 py-0.5 bg-blue-100 text-blue-700 font-bold rounded text-[10px]">🔵 NO PRAZO (&lt; 60d)</span>' :
                                        '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded text-[10px]">🟢 JÁ VOADO</span>';
@@ -4236,7 +4253,7 @@
                             </div>
                             
                             ${p.obs ? `
-                                <div class="p-2 rounded-lg border font-semibold text-[11px] flex items-start gap-1.5 ${p.status === 'VOADO' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900'}">
+                                <div class="p-2 rounded-lg border font-semibold text-[11px] flex items-start gap-1.5 ${p.status === 'REVOO' ? 'bg-purple-50 border-purple-200 text-purple-900' : (p.status === 'VOADO' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900')}">
                                     <span class="text-sm">⚠️</span>
                                     <span>${p.obs}</span>
                                 </div>
@@ -4251,9 +4268,14 @@
                                 ${p.porte_cm ? `<div class="col-span-2">Porte: <b class="text-slate-900">${p.porte_cm} cm</b></div>` : ''}
                             </div>
 
-                            <button onclick="baixarKMLTalhaoPorChave('${p.fa}', '${p.talhao}')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded-lg text-xs transition flex items-center justify-center gap-1.5 shadow-sm cursor-pointer mt-1">
-                                📥 <span>Baixar KML deste Talhão</span>
-                            </button>
+                            <div class="flex gap-1.5 mt-2">
+                                <button onclick="baixarKMLTalhaoPorChave('${p.fa}', '${p.talhao}')" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 px-2 rounded-lg text-xs transition flex items-center justify-center gap-1 shadow-sm cursor-pointer">
+                                    📥 <span>KML</span>
+                                </button>
+                                <button onclick="alternarRevooTalhao('${p.fa}', '${p.talhao}')" class="flex-1 ${p.status === 'REVOO' ? 'bg-amber-600 hover:bg-amber-700' : 'bg-purple-600 hover:bg-purple-700'} text-white font-bold py-1.5 px-2 rounded-lg text-xs transition flex items-center justify-center gap-1 shadow-sm cursor-pointer" title="${p.status === 'REVOO' ? 'Desmarcar revoo' : 'Marcar para voar novamente (sem porte / problema)'}">
+                                    ${p.status === 'REVOO' ? '↩️ <span>Desmarcar</span>' : '🔁 <span>Voar Novamente</span>'}
+                                </button>
+                            </div>
                         </div>
                     `;
 
@@ -4452,6 +4474,84 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        }
+
+        // ================= GESTÃO DINÂMICA DE RE-VOO / SEM PORTE =================
+        function obterRevoosLocais() {
+            try {
+                return JSON.parse(localStorage.getItem('clealco_revoo_talhoes') || '{}');
+            } catch(e) { return {}; }
+        }
+
+        function salvarRevoosLocais(obj) {
+            try {
+                localStorage.setItem('clealco_revoo_talhoes', JSON.stringify(obj));
+            } catch(e) {}
+        }
+
+        function aplicarRevoosSalvosNasFeatures() {
+            if (!window.DADOS_MAPA_VOOS || !window.DADOS_MAPA_VOOS.features) return;
+            const revoos = obterRevoosLocais();
+            window.DADOS_MAPA_VOOS.features.forEach(f => {
+                const p = f.properties || {};
+                const limpaFa = String(p.fa || '').trim().replace(/^0+/, '');
+                const tal = String(p.talhao || '').trim().replace(/^0+/, '');
+                const chaveTalhao = `${limpaFa}_${tal}`;
+                const chaveFazenda = `${limpaFa}_TODOS`;
+                
+                if (revoos[chaveTalhao]) {
+                    p.statusOriginal = p.statusOriginal || p.status;
+                    p.status = 'REVOO';
+                    p.obs = `🔁 Voar Novamente (${revoos[chaveTalhao].motivo || 'Marcado pelo usuário'})`;
+                } else if (revoos[chaveFazenda]) {
+                    p.statusOriginal = p.statusOriginal || p.status;
+                    p.status = 'REVOO';
+                    p.obs = `🔁 Voar Novamente (${revoos[chaveFazenda].motivo || 'Marcado pelo usuário'})`;
+                }
+            });
+        }
+
+        function alternarRevooTalhao(fa, talhao) {
+            const limpaFa = String(fa || '').trim().replace(/^0+/, '');
+            const tal = String(talhao || '').trim().replace(/^0+/, '');
+            const chave = `${limpaFa}_${tal}`;
+            const revoos = obterRevoosLocais();
+
+            const feat = window.DADOS_MAPA_VOOS?.features?.find(f => {
+                const p = f.properties || {};
+                return String(p.fa).trim().replace(/^0+/, '') === limpaFa && String(p.talhao).trim().replace(/^0+/, '') === tal;
+            });
+
+            if (!feat) return;
+            const p = feat.properties;
+
+            if (p.status === 'REVOO') {
+                if (confirm(`Deseja desmarcar o revoo para a Fazenda ${p.fazenda} (Talhão ${p.talhao}) e restaurar o status anterior?`)) {
+                    delete revoos[chave];
+                    salvarRevoosLocais(revoos);
+                    p.status = p.statusOriginal || 'VOADO';
+                    p.obs = 'Status restaurado';
+                    aplicarFiltrosMapa();
+                    selecionarTalhaoMapa(fa, talhao);
+                }
+            } else {
+                const motivo = prompt(`Informe o motivo para marcar este talhão para VOAR NOVAMENTE:\nEx: Sem porte / Porte baixo / Chuva / Problema`, "Sem porte / Voar novamente");
+                if (motivo !== null && motivo.trim() !== "") {
+                    revoos[chave] = {
+                        fa: limpaFa,
+                        talhao: tal,
+                        fazenda: p.fazenda,
+                        motivo: motivo.trim(),
+                        data: new Date().toLocaleDateString('pt-BR')
+                    };
+                    salvarRevoosLocais(revoos);
+                    p.statusOriginal = p.status;
+                    p.status = 'REVOO';
+                    p.obs = `🔁 Voar Novamente (${motivo.trim()})`;
+                    aplicarFiltrosMapa();
+                    selecionarTalhaoMapa(fa, talhao);
+                }
+            }
         }
 
         // ================= CONTROLES AVANÇADOS DO MAPA (MOBILE, TABLET E GPS) =================
