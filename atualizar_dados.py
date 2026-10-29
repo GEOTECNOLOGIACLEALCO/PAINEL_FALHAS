@@ -650,7 +650,8 @@ try:
             # 🔄 REGRA DE RE-VOO / SEM PORTE (Prioridade Máxima):
             motivo_revoo = custom_revoo_dict.get((faz, tal)) or custom_revoo_dict.get((faz, 'TODOS'))
             if not motivo_revoo and (pastas_voo_todas.get(faz, {}).get('revoo') or kmls_por_fa.get(faz, {}).get('revoo')):
-                motivo_revoo = "Pendente de Voo / Terminar Outras Partes"
+                if status_voo not in ["VOADO"]:
+                    motivo_revoo = "Pendente de Voo / Terminar Outras Partes"
 
             if motivo_revoo:
                 status_voo = "REVOO"
@@ -711,7 +712,7 @@ try:
                                 gd_d = json.loads(g_simpl_d.ExportToJson())
                                 gd_d['coordinates'] = round_coords(gd_d['coordinates'], 5)
                                 
-                                st_direct = "VOO_RECENTE" if fa_fora in pastas_nao_processados else "VOADO"
+                                st_direct = "VOO_RECENTE" if (fa_fora in pastas_nao_processados and fa_fora not in pastas_falhas_linhas) else "VOADO"
                                 obs_direct = f"Voo Recente ({os.path.basename(kml_f)})" if st_direct == "VOO_RECENTE" else f"Voo Realizado ({os.path.basename(kml_f)})"
                                 m_rev_d = custom_revoo_dict.get((fa_fora, str(nome_tal_d).lstrip('0'))) or custom_revoo_dict.get((fa_fora, 'TODOS'))
                                 if m_rev_d:
