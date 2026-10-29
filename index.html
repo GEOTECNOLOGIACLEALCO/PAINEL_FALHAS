@@ -1531,9 +1531,9 @@
                         </div>
                     </div>
 
-                    <!-- Overlay de Dica de Navegação / Suporte a Toque -->
-                    <div class="absolute bottom-3 left-3 z-[1000] bg-slate-900/85 backdrop-blur-md text-white text-[11px] px-3 py-1.5 rounded-lg border border-white/20 shadow-lg pointer-events-none flex items-center gap-2 max-w-[85%] sm:max-w-none">
-                        <span>💡 Toque ou clique em um talhão para ver os dados e baixar o KML</span>
+                    <!-- Overlay de Dica de Navegação / Suporte a Toque (Reposicionado para não colidir com a legenda) -->
+                    <div class="absolute bottom-3 right-20 sm:right-32 z-[1000] bg-slate-900/85 backdrop-blur-md text-white text-[11px] px-3 py-1.5 rounded-lg border border-white/20 shadow-lg pointer-events-none hidden sm:flex items-center gap-2">
+                        <span>💡 Clique em um talhão para ver os dados e baixar o KML</span>
                     </div>
 
                     <!-- Botão Flutuante de Fechar Tela Cheia (aparece apenas quando ativo) -->
@@ -4104,66 +4104,67 @@
             if (!mapaVoosInstancia) return;
             
             if (!legendaMapaControl) {
-                legendaMapaControl = L.control({ position: 'bottomright' });
+                legendaMapaControl = L.control({ position: 'bottomleft' });
                 legendaMapaControl.onAdd = function() {
-                    const div = L.DomUtil.create('div', 'leaflet-bar-custom leaflet-control-legenda');
+                    const div = L.DomUtil.create('div', 'leaflet-control-legenda');
+                    div.style.pointerEvents = 'auto';
                     div.innerHTML = `
-                        <div class="bg-slate-900/95 text-white backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-slate-700/80 shadow-2xl text-[11px] font-sans min-w-[190px] sm:min-w-[210px] select-none pointer-events-auto">
-                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-700/80 cursor-pointer" onclick="toggleConteudoLegendaMapa()" title="Clique para minimizar ou expandir a legenda">
-                                <span class="font-black tracking-wider uppercase flex items-center gap-1.5 text-xs text-white">
-                                    <span>🗺️</span> <span>Legenda Operacional</span>
+                        <div class="bg-white/95 text-slate-900 backdrop-blur-md p-3 rounded-2xl border-2 border-slate-300 shadow-2xl text-[12px] font-sans min-w-[210px] sm:min-w-[230px] select-none">
+                            <div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-200 cursor-pointer" onclick="toggleConteudoLegendaMapa()" title="Clique para minimizar ou expandir a legenda">
+                                <span class="font-black tracking-wider uppercase flex items-center gap-1.5 text-xs text-slate-900">
+                                    <span class="text-sm">🗺️</span> <span>LEGENDA OPERACIONAL</span>
                                 </span>
-                                <span id="btn-toggle-legenda-icon" class="text-slate-400 hover:text-white font-mono text-xs px-1 font-bold">−</span>
+                                <span id="btn-toggle-legenda-icon" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded-md font-mono text-xs font-black leading-none">−</span>
                             </div>
-                            <div id="corpo-legenda-mapa" class="space-y-1 transition-all">
-                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('REVOO')" title="Filtrar Voar Novamente">
-                                    <span class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded-full bg-purple-600 border border-purple-400 inline-block shrink-0 shadow-sm"></span>
-                                        <span class="text-purple-200 font-bold">Voar Novamente</span>
+                            <div id="corpo-legenda-mapa" class="space-y-1.5 transition-all">
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-50 px-2 py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('REVOO')" title="Filtrar Voar Novamente">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-purple-600 border border-purple-800 inline-block shrink-0 shadow-xs"></span>
+                                        <span class="text-slate-900 font-bold text-xs">Voar Novamente</span>
                                     </span>
-                                    <b class="text-purple-300 font-mono text-[10px]" id="leg-map-revoo">${counts.revoo || 0}</b>
+                                    <b class="bg-purple-100 text-purple-900 border border-purple-200 font-black px-2 py-0.5 rounded-md text-[11px] font-mono" id="leg-map-revoo">${counts.revoo || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('VOO_RECENTE')" title="Filtrar Voo Recente">
-                                    <span class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded-full bg-sky-500 border border-sky-300 inline-block shrink-0 shadow-sm"></span>
-                                        <span class="text-sky-200 font-bold">Voo Recente / Fila</span>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-50 px-2 py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('VOO_RECENTE')" title="Filtrar Voo Recente / Fila">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-sky-500 border border-sky-700 inline-block shrink-0 shadow-xs"></span>
+                                        <span class="text-slate-900 font-bold text-xs">Voo Recente / Fila</span>
                                     </span>
-                                    <b class="text-sky-300 font-mono text-[10px]" id="leg-map-recente">${counts.recente || 0}</b>
+                                    <b class="bg-sky-100 text-sky-900 border border-sky-200 font-black px-2 py-0.5 rounded-md text-[11px] font-mono" id="leg-map-recente">${counts.recente || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('VOADO')" title="Filtrar Concluído">
-                                    <span class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded-full bg-emerald-500 border border-emerald-300 inline-block shrink-0 shadow-sm"></span>
-                                        <span class="text-emerald-200 font-bold">Concluído / Voado</span>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-50 px-2 py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('VOADO')" title="Filtrar Concluído / Voado">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-emerald-600 border border-emerald-800 inline-block shrink-0 shadow-xs"></span>
+                                        <span class="text-slate-900 font-bold text-xs">Concluído / Voado</span>
                                     </span>
-                                    <b class="text-emerald-300 font-mono text-[10px]" id="leg-map-voado">${counts.voado || 0}</b>
+                                    <b class="bg-emerald-100 text-emerald-900 border border-emerald-200 font-black px-2 py-0.5 rounded-md text-[11px] font-mono" id="leg-map-voado">${counts.voado || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('CRITICO')" title="Filtrar Crítico">
-                                    <span class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded-full bg-red-600 border border-red-400 inline-block shrink-0 shadow-sm"></span>
-                                        <span class="text-red-200 font-medium">Crítico (&gt; 90d)</span>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-50 px-2 py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('CRITICO')" title="Filtrar Crítico (> 90d)">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-red-600 border border-red-800 inline-block shrink-0 shadow-xs"></span>
+                                        <span class="text-slate-900 font-bold text-xs">Crítico (&gt; 90d)</span>
                                     </span>
-                                    <b class="text-red-300 font-mono text-[10px]" id="leg-map-critico">${counts.critico || 0}</b>
+                                    <b class="bg-red-100 text-red-900 border border-red-200 font-black px-2 py-0.5 rounded-md text-[11px] font-mono" id="leg-map-critico">${counts.critico || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('ATENCAO')" title="Filtrar Atenção">
-                                    <span class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded-full bg-amber-500 border border-amber-300 inline-block shrink-0 shadow-sm"></span>
-                                        <span class="text-amber-200 font-medium">Atenção (60-90d)</span>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-50 px-2 py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('ATENCAO')" title="Filtrar Atenção (60-90d)">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-amber-500 border border-amber-700 inline-block shrink-0 shadow-xs"></span>
+                                        <span class="text-slate-900 font-bold text-xs">Atenção (60-90d)</span>
                                     </span>
-                                    <b class="text-amber-300 font-mono text-[10px]" id="leg-map-atencao">${counts.atencao || 0}</b>
+                                    <b class="bg-amber-100 text-amber-900 border border-amber-200 font-black px-2 py-0.5 rounded-md text-[11px] font-mono" id="leg-map-atencao">${counts.atencao || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('NOPRAZO')" title="Filtrar No Prazo">
-                                    <span class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded-full bg-yellow-500 border border-yellow-300 inline-block shrink-0 shadow-sm"></span>
-                                        <span class="text-yellow-200 font-medium">No Prazo (&lt; 60d)</span>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-50 px-2 py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('NOPRAZO')" title="Filtrar No Prazo (< 60d)">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-yellow-500 border border-yellow-700 inline-block shrink-0 shadow-xs"></span>
+                                        <span class="text-slate-900 font-bold text-xs">No Prazo (&lt; 60d)</span>
                                     </span>
-                                    <b class="text-yellow-300 font-mono text-[10px]" id="leg-map-noprazo">${counts.noprazo || 0}</b>
+                                    <b class="bg-yellow-100 text-yellow-900 border border-yellow-200 font-black px-2 py-0.5 rounded-md text-[11px] font-mono" id="leg-map-noprazo">${counts.noprazo || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('BASE_CLEALCO')" title="Filtrar Base Clealco">
-                                    <span class="flex items-center gap-1.5">
-                                        <span class="w-3 h-3 rounded-full bg-slate-500 border border-slate-400 inline-block shrink-0 shadow-sm"></span>
-                                        <span class="text-slate-300">Base Clealco</span>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-50 px-2 py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('BASE_CLEALCO')" title="Filtrar Base Clealco">
+                                    <span class="flex items-center gap-2">
+                                        <span class="w-3.5 h-3.5 rounded-full bg-slate-500 border border-slate-700 inline-block shrink-0 shadow-xs"></span>
+                                        <span class="text-slate-700 font-semibold text-xs">Base Clealco</span>
                                     </span>
-                                    <b class="text-slate-400 font-mono text-[10px]" id="leg-map-base">${counts.base || 0}</b>
+                                    <b class="bg-slate-100 text-slate-800 border border-slate-200 font-black px-2 py-0.5 rounded-md text-[11px] font-mono" id="leg-map-base">${counts.base || 0}</b>
                                 </div>
                             </div>
                         </div>
