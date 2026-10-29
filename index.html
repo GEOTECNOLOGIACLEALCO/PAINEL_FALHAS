@@ -1379,13 +1379,15 @@
                     <!-- Filtro de Status -->
                     <div class="w-full sm:w-auto min-w-[180px]">
                         <select id="mapa-filtro-status" onchange="aplicarFiltrosMapa()" class="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs text-slate-800 font-medium focus:outline-none focus:border-red-500 shadow-sm cursor-pointer">
-                            <option value="TODOS">🚦 Todos os Status</option>
+                            <option value="TODOS">🚦 Todos os Polígonos (Geral)</option>
                             <option value="BACKLOG_TODOS">Somente Backlog (A Voar)</option>
                             <option value="REVOO">🔁 Voar Novamente / Sem Porte</option>
-                            <option value="CRITICO">🔴 Crítico / Porte Alto (&gt; 90 dias)</option>
-                            <option value="ATENCAO">🟡 Atenção (60 a 90 dias)</option>
-                            <option value="NOPRAZO">🔵 No Prazo (&lt; 60 dias)</option>
+                            <option value="VOO_RECENTE">🔷 Voo Recente / Fila (Não Processados)</option>
                             <option value="VOADO">🟢 Já Voado / Concluído</option>
+                            <option value="CRITICO">🔴 Crítico / Porte Alto (&gt; 90 dias)</option>
+                            <option value="ATENCAO">🟠 Atenção (60 a 90 dias)</option>
+                            <option value="NOPRAZO">🟡 No Prazo (&lt; 60 dias)</option>
+                            <option value="BASE_CLEALCO">⚪ Base Clealco (Cadastrado)</option>
                         </select>
                     </div>
 
@@ -1424,6 +1426,20 @@
                                 </span>
                                 <b class="text-purple-900 font-black ml-2" id="legenda-count-revoo">0</b>
                             </div>
+                            <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-sky-200">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded bg-sky-500 border border-sky-600 flex-shrink-0"></span>
+                                    <span class="text-sky-900 font-bold">Voo Recente / Fila</span>
+                                </span>
+                                <b class="text-sky-900 font-black ml-2" id="legenda-count-recente">0</b>
+                            </div>
+                            <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-emerald-200">
+                                <span class="flex items-center gap-2">
+                                    <span class="w-3.5 h-3.5 rounded bg-emerald-600 border border-emerald-700 flex-shrink-0"></span>
+                                    <span class="text-emerald-900 font-bold">Já Voado</span>
+                                </span>
+                                <b class="text-emerald-900 font-black ml-2" id="legenda-count-voado">0</b>
+                            </div>
                             <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
                                 <span class="flex items-center gap-2">
                                     <span class="w-3.5 h-3.5 rounded bg-red-600 border border-red-700 flex-shrink-0"></span>
@@ -1440,17 +1456,17 @@
                             </div>
                             <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
                                 <span class="flex items-center gap-2">
-                                    <span class="w-3.5 h-3.5 rounded bg-blue-500 border border-blue-600 flex-shrink-0"></span>
+                                    <span class="w-3.5 h-3.5 rounded bg-yellow-500 border border-yellow-600 flex-shrink-0"></span>
                                     <span class="text-slate-700 font-medium">No Prazo (&lt; 60d)</span>
                                 </span>
                                 <b class="text-slate-900 font-black ml-2" id="legenda-count-noprazo">0</b>
                             </div>
-                            <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200">
+                            <div class="flex items-center justify-between bg-white p-2 rounded-lg border border-slate-200 col-span-2 sm:col-span-3">
                                 <span class="flex items-center gap-2">
-                                    <span class="w-3.5 h-3.5 rounded bg-emerald-600 border border-emerald-700 flex-shrink-0"></span>
-                                    <span class="text-slate-700 font-medium">Já Voado</span>
+                                    <span class="w-3.5 h-3.5 rounded bg-slate-500 border border-slate-600 flex-shrink-0"></span>
+                                    <span class="text-slate-700 font-medium">Base Clealco (Demais Talhões)</span>
                                 </span>
-                                <b class="text-slate-900 font-black ml-2" id="legenda-count-voado">0</b>
+                                <b class="text-slate-900 font-black ml-2" id="legenda-count-base">0</b>
                             </div>
                         </div>
                     </div>
@@ -4063,18 +4079,130 @@
         function getEstiloTalhao(status) {
             switch(status) {
                 case 'REVOO':
-                    return { fillColor: '#9333ea', color: '#6b21a8', weight: 2.0, fillOpacity: 0.70 };
+                    return { fillColor: '#9333ea', color: '#6b21a8', weight: 2.0, fillOpacity: 0.75 };
                 case 'CRITICO':
                     return { fillColor: '#dc2626', color: '#991b1b', weight: 1.5, fillOpacity: 0.65 };
                 case 'ATENCAO':
                     return { fillColor: '#f59e0b', color: '#b45309', weight: 1.5, fillOpacity: 0.65 };
                 case 'NOPRAZO':
-                    return { fillColor: '#3b82f6', color: '#1d4ed8', weight: 1.5, fillOpacity: 0.60 };
+                    return { fillColor: '#eab308', color: '#ca8a04', weight: 1.5, fillOpacity: 0.60 };
+                case 'VOO_RECENTE':
+                    return { fillColor: '#0284c7', color: '#0369a1', weight: 1.8, fillOpacity: 0.70 };
                 case 'VOADO':
-                    return { fillColor: '#10b981', color: '#047857', weight: 1.5, fillOpacity: 0.55 };
+                    return { fillColor: '#10b981', color: '#047857', weight: 1.5, fillOpacity: 0.60 };
+                case 'BASE_CLEALCO':
+                    return { fillColor: '#64748b', color: '#475569', weight: 0.6, fillOpacity: 0.12 };
                 default:
-                    return { fillColor: '#64748b', color: '#334155', weight: 1.0, fillOpacity: 0.35 };
+                    return { fillColor: '#64748b', color: '#475569', weight: 0.6, fillOpacity: 0.12 };
             }
+        }
+
+        // Legenda flutuante sobreposta diretamente no contêiner do mapa
+        let legendaMapaControl = null;
+
+        function criarOuAtualizarLegendaNoMapa(counts) {
+            if (!mapaVoosInstancia) return;
+            
+            if (!legendaMapaControl) {
+                legendaMapaControl = L.control({ position: 'bottomright' });
+                legendaMapaControl.onAdd = function() {
+                    const div = L.DomUtil.create('div', 'leaflet-bar-custom leaflet-control-legenda');
+                    div.innerHTML = `
+                        <div class="bg-slate-900/95 text-white backdrop-blur-md p-2.5 sm:p-3 rounded-2xl border border-slate-700/80 shadow-2xl text-[11px] font-sans min-w-[190px] sm:min-w-[210px] select-none pointer-events-auto">
+                            <div class="flex items-center justify-between pb-1.5 mb-1.5 border-b border-slate-700/80 cursor-pointer" onclick="toggleConteudoLegendaMapa()" title="Clique para minimizar ou expandir a legenda">
+                                <span class="font-black tracking-wider uppercase flex items-center gap-1.5 text-xs text-white">
+                                    <span>🗺️</span> <span>Legenda Operacional</span>
+                                </span>
+                                <span id="btn-toggle-legenda-icon" class="text-slate-400 hover:text-white font-mono text-xs px-1 font-bold">−</span>
+                            </div>
+                            <div id="corpo-legenda-mapa" class="space-y-1 transition-all">
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('REVOO')" title="Filtrar Voar Novamente">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-purple-600 border border-purple-400 inline-block shrink-0 shadow-sm"></span>
+                                        <span class="text-purple-200 font-bold">Voar Novamente</span>
+                                    </span>
+                                    <b class="text-purple-300 font-mono text-[10px]" id="leg-map-revoo">${counts.revoo || 0}</b>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('VOO_RECENTE')" title="Filtrar Voo Recente">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-sky-500 border border-sky-300 inline-block shrink-0 shadow-sm"></span>
+                                        <span class="text-sky-200 font-bold">Voo Recente / Fila</span>
+                                    </span>
+                                    <b class="text-sky-300 font-mono text-[10px]" id="leg-map-recente">${counts.recente || 0}</b>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('VOADO')" title="Filtrar Concluído">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-emerald-500 border border-emerald-300 inline-block shrink-0 shadow-sm"></span>
+                                        <span class="text-emerald-200 font-bold">Concluído / Voado</span>
+                                    </span>
+                                    <b class="text-emerald-300 font-mono text-[10px]" id="leg-map-voado">${counts.voado || 0}</b>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('CRITICO')" title="Filtrar Crítico">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-red-600 border border-red-400 inline-block shrink-0 shadow-sm"></span>
+                                        <span class="text-red-200 font-medium">Crítico (&gt; 90d)</span>
+                                    </span>
+                                    <b class="text-red-300 font-mono text-[10px]" id="leg-map-critico">${counts.critico || 0}</b>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('ATENCAO')" title="Filtrar Atenção">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-amber-500 border border-amber-300 inline-block shrink-0 shadow-sm"></span>
+                                        <span class="text-amber-200 font-medium">Atenção (60-90d)</span>
+                                    </span>
+                                    <b class="text-amber-300 font-mono text-[10px]" id="leg-map-atencao">${counts.atencao || 0}</b>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('NOPRAZO')" title="Filtrar No Prazo">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-yellow-500 border border-yellow-300 inline-block shrink-0 shadow-sm"></span>
+                                        <span class="text-yellow-200 font-medium">No Prazo (&lt; 60d)</span>
+                                    </span>
+                                    <b class="text-yellow-300 font-mono text-[10px]" id="leg-map-noprazo">${counts.noprazo || 0}</b>
+                                </div>
+                                <div class="flex items-center justify-between gap-2 hover:bg-slate-800/80 px-1.5 py-0.5 rounded-lg cursor-pointer transition" onclick="filtrarStatusPelaLegenda('BASE_CLEALCO')" title="Filtrar Base Clealco">
+                                    <span class="flex items-center gap-1.5">
+                                        <span class="w-3 h-3 rounded-full bg-slate-500 border border-slate-400 inline-block shrink-0 shadow-sm"></span>
+                                        <span class="text-slate-300">Base Clealco</span>
+                                    </span>
+                                    <b class="text-slate-400 font-mono text-[10px]" id="leg-map-base">${counts.base || 0}</b>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    L.DomEvent.disableClickPropagation(div);
+                    L.DomEvent.disableScrollPropagation(div);
+                    return div;
+                };
+                legendaMapaControl.addTo(mapaVoosInstancia);
+            } else {
+                const setL = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val || 0; };
+                setL('leg-map-revoo', counts.revoo);
+                setL('leg-map-recente', counts.recente);
+                setL('leg-map-voado', counts.voado);
+                setL('leg-map-critico', counts.critico);
+                setL('leg-map-atencao', counts.atencao);
+                setL('leg-map-noprazo', counts.noprazo);
+                setL('leg-map-base', counts.base);
+            }
+        }
+
+        function toggleConteudoLegendaMapa() {
+            const corpo = document.getElementById('corpo-legenda-mapa');
+            const icone = document.getElementById('btn-toggle-legenda-icon');
+            if (!corpo) return;
+            if (corpo.classList.contains('hidden')) {
+                corpo.classList.remove('hidden');
+                if (icone) icone.innerText = '−';
+            } else {
+                corpo.classList.add('hidden');
+                if (icone) icone.innerText = '+';
+            }
+        }
+
+        function filtrarStatusPelaLegenda(status) {
+            const sel = document.getElementById('mapa-filtro-status');
+            if (!sel) return;
+            sel.value = (sel.value === status) ? 'TODOS' : status;
+            aplicarFiltrosMapa();
         }
 
         function aplicarFiltrosMapa() {
@@ -4090,8 +4218,10 @@
             let totalCrit = 0, areaCrit = 0;
             let totalAten = 0, areaAten = 0;
             let totalPrazo = 0, areaPrazo = 0;
+            let totalRecente = 0, areaRecente = 0;
             let totalVoado = 0, areaVoado = 0;
             let totalRevoo = 0, areaRevoo = 0;
+            let totalBase = 0, areaBase = 0;
             const topFazendasMap = {};
 
             features.forEach(f => {
@@ -4107,10 +4237,12 @@
                 }
 
                 if (st === 'REVOO') { totalRevoo++; areaRevoo += ha; }
+                else if (st === 'VOO_RECENTE') { totalRecente++; areaRecente += ha; }
+                else if (st === 'VOADO') { totalVoado++; areaVoado += ha; }
                 else if (st === 'CRITICO') { totalCrit++; areaCrit += ha; }
                 else if (st === 'ATENCAO') { totalAten++; areaAten += ha; }
                 else if (st === 'NOPRAZO') { totalPrazo++; areaPrazo += ha; }
-                else if (st === 'VOADO') { totalVoado++; areaVoado += ha; }
+                else { totalBase++; areaBase += ha; }
             });
 
             // Atualiza KPIs com dados oficiais das planilhas e polígonos mapeados
@@ -4178,10 +4310,23 @@
             }
 
             setTxt('legenda-count-revoo', totalRevoo);
+            setTxt('legenda-count-recente', totalRecente);
+            setTxt('legenda-count-voado', totalVoado);
             setTxt('legenda-count-critico', totalCrit);
             setTxt('legenda-count-atencao', totalAten);
             setTxt('legenda-count-noprazo', totalPrazo);
-            setTxt('legenda-count-voado', totalVoado);
+            setTxt('legenda-count-base', totalBase);
+
+            // Atualiza legenda flutuante no mapa
+            criarOuAtualizarLegendaNoMapa({
+                revoo: totalRevoo,
+                recente: totalRecente,
+                voado: totalVoado,
+                critico: totalCrit,
+                atencao: totalAten,
+                noprazo: totalPrazo,
+                base: totalBase
+            });
 
             // Renderiza Top 5 Fazendas no Backlog
             const containerTop = document.getElementById('mapa-top-fazendas');
@@ -4228,19 +4373,28 @@
                 onEachFeature: (feat, layer) => {
                     const p = feat.properties || {};
                     
+                    const statusTxt = p.status === 'REVOO' ? '🔁 Voar Novamente' :
+                                     p.status === 'CRITICO' ? '🔴 Crítico (> 90d)' :
+                                     p.status === 'ATENCAO' ? '🟠 Atenção (60-90d)' :
+                                     p.status === 'NOPRAZO' ? '🟡 No Prazo (< 60d)' :
+                                     p.status === 'VOO_RECENTE' ? '🔷 Voo Recente (Em Fila)' :
+                                     p.status === 'VOADO' ? '🟢 Já Voado / Concluído' : '⚪ Base Clealco';
+
                     // Tooltip no hover
                     layer.bindTooltip(`
                         <b>${p.fazenda}</b> - T${p.talhao}<br>
-                        Área: ${p.area_ha} ha | Status: ${p.status === 'REVOO' ? '🔁 Voar Novamente' : p.status}
-                        ${p.obs ? `<br><span style="color:#7e22ce;font-weight:bold;">⚠️ ${p.obs}</span>` : ''}
+                        Área: ${p.area_ha} ha | Status: <b>${statusTxt}</b>
+                        ${p.obs ? `<br><span style="color:${p.status === 'REVOO' ? '#7e22ce' : (p.status === 'VOO_RECENTE' ? '#0284c7' : '#b45309')};font-weight:bold;">ℹ️ ${p.obs}</span>` : ''}
                     `, { sticky: true, className: 'leaflet-tooltip-clealco' });
 
                     // Popup no clique
                     const statusBadge = p.status === 'REVOO' ? '<span class="px-2 py-0.5 bg-purple-100 text-purple-800 font-black rounded text-[10px] border border-purple-300">🔁 VOAR NOVAMENTE</span>' :
                                        p.status === 'CRITICO' ? '<span class="px-2 py-0.5 bg-red-100 text-red-700 font-bold rounded text-[10px]">🔴 CRÍTICO (> 90d)</span>' :
-                                       p.status === 'ATENCAO' ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-700 font-bold rounded text-[10px]">🟡 ATENÇÃO</span>' :
-                                       p.status === 'NOPRAZO' ? '<span class="px-2 py-0.5 bg-blue-100 text-blue-700 font-bold rounded text-[10px]">🔵 NO PRAZO (&lt; 60d)</span>' :
-                                       '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded text-[10px]">🟢 JÁ VOADO</span>';
+                                       p.status === 'ATENCAO' ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-700 font-bold rounded text-[10px]">🟠 ATENÇÃO (60-90d)</span>' :
+                                       p.status === 'NOPRAZO' ? '<span class="px-2 py-0.5 bg-yellow-100 text-yellow-800 font-bold rounded text-[10px]">🟡 NO PRAZO (&lt; 60d)</span>' :
+                                       p.status === 'VOO_RECENTE' ? '<span class="px-2 py-0.5 bg-sky-100 text-sky-800 font-bold rounded text-[10px]">🔷 VOO RECENTE (EM FILA)</span>' :
+                                       p.status === 'VOADO' ? '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded text-[10px]">🟢 JÁ VOADO / CONCLUÍDO</span>' :
+                                       '<span class="px-2 py-0.5 bg-slate-100 text-slate-700 font-bold rounded text-[10px]">⚪ BASE CLEALCO</span>';
 
                     const popupContent = `
                         <div class="p-1 font-sans text-xs space-y-2 min-w-[240px]">
@@ -4253,8 +4407,8 @@
                             </div>
                             
                             ${p.obs ? `
-                                <div class="p-2 rounded-lg border font-semibold text-[11px] flex items-start gap-1.5 ${p.status === 'REVOO' ? 'bg-purple-50 border-purple-200 text-purple-900' : (p.status === 'VOADO' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900')}">
-                                    <span class="text-sm">⚠️</span>
+                                <div class="p-2 rounded-lg border font-semibold text-[11px] flex items-start gap-1.5 ${p.status === 'REVOO' ? 'bg-purple-50 border-purple-200 text-purple-900' : (p.status === 'VOO_RECENTE' ? 'bg-sky-50 border-sky-200 text-sky-900' : (p.status === 'VOADO' ? 'bg-emerald-50 border-emerald-200 text-emerald-900' : 'bg-amber-50 border-amber-200 text-amber-900'))}">
+                                    <span class="text-sm">ℹ️</span>
                                     <span>${p.obs}</span>
                                 </div>
                             ` : ''}

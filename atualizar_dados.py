@@ -394,24 +394,40 @@ try:
         
         kmls_por_fa = {}
         pastas_voo_todas = {} # Todas as pastas de voo detectadas (com ou sem KML)
+        pastas_nao_processados = set()
+        pastas_falhas_linhas = set()
+        
         for base_img in pastas_imagens:
             if not os.path.exists(base_img): continue
+            is_np = ('1 - Não Processados' in base_img or '1 - N' in base_img)
+            is_fl = ('2 - Falhas e Linhas' in base_img or '2 - F' in base_img)
             for pasta_faz in os.listdir(base_img):
                 caminho_faz = os.path.join(base_img, pasta_faz)
                 if not os.path.isdir(caminho_faz): continue
-                m = re.match(r'^(\d+)', pasta_faz.strip())
-                fa_code = m.group(1).lstrip('0') if m else None
-                if not fa_code: continue
                 
-                if fa_code not in pastas_voo_todas:
-                    pastas_voo_todas[fa_code] = {
-                        'pasta': pasta_faz,
-                        'revoo': 'terminar' in pasta_faz.lower()
-                    }
-                else:
-                    # Se uma das pastas já não tem 'terminar', não marca mais como revoo
-                    if 'terminar' not in pasta_faz.lower():
-                        pastas_voo_todas[fa_code]['revoo'] = False
+                fa_matches = re.findall(r'\b\d{3,6}\b', pasta_faz.strip())
+                fas_encontradas = [f.lstrip('0') for f in fa_matches if f not in ['2026', '2025', '2024', '2023']]
+                
+                m = re.match(r'^(\d+)', pasta_faz.strip())
+                fa_code = m.group(1).lstrip('0') if m else (fas_encontradas[0] if fas_encontradas else None)
+                if not fa_code and not fas_encontradas: continue
+                if not fas_encontradas and fa_code:
+                    fas_encontradas = [fa_code]
+                
+                for f_c in fas_encontradas:
+                    if is_np:
+                        pastas_nao_processados.add(f_c)
+                    elif is_fl:
+                        pastas_falhas_linhas.add(f_c)
+                    
+                    if f_c not in pastas_voo_todas:
+                        pastas_voo_todas[f_c] = {
+                            'pasta': pasta_faz,
+                            'revoo': 'terminar' in pasta_faz.lower()
+                        }
+                    else:
+                        if 'terminar' not in pasta_faz.lower():
+                            pastas_voo_todas[f_c]['revoo'] = False
                 
                 achados = []
                 for arq in os.listdir(caminho_faz):
@@ -429,21 +445,30 @@ try:
                                     if sub_sub_arq.lower().endswith('.kml') and ('talhao' in sub_sub_arq.lower() or 'talho' in sub_sub_arq.lower()):
                                         achados.append(os.path.join(p_arq, sub_sub_arq))
                 if achados:
-                    if fa_code not in kmls_por_fa:
-                        kmls_por_fa[fa_code] = {
-                            'pasta': pasta_faz,
-                            'kmls': list(set(achados)),
-                            'revoo': 'terminar' in pasta_faz.lower()
-                        }
-                    else:
-                        # Acumula KMLs da Parte 2 (sem duplicar caminhos)
-                        for kml_item in achados:
-                            if kml_item not in kmls_por_fa[fa_code]['kmls']:
-                                kmls_por_fa[fa_code]['kmls'].append(kml_item)
-                        if 'terminar' not in pasta_faz.lower():
-                            kmls_por_fa[fa_code]['revoo'] = False
+                    for f_c in fas_encontradas:
+                        if f_c not in kmls_por_fa:
+                            kmls_por_fa[f_c] = {
+                                'pasta': pasta_faz,
+                                'kmls': list(set(achados)),
+                                'revoo': 'terminar' in pasta_faz.lower()
+                            }
+                        else:
+                            for kml_item in achados:
+                                if kml_item not in kmls_por_fa[f_c]['kmls']:
+                                    kmls_por_fa[f_c]['kmls'].append(kml_item)
+                            if 'terminar' not in pasta_faz.lower():
+                                kmls_por_fa[f_c]['revoo'] = False
                     
-        print(f"Varredura concluída: {len(pastas_voo_todas)} pastas de voo ({len(kmls_por_fa)} com KML gerado).")
+        # Complementa com base_proc oficial
+        for item in base_proc:
+            fa_p = str(item.get('fa') or '').strip().lstrip('0')
+            if fa_p:
+                if item.get('tif') == 'PENDENTE':
+                    pastas_nao_processados.add(fa_p)
+                elif item.get('tif') == 'FEITO' and item.get('linhas') == 'FEITO':
+                    pastas_falhas_linhas.add(fa_p)
+                    
+        print(f"Varredura concluída: {len(pastas_voo_todas)} pastas de voo ({len(kmls_por_fa)} com KML gerado). Fila Não Processados: {len(pastas_nao_processados)} FAs.")
         
         # 2. Carrega as geometrias dos KMLs com Bounding Box pré-calculado
         geoms_por_fa = {}
@@ -521,13 +546,16 @@ try:
                             idx_porte = next((i for i, h in enumerate(headers) if 'PORTE' in h), -1)
                             idx_var = next((i for i, h in enumerate(headers) if 'VARIEDADE' in h), -1)
                             idx_sem = next((i for i, h in enumerate(headers) if 'SEMAFARO' in h or 'SEMAFORO' in h), -1)
+                            idx_realizada = next((i for i, h in enumerate(headers) if 'REALIZADA' in h or 'VOADA' in h), -1)
                             
                             for r in rows_p[h_idx+1:]:
                                 fa_v = str(r[idx_fa] or '').strip().lstrip('0')
                                 tal_v = str(r[idx_tal] or '').strip().lstrip('0')
-                                if fa_v and tal_v:
-                                    talhoes_voados_bases.setdefault(fa_v, set()).add(tal_v)
                                 k = (fa_v, tal_v)
+                                if fa_v and tal_v and idx_realizada != -1:
+                                    val_real = parse_num(r[idx_realizada])
+                                    if val_real > 0 and k not in backlog_dict:
+                                        talhoes_voados_bases.setdefault(fa_v, set()).add(tal_v)
                                 if k in backlog_dict:
                                     if idx_porte != -1 and r[idx_porte] and not backlog_dict[k]["porte_cm"]:
                                         backlog_dict[k]["porte_cm"] = str(r[idx_porte]).strip()
@@ -537,6 +565,11 @@ try:
                                         backlog_dict[k]["semaforo"] = str(r[idx_sem]).strip()
                     except: pass
         
+        def round_coords(coords, p=5):
+            if isinstance(coords, (float, int)):
+                return round(coords, p)
+            return [round_coords(x, p) for x in coords]
+
         # Leitura do SHP
         ds = ogr.Open(caminho_shp)
         layer = ds.GetLayer()
@@ -554,15 +587,12 @@ try:
             
             k = (faz, tal)
             bk = backlog_dict.get(k)
-            
-            # Filtro rápido de relevância: se não tem voo e não está no backlog, ignora imediatamente
-            if faz not in geoms_por_fa and faz not in pastas_voo_todas and not bk:
-                continue
 
-            status_voo = "OUTRO"
-            obs_voo = ""
+            status_voo = "BASE_CLEALCO"
+            obs_voo = "Base Clealco (Área Cadastrada)"
             
             # Caso 1: Fazenda possui KML de voo (cruza espacialmente com o SHP)
+            teve_kml_match = False
             if faz in geoms_por_fa and geoms_por_fa[faz]:
                 tg_area = geom.GetArea()
                 max_frac = 0.0
@@ -579,64 +609,58 @@ try:
                                 if f_area > max_frac:
                                     max_frac = f_area
                 if max_frac >= 0.05:
+                    teve_kml_match = True
                     status_voo = "VOADO"
                     fas_com_talhao_voado.add(faz)
                     obs_voo = f"Voo Realizado ({int(round(max_frac*100))}% de cobertura KML)"
-                elif kmls_por_fa[faz]['revoo']:
-                    status_voo = "ATENCAO"
-                    obs_voo = "Pendente de Voo / Terminar Outras Partes"
-                elif bk:
-                    matched_keys.add(k)
-                    dias = bk["dias_brota"]
-                    status_voo = "CRITICO" if dias > 90 or "atrasado" in bk["status_prazo"].lower() else ("ATENCAO" if dias >= 60 else "NOPRAZO")
-                else:
-                    continue
-                if bk:
-                    matched_keys.add(k)
-            # Caso 1B: Fazenda possui pasta de Voo mas ainda sem KML (cruza com as Bases Oficiais de Voo)
-            elif faz in pastas_voo_todas:
-                info_p = pastas_voo_todas[faz]
+
+            # Caso 2: Confirmação por Base de Voo oficial (se não cruzou por KML)
+            if not teve_kml_match:
                 tals_voados_faz = talhoes_voados_bases.get(faz, set())
                 if tal in tals_voados_faz:
                     status_voo = "VOADO"
                     fas_com_talhao_voado.add(faz)
                     obs_voo = "Voo Realizado (Confirmado na Base de Voo)"
-                elif info_p['revoo']:
-                    status_voo = "ATENCAO"
-                    obs_voo = "Pendente de Voo / Terminar Outras Partes"
-                elif bk:
-                    matched_keys.add(k)
-                    dias = bk["dias_brota"]
-                    status_voo = "CRITICO" if dias > 90 or "atrasado" in bk["status_prazo"].lower() else ("ATENCAO" if dias >= 60 else "NOPRAZO")
-                else:
-                    continue
+
+            # Caso 3: Voo recente em Não Processados (mesmo sem talhão/KML individual gerado)
+            if status_voo not in ["VOADO"]:
+                if faz in pastas_nao_processados:
+                    status_voo = "VOO_RECENTE"
+                    fas_com_talhao_voado.add(faz)
+                    obs_voo = "Voo Recente (Aguardando Processamento de Linhas/Falhas)"
+
+            # Caso 4: Se não foi voado e nem é voo recente, checa se está no Backlog oficial (A Voar)
+            if status_voo not in ["VOADO", "VOO_RECENTE"]:
                 if bk:
-                    matched_keys.add(k)
-            # Caso 2: Talhão está no Backlog oficial
-            elif bk:
+                    dias = bk["dias_brota"]
+                    if dias > 90 or "atrasado" in bk["status_prazo"].lower():
+                        status_voo = "CRITICO"
+                        obs_voo = f"Crítico (> 90 dias: {dias}d)"
+                    elif dias >= 60:
+                        status_voo = "ATENCAO"
+                        obs_voo = f"Atenção (60 a 90 dias: {dias}d)"
+                    else:
+                        status_voo = "NOPRAZO"
+                        obs_voo = f"No Prazo (< 60 dias: {dias}d)"
+
+            # Se estava no backlog, registra a chave como vinculada ao mapa
+            if bk:
                 matched_keys.add(k)
-                dias = bk["dias_brota"]
-                if dias > 90 or "atrasado" in bk["status_prazo"].lower():
-                    status_voo = "CRITICO"
-                elif dias >= 60:
-                    status_voo = "ATENCAO"
-                else:
-                    status_voo = "NOPRAZO"
-            else:
-                continue
 
             # 🔄 REGRA DE RE-VOO / SEM PORTE (Prioridade Máxima):
-            # Se a fazenda ou talhão específico foi marcado para voar novamente (ex: 202807 sem porte)
             motivo_revoo = custom_revoo_dict.get((faz, tal)) or custom_revoo_dict.get((faz, 'TODOS'))
+            if not motivo_revoo and (pastas_voo_todas.get(faz, {}).get('revoo') or kmls_por_fa.get(faz, {}).get('revoo')):
+                motivo_revoo = "Pendente de Voo / Terminar Outras Partes"
+
             if motivo_revoo:
                 status_voo = "REVOO"
                 obs_voo = f"🔁 Voar Novamente ({motivo_revoo})"
                 if faz in fas_com_talhao_voado and (faz, 'TODOS') in custom_revoo_dict:
                     fas_com_talhao_voado.discard(faz)
                 
-            geom = feat.GetGeometryRef()
-            geom_simpl = geom.Simplify(0.00004) # ~4m de precisao para manter arquivo leve
+            geom_simpl = geom.Simplify(0.00008) # ~8m de precisao para visual ultraleve e responsivo
             geojson_geom = json.loads(geom_simpl.ExportToJson())
+            geojson_geom['coordinates'] = round_coords(geojson_geom['coordinates'], 5)
             
             props = {
                 "fa": bk["fa"] if bk else feat.GetField('FAZENDA'),
@@ -683,9 +707,12 @@ try:
                                 lat_mid_d = (env_d[2] + env_d[3]) / 2.0
                                 area_ha_d = round(g_d.GetArea() * (111319.0 ** 2) * math.cos(math.radians(lat_mid_d)) / 10000.0, 2)
                                 nome_tal_d = feat_d.GetField("Name") or f"{idx_d + 1}"
-                                g_simpl_d = g_d.Simplify(0.00004)
-                                st_direct = "VOADO"
-                                obs_direct = f"Voo Realizado ({os.path.basename(kml_f)})"
+                                g_simpl_d = g_d.Simplify(0.00008)
+                                gd_d = json.loads(g_simpl_d.ExportToJson())
+                                gd_d['coordinates'] = round_coords(gd_d['coordinates'], 5)
+                                
+                                st_direct = "VOO_RECENTE" if fa_fora in pastas_nao_processados else "VOADO"
+                                obs_direct = f"Voo Recente ({os.path.basename(kml_f)})" if st_direct == "VOO_RECENTE" else f"Voo Realizado ({os.path.basename(kml_f)})"
                                 m_rev_d = custom_revoo_dict.get((fa_fora, str(nome_tal_d).lstrip('0'))) or custom_revoo_dict.get((fa_fora, 'TODOS'))
                                 if m_rev_d:
                                     st_direct = "REVOO"
@@ -705,7 +732,7 @@ try:
                                         "data_plantio": "",
                                         "obs": obs_direct
                                     },
-                                    "geometry": json.loads(g_simpl_d.ExportToJson())
+                                    "geometry": gd_d
                                 })
                     except Exception as ex_direct:
                         print(f"Erro inserindo KML direto {info_fora['pasta']}: {ex_direct}")
