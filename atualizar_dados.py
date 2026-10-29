@@ -267,7 +267,11 @@ if os.path.exists(dir_bd_falhas_2026):
 
         for arq_csv in glob.glob(os.path.join(dir_bd_falhas_2026, "*.csv")):
             b_name = os.path.basename(arq_csv).replace('.csv', '').replace('.CSV', '').strip()
-            num_fa = re.sub(r'\D', '', b_name)
+            if not re.match(r'^\d+', b_name) or 'comparativo' in b_name.lower() or 'valores' in b_name.lower():
+                continue
+            m_fa = re.match(r'^(\d+)', b_name)
+            fa_base = m_fa.group(1) if m_fa else b_name
+            num_fa = re.sub(r'\D', '', fa_base)
             k_fa = num_fa.lstrip('0')
             is_prop = (num_fa.startswith('20') and len(num_fa) == 6)
             seg_chave = 'Própria' if is_prop else 'Fornecedores'
@@ -1011,7 +1015,8 @@ def compilar_historico_falhas():
 
         for c in csvs:
             basename = os.path.splitext(os.path.basename(c))[0]
-            fa = basename.split()[0].strip()
+            m_fa_h = re.match(r'^(\d+)', basename)
+            fa = m_fa_h.group(1) if m_fa_h else basename.split()[0].strip()
             fa_clean = fa.lstrip('0')
             
             # Tipo de parceria
