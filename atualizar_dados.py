@@ -142,58 +142,56 @@ if os.path.exists(dir_falhas_live):
         
         m_base = re.match(r'^(\d+)', b_name)
         b_fa = m_base.group(1) if m_base else b_name
-        is_subpart = (b_name != b_fa)
+
+        # Se a fazenda já está na base compilada de falhas, não adiciona novamente
+        if b_fa in mapa_falhas_por_fa:
+            continue
 
         num_clean = re.sub(r'\D', '', b_fa)
         tipo_calc = "Própria" if (num_clean.startswith('20') and len(num_clean) == 6) else "Terceiro"
         nome_f = mapa_faz_nome.get(b_fa, "N/D")
         
-        ha_val, comp_l, comp_f = 0.0, 0.0, 0.0
+        ha_val, comp_l, comp_f, p_falha = 0.0, 0.0, 0.0, 0.0
         try:
             with open(f_csv, 'r', encoding='latin1', errors='ignore') as fp:
                 r_all = list(csv.reader(fp))
-                if len(r_all) > 1 and len(r_all[1]) > 2:
-                    ha_val = float(r_all[1][2].strip().replace(',', '.'))
-                c_hdr = [str(c).strip().upper() for c in r_all[0]]
-                i_l = next((i for i, c in enumerate(c_hdr) if 'COMP_LINHAS' in c or 'COMP LINHAS' in c), None)
-                i_f = next((i for i, c in enumerate(c_hdr) if 'COMP_FALHAS' in c or 'COMP FALHAS' in c), None)
-                if i_l is not None and i_f is not None:
-                    for row_l in r_all[1:]:
-                        if len(row_l) > max(i_l, i_f):
-                            try:
-                                comp_l += float(str(row_l[i_l]).replace(',', '.'))
-                                comp_f += float(str(row_l[i_f]).replace(',', '.'))
-                            except: pass
+                if len(r_all) > 1:
+                    r1 = r_all[1]
+                    if len(r1) > 2:
+                        ha_val = float(r1[2].strip().replace(',', '.'))
+                    c_hdr = [str(c).strip().upper() for c in r_all[0]]
+                    i_l = next((i for i, c in enumerate(c_hdr) if 'COMP_LINHAS' in c or 'COMP LINHAS' in c), None)
+                    i_f = next((i for i, c in enumerate(c_hdr) if 'COMP_FALHAS' in c or 'COMP FALHAS' in c), None)
+                    i_p = next((i for i, c in enumerate(c_hdr) if 'PORC_FALHA' in c or 'PORC FALHA' in c), 5)
+                    if i_l is not None and len(r1) > i_l:
+                        comp_l = float(str(r1[i_l]).replace(',', '.'))
+                    if i_f is not None and len(r1) > i_f:
+                        comp_f = float(str(r1[i_f]).replace(',', '.'))
+                    if i_p is not None and len(r1) > i_p:
+                        p_falha = float(str(r1[i_p]).replace(',', '.'))
 
-            if b_fa in mapa_falhas_por_fa:
-                if is_subpart:
-                    # É uma parte adicional (ex: _P2), soma na fazenda já cadastrada
-                    item_existente = mapa_falhas_por_fa[b_fa]
-                    item_existente["Area_Ha"] = round(item_existente["Area_Ha"] + ha_val, 2)
-                    item_existente["Comp_Linhas"] = round(item_existente["Comp_Linhas"] + comp_l, 2)
-                    item_existente["Comp_Falhas"] = round(item_existente["Comp_Falhas"] + comp_f, 2)
-                    if item_existente["Comp_Linhas"] > 0:
-                        item_existente["Porc_Falha"] = round((item_existente["Comp_Falhas"] / item_existente["Comp_Linhas"]) * 100, 2)
-                    lim_verde = 8.0 if item_existente["Tipo"] == "Própria" else 5.0
-                    item_existente["Indice_Falha"] = 'Aceitável' if item_existente["Porc_Falha"] <= lim_verde else ('Atenção' if item_existente["Porc_Falha"] <= 10.0 else 'Crítico')
-            else:
-                p_falha = round((comp_f / comp_l) * 100, 2) if comp_l > 0 else 0.0
-                lim_verde = 8.0 if tipo_calc == "Própria" else 5.0
-                ind = 'Aceitável' if p_falha <= lim_verde else ('Atenção' if p_falha <= 10.0 else 'Crítico')
-                novo_item = {
-                    "FA": b_fa,
-                    "Fazenda": nome_f,
-                    "Tipo": tipo_calc,
-                    "Area_Ha": round(ha_val, 2),
-                    "Comp_Linhas": round(comp_l, 2),
-                    "Comp_Falhas": round(comp_f, 2),
-                    "Porc_Falha": p_falha,
-                    "Indice_Falha": ind
-                }
-                falhas.append(novo_item)
-                mapa_falhas_por_fa[b_fa] = novo_item
-        except Exception as e:
+            lim_verde = 8.0 if tipo_calc == "Própria" else 5.0
+            ind = 'Aceitável' if p_falha <= lim_verde else ('Atenção' if p_falha <= 10.0 else 'Crítico')
+            novo_item = {
+                "FA": b_fa,
+                "Fazenda": nome_f,
+                "Tipo": tipo_calc,
+                "Area_Ha": round(ha_val, 2),
+                "Comp_Linhas": round(comp_l, 2),
+                "Comp_Falhas": round(comp_f, 2),
+                "Porc_Falha": p_falha,
+                "Indice_Falha": ind
+            }
+            falhas.append(novo_item)
+            mapa_falhas_por_fa[b_fa] = novo_item
+        except Exception:
             pass
+
+# Normaliza os Tipos de todas as fazendas na lista de falhas para evitar problemas de acentuação
+for f_item in falhas:
+    fa_str = str(f_item.get("FA", "")).strip()
+    is_p = (fa_str.startswith('20') and len(fa_str) == 6) or str(f_item.get("Tipo", "")).lower().startswith("pr")
+    f_item["Tipo"] = "Própria" if is_p else "Terceiro"
 
 # 4. METAS_GLOBAIS
 sheet_m = wb['METAS_GLOBAIS']

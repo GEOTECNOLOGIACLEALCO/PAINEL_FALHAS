@@ -3857,11 +3857,14 @@
 
             lista.forEach(f => {
                 const tipo = (f.Tipo || '').toLowerCase();
+                const fa = String(f.FA || '').trim();
                 const area = parseFloat(f.Area_Ha) || 0;
                 const linhas = parseFloat(f.Comp_Linhas) || 0;
                 const falhas = parseFloat(f.Comp_Falhas) || 0;
 
-                if (tipo.includes('próp') || tipo.includes('prop')) {
+                const isProp = tipo.includes('próp') || tipo.includes('prop') || (fa.startsWith('20') && fa.length === 6);
+
+                if (isProp) {
                     propArea += area;
                     propLinhas += linhas;
                     propFalhas += falhas;
