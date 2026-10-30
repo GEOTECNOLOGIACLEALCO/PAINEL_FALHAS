@@ -1,7 +1,24 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 30/10/2026 13:23:08
+// Gerado em: 30/10/2026 13:24:04
 // Total de Mapas: 1322
 window.DADOS_MAPAS_SAFRA = [
+  {
+    "arquivo": "201227 B - Fazenda Sao Bento (Margarida H. Tuyama Yabuta).pdf",
+    "url": "mapas_safra/Clealco/201227 B - Fazenda Sao Bento (Margarida H. Tuyama Yabuta).pdf",
+    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco/201227%20B%20-%20Fazenda%20Sao%20Bento%20%28Margarida%20H.%20Tuyama%20Yabuta%29.pdf?csf=1&web=1",
+    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco?csf=1&web=1",
+    "categoria": "Clealco",
+    "subpasta": "",
+    "fa": "201227 B",
+    "fazenda": "Fazenda Sao Bento",
+    "proprietario": "Margarida H. Tuyama Yabuta",
+    "data_modificacao": "30/10/2026 13:23",
+    "timestamp": 1793377398,
+    "tamanho_kb": 477.1,
+    "dias_atras": 0.0,
+    "is_novo": true,
+    "is_hoje": true
+  },
   {
     "arquivo": "202001 - Sitio Santa Terezinha (Nelson Pedro Feltrin).pdf",
     "url": "mapas_safra/Clealco/202001 - Sitio Santa Terezinha (Nelson Pedro Feltrin).pdf",
@@ -339,23 +356,6 @@ window.DADOS_MAPAS_SAFRA = [
     "timestamp": 1791980339,
     "tamanho_kb": 312.8,
     "dias_atras": 16.2,
-    "is_novo": false,
-    "is_hoje": false
-  },
-  {
-    "arquivo": "201227 B - Fazenda Sao Bento (Margarida H. Tuyama Yabuta).pdf",
-    "url": "mapas_safra/Clealco/201227 B - Fazenda Sao Bento (Margarida H. Tuyama Yabuta).pdf",
-    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco/201227%20B%20-%20Fazenda%20Sao%20Bento%20%28Margarida%20H.%20Tuyama%20Yabuta%29.pdf?csf=1&web=1",
-    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco?csf=1&web=1",
-    "categoria": "Clealco",
-    "subpasta": "",
-    "fa": "201227 B",
-    "fazenda": "Fazenda Sao Bento",
-    "proprietario": "Margarida H. Tuyama Yabuta",
-    "data_modificacao": "08/10/2026 11:07",
-    "timestamp": 1791468433,
-    "tamanho_kb": 458.7,
-    "dias_atras": 22.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9824,7 +9824,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "09/03/2026 14:35",
     "timestamp": 1773077745,
     "tamanho_kb": 282.5,
-    "dias_atras": 234.9,
+    "dias_atras": 235.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -10640,7 +10640,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/02/2026 07:23",
     "timestamp": 1770373395,
     "tamanho_kb": 282.0,
-    "dias_atras": 266.2,
+    "dias_atras": 266.3,
     "is_novo": false,
     "is_hoje": false
   },
@@ -18239,7 +18239,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "20/03/2024 12:11",
     "timestamp": 1710947516,
     "tamanho_kb": 239.8,
-    "dias_atras": 954.0,
+    "dias_atras": 954.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -18358,7 +18358,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "05/03/2024 12:12",
     "timestamp": 1709651522,
     "tamanho_kb": 255.1,
-    "dias_atras": 969.0,
+    "dias_atras": 969.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -22217,7 +22217,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "14/02/2024 14:35",
     "timestamp": 1707932154,
     "tamanho_kb": 275.2,
-    "dias_atras": 988.9,
+    "dias_atras": 989.0,
     "is_novo": false,
     "is_hoje": false
   },
