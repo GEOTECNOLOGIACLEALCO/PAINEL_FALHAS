@@ -1,5 +1,5 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 30/10/2026 11:52:48
+// Gerado em: 30/10/2026 11:53:06
 // Total de Mapas: 1322
 window.DADOS_MAPAS_SAFRA = [
   {
@@ -18120,7 +18120,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/04/2024 08:17",
     "timestamp": 1712747825,
     "tamanho_kb": 278.2,
-    "dias_atras": 933.1,
+    "dias_atras": 933.2,
     "is_novo": false,
     "is_hoje": false
   },
@@ -19021,7 +19021,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/02/2024 17:53",
     "timestamp": 1709067185,
     "tamanho_kb": 423.7,
-    "dias_atras": 975.7,
+    "dias_atras": 975.8,
     "is_novo": false,
     "is_hoje": false
   },
