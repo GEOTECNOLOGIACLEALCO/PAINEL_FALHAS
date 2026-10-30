@@ -1,5 +1,5 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 30/10/2026 13:32:45
+// Gerado em: 30/10/2026 13:33:28
 // Total de Mapas: 1322
 window.DADOS_MAPAS_SAFRA = [
   {
@@ -695,7 +695,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "02/10/2026 07:33",
     "timestamp": 1790937207,
     "tamanho_kb": 326.6,
-    "dias_atras": 28.2,
+    "dias_atras": 28.3,
     "is_novo": false,
     "is_hoje": false
   },
@@ -1834,7 +1834,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "01/09/2026 09:57",
     "timestamp": 1788267427,
     "tamanho_kb": 350.4,
-    "dias_atras": 59.1,
+    "dias_atras": 59.2,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2395,7 +2395,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/08/2026 07:33",
     "timestamp": 1787308387,
     "tamanho_kb": 609.7,
-    "dias_atras": 70.2,
+    "dias_atras": 70.3,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2463,7 +2463,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "20/08/2026 07:33",
     "timestamp": 1787222005,
     "tamanho_kb": 280.8,
-    "dias_atras": 71.2,
+    "dias_atras": 71.3,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2565,7 +2565,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "18/08/2026 09:57",
     "timestamp": 1787057827,
     "tamanho_kb": 330.8,
-    "dias_atras": 73.1,
+    "dias_atras": 73.2,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3330,7 +3330,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "05/08/2026 14:45",
     "timestamp": 1785951918,
     "tamanho_kb": 264.0,
-    "dias_atras": 85.9,
+    "dias_atras": 86.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -5506,7 +5506,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "18/06/2026 17:09",
     "timestamp": 1781813342,
     "tamanho_kb": 303.4,
-    "dias_atras": 133.8,
+    "dias_atras": 133.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -5863,7 +5863,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/06/2026 17:08",
     "timestamp": 1781554129,
     "tamanho_kb": 296.0,
-    "dias_atras": 136.8,
+    "dias_atras": 136.9,
     "is_novo": false,
     "is_hoje": false
   },
