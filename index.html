@@ -2174,10 +2174,10 @@
                     </div>
                 </div>
 
-                <!-- KPI 3: Média Ponderada (%) -->
+                <!-- KPI 3: Média (%) -->
                 <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase mb-1.5">
-                        <span>Média Ponderada</span>
+                        <span>Média</span>
                         <span id="hist-kpi-trend-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">EVOLUÇÃO</span>
                     </div>
                     <div class="flex items-baseline gap-1">
@@ -7048,7 +7048,17 @@
                 fazendas.filter(f => f.ano === safraHistoricoAtiva).forEach(f => totalTalhoes += (f.qtd_t || 0));
             }
 
-            const mediaPond = kmLinhas > 0 ? (kmFalhas / kmLinhas * 100) : 0;
+            // Média (Aritmética/Simples)
+            let mediaFinal = 0;
+            if (safraHistoricoAtiva === 'todas') {
+                const anosComMedia = Object.keys(data.resumo_anos).filter(a => data.resumo_anos[a]?.media_ponderada_pct != null);
+                if (anosComMedia.length > 0) {
+                    const somaMedias = anosComMedia.reduce((acc, a) => acc + (data.resumo_anos[a].media_ponderada_pct || 0), 0);
+                    mediaFinal = somaMedias / anosComMedia.length;
+                }
+            } else {
+                mediaFinal = data.resumo_anos[safraHistoricoAtiva]?.media_ponderada_pct || 0;
+            }
 
             const elArea = document.getElementById('hist-kpi-area');
             if (elArea) elArea.innerText = haTotal.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
@@ -7067,10 +7077,10 @@
 
             const elMedia = document.getElementById('hist-kpi-media-pct');
             if (elMedia) {
-                elMedia.innerText = mediaPond.toFixed(2).replace('.', ',');
-                if (mediaPond <= 5.0) {
+                elMedia.innerText = mediaFinal.toFixed(2).replace('.', ',');
+                if (mediaFinal <= 5.0) {
                     elMedia.className = "text-2xl sm:text-3xl font-black text-emerald-600";
-                } else if (mediaPond <= 8.0) {
+                } else if (mediaFinal <= 8.0) {
                     elMedia.className = "text-2xl sm:text-3xl font-black text-amber-600";
                 } else {
                     elMedia.className = "text-2xl sm:text-3xl font-black text-red-600";
@@ -7121,7 +7131,7 @@
             const anos = Object.keys(data.resumo_anos).sort();
             const mediasConsolidadas = anos.map(ano => data.resumo_anos[ano]?.media_ponderada_pct || 0);
 
-            // Calcular médias para Próprias e Terceiros por safra
+            // Calcular médias (aritméticas) para Próprias e Terceiros por safra
             const mediasProprias = [];
             const mediasTerceiros = [];
             anos.forEach(ano => {
@@ -7129,13 +7139,11 @@
                 const prop = fs.filter(f => f.tipo === 'Própria');
                 const terc = fs.filter(f => f.tipo === 'Terceiro');
 
-                const kmLProp = prop.reduce((acc, f) => acc + (f.cl || 0), 0);
-                const kmFProp = prop.reduce((acc, f) => acc + (f.cf || 0), 0);
-                mediasProprias.push(kmLProp > 0 ? +(kmFProp / kmLProp * 100).toFixed(2) : 0);
+                const medP = prop.length > 0 ? +(prop.reduce((acc, f) => acc + (f.pct || 0), 0) / prop.length).toFixed(2) : 0;
+                mediasProprias.push(medP);
 
-                const kmLTerc = terc.reduce((acc, f) => acc + (f.cl || 0), 0);
-                const kmFTerc = terc.reduce((acc, f) => acc + (f.cf || 0), 0);
-                mediasTerceiros.push(kmLTerc > 0 ? +(kmFTerc / kmLTerc * 100).toFixed(2) : 0);
+                const medT = terc.length > 0 ? +(terc.reduce((acc, f) => acc + (f.pct || 0), 0) / terc.length).toFixed(2) : 0;
+                mediasTerceiros.push(medT);
             });
 
             // 1. Gráfico de Evolução (Barras Agrupadas + Linha de Tendência)
