@@ -999,17 +999,123 @@ def compilar_historico_falhas():
     fazendas_todas = []
     resumo_anos = {}
 
-    for ano, pasta in base_dirs.items():
-        if not os.path.exists(pasta):
-            print(f"[HISTORICO FALHAS] Pasta não encontrada: {pasta}")
-            continue
-        
-        csvs = glob.glob(os.path.join(pasta, "*.csv"))
+    # 1. Leitura direta das safras históricas (2021-2025) da planilha oficial (SOMENTE-LEITURA)
+    caminho_hist_excel = r"W:\01-DRONE\08-BANCO DE DADOS\HISTORICO - FALHAS - BASE KPI\Historico - Falhas.xlsx"
+    if os.path.exists(caminho_hist_excel):
+        try:
+            wb_hist = openpyxl.load_workbook(caminho_hist_excel, data_only=True, read_only=True)
+            for ano in ['2021', '2022', '2023', '2024', '2025']:
+                if ano not in wb_hist.sheetnames:
+                    continue
+                ws_h = wb_hist[ano]
+                raw_rows = [r for r in list(ws_h.iter_rows(values_only=True))[1:] if any(r)]
+
+                fa_grouped = {}
+                for r in raw_rows:
+                    fa_raw = str(r[0] or '').strip()
+                    m_f = re.match(r'^(\d+)', fa_raw)
+                    fa_k = m_f.group(1) if m_f else fa_raw.split()[0].strip()
+                    if not fa_k: continue
+                    fa_clean = fa_k.lstrip('0')
+
+                    nome = str(r[1] or '').strip()
+                    if not nome:
+                        info = info_por_fa.get(fa_k, info_por_fa.get(fa_clean, {}))
+                        nome = info.get('nome', f"FAZENDA FA {fa_k}")
+
+                    tipo_orig = str(r[2] or '').strip()
+                    is_prop = 'prop' in tipo_orig.lower() or (fa_k.startswith('20') and len(fa_k) == 6)
+                    tipo_clean = 'Própria' if is_prop else 'Terceiro'
+
+                    try: ha_val = float(str(r[3] or 0).strip().replace(',', '.'))
+                    except: ha_val = 0.0
+
+                    try:
+                        p_val = float(str(r[4] or 0).strip().replace(',', '.'))
+                        if ano in ['2023', '2024', '2025']:
+                            p_val = p_val * 100.0
+                    except:
+                        p_val = 0.0
+
+                    if fa_k not in fa_grouped:
+                        info = info_por_fa.get(fa_k, info_por_fa.get(fa_clean, {}))
+                        fa_grouped[fa_k] = {
+                            'fa': fa_k,
+                            'nome': nome,
+                            'tipo': tipo_clean,
+                            'zona': info.get('zona', ''),
+                            'ha': 0.0,
+                            'pcts': [],
+                            'talhoes': []
+                        }
+                    fa_grouped[fa_k]['ha'] += ha_val
+                    fa_grouped[fa_k]['pcts'].append(p_val)
+                    fa_grouped[fa_k]['talhoes'].append({
+                        't': f"T-{len(fa_grouped[fa_k]['talhoes']) + 1}",
+                        'ha': round(ha_val, 2),
+                        'cl': 0.0,
+                        'cf': 0.0,
+                        'pct': round(p_val, 2),
+                        'nf': 0,
+                        'nl': 0,
+                        'st': classificar_status(p_val, tipo_clean)
+                    })
+
+                ha_ano = 0.0
+                status_contagem = {'Aceitável': 0, 'Atenção': 0, 'Crítico': 0}
+                lista_medias_f = []
+
+                for fa_k, d_fa in fa_grouped.items():
+                    ha_f = round(d_fa['ha'], 2)
+                    ha_ano += ha_f
+                    media_f = round(sum(d_fa['pcts']) / len(d_fa['pcts']), 2) if d_fa['pcts'] else 0.0
+                    lista_medias_f.append(media_f)
+                    st_f = classificar_status(media_f, d_fa['tipo'])
+                    status_contagem[st_f] += 1
+
+                    fazendas_todas.append({
+                        'ano': ano,
+                        'fa': fa_k,
+                        'faz': d_fa['nome'],
+                        'tipo': d_fa['tipo'],
+                        'zona': d_fa['zona'],
+                        'ha': ha_f,
+                        'pct': media_f,
+                        'cf': 0.0,
+                        'cl': 0.0,
+                        'nf': 0,
+                        'nl': 0,
+                        'st': st_f,
+                        'qtd_t': len(d_fa['talhoes']),
+                        'talhoes': d_fa['talhoes']
+                    })
+
+                media_simples_ano = round(sum(lista_medias_f) / len(lista_medias_f), 2) if lista_medias_f else 0.0
+                resumo_anos[ano] = {
+                    'ha_total': round(ha_ano, 2),
+                    'km_linhas': 0.0,
+                    'km_falhas': 0.0,
+                    'num_falhas': 0,
+                    'media_ponderada_pct': media_simples_ano,
+                    'qtd_fazendas': len(fa_grouped),
+                    'status_contagem': status_contagem
+                }
+                print(f"[HISTORICO FALHAS] Safra {ano} (Planilha Oficial): {len(fa_grouped)} fazendas, {ha_ano:.1f} ha, Média Simples: {media_simples_ano}%")
+            wb_hist.close()
+        except Exception as ex_h:
+            print(f"[HISTORICO FALHAS] Erro ao ler planilha oficial de histórico: {ex_h}")
+
+    # 2. Leitura da Safra Atual (2026) a partir dos arquivos do Banco de Dados
+    pasta_2026 = base_dirs.get('2026')
+    if pasta_2026 and os.path.exists(pasta_2026):
+        ano = '2026'
+        csvs = glob.glob(os.path.join(pasta_2026, "*.csv"))
         ha_ano = 0.0
         km_l_ano = 0.0
         km_f_ano = 0.0
         num_f_ano = 0
         status_contagem = {'Aceitável': 0, 'Atenção': 0, 'Crítico': 0}
+        lista_medias_2026 = []
 
         for c in csvs:
             basename = os.path.splitext(os.path.basename(c))[0]
@@ -1017,7 +1123,6 @@ def compilar_historico_falhas():
             fa = m_fa_h.group(1) if m_fa_h else basename.split()[0].strip()
             fa_clean = fa.lstrip('0')
             
-            # Tipo de parceria
             is_propria = fa.startswith('20') and len(fa) == 6
             tipo = 'Própria' if is_propria else 'Terceiro'
 
@@ -1028,7 +1133,6 @@ def compilar_historico_falhas():
                 partes = basename.split(maxsplit=1)
                 nome_faz = partes[1].strip() if len(partes) > 1 else f"FAZENDA FA {fa}"
 
-            # Ler CSV com delimitador vírgula
             rows = []
             try:
                 with open(c, 'r', encoding='latin1') as f:
@@ -1084,13 +1188,13 @@ def compilar_historico_falhas():
 
             st = classificar_status(pct, tipo)
             status_contagem[st] += 1
+            lista_medias_2026.append(pct)
 
             ha_ano += ha
             km_l_ano += cl
             km_f_ano += cf
             num_f_ano += nf
 
-            # Talhões detalhados
             lista_t = []
             for tr in talhoes_rows:
                 user_id = tr[1].strip() or tr[0].strip()
@@ -1129,17 +1233,17 @@ def compilar_historico_falhas():
                 'talhoes': lista_t
             })
 
-        media_pond = round((km_f_ano / km_l_ano * 100), 2) if km_l_ano > 0 else 0.0
-        resumo_anos[ano] = {
+        media_simples_2026 = round(sum(lista_medias_2026) / len(lista_medias_2026), 2) if lista_medias_2026 else 0.0
+        resumo_anos['2026'] = {
             'ha_total': round(ha_ano, 2),
             'km_linhas': round(km_l_ano, 2),
             'km_falhas': round(km_f_ano, 2),
             'num_falhas': num_f_ano,
-            'media_ponderada_pct': media_pond,
-            'qtd_fazendas': len([f for f in fazendas_todas if f['ano'] == ano]),
+            'media_ponderada_pct': media_simples_2026,
+            'qtd_fazendas': len([f for f in fazendas_todas if f['ano'] == '2026']),
             'status_contagem': status_contagem
         }
-        print(f"[HISTORICO FALHAS] Safra {ano}: {resumo_anos[ano]['qtd_fazendas']} fazendas, {ha_ano:.1f} ha, Média Ponderada: {media_pond}%")
+        print(f"[HISTORICO FALHAS] Safra 2026 (Safra Atual): {resumo_anos['2026']['qtd_fazendas']} fazendas, {ha_ano:.1f} ha, Média Simples: {media_simples_2026}%")
 
     # Mapear histórico multi-safra para fazendas repetidas
     fa_map = {}
