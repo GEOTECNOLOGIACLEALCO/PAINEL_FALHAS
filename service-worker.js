@@ -1,4 +1,4 @@
-const CACHE_NAME = 'clealco-voos-v2460';
+const CACHE_NAME = 'clealco-voos-v2461';
 const ASSETS_ESTATICOS = [
     './',
     './index.html',
