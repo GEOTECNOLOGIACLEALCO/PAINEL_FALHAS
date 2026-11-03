@@ -1,4 +1,4 @@
-const CACHE_NAME = 'clealco-voos-v2801';
+const CACHE_NAME = 'clealco-voos-v2805';
 const ASSETS_ESTATICOS = [
     './',
     './index.html',
@@ -8,6 +8,7 @@ const ASSETS_ESTATICOS = [
     './dados_mapas_safra.js',
     './dados_historico_falhas.js',
     './dados_arable_clima.js',
+    './dados_coordenadas_fas.js',
     './leaflet.css',
     './leaflet.js',
     './logo_clealco.png',

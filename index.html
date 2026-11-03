@@ -3754,6 +3754,15 @@
                     });
                 }
                 clusterAtual.poloRef = poloMaisProximo;
+
+                // Estimativa operacional realista de baterias:
+                // Drone de mapeamento / linha de plantio faz em média 20 a 25 ha por bateria (voo a 100-120m GSD ~3cm)
+                // Tempo médio de voo: ~22 minutos por bateria
+                const bateriasEst = Math.max(1, Math.ceil(clusterAtual.haTotal / 22.0));
+                const tempoVooEstMin = Math.round(bateriasEst * 22);
+                clusterAtual.bateriasEst = bateriasEst;
+                clusterAtual.tempoVooEstMin = tempoVooEstMin;
+
                 clusters.push(clusterAtual);
             });
 
@@ -3883,19 +3892,33 @@
                                 </div>
                             </div>
 
-                            <!-- Distribuição Agronômica da Missão -->
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs pt-1 border-t border-slate-100">
+                            <!-- Telemetria Operacional e Agronômica da Missão -->
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1 border-t border-slate-100">
+                                <div class="bg-amber-50/70 p-2 rounded-lg border border-amber-200">
+                                    <span class="text-[10px] text-amber-800 font-bold block uppercase flex items-center justify-between">
+                                        <span>Baterias Estimadas</span>
+                                        <span>🔋</span>
+                                    </span>
+                                    <b class="text-amber-900 font-black text-sm">~${c.bateriasEst} un</b>
+                                    <span class="text-[9px] text-amber-700/80 block mt-0.5">Média ~22 ha/bateria</span>
+                                </div>
+                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                    <span class="text-[10px] text-slate-500 font-bold block uppercase flex items-center justify-between">
+                                        <span>Tempo de Voo</span>
+                                        <span>⏱️</span>
+                                    </span>
+                                    <b class="text-slate-900 font-black text-sm">~${c.tempoVooEstMin} min</b>
+                                    <span class="text-[9px] text-slate-400 block mt-0.5">${(c.tempoVooEstMin/60).toFixed(1)}h em campo</span>
+                                </div>
                                 <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
                                     <span class="text-[10px] text-slate-500 font-bold block uppercase">Área Própria</span>
                                     <b class="text-red-600 font-black text-sm">${c.propHa.toFixed(1)} ha</b>
+                                    <span class="text-[9px] text-slate-400 block mt-0.5">${c.tercHa > 0 ? `${c.tercHa.toFixed(1)} ha terc.` : '100% Própria'}</span>
                                 </div>
                                 <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
-                                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Fornecedores</span>
-                                    <b class="text-amber-600 font-black text-sm">${c.tercHa.toFixed(1)} ha</b>
-                                </div>
-                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 col-span-2 sm:col-span-1">
                                     <span class="text-[10px] text-slate-500 font-bold block uppercase">Talhões a Voar</span>
                                     <b class="text-slate-900 font-black text-sm">${c.talhoesTotal} talhões</b>
+                                    <span class="text-[9px] text-slate-400 block mt-0.5">${c.itens.length} FAs vizinhas</span>
                                 </div>
                             </div>
 
