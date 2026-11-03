@@ -3754,13 +3754,6 @@
                     });
                 }
                 clusterAtual.poloRef = poloMaisProximo;
-
-                // Estimativa de baterias e tempo de voo: ~15 a 20 ha por bateria / ~18 min de voo por bateria
-                const bateriasEst = Math.max(1, Math.ceil(clusterAtual.haTotal / 18.0));
-                const tempoVooEstMin = Math.round(bateriasEst * 18);
-                clusterAtual.bateriasEst = bateriasEst;
-                clusterAtual.tempoVooEstMin = tempoVooEstMin;
-
                 clusters.push(clusterAtual);
             });
 
@@ -3856,7 +3849,7 @@
                     <div class="mb-3 p-3 rounded-xl bg-blue-50/70 border border-blue-200 text-xs text-blue-900 flex items-center justify-between flex-wrap gap-2">
                         <div class="flex items-center gap-2">
                             <span class="text-base">🛩️</span>
-                            <span><b>Roteirizador de Missões Ativo:</b> As <b>${fasUnicos.size} FAs</b> pendentes foram agrupadas em <b>${clusters.length} blocos vizinhos</b> (raio ≤ 8 km) para otimizar deslocamento e troca de baterias.</span>
+                            <span><b>Roteirizador de Missões Ativo:</b> As <b>${fasUnicos.size} FAs</b> pendentes foram agrupadas em <b>${clusters.length} blocos vizinhos</b> (raio ≤ 8 km) para otimizar deslocamento e logística de voo.</span>
                         </div>
                         <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-200 text-blue-900">${clusters.length} Missões Otimizadas</span>
                     </div>
@@ -3890,16 +3883,8 @@
                                 </div>
                             </div>
 
-                            <!-- Telemetria Operacional da Missão (Baterias & Autonomia) -->
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1 border-t border-slate-100">
-                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
-                                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Baterias Drone</span>
-                                    <b class="text-amber-700 font-black text-sm">🔋 ~${c.bateriasEst} un</b>
-                                </div>
-                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
-                                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Tempo de Voo</span>
-                                    <b class="text-slate-900 font-black text-sm">⏱️ ~${c.tempoVooEstMin} min</b>
-                                </div>
+                            <!-- Distribuição Agronômica da Missão -->
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 text-xs pt-1 border-t border-slate-100">
                                 <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
                                     <span class="text-[10px] text-slate-500 font-bold block uppercase">Área Própria</span>
                                     <b class="text-red-600 font-black text-sm">${c.propHa.toFixed(1)} ha</b>
@@ -3907,6 +3892,10 @@
                                 <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
                                     <span class="text-[10px] text-slate-500 font-bold block uppercase">Fornecedores</span>
                                     <b class="text-amber-600 font-black text-sm">${c.tercHa.toFixed(1)} ha</b>
+                                </div>
+                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200 col-span-2 sm:col-span-1">
+                                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Talhões a Voar</span>
+                                    <b class="text-slate-900 font-black text-sm">${c.talhoesTotal} talhões</b>
                                 </div>
                             </div>
 
