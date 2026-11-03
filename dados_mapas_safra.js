@@ -1,5 +1,5 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 03/11/2026 14:54:29
+// Gerado em: 03/11/2026 14:55:13
 // Total de Mapas: 1322
 window.DADOS_MAPAS_SAFRA = [
   {
@@ -1698,7 +1698,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "02/09/2026 16:06",
     "timestamp": 1788375998,
     "tamanho_kb": 434.8,
-    "dias_atras": 61.9,
+    "dias_atras": 62.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3653,7 +3653,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "29/07/2026 16:07",
     "timestamp": 1785352029,
     "tamanho_kb": 257.1,
-    "dias_atras": 96.9,
+    "dias_atras": 97.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -12238,7 +12238,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "24/11/2025 16:07",
     "timestamp": 1764011230,
     "tamanho_kb": 253.7,
-    "dias_atras": 343.9,
+    "dias_atras": 344.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -13615,7 +13615,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/09/2025 13:42",
     "timestamp": 1757522566,
     "tamanho_kb": 346.8,
-    "dias_atras": 419.0,
+    "dias_atras": 419.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -18511,7 +18511,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "01/03/2024 08:55",
     "timestamp": 1709294100,
     "tamanho_kb": 318.7,
-    "dias_atras": 977.2,
+    "dias_atras": 977.3,
     "is_novo": false,
     "is_hoje": false
   },
