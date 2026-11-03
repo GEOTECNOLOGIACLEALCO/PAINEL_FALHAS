@@ -43,6 +43,7 @@
     <script src="dados_mapas_safra.js"></script>
     <script src="dados_historico_falhas.js"></script>
     <script src="dados_arable_clima.js"></script>
+    <script src="dados_coordenadas_fas.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
@@ -1249,15 +1250,24 @@
                         <p class="text-xs text-slate-500">Demandas cadastradas que ainda não foram sobrevoadas</p>
                     </div>
 
-                    <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex flex-wrap items-center gap-2.5">
                         <!-- Campo de Pesquisa por FA e Fazenda no Backlog -->
                         <div class="relative">
-                            <input type="text" id="input-busca-backlog" placeholder="🔍 Pesquisar FA ou Fazenda..." onkeyup="renderizarBacklog()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:bg-white w-56 md:w-64 transition">
+                            <input type="text" id="input-busca-backlog" placeholder="🔍 Pesquisar FA ou Fazenda..." onkeyup="renderizarBacklog()" class="bg-slate-50 border border-slate-300 rounded-lg px-3 py-1.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-red-500 focus:bg-white w-52 md:w-60 transition">
                         </div>
 
-                        <button id="btn-tipo-agrupamento" onclick="alternarModoBacklog()" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg font-bold transition shadow-sm">
-                            🔄 Visualizar: Consolidado (Por FA)
-                        </button>
+                        <!-- Seletor de Modo: Por FA, Por Talhão ou Clusters de Proximidade -->
+                        <div class="inline-flex rounded-lg border border-slate-300 p-0.5 bg-slate-100 text-xs shadow-2xs">
+                            <button type="button" id="btn-bk-modo-fa" onclick="setModoVisualizacaoBacklog('fa')" class="px-2.5 py-1 rounded-md font-bold transition cursor-pointer bg-white text-red-600 shadow-xs">
+                                📋 Por FA
+                            </button>
+                            <button type="button" id="btn-bk-modo-talhao" onclick="setModoVisualizacaoBacklog('talhao')" class="px-2.5 py-1 rounded-md font-bold transition cursor-pointer text-slate-600 hover:text-slate-900">
+                                🔲 Talhões
+                            </button>
+                            <button type="button" id="btn-bk-modo-clusters" onclick="setModoVisualizacaoBacklog('clusters')" class="px-2.5 py-1 rounded-md font-bold transition cursor-pointer text-slate-600 hover:text-slate-900 flex items-center gap-1">
+                                🛩️ <span>Clusters / Rotas</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -3636,12 +3646,138 @@
             `;}).join('');
         }
 
-        // ================= BACKLOG =================
-        function alternarModoBacklog() {
-            modoAgrupadoBacklog = !modoAgrupadoBacklog;
-            const btn = document.getElementById('btn-tipo-agrupamento');
-            btn.innerText = modoAgrupadoBacklog ? "🔄 Visualizar: Consolidado (Por FA)" : "🔄 Visualizar: Por Talhão";
+        // ================= BACKLOG (ROTEIRIZADOR & CLUSTERS DE PROXIMIDADE) =================
+        let modoVisualizacaoBacklog = 'fa'; // 'fa', 'talhao', 'clusters'
+
+        function setModoVisualizacaoBacklog(modo) {
+            modoVisualizacaoBacklog = modo;
+            modoAgrupadoBacklog = (modo === 'fa');
+
+            // Atualiza botões
+            const btnFa = document.getElementById('btn-bk-modo-fa');
+            const btnTalhao = document.getElementById('btn-bk-modo-talhao');
+            const btnClusters = document.getElementById('btn-bk-modo-clusters');
+
+            const clsAtivo = 'px-2.5 py-1 rounded-md font-bold transition cursor-pointer bg-white text-red-600 shadow-xs';
+            const clsInativo = 'px-2.5 py-1 rounded-md font-bold transition cursor-pointer text-slate-600 hover:text-slate-900';
+
+            if (btnFa) btnFa.className = (modo === 'fa') ? clsAtivo : clsInativo;
+            if (btnTalhao) btnTalhao.className = (modo === 'talhao') ? clsAtivo : clsInativo;
+            if (btnClusters) btnClusters.className = (modo === 'clusters') ? clsAtivo : clsInativo;
+
             renderizarBacklog();
+        }
+
+        function alternarModoBacklog() {
+            setModoVisualizacaoBacklog(modoVisualizacaoBacklog === 'fa' ? 'talhao' : 'fa');
+        }
+
+        // Função utilitária de distância em km (Haversine)
+        function calcularDistanciaKm(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Raio da Terra em km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+
+        // Agrupa FAs pendentes em Clusters Logísticos (Raio máximo de 7.5 km entre vizinhos)
+        function agruparBacklogEmClusters(fasLista) {
+            const coordsMap = window.COORDENADAS_FAS_CLEALCO || {};
+            const visitados = new Set();
+            const clusters = [];
+
+            // Polos de referência para nomear clusters
+            const POLOS_REF = [
+                { nome: 'Polo Clementina', lat: -21.7580, lng: -50.4500 },
+                { nome: 'Polo Queiroz', lat: -21.7940, lng: -50.2440 },
+                { nome: 'Polo Penápolis', lat: -21.4230, lng: -50.0800 },
+                { nome: 'Polo Braúna / Santópolis', lat: -21.6000, lng: -50.3500 },
+                { nome: 'Polo Luiziânia', lat: -21.6700, lng: -50.3200 }
+            ];
+
+            const itensComCoords = fasLista.map(item => {
+                const faNorm = String(item.fa || '').trim().lstrip ? item.fa.trim().replace(/^0+/, '') : String(item.fa || '').trim();
+                const pt = coordsMap[faNorm] || null;
+                return { ...item, faNorm, coords: pt };
+            });
+
+            const RAIO_MAX_CLUSTER_KM = 8.0; // Fazendas a até 8km entram no mesmo cluster de missão
+
+            itensComCoords.forEach(item => {
+                if (visitados.has(item.fa)) return;
+                visitados.add(item.fa);
+
+                const clusterAtual = {
+                    id: clusters.length + 1,
+                    itens: [item],
+                    haTotal: item.ha,
+                    talhoesTotal: item.count || 1,
+                    propHa: (item.tipo === 'Própria' ? item.ha : 0),
+                    tercHa: (item.tipo !== 'Própria' ? item.ha : 0),
+                    centroide: item.coords ? [...item.coords] : null
+                };
+
+                if (item.coords) {
+                    itensComCoords.forEach(vizinho => {
+                        if (visitados.has(vizinho.fa) || !vizinho.coords) return;
+                        const dist = calcularDistanciaKm(clusterAtual.centroide[0], clusterAtual.centroide[1], vizinho.coords[0], vizinho.coords[1]);
+                        if (dist <= RAIO_MAX_CLUSTER_KM) {
+                            visitados.add(vizinho.fa);
+                            clusterAtual.itens.push(vizinho);
+                            clusterAtual.haTotal += vizinho.ha;
+                            clusterAtual.talhoesTotal += (vizinho.count || 1);
+                            if (vizinho.tipo === 'Própria') clusterAtual.propHa += vizinho.ha;
+                            else clusterAtual.tercHa += vizinho.ha;
+
+                            // Recalcula centroide do cluster
+                            const n = clusterAtual.itens.length;
+                            clusterAtual.centroide[0] = (clusterAtual.centroide[0] * (n - 1) + vizinho.coords[0]) / n;
+                            clusterAtual.centroide[1] = (clusterAtual.centroide[1] * (n - 1) + vizinho.coords[1]) / n;
+                        }
+                    });
+                }
+
+                // Identifica a região ou polo mais próximo
+                let poloMaisProximo = 'Região Operacional';
+                if (clusterAtual.centroide) {
+                    let menorD = Infinity;
+                    POLOS_REF.forEach(p => {
+                        const d = calcularDistanciaKm(clusterAtual.centroide[0], clusterAtual.centroide[1], p.lat, p.lng);
+                        if (d < menorD) {
+                            menorD = d;
+                            poloMaisProximo = `${p.nome} (~${d.toFixed(0)} km)`;
+                        }
+                    });
+                }
+                clusterAtual.poloRef = poloMaisProximo;
+
+                // Estimativa de baterias e tempo de voo: ~15 a 20 ha por bateria / ~18 min de voo por bateria
+                const bateriasEst = Math.max(1, Math.ceil(clusterAtual.haTotal / 18.0));
+                const tempoVooEstMin = Math.round(bateriasEst * 18);
+                clusterAtual.bateriasEst = bateriasEst;
+                clusterAtual.tempoVooEstMin = tempoVooEstMin;
+
+                clusters.push(clusterAtual);
+            });
+
+            // Ordena clusters por maior área pendente
+            clusters.sort((a, b) => b.haTotal - a.haTotal);
+            return clusters;
+        }
+
+        function focarClusterNoMapa(lat, lng) {
+            if (typeof trocarAba === 'function') {
+                trocarAba('mapa');
+            }
+            setTimeout(() => {
+                if (window.mapaVoosInstancia && lat && lng) {
+                    window.mapaVoosInstancia.setView([lat, lng], 13, { animate: true });
+                }
+            }, 300);
         }
 
         function renderizarBacklog() {
@@ -3683,21 +3819,110 @@
                 donutTxt.innerText = `${totalK}k ha`;
             }
 
-            let lista = dadosBacklog;
-            if (modoAgrupadoBacklog) {
-                const map = {};
-                dadosBacklog.forEach(b => {
-                    if (!map[b.fa]) {
-                        map[b.fa] = { fa: b.fa, fazenda: b.fazenda, tipo: b.tipo, ha: 0, count: 0, status_prazo: b.status_prazo };
-                    }
-                    map[b.fa].ha += b.ha;
-                    map[b.fa].count += 1;
-                });
-                lista = Object.values(map).sort((a, b) => b.ha - a.ha);
-            }
+            // Agrupa por FA para lista e para clusters
+            const mapFas = {};
+            dadosBacklog.forEach(b => {
+                if (!mapFas[b.fa]) {
+                    mapFas[b.fa] = { fa: b.fa, fazenda: b.fazenda, tipo: b.tipo, ha: 0, count: 0, status_prazo: b.status_prazo };
+                }
+                mapFas[b.fa].ha += b.ha;
+                mapFas[b.fa].count += 1;
+            });
+            const listaPorFa = Object.values(mapFas).sort((a, b) => b.ha - a.ha);
+
+            const container = document.getElementById('lista-backlog');
+            if (!container) return;
 
             // Filtro de busca por FA ou Fazenda
             const termoBusca = (document.getElementById('input-busca-backlog')?.value || '').toLowerCase().trim();
+
+            // MODO 3: ROTEIRIZADOR & CLUSTERS DE PROXIMIDADE
+            if (modoVisualizacaoBacklog === 'clusters') {
+                let clusters = agruparBacklogEmClusters(listaPorFa);
+
+                if (termoBusca) {
+                    clusters = clusters.filter(c => 
+                        c.poloRef.toLowerCase().includes(termoBusca) ||
+                        c.itens.some(it => it.fa.toLowerCase().includes(termoBusca) || it.fazenda.toLowerCase().includes(termoBusca))
+                    );
+                }
+
+                if (clusters.length === 0) {
+                    container.innerHTML = `<div class="bg-slate-50 border border-slate-200 text-center py-8 rounded-lg text-slate-500 text-xs">Nenhum cluster encontrado para a pesquisa "${termoBusca}".</div>`;
+                    return;
+                }
+
+                container.innerHTML = `
+                    <div class="mb-3 p-3 rounded-xl bg-blue-50/70 border border-blue-200 text-xs text-blue-900 flex items-center justify-between flex-wrap gap-2">
+                        <div class="flex items-center gap-2">
+                            <span class="text-base">🛩️</span>
+                            <span><b>Roteirizador de Missões Ativo:</b> As <b>${fasUnicos.size} FAs</b> pendentes foram agrupadas em <b>${clusters.length} blocos vizinhos</b> (raio ≤ 8 km) para otimizar deslocamento e troca de baterias.</span>
+                        </div>
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-200 text-blue-900">${clusters.length} Missões Otimizadas</span>
+                    </div>
+                ` + clusters.map((c, idx) => {
+                    const btnVerMapa = c.centroide ? `
+                        <button type="button" onclick="focarClusterNoMapa(${c.centroide[0]}, ${c.centroide[1]})" title="Ver este bloco no Mapa de Voos" class="px-2.5 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold text-xs inline-flex items-center gap-1 cursor-pointer transition shadow-2xs">
+                            📍 <span>Ver no Mapa</span>
+                        </button>
+                    ` : '';
+
+                    const tagsFas = c.itens.map(it => `
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-800 border border-slate-200">
+                            <b class="text-red-600">FA ${it.fa}</b> ${it.fazenda} <span class="text-slate-500 font-normal">(${it.ha.toFixed(1)} ha)</span>
+                        </span>
+                    `).join('');
+
+                    return `
+                        <div class="bg-white border border-slate-200 border-l-4 border-l-blue-600 p-4 rounded-xl shadow-xs hover:shadow-md transition space-y-2.5">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded-full bg-blue-600 text-white font-black text-xs">Missão #${idx + 1}</span>
+                                    <h4 class="font-extrabold text-slate-900 text-sm">${c.poloRef}</h4>
+                                    <span class="text-xs text-slate-500 font-medium">• ${c.itens.length} FAs (${c.talhoesTotal} talhões)</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="text-right">
+                                        <span class="text-base font-black text-blue-700">${c.haTotal.toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1})} ha</span>
+                                        <div class="text-[10px] text-slate-400 font-semibold">Área do Bloco</div>
+                                    </div>
+                                    ${btnVerMapa}
+                                </div>
+                            </div>
+
+                            <!-- Telemetria Operacional da Missão (Baterias & Autonomia) -->
+                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs pt-1 border-t border-slate-100">
+                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Baterias Drone</span>
+                                    <b class="text-amber-700 font-black text-sm">🔋 ~${c.bateriasEst} un</b>
+                                </div>
+                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Tempo de Voo</span>
+                                    <b class="text-slate-900 font-black text-sm">⏱️ ~${c.tempoVooEstMin} min</b>
+                                </div>
+                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Área Própria</span>
+                                    <b class="text-red-600 font-black text-sm">${c.propHa.toFixed(1)} ha</b>
+                                </div>
+                                <div class="bg-slate-50 p-2 rounded-lg border border-slate-200">
+                                    <span class="text-[10px] text-slate-500 font-bold block uppercase">Fornecedores</span>
+                                    <b class="text-amber-600 font-black text-sm">${c.tercHa.toFixed(1)} ha</b>
+                                </div>
+                            </div>
+
+                            <!-- FAs que compõem este Cluster -->
+                            <div class="flex flex-wrap gap-1.5 pt-1">
+                                ${tagsFas}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                return;
+            }
+
+            // MODOS CONVENCIONAIS: 'fa' ou 'talhao'
+            let lista = (modoVisualizacaoBacklog === 'fa') ? listaPorFa : dadosBacklog;
+
             if (termoBusca) {
                 lista = lista.filter(b => 
                     b.fa.toLowerCase().includes(termoBusca) || 
@@ -3706,17 +3931,18 @@
                 );
             }
 
-            const container = document.getElementById('lista-backlog');
             if (lista.length === 0) {
                 container.innerHTML = `<div class="bg-slate-50 border border-slate-200 text-center py-8 rounded-lg text-slate-500 text-xs">Nenhum FA ou Fazenda encontrada para a pesquisa "${termoBusca}".</div>`;
                 return;
             }
 
+            const isPorFa = (modoVisualizacaoBacklog === 'fa');
+
             container.innerHTML = lista.map(b => {
                 const corBadge = b.tipo === 'Própria' ? 'bg-red-50 text-red-600 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200';
                 const corBorder = b.tipo === 'Própria' ? 'border-l-red-600' : 'border-l-amber-500';
                 const corValor = b.tipo === 'Própria' ? 'text-red-600' : 'text-amber-600';
-                const btnKml = modoAgrupadoBacklog ? `
+                const btnKml = isPorFa ? `
                     <button type="button" onclick="baixarKMLPorFA('${b.fa}')" title="Baixar KML de todos os talhões da FA ${b.fa} para o Drone" class="ml-2 px-2 py-0.5 rounded bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-700 border border-slate-300 font-bold text-[10px] inline-flex items-center gap-1 cursor-pointer transition">
                         <svg class="w-3 h-3 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                         <span>KML Drone</span>
@@ -3732,7 +3958,7 @@
                         <div>
                             <div class="flex items-center flex-wrap gap-1">
                                 <span class="font-black text-red-600 text-sm">FA ${b.fa}</span>
-                                <span class="text-slate-900 ml-1 font-bold">${b.fazenda} ${modoAgrupadoBacklog ? `— <span class='text-slate-500 font-normal'>${b.count} talhões</span>` : `- T. ${b.talhao}`}</span>
+                                <span class="text-slate-900 ml-1 font-bold">${b.fazenda} ${isPorFa ? `— <span class='text-slate-500 font-normal'>${b.count} talhões</span>` : `- T. ${b.talhao}`}</span>
                                 ${btnKml}
                             </div>
                             <div class="text-[11px] text-slate-500 mt-1 flex items-center gap-2">

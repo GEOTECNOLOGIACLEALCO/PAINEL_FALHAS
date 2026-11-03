@@ -758,6 +758,25 @@ try:
         with open(caminho_mapa_js, "w", encoding="utf-8") as f:
             f.write("window.DADOS_MAPA_VOOS = " + json.dumps(payload_mapa_cifrado, ensure_ascii=False) + ";\n")
             
+        # Exporta centroides de FAs para o Roteirizador / Clusters de Proximidade do Backlog
+        caminho_coords_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_coordenadas_fas.js"
+        try:
+            layer.ResetReading()
+            cents_map = {}
+            for feat_c in layer:
+                fa_c = str(feat_c.GetField('FAZENDA') or '').strip().lstrip('0')
+                g_c = feat_c.GetGeometryRef()
+                if g_c and fa_c:
+                    ct = g_c.Centroid()
+                    if ct:
+                        cents_map.setdefault(fa_c, []).append((ct.GetY(), ct.GetX()))
+            fa_coords_export = {fa: [round(sum(p[0] for p in pts)/len(pts), 5), round(sum(p[1] for p in pts)/len(pts), 5)] for fa, pts in cents_map.items()}
+            with open(caminho_coords_js, "w", encoding="utf-8") as f_c:
+                f_c.write("window.COORDENADAS_FAS_CLEALCO = " + json.dumps(fa_coords_export, separators=(',', ':')) + ";\n")
+            print(f"dados_coordenadas_fas.js exportado com sucesso! ({len(fa_coords_export)} FAs mapeadas para rotas).")
+        except Exception as e_c:
+            print(f"Aviso ao exportar coordenadas de FAs para rotas: {e_c}")
+
         mb = os.path.getsize(caminho_mapa_js) / (1024*1024)
         print(f"dados_mapa_voos.js criptografado com sucesso! {len(features_geojson)} talhões mapeados ({len(matched_keys)} backlog cruzados) - {mb:.2f} MB em {time.time()-t_mapa:.2f}s")
     else:
