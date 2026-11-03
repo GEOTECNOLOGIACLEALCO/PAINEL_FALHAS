@@ -982,10 +982,10 @@
 
                     <!-- Notificação Pós-Plantio & Input de Busca Rápida -->
                     <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-                        <!-- Botão Alerta/Sino: TIF Feito -> Apto Pós-Plantio -->
-                        <button id="btn-alerta-pos-plantio" onclick="ativarFiltroPosPlantio()" title="Clique para filtrar apenas voos com TIF Feito aguardando restituição de Linhas (Fila do Pós-Plantio)" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 cursor-pointer group hover:border-emerald-400">
+                        <!-- Botão Alerta/Sino: TIF Feito -> Apto Pós-Plantio (A partir de hoje) -->
+                        <button id="btn-alerta-pos-plantio" onclick="ativarFiltroPosPlantio()" title="Contabilizando a partir de hoje (03/11/2026): TIFs concluídos aguardando restituição de Linhas" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 cursor-pointer group hover:border-emerald-400">
                             <span class="relative flex h-2 w-2">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span id="ping-pos-plantio" class="hidden animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                                 <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                             </span>
                             <span class="text-sm">🔔</span>
@@ -3635,14 +3635,56 @@
             filtrarLista();
         }
 
+        // Marco Zero para Notificações do Pós-Plantio: a partir de hoje (03/11/2026 em diante)
+        const DATA_CORTE_POS_PLANTIO = new Date(2026, 10, 3, 0, 0, 0); // 03/11/2026 (Mês 10 = Novembro em JS)
+
+        function parseDataObj(val) {
+            if (!val || val === 'N/D') return null;
+            if (val instanceof Date) return val;
+            let s = String(val).trim();
+            if (s.includes('T')) s = s.split('T')[0];
+            let p = s.replace(/-/g, '/').split(' ')[0].split('/');
+            if (p.length === 3) {
+                if (p[0].length === 4) {
+                    return new Date(parseInt(p[0], 10), parseInt(p[1], 10) - 1, parseInt(p[2], 10));
+                } else {
+                    return new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10));
+                }
+            }
+            const d = new Date(val);
+            return isNaN(d.getTime()) ? null : d;
+        }
+
+        function isAptoPosPlantio(item) {
+            if (!item) return false;
+            const tifOk = (item.tif || '').toUpperCase() === 'FEITO';
+            const linhasPendentes = (item.linhas || '').toUpperCase() !== 'FEITO';
+            if (!tifOk || !linhasPendentes) return false;
+
+            // Filtra estritamente a partir de hoje (03/11/2026)
+            const dataRefStr = (item.data_proc && item.data_proc !== 'N/D') ? item.data_proc : item.data_voo;
+            const d = parseDataObj(dataRefStr);
+            if (!d) return false;
+
+            const dZero = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+            return dZero >= DATA_CORTE_POS_PLANTIO;
+        }
+
         function atualizarContadorPosPlantio() {
             if (!dadosBase || !dadosBase.length) return;
-            const prontos = dadosBase.filter(i => (i.tif || '').toUpperCase() === 'FEITO' && (i.linhas || '').toUpperCase() !== 'FEITO');
+            const prontos = dadosBase.filter(isAptoPosPlantio);
             const qtd = prontos.length;
             const elBadge = document.getElementById('badge-count-pos-plantio');
             if (elBadge) elBadge.innerText = qtd;
             const elPill = document.getElementById('pill-count-pos-plantio');
             if (elPill) elPill.innerText = qtd;
+
+            // Ativa o pulso luminoso do sino apenas se houver pendências reais de hoje em diante
+            const elPing = document.getElementById('ping-pos-plantio');
+            if (elPing) {
+                if (qtd > 0) elPing.classList.remove('hidden');
+                else elPing.classList.add('hidden');
+            }
         }
 
         function ativarFiltroPosPlantio() {
@@ -3667,7 +3709,7 @@
             const termo = (document.getElementById('input-busca').value || '').toLowerCase().trim();
             let lista = dadosBase;
 
-            if (filtroAtual === 'pronto_pos_plantio') lista = lista.filter(i => (i.tif || '').toUpperCase() === 'FEITO' && (i.linhas || '').toUpperCase() !== 'FEITO');
+            if (filtroAtual === 'pronto_pos_plantio') lista = lista.filter(isAptoPosPlantio);
             else if (filtroAtual === 'tif_pendente') lista = lista.filter(i => i.tif !== 'FEITO');
             else if (filtroAtual === 'linhas_pendentes') lista = lista.filter(i => i.linhas !== 'FEITO');
             else if (filtroAtual === 'linhas_feitas') lista = lista.filter(i => i.linhas === 'FEITO');
@@ -3682,13 +3724,22 @@
 
             const container = document.getElementById('lista-fas');
             if (lista.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500 text-sm">Nenhum registro encontrado.</div>';
+                if (filtroAtual === 'pronto_pos_plantio') {
+                    container.innerHTML = `
+                    <div class="col-span-full text-center py-10 text-slate-400 bg-slate-900/40 rounded-xl border border-white/10 p-6">
+                        <div class="text-3xl mb-2">🎉</div>
+                        <div class="text-sm font-bold text-white mb-1">Nenhum TIF aguardando Pós-Plantio a partir de hoje (03/11/2026)!</div>
+                        <p class="text-xs text-gray-400 max-w-md mx-auto">Assim que os primeiros processamentos com data de hoje forem concluídos no servidor, eles aparecerão automaticamente aqui com notificação em tempo real.</p>
+                    </div>`;
+                } else {
+                    container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500 text-sm">Nenhum registro encontrado.</div>';
+                }
                 return;
             }
 
             container.innerHTML = lista.map(item => {
                 const isProp = item.fa.startsWith('2');
-                const isAptoPos = (item.tif || '').toUpperCase() === 'FEITO' && (item.linhas || '').toUpperCase() !== 'FEITO';
+                const isAptoPos = isAptoPosPlantio(item);
                 return `
                 <div class="bg-white border ${isAptoPos ? 'border-emerald-500 ring-2 ring-emerald-400/25 shadow-md' : 'border-slate-200'} rounded-xl p-3.5 hover:border-red-400 hover:shadow-md transition shadow-sm relative overflow-hidden">
                     ${isAptoPos ? `
