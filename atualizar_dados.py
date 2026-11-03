@@ -349,7 +349,14 @@ dados_completos = {
     "metas_globais": metas,
     "acompanhamento": acomp,
     "creditos_inforow": creditos_dinamicos,
-    "data_compilacao": datetime.now().strftime("%d/%m/%Y às %H:%M")
+    "data_compilacao": datetime.now().strftime("%d/%m/%Y às %H:%M"),
+    "status_automacao": {
+        "status": "Online",
+        "data_hora": datetime.now().strftime("%d/%m/%Y às %H:%M"),
+        "total_voos": len(base_proc),
+        "total_backlog": len(backlog),
+        "total_falhas": len(falhas)
+    }
 }
 
 dados_str = json.dumps(dados_completos, ensure_ascii=False)
@@ -999,111 +1006,138 @@ def compilar_historico_falhas():
     fazendas_todas = []
     resumo_anos = {}
 
-    # 1. Leitura direta das safras históricas (2021-2025) da planilha oficial (SOMENTE-LEITURA)
+    # 1. Leitura direta das safras históricas (2021-2025) da planilha oficial (SOMENTE-LEITURA) com Cache Inteligente
     caminho_hist_excel = r"W:\01-DRONE\08-BANCO DE DADOS\HISTORICO - FALHAS - BASE KPI\Historico - Falhas.xlsx"
+    caminho_cache_hist = os.path.join(os.path.dirname(caminho_xlsx), "cache_historico_2021_2025.json")
+
+    usou_cache = False
     if os.path.exists(caminho_hist_excel):
-        try:
-            wb_hist = openpyxl.load_workbook(caminho_hist_excel, data_only=True, read_only=True)
-            for ano in ['2021', '2022', '2023', '2024', '2025']:
-                if ano not in wb_hist.sheetnames:
-                    continue
-                ws_h = wb_hist[ano]
-                raw_rows = [r for r in list(ws_h.iter_rows(values_only=True))[1:] if any(r)]
+        mtime_atual_excel = os.path.getmtime(caminho_hist_excel)
+        if os.path.exists(caminho_cache_hist):
+            try:
+                with open(caminho_cache_hist, "r", encoding="utf-8") as f_c:
+                    dados_cache = json.load(f_c)
+                if dados_cache.get("mtime_origem") == mtime_atual_excel and dados_cache.get("fazendas_hist") and dados_cache.get("resumo_anos_hist"):
+                    fazendas_todas.extend(dados_cache["fazendas_hist"])
+                    resumo_anos.update(dados_cache["resumo_anos_hist"])
+                    usou_cache = True
+                    print(f"[HISTORICO FALHAS] Safras 2021-2025 carregadas instantaneamente via cache ({len(dados_cache['fazendas_hist'])} registros).")
+            except Exception:
+                usou_cache = False
 
-                fa_grouped = {}
-                for r in raw_rows:
-                    fa_raw = str(r[0] or '').strip()
-                    m_f = re.match(r'^(\d+)', fa_raw)
-                    fa_k = m_f.group(1) if m_f else fa_raw.split()[0].strip()
-                    if not fa_k: continue
-                    fa_clean = fa_k.lstrip('0')
+        if not usou_cache:
+            try:
+                wb_hist = openpyxl.load_workbook(caminho_hist_excel, data_only=True, read_only=True)
+                fazendas_hist_novas = []
+                resumo_anos_hist_novos = {}
+                for ano in ['2021', '2022', '2023', '2024', '2025']:
+                    if ano not in wb_hist.sheetnames:
+                        continue
+                    ws_h = wb_hist[ano]
+                    raw_rows = [r for r in list(ws_h.iter_rows(values_only=True))[1:] if any(r)]
 
-                    nome = str(r[1] or '').strip()
-                    if not nome:
-                        info = info_por_fa.get(fa_k, info_por_fa.get(fa_clean, {}))
-                        nome = info.get('nome', f"FAZENDA FA {fa_k}")
+                    fa_grouped = {}
+                    for r in raw_rows:
+                        fa_raw = str(r[0] or '').strip()
+                        m_f = re.match(r'^(\d+)', fa_raw)
+                        fa_k = m_f.group(1) if m_f else fa_raw.split()[0].strip()
+                        if not fa_k: continue
+                        fa_clean = fa_k.lstrip('0')
 
-                    tipo_orig = str(r[2] or '').strip()
-                    is_prop = 'prop' in tipo_orig.lower() or (fa_k.startswith('20') and len(fa_k) == 6)
-                    tipo_clean = 'Própria' if is_prop else 'Terceiro'
+                        nome = str(r[1] or '').strip()
+                        if not nome:
+                            info = info_por_fa.get(fa_k, info_por_fa.get(fa_clean, {}))
+                            nome = info.get('nome', f"FAZENDA FA {fa_k}")
 
-                    try: ha_val = float(str(r[3] or 0).strip().replace(',', '.'))
-                    except: ha_val = 0.0
+                        tipo_orig = str(r[2] or '').strip()
+                        is_prop = 'prop' in tipo_orig.lower() or (fa_k.startswith('20') and len(fa_k) == 6)
+                        tipo_clean = 'Própria' if is_prop else 'Terceiro'
 
-                    try:
-                        p_val = float(str(r[4] or 0).strip().replace(',', '.'))
-                        if ano in ['2023', '2024', '2025']:
-                            p_val = p_val * 100.0
-                    except:
-                        p_val = 0.0
+                        try: ha_val = float(str(r[3] or 0).strip().replace(',', '.'))
+                        except: ha_val = 0.0
 
-                    if fa_k not in fa_grouped:
-                        info = info_por_fa.get(fa_k, info_por_fa.get(fa_clean, {}))
-                        fa_grouped[fa_k] = {
+                        try:
+                            p_val = float(str(r[4] or 0).strip().replace(',', '.'))
+                            if ano in ['2023', '2024', '2025']:
+                                p_val = p_val * 100.0
+                        except:
+                            p_val = 0.0
+
+                        if fa_k not in fa_grouped:
+                            info = info_por_fa.get(fa_k, info_por_fa.get(fa_clean, {}))
+                            fa_grouped[fa_k] = {
+                                'fa': fa_k,
+                                'nome': nome,
+                                'tipo': tipo_clean,
+                                'zona': info.get('zona', ''),
+                                'ha': 0.0,
+                                'pcts': [],
+                                'talhoes': []
+                            }
+                        fa_grouped[fa_k]['ha'] += ha_val
+                        fa_grouped[fa_k]['pcts'].append(p_val)
+                        fa_grouped[fa_k]['talhoes'].append({
+                            't': f"T-{len(fa_grouped[fa_k]['talhoes']) + 1}",
+                            'ha': round(ha_val, 2),
+                            'cl': 0.0,
+                            'cf': 0.0,
+                            'pct': round(p_val, 2),
+                            'nf': 0,
+                            'nl': 0,
+                            'st': classificar_status(p_val, tipo_clean)
+                        })
+
+                    ha_ano = 0.0
+                    status_contagem = {'Aceitável': 0, 'Atenção': 0, 'Crítico': 0}
+                    lista_medias_f = []
+
+                    for fa_k, d_fa in fa_grouped.items():
+                        ha_f = round(d_fa['ha'], 2)
+                        ha_ano += ha_f
+                        media_f = round(sum(d_fa['pcts']) / len(d_fa['pcts']), 2) if d_fa['pcts'] else 0.0
+                        lista_medias_f.append(media_f)
+                        st_f = classificar_status(media_f, d_fa['tipo'])
+                        status_contagem[st_f] += 1
+
+                        item_f = {
+                            'ano': ano,
                             'fa': fa_k,
-                            'nome': nome,
-                            'tipo': tipo_clean,
-                            'zona': info.get('zona', ''),
-                            'ha': 0.0,
-                            'pcts': [],
-                            'talhoes': []
+                            'faz': d_fa['nome'],
+                            'tipo': d_fa['tipo'],
+                            'zona': d_fa['zona'],
+                            'ha': ha_f,
+                            'pct': media_f,
+                            'cf': 0.0,
+                            'cl': 0.0,
+                            'nf': 0,
+                            'nl': 0,
+                            'st': st_f,
+                            'qtd_t': len(d_fa['talhoes']),
+                            'talhoes': d_fa['talhoes']
                         }
-                    fa_grouped[fa_k]['ha'] += ha_val
-                    fa_grouped[fa_k]['pcts'].append(p_val)
-                    fa_grouped[fa_k]['talhoes'].append({
-                        't': f"T-{len(fa_grouped[fa_k]['talhoes']) + 1}",
-                        'ha': round(ha_val, 2),
-                        'cl': 0.0,
-                        'cf': 0.0,
-                        'pct': round(p_val, 2),
-                        'nf': 0,
-                        'nl': 0,
-                        'st': classificar_status(p_val, tipo_clean)
-                    })
+                        fazendas_todas.append(item_f)
+                        fazendas_hist_novas.append(item_f)
 
-                ha_ano = 0.0
-                status_contagem = {'Aceitável': 0, 'Atenção': 0, 'Crítico': 0}
-                lista_medias_f = []
-
-                for fa_k, d_fa in fa_grouped.items():
-                    ha_f = round(d_fa['ha'], 2)
-                    ha_ano += ha_f
-                    media_f = round(sum(d_fa['pcts']) / len(d_fa['pcts']), 2) if d_fa['pcts'] else 0.0
-                    lista_medias_f.append(media_f)
-                    st_f = classificar_status(media_f, d_fa['tipo'])
-                    status_contagem[st_f] += 1
-
-                    fazendas_todas.append({
-                        'ano': ano,
-                        'fa': fa_k,
-                        'faz': d_fa['nome'],
-                        'tipo': d_fa['tipo'],
-                        'zona': d_fa['zona'],
-                        'ha': ha_f,
-                        'pct': media_f,
-                        'cf': 0.0,
-                        'cl': 0.0,
-                        'nf': 0,
-                        'nl': 0,
-                        'st': st_f,
-                        'qtd_t': len(d_fa['talhoes']),
-                        'talhoes': d_fa['talhoes']
-                    })
-
-                media_simples_ano = round(sum(lista_medias_f) / len(lista_medias_f), 2) if lista_medias_f else 0.0
-                resumo_anos[ano] = {
-                    'ha_total': round(ha_ano, 2),
-                    'km_linhas': 0.0,
-                    'km_falhas': 0.0,
-                    'num_falhas': 0,
-                    'media_ponderada_pct': media_simples_ano,
-                    'qtd_fazendas': len(fa_grouped),
-                    'status_contagem': status_contagem
-                }
-                print(f"[HISTORICO FALHAS] Safra {ano} (Planilha Oficial): {len(fa_grouped)} fazendas, {ha_ano:.1f} ha, Média Simples: {media_simples_ano}%")
-            wb_hist.close()
-        except Exception as ex_h:
-            print(f"[HISTORICO FALHAS] Erro ao ler planilha oficial de histórico: {ex_h}")
+                    media_simples_ano = round(sum(lista_medias_f) / len(lista_medias_f), 2) if lista_medias_f else 0.0
+                    res_ano_item = {
+                        'ha_total': round(ha_ano, 2),
+                        'km_linhas': 0.0,
+                        'km_falhas': 0.0,
+                        'num_falhas': 0,
+                        'media_ponderada_pct': media_simples_ano,
+                        'qtd_fazendas': len(fa_grouped),
+                        'status_contagem': status_contagem
+                    }
+                    resumo_anos[ano] = res_ano_item
+                    resumo_anos_hist_novos[ano] = res_ano_item
+                    print(f"[HISTORICO FALHAS] Safra {ano} (Planilha Oficial): {len(fa_grouped)} fazendas, {ha_ano:.1f} ha, Média Simples: {media_simples_ano}%")
+                wb_hist.close()
+                try:
+                    with open(caminho_cache_hist, "w", encoding="utf-8") as f_c:
+                        json.dump({"mtime_origem": mtime_atual_excel, "fazendas_hist": fazendas_hist_novas, "resumo_anos_hist": resumo_anos_hist_novos}, f_c, ensure_ascii=False)
+                except: pass
+            except Exception as ex_h:
+                print(f"[HISTORICO FALHAS] Erro ao ler planilha oficial de histórico: {ex_h}")
 
     # 2. Leitura da Safra Atual (2026) a partir dos arquivos do Banco de Dados
     pasta_2026 = base_dirs.get('2026')
@@ -1285,6 +1319,119 @@ def compilar_historico_falhas():
     print(f"[HISTORICO FALHAS] Arquivo gravado com sucesso: {output_path} ({len(fazendas_todas)} registros compilados).")
 
 compilar_historico_falhas()
+
+# -------------------------------------------------------------
+# 7. SINCRONIZAÇÃO DE ESTAÇÕES CLIMÁTICAS ARABLE (IOT & METEOROLOGIA)
+# -------------------------------------------------------------
+def compilar_dados_arable_clima():
+    import urllib.request
+    from datetime import timezone
+    caminho_clima_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_arable_clima.js"
+    api_key = "e951a4f6-f5b4-4a61-b2a8-2c40b388bf82"
+    headers = {'Authorization': f'Apikey {api_key}', 'Accept': 'application/json'}
+    
+    print("[ARABLE CLIMA] Conectando à API Arable Cloud...")
+    try:
+        req_dev = urllib.request.Request("https://api.arable.cloud/api/v2/devices", headers=headers)
+        with urllib.request.urlopen(req_dev, timeout=15) as resp:
+            devices_data = json.loads(resp.read().decode('utf-8'))
+        
+        items = devices_data.get('items', [])
+        if not items:
+            print("[ARABLE CLIMA] Nenhum dispositivo retornado pela API.")
+            return
+
+        now_utc = datetime.now(timezone.utc)
+        start_7d = (now_utc - timedelta(days=7)).strftime('%Y-%m-%dT00:00:00Z')
+        start_24h = now_utc - timedelta(hours=24)
+
+        estacoes = []
+        for dev in items:
+            d_id = dev.get('name')
+            loc = dev.get('current_location', {})
+            gps = loc.get('gps', [0, 0])
+            sites = [s.get('name') for s in loc.get('sites', [])]
+            site_nome = sites[0] if sites else d_id
+            
+            # Limpa e padroniza o nome da Unidade
+            if "Queiroz" in site_nome: nome_amigavel = "Unidade Queiroz"
+            elif "Penapolis" in site_nome or "Penápolis" in site_nome: nome_amigavel = "Unidade Penápolis"
+            elif "Clementina" in site_nome: nome_amigavel = "Unidade Clementina"
+            else: nome_amigavel = site_nome
+
+            url_data = f"https://api.arable.cloud/api/v2/data/local_hourly?device={d_id}&start_time={start_7d}"
+            req_d = urllib.request.Request(url_data, headers=headers)
+            hourly_records = []
+            try:
+                with urllib.request.urlopen(req_d, timeout=20) as resp_d:
+                    hourly_records = json.loads(resp_d.read().decode('utf-8'))
+            except Exception as e_h:
+                print(f"[ARABLE CLIMA] Aviso ao obter histórico de {d_id}: {e_h}")
+
+            last_rec = hourly_records[-1] if hourly_records else {}
+            
+            # Cálculo de chuva recente
+            chuva_7d = round(sum(r.get('precip') or 0 for r in hourly_records), 1)
+            chuva_24h = 0.0
+            for r in hourly_records:
+                r_time_str = r.get('time', '')
+                if r_time_str:
+                    try:
+                        r_dt = datetime.fromisoformat(r_time_str.replace('Z', '+00:00'))
+                        if r_dt >= start_24h:
+                            chuva_24h += (r.get('precip') or 0)
+                    except: pass
+            chuva_24h = round(chuva_24h, 1)
+
+            temp = last_rec.get('tair')
+            ur = round((last_rec.get('rh') or 0) * 100) if last_rec.get('rh') is not None else None
+            vento_ms = last_rec.get('wind_speed') or 0
+            vento_kmh = round(vento_ms * 3.6, 1)
+            rajada_kmh = round((last_rec.get('wind_speed_max') or 0) * 3.6, 1)
+            dir_vento = last_rec.get('wind_direction') or 'N/D'
+
+            estacoes.append({
+                "id": d_id,
+                "unidade": nome_amigavel,
+                "lat": gps[1],
+                "lng": gps[0],
+                "altitude": round(loc.get('elev') or 0),
+                "bateria": round(dev.get('batt_pct') or 0),
+                "sinal": dev.get('signal_strength') or 'OK',
+                "status": dev.get('state') or 'Active',
+                "ultima_leitura": last_rec.get('time') or dev.get('last_seen'),
+                "temperatura": temp,
+                "umidade": ur,
+                "chuva_24h": chuva_24h,
+                "chuva_7d": chuva_7d,
+                "vento_kmh": vento_kmh,
+                "rajada_kmh": rajada_kmh,
+                "direcao_vento": dir_vento,
+                "favoravel_aplicacao": (vento_kmh <= 18 and (ur is None or ur >= 50) and (temp is None or temp <= 32))
+            })
+
+        payload_final = {
+            "atualizado_em": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+            "total_estacoes": len(estacoes),
+            "estacoes": estacoes
+        }
+
+        json_str = json.dumps(payload_final, ensure_ascii=False)
+        encrypted = criptografar_payload(json_str, CHAVE_ACESSO_CLEALCO)
+
+        with open(caminho_clima_js, "w", encoding="utf-8") as f_out:
+            f_out.write("// Estações Agrometeorológicas Arable (Queiroz, Penápolis, Clementina)\n")
+            f_out.write(f"// Atualizado em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
+            f_out.write("// Payload criptografado AES-GCM (Clealco)\n")
+            f_out.write("window.DADOS_ARABLE_CLIMA = ")
+            json.dump(encrypted, f_out, ensure_ascii=False)
+            f_out.write(";\n")
+
+        print(f"[ARABLE CLIMA] Sucesso! {len(estacoes)} estações compiladas em {caminho_clima_js}")
+    except Exception as e:
+        print(f"[ARABLE CLIMA] Erro ao sincronizar estações Arable: {e}")
+
+compilar_dados_arable_clima()
 
 def incrementar_versao_service_worker():
     sw_path = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\service-worker.js"
