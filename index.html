@@ -125,6 +125,35 @@
             font-weight: 700;
             box-shadow: 0 0 8px rgba(227, 6, 19, 0.2);
         }
+        .filtro-pill-emerald {
+            font-size: 0.72rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #059669;
+            background: rgba(16, 185, 129, 0.08);
+            cursor: pointer;
+            transition: 0.2s;
+            font-weight: 700;
+        }
+        .filtro-pill-emerald:hover, .filtro-pill-emerald.active {
+            background: rgba(16, 185, 129, 0.25) !important;
+            border-color: #10B981 !important;
+            color: #047857 !important;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.35) !important;
+        }
+        body:not(.light-theme) .filtro-pill-emerald {
+            color: #34d399;
+            border-color: rgba(52, 211, 153, 0.4);
+            background: rgba(52, 211, 153, 0.12);
+        }
+        body:not(.light-theme) .filtro-pill-emerald:hover,
+        body:not(.light-theme) .filtro-pill-emerald.active {
+            background: rgba(52, 211, 153, 0.3) !important;
+            border-color: #34d399 !important;
+            color: #a7f3d0 !important;
+            box-shadow: 0 0 12px rgba(52, 211, 153, 0.5) !important;
+        }
         .arable-minimal-icon {
             background: transparent !important;
             border: none !important;
@@ -951,16 +980,30 @@
                         <p class="text-xs text-gray-400">Pesquise por FA ou Fazenda e filtre por status operacional</p>
                     </div>
 
-                    <!-- Input de Busca Rápida -->
-                    <div class="flex items-center gap-2 w-full md:w-auto">
-                        <input type="text" id="input-busca" placeholder="Pesquisar FA ou Fazenda..." onkeyup="filtrarLista()" class="w-full md:w-64 bg-slate-900/60 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
+                    <!-- Notificação Pós-Plantio & Input de Busca Rápida -->
+                    <div class="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+                        <!-- Botão Alerta/Sino: TIF Feito -> Apto Pós-Plantio -->
+                        <button id="btn-alerta-pos-plantio" onclick="ativarFiltroPosPlantio()" title="Clique para filtrar apenas voos com TIF Feito aguardando restituição de Linhas (Fila do Pós-Plantio)" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 border border-emerald-500/40 cursor-pointer group hover:border-emerald-400">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span class="text-sm">🔔</span>
+                            <span>Prontos p/ Pós-Plantio:</span>
+                            <span id="badge-count-pos-plantio" class="bg-emerald-500 text-slate-950 font-black px-1.5 py-0.5 rounded-md text-[10px]">0</span>
+                        </button>
+
+                        <input type="text" id="input-busca" placeholder="Pesquisar FA ou Fazenda..." onkeyup="filtrarLista()" class="w-full md:w-60 bg-slate-900/60 border border-white/20 rounded-lg px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-red-500">
                     </div>
                 </div>
 
                 <!-- Filtros em Pílula -->
-                <div class="flex flex-wrap gap-2 mb-4">
+                <div class="flex flex-wrap items-center gap-2 mb-4">
                     <button class="filtro-pill" onclick="setFiltro('todos', this)">Todos</button>
                     <button class="filtro-pill active" onclick="setFiltro('esta_semana', this)">Esta Semana</button>
+                    <button class="filtro-pill filtro-pill-emerald" id="pill-pos-plantio" onclick="setFiltro('pronto_pos_plantio', this)">
+                        🌱 Prontos p/ Pós-Plantio (<span id="pill-count-pos-plantio">0</span>)
+                    </button>
                     <button class="filtro-pill" onclick="setFiltro('tif_pendente', this)">TIF Pendente</button>
                     <button class="filtro-pill" onclick="setFiltro('linhas_pendentes', this)">Linhas Pendentes</button>
                     <button class="filtro-pill" onclick="setFiltro('linhas_feitas', this)">Linhas Feitas</button>
@@ -3588,13 +3631,35 @@
             document.getElementById('bar-meta-geral').style.width = pctG + '%';
             document.getElementById('pct-meta-geral').innerText = pctG.replace('.', ',') + '% atingido';
 
+            atualizarContadorPosPlantio();
             filtrarLista();
+        }
+
+        function atualizarContadorPosPlantio() {
+            if (!dadosBase || !dadosBase.length) return;
+            const prontos = dadosBase.filter(i => (i.tif || '').toUpperCase() === 'FEITO' && (i.linhas || '').toUpperCase() !== 'FEITO');
+            const qtd = prontos.length;
+            const elBadge = document.getElementById('badge-count-pos-plantio');
+            if (elBadge) elBadge.innerText = qtd;
+            const elPill = document.getElementById('pill-count-pos-plantio');
+            if (elPill) elPill.innerText = qtd;
+        }
+
+        function ativarFiltroPosPlantio() {
+            const pill = document.getElementById('pill-pos-plantio');
+            if (pill) {
+                setFiltro('pronto_pos_plantio', pill);
+            } else {
+                filtroAtual = 'pronto_pos_plantio';
+                document.querySelectorAll('.filtro-pill').forEach(b => b.classList.remove('active'));
+                filtrarLista();
+            }
         }
 
         function setFiltro(tipo, btnEl) {
             filtroAtual = tipo;
             document.querySelectorAll('.filtro-pill').forEach(b => b.classList.remove('active'));
-            btnEl.classList.add('active');
+            if (btnEl) btnEl.classList.add('active');
             filtrarLista();
         }
 
@@ -3602,7 +3667,8 @@
             const termo = (document.getElementById('input-busca').value || '').toLowerCase().trim();
             let lista = dadosBase;
 
-            if (filtroAtual === 'tif_pendente') lista = lista.filter(i => i.tif !== 'FEITO');
+            if (filtroAtual === 'pronto_pos_plantio') lista = lista.filter(i => (i.tif || '').toUpperCase() === 'FEITO' && (i.linhas || '').toUpperCase() !== 'FEITO');
+            else if (filtroAtual === 'tif_pendente') lista = lista.filter(i => i.tif !== 'FEITO');
             else if (filtroAtual === 'linhas_pendentes') lista = lista.filter(i => i.linhas !== 'FEITO');
             else if (filtroAtual === 'linhas_feitas') lista = lista.filter(i => i.linhas === 'FEITO');
             else if (filtroAtual === 'nao_exportado') lista = lista.filter(i => i.exp !== 'FEITO');
@@ -3622,16 +3688,22 @@
 
             container.innerHTML = lista.map(item => {
                 const isProp = item.fa.startsWith('2');
+                const isAptoPos = (item.tif || '').toUpperCase() === 'FEITO' && (item.linhas || '').toUpperCase() !== 'FEITO';
                 return `
-                <div class="bg-white border border-slate-200 rounded-xl p-3.5 hover:border-red-400 hover:shadow-md transition shadow-sm">
-                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
+                <div class="bg-white border ${isAptoPos ? 'border-emerald-500 ring-2 ring-emerald-400/25 shadow-md' : 'border-slate-200'} rounded-xl p-3.5 hover:border-red-400 hover:shadow-md transition shadow-sm relative overflow-hidden">
+                    ${isAptoPos ? `
+                        <div class="absolute top-0 right-0 bg-emerald-600 text-white text-[9px] font-black uppercase px-2.5 py-0.5 rounded-bl-lg shadow-sm flex items-center gap-1.5 tracking-wider">
+                            <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> APTO PÓS-PLANTIO
+                        </div>
+                    ` : ''}
+                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100 ${isAptoPos ? 'pr-28' : ''}">
                         <div class="flex items-center gap-1.5">
                             <span class="text-xs font-black text-red-600">FA ${item.fa}</span>
                             <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded ${isProp ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
                                 ${isProp ? 'PRÓPRIA' : 'TERCEIRO'}
                             </span>
                         </div>
-                        <span class="text-xs font-bold text-slate-800 truncate max-w-[150px]" title="${item.fazenda}">${item.fazenda}</span>
+                        <span class="text-xs font-bold text-slate-800 truncate max-w-[130px]" title="${item.fazenda}">${item.fazenda}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
                         <div><b class="text-slate-800">Base:</b> ${item.base}</div>
@@ -3640,7 +3712,10 @@
                         <div><b class="text-slate-800">Linhas:</b> <span class="${item.linhas==='FEITO'?'text-emerald-700 font-bold':'text-amber-600'} font-bold">${item.linhas}</span></div>
                         <div><b class="text-slate-800">Ha Voo:</b> ${item.ha_voo}</div>
                         <div><b class="text-slate-800">Área KML:</b> ${item.area_kml} ha</div>
-                        <div class="col-span-2 pt-1 border-t border-slate-200 text-slate-700"><b class="text-slate-800">Exportação:</b> <span class="${item.exp==='FEITO'?'text-emerald-700 font-bold':'text-amber-600 font-bold'}">${item.exp}</span></div>
+                        <div class="col-span-2 pt-1 border-t border-slate-200 text-slate-700 flex items-center justify-between">
+                            <span><b class="text-slate-800">Exportação:</b> <span class="${item.exp==='FEITO'?'text-emerald-700 font-bold':'text-amber-600 font-bold'}">${item.exp}</span></span>
+                            ${isAptoPos ? '<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Aguardando Restituição</span>' : ''}
+                        </div>
                     </div>
                 </div>
             `;}).join('');
