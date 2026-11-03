@@ -29,3 +29,4 @@ git commit -m "Atualizacao automatica de dados: %date% %time%"
 git push origin main
 echo.
 echo Painel atualizado com sucesso no GitHub!
+python notificar_windows.py "Clealco Geotecnologia" "Base sincronizada com o GitHub com sucesso!"
