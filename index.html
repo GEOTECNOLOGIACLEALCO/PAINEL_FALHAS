@@ -5692,6 +5692,36 @@
             return textoJanela;
         }
 
+        function obterEstacaoArableParaPolo(polo) {
+            const dadosArable = window.DADOS_ARABLE_CLIMA;
+            if (!dadosArable || !dadosArable.estacoes || !Array.isArray(dadosArable.estacoes)) return null;
+
+            const nomePolo = (polo.nome || '').toLowerCase();
+            if (nomePolo.includes('clementina')) {
+                return dadosArable.estacoes.find(e => (e.unidade || '').toLowerCase().includes('clementina'));
+            }
+            if (nomePolo.includes('queiroz')) {
+                return dadosArable.estacoes.find(e => (e.unidade || '').toLowerCase().includes('queiroz'));
+            }
+            if (nomePolo.includes('penápolis') || nomePolo.includes('penapolis')) {
+                return dadosArable.estacoes.find(e => (e.unidade || '').toLowerCase().includes('penápolis') || (e.unidade || '').toLowerCase().includes('penapolis'));
+            }
+
+            // Para polo geral ou GPS, busca a estação Arable mais próxima geograficamente (em até 35km)
+            let maisProxima = null;
+            let menorDist = Infinity;
+            dadosArable.estacoes.forEach(e => {
+                if (e.lat && e.lng) {
+                    const dist = Math.hypot(e.lat - polo.lat, e.lng - polo.lng);
+                    if (dist < menorDist) {
+                        menorDist = dist;
+                        maisProxima = e;
+                    }
+                }
+            });
+            return menorDist < 0.35 ? maisProxima : null;
+        }
+
         function processarExibicaoClima(data, polo) {
             const current = data.current || {};
             const daily = data.daily || {};
@@ -5710,11 +5740,20 @@
             const tMaxHoje = Math.round(daily.temperature_2m_max && daily.temperature_2m_max[hojeIdx] !== undefined ? daily.temperature_2m_max[hojeIdx] : 28);
             const tMinHoje = Math.round(daily.temperature_2m_min && daily.temperature_2m_min[hojeIdx] !== undefined ? daily.temperature_2m_min[hojeIdx] : 18);
 
-            // Temperatura Real (Atual) e Sensação Térmica
-            const tempRealVal = (current.temperature_2m !== undefined && current.temperature_2m !== null)
-                ? Number(current.temperature_2m)
-                : null;
+            // Verifica se há estação Arable física no campo para este polo
+            const estacaoArable = obterEstacaoArableParaPolo(polo);
+
+            // Temperatura Real (Atual): Prioridade 1 para sensor físico Arable se disponível
+            let tempRealVal = null;
+            let fonteTempLabel = 'Satélite';
+            if (estacaoArable && estacaoArable.temperatura !== null && estacaoArable.temperatura !== undefined) {
+                tempRealVal = Number(estacaoArable.temperatura);
+                fonteTempLabel = 'Estação Arable';
+            } else if (current.temperature_2m !== undefined && current.temperature_2m !== null) {
+                tempRealVal = Number(current.temperature_2m);
+            }
             const tempRealStr = tempRealVal !== null ? `${tempRealVal.toFixed(1)}°C` : `${tMinHoje}°C`;
+
             const sensacaoVal = (current.apparent_temperature !== undefined && current.apparent_temperature !== null)
                 ? Number(current.apparent_temperature)
                 : null;
@@ -5728,16 +5767,24 @@
                 elIconePrincipalBox.className = `w-11 h-11 rounded-xl ${weatherHoje.corBg} ${weatherHoje.corTexto} flex items-center justify-center text-2xl shadow-inner border ${weatherHoje.corBorda} flex-shrink-0 transition-all`;
             }
 
-            // Atualiza o subtítulo com a Temperatura Real em destaque e a previsão do dia
+            // Atualiza o subtítulo com a Temperatura Real em destaque e a indicação da estação
             const subtitulo = document.getElementById('clima-subtitulo-polo');
             if (subtitulo) {
-                subtitulo.innerHTML = `<span class="font-bold text-slate-800">${polo.nome}</span> • <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-900 border border-amber-300 font-black text-xs shadow-xs">🌡️ ${tempRealStr} Real</span>${sensacaoBadge} • Hoje: ${weatherHoje.icone} ${weatherHoje.texto} (${tMinHoje}° a ${tMaxHoje}°C)`;
+                const tagArableFonte = estacaoArable 
+                    ? `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-900 border border-emerald-300 font-black text-xs shadow-xs" title="Sensor Físico Arable em campo: ${estacaoArable.unidade}">🌦️ ${tempRealStr} Arable</span>` 
+                    : `<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-900 border border-amber-300 font-black text-xs shadow-xs">🌡️ ${tempRealStr} Real</span>`;
+                subtitulo.innerHTML = `<span class="font-bold text-slate-800">${polo.nome}</span> • ${tagArableFonte}${sensacaoBadge} • Hoje: ${weatherHoje.icone} ${weatherHoje.texto} (${tMinHoje}° a ${tMaxHoje}°C)`;
             }
 
-            // 1. Card 1: Tempo & Chuva Hoje
-            const chuvaHoje = (daily.precipitation_sum && daily.precipitation_sum[hojeIdx] !== undefined)
+            // 1. Card 1: Tempo & Chuva Hoje (considera chuva medida na Arable se disponível)
+            let chuvaHoje = (daily.precipitation_sum && daily.precipitation_sum[hojeIdx] !== undefined)
                 ? Number(daily.precipitation_sum[hojeIdx])
                 : (Number(current.precipitation) || 0);
+            if (estacaoArable && estacaoArable.chuva_24h !== undefined && estacaoArable.chuva_24h !== null) {
+                // Exibe a chuva real medida pela estação nas últimas 24h
+                chuvaHoje = Number(estacaoArable.chuva_24h);
+            }
+
             const probChuvaHoje = (daily.precipitation_probability_max && daily.precipitation_probability_max[hojeIdx] !== undefined)
                 ? daily.precipitation_probability_max[hojeIdx]
                 : 0;
@@ -5754,7 +5801,8 @@
                 elTempoHojeCondicao.className = `text-lg sm:text-xl font-black ${weatherHoje.corTexto} uppercase truncate`;
             }
             if (elTempoHojeTemp) {
-                elTempoHojeTemp.innerHTML = `<span class="text-slate-900 font-black">${tempRealStr} Real</span> <span class="text-slate-400 font-medium text-[10px]">(${tMinHoje}° / ${tMaxHoje}°C)</span>`;
+                const subTempDesc = estacaoArable ? `(Sensor Arable • Min ${tMinHoje}° / Max ${tMaxHoje}°)` : `(${tMinHoje}° / ${tMaxHoje}°C)`;
+                elTempoHojeTemp.innerHTML = `<span class="text-slate-900 font-black">${tempRealStr}</span> <span class="text-slate-400 font-medium text-[10px]">${subTempDesc}</span>`;
             }
             if (elChuvaHoje) elChuvaHoje.innerText = chuvaHoje.toFixed(1) + ' mm';
             if (elChuvaHojeProb) elChuvaHojeProb.innerText = probChuvaHoje + '%';
@@ -5806,8 +5854,17 @@
             }
 
             // 4. Semáforo Drone (Vento / Chuva) & Telemetria em Tempo Real
-            const ventoAtual = Number(current.wind_speed_10m) || 0;
-            const rajadaAtual = Number(current.wind_gusts_10m) || ventoAtual;
+            let ventoAtual = Number(current.wind_speed_10m) || 0;
+            let rajadaAtual = Number(current.wind_gusts_10m) || ventoAtual;
+            let direcaoVentoAtual = Number(current.wind_direction_10m) || 0;
+
+            if (estacaoArable && estacaoArable.vento_kmh !== undefined && estacaoArable.vento_kmh !== null) {
+                ventoAtual = Number(estacaoArable.vento_kmh);
+                if (estacaoArable.rajada_kmh !== undefined && estacaoArable.rajada_kmh !== null) {
+                    rajadaAtual = Number(estacaoArable.rajada_kmh);
+                }
+            }
+
             const elVentoAtual = document.getElementById('kpi-vento-atual');
             const elRajadaAtual = document.getElementById('kpi-rajada-atual');
             if (elVentoAtual) elVentoAtual.innerText = ventoAtual.toFixed(1) + ' km/h';
@@ -5967,7 +6024,6 @@
             inicializarOuAtualizarMapaRadar(polo);
 
             // 11. Atualiza Motor de Animação de Rajadas de Vento (Estilo Windy)
-            const direcaoVentoAtual = Number(current.wind_direction_10m) || 0;
             atualizarDadosVentoMotor(ventoAtual, rajadaAtual, direcaoVentoAtual);
             if (animacaoVentoAtiva) {
                 iniciarLoopAnimacaoVento();
