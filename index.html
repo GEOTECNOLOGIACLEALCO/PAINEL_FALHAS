@@ -1295,10 +1295,10 @@
                     <div class="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-around shadow-sm">
                         <div class="relative w-28 h-28 flex items-center justify-center">
                             <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
-                                <path stroke="#f59e0b" stroke-width="4.5" stroke-dasharray="85.4, 100" stroke-dashoffset="0" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                <path stroke="#dc2626" stroke-width="4.5" stroke-dasharray="14.6, 100" stroke-dashoffset="-85.4" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="bk-donut-terc" stroke="#f59e0b" stroke-width="4.5" stroke-dasharray="91.9, 100" stroke-dashoffset="0" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="bk-donut-prop" stroke="#dc2626" stroke-width="4.5" stroke-dasharray="8.1, 100" stroke-dashoffset="-91.9" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                             </svg>
-                            <span class="absolute text-xs font-black text-slate-900">9.4k ha</span>
+                            <span id="bk-donut-total-txt" class="absolute text-xs font-black text-slate-900">8.1k ha</span>
                         </div>
                         <div class="text-xs space-y-2 font-medium">
                             <div class="flex items-center gap-2">
@@ -3668,6 +3668,20 @@
             document.getElementById('bk-pct-terc').innerText = pctT + '%';
             document.getElementById('bk-bar-prop').style.width = pctP + '%';
             document.getElementById('bk-bar-terc').style.width = pctT + '%';
+
+            // Atualiza Donut dinamicamente
+            const donutTerc = document.getElementById('bk-donut-terc');
+            const donutProp = document.getElementById('bk-donut-prop');
+            const donutTxt = document.getElementById('bk-donut-total-txt');
+            if (donutTerc) donutTerc.setAttribute('stroke-dasharray', `${pctT}, 100`);
+            if (donutProp) {
+                donutProp.setAttribute('stroke-dasharray', `${pctP}, 100`);
+                donutProp.setAttribute('stroke-dashoffset', `-${pctT}`);
+            }
+            if (donutTxt) {
+                const totalK = (haTotal / 1000).toFixed(1);
+                donutTxt.innerText = `${totalK}k ha`;
+            }
 
             let lista = dadosBacklog;
             if (modoAgrupadoBacklog) {
