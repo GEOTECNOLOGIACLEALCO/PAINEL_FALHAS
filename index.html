@@ -124,12 +124,41 @@
             font-weight: 700;
             box-shadow: 0 0 8px rgba(227, 6, 19, 0.2);
         }
-        .arable-custom-div-icon {
+        .arable-minimal-icon {
             background: transparent !important;
             border: none !important;
         }
-        .arable-marker-pin {
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        .arable-clean-tag {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            background: rgba(15, 23, 42, 0.90);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 800;
+            font-family: inherit;
+            padding: 2.5px 8px;
+            border-radius: 9999px;
+            border: 1.5px solid #10b981;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+        .arable-clean-tag:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+        }
+        .arable-clean-tag .tag-temp {
+            color: #fde047;
+        }
+        .arable-clean-tag .tag-sep {
+            color: rgba(255, 255, 255, 0.35);
+            font-size: 10px;
+        }
+        .arable-clean-tag .tag-chuva {
+            color: #38bdf8;
         }
         body.light-theme {
             --bg-dark: #F1F5F9;
@@ -1319,9 +1348,6 @@
                         <button onclick="toggleRadarChuva()" id="btn-radar-chuva" title="Ver manchas de chuva e radar meteorológico (IPMet / RainViewer) em tempo real" class="text-xs bg-cyan-50 hover:bg-cyan-100 text-cyan-800 border border-cyan-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                             🌧️ <span id="lbl-radar-chuva">Radar Chuva</span>
                         </button>
-                        <button onclick="toggleEstacoesArable()" id="btn-arable-mapa-top" title="Ver estações meteorológicas físicas Arable em tempo real" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
-                            🌦️ <span id="lbl-arable-top">Estações Arable</span>
-                        </button>
                         <button onclick="localizarMinhaPosicao()" id="btn-gps-posicao" title="Ativar GPS e ver sua localização atual no mapa" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                             📍 <span>Minha Posição</span>
                         </button>
@@ -1417,12 +1443,6 @@
                         <span>Radar Chuva</span>
                     </button>
 
-                    <!-- Botão Toggle Estações Arable -->
-                    <button id="btn-estacoes-arable-bar" onclick="toggleEstacoesArable()" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer" title="Ligar/Desligar Estações Meteorológicas Arable (Queiroz, Penápolis, Clementina)">
-                        <span class="text-base leading-none">🌦️</span>
-                        <span>Estações Arable</span>
-                    </button>
-
                     <!-- Botão Toggle Painel Lateral / Legenda -->
                     <button onclick="togglePainelLateralMapa()" class="text-xs bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-3 py-2 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                         <span>📊 Legenda & Ranking</span>
@@ -1511,9 +1531,6 @@
                         </button>
                         <button onclick="toggleRadarChuva()" id="btn-radar-floating" class="bg-white/95 hover:bg-white text-cyan-700 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Ligar/Desligar Radar Meteorológico de Chuvas">
                             🌧️ <span class="hidden sm:inline">Radar</span>
-                        </button>
-                        <button onclick="toggleEstacoesArable()" id="btn-arable-floating" class="bg-white/95 hover:bg-white text-emerald-700 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Ligar/Desligar Estações Físicas Arable">
-                            🌦️ <span class="hidden sm:inline">Arable</span>
                         </button>
                     </div>
 
@@ -1633,52 +1650,38 @@
                 </div>
             </div>
 
-            <!-- Banner Inteligente de Alerta de Voo / Condição Climática -->
-            <div id="clima-alerta-banner" class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-l-emerald-500 bg-white flex items-center justify-between gap-3 shadow-sm">
+            <!-- Banner Unificado: Janela de Voo Drone & Alerta Operacional -->
+            <div id="clima-alerta-banner" class="glass-panel p-3.5 sm:p-4 rounded-xl border-l-4 border-l-emerald-500 bg-white flex flex-col md:flex-row md:items-center justify-between gap-3 shadow-sm">
                 <div class="flex items-center gap-3">
                     <span id="clima-alerta-dot" class="w-3.5 h-3.5 rounded-full bg-emerald-500 flex-shrink-0 animate-pulse"></span>
                     <div>
-                        <div id="clima-alerta-titulo" class="text-xs sm:text-sm font-black text-slate-900 uppercase">
-                            Janela Operacional Favorável para Voos
-                        </div>
-                        <div id="clima-alerta-desc" class="text-[11px] sm:text-xs text-slate-600">
-                            Sem previsão de chuvas significativas e ventos dentro dos limites operacionais de segurança.
-                        </div>
-                    </div>
-                </div>
-                <div id="clima-alerta-extra" class="text-right hidden sm:block text-xs font-semibold text-slate-500">
-                    Limites Operacionais: Vento &lt; 28 km/h • Chuva = 0 mm
-                </div>
-            </div>
-
-            <!-- Painel Inteligente: Janela para Voo Drone (Sol Alto & Vento Brando) -->
-            <div id="painel-janela-ouro" class="glass-panel p-3.5 sm:p-4 rounded-xl border border-amber-300/80 bg-gradient-to-r from-amber-500/10 via-emerald-500/10 to-sky-500/10 shadow-sm flex flex-wrap items-center justify-between gap-3">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center text-xl font-black shadow-inner border border-amber-300/50 flex-shrink-0">
-                        ☀️
-                    </div>
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <h3 class="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-wide">
-                                Janela para Voo Drone (Sol Alto & Sem Sombras)
-                            </h3>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <div id="clima-alerta-titulo" class="text-xs sm:text-sm font-black text-slate-900 uppercase">
+                                Janela Operacional Favorável para Voos
+                            </div>
                             <span id="badge-janela-ouro" class="text-[9px] font-black px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 uppercase">
                                 FAVORÁVEL
                             </span>
                         </div>
-                        <p id="desc-janela-ouro" class="text-[11px] sm:text-xs text-slate-600 font-medium">
-                            Avaliando elevação solar (> 30°) para eliminação de sombras nos canaviais e ventos brandos...
+                        <div id="clima-alerta-desc" class="text-[11px] sm:text-xs text-slate-600 mt-0.5">
+                            Sem previsão de chuvas significativas e ventos dentro dos limites operacionais de segurança.
+                        </div>
+                        <p id="desc-janela-ouro" class="text-[10px] text-slate-400 font-medium hidden sm:block">
+                            Sol alto (&gt; 30°) para eliminação de sombras nos canaviais e ventos brandos.
                         </p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2.5 text-right flex-wrap">
-                    <div class="bg-white/95 px-3.5 py-2 rounded-xl border border-slate-200 text-xs shadow-sm">
-                        <span class="text-[9px] uppercase font-bold text-slate-500 block">Horário Recomendado</span>
-                        <b id="val-horario-janela-ouro" class="text-sm font-black text-slate-900">08:00 às 17:00</b>
+                <div class="flex items-center gap-2 text-xs flex-shrink-0 flex-wrap">
+                    <div class="bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-2xs">
+                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Horário Recomendado</span>
+                        <b id="val-horario-janela-ouro" class="text-xs font-black text-slate-900">08:00 às 17:00</b>
                     </div>
-                    <div class="bg-white/95 px-3.5 py-2 rounded-xl border border-slate-200 text-xs hidden sm:block shadow-sm">
-                        <span class="text-[9px] uppercase font-bold text-slate-500 block">Elevação Solar Máx.</span>
-                        <b id="val-elevacao-solar" class="text-sm font-black text-amber-600">59° (Sem sombras)</b>
+                    <div class="bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-2xs hidden sm:block">
+                        <span class="text-[9px] uppercase font-bold text-slate-400 block">Elevação Solar</span>
+                        <b id="val-elevacao-solar" class="text-xs font-black text-amber-600">59° (Sem sombras)</b>
+                    </div>
+                    <div id="clima-alerta-extra" class="text-right hidden lg:block text-[11px] font-semibold text-slate-500 pl-2 border-l border-slate-200">
+                        Vento &lt; 28 km/h • Chuva = 0 mm
                     </div>
                 </div>
             </div>
@@ -1765,119 +1768,23 @@
 
             </div>
 
-            <!-- ================= ESTAÇÕES METEOROLÓGICAS FÍSICAS ARABLE (CLEALCO) ================= -->
-            <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
-                <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center text-lg font-black shadow-xs">
-                            🌦️
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
-                                    Estações Físicas Arable (Clealco)
-                                </h3>
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                    ● Sensores IoT em Campo
-                                </span>
-                            </div>
-                            <p class="text-[11px] text-slate-500 font-medium">
-                                Telemetria direta dos sensores meteorológicos e pluviômetros instalados nas Unidades
-                            </p>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span id="arable-sync-tag" class="text-[10px] text-slate-400 font-semibold">Sincronizado via Arable Cloud</span>
-                        <button onclick="focarEstacaoNoMapa()" type="button" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-800 px-2.5 py-1.5 rounded-lg font-bold border border-emerald-200 transition flex items-center gap-1 cursor-pointer">
-                            🗺️ <span>Ver no Mapa</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Grid de Cards das Estações Arable (Queiroz, Penápolis, Clementina) -->
-                <div id="grid-estacoes-arable" class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-                    <div class="col-span-full py-6 text-center text-slate-400 text-xs">
-                        Carregando telemetria das estações Arable...
-                    </div>
-                </div>
-            </div>
-
-            <!-- Previsão Diária (Próximos 7 Dias) -->
-            <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
-                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
-                    <div class="flex items-center gap-2">
-                        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
-                            Previsão Diária Detalhada (Próximos 7 Dias)
-                        </h3>
-                    </div>
-                    <span class="text-xs text-slate-400 font-medium">Modelos Globais ECMWF / GFS de Alta Precisão</span>
-                </div>
-                
-                <div id="grid-previsao-diaria" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3">
-                    <div class="col-span-full py-8 text-center text-slate-400 text-xs">
-                        Carregando previsão do tempo...
-                    </div>
-                </div>
-            </div>
-
-            <!-- Gráficos Agrometeorológicos Interativos (2 Colunas) -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-                
-                <!-- Gráfico 1: Janela Operacional Horária (Próximas 24h) -->
-                <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-slate-100 pb-2">
-                        <div>
-                            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
-                                Janela Operacional Horária (Próximas 24h)
-                            </h3>
-                            <p class="text-[11px] text-slate-500">Precipitação horária (mm) e velocidade do vento (km/h)</p>
-                        </div>
-                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
-                            Limite Voo: 28 km/h
-                        </span>
-                    </div>
-                    <div class="relative w-full h-64 sm:h-72">
-                        <canvas id="chart-janela-horaria"></canvas>
-                    </div>
-                </div>
-
-                <!-- Gráfico 2: Balanço de Precipitação Mensal da Safra vs Média Histórica -->
-                <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
-                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-slate-100 pb-2">
-                        <div>
-                            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
-                                Precipitação Mensal da Safra vs Média Histórica
-                            </h3>
-                            <p class="text-[11px] text-slate-500">Normal Climatológica regional (CIIAGRO / INMET: ~1.377 mm anuais)</p>
-                        </div>
-                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
-                            Safra 2026/2027
-                        </span>
-                    </div>
-                    <div class="relative w-full h-64 sm:h-72">
-                        <canvas id="chart-balanco-safra"></canvas>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Radar Doppler em Tempo Real & Histórico Recente de Chuvas (2 Colunas) -->
+            <!-- ================= RADAR DOPPLER & ESTAÇÕES ARABLE EM TEMPO REAL (2 COLUNAS) ================= -->
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
                 
-                <!-- Radar Doppler Interativo (Col 7) -->
+                <!-- Radar Doppler & Estações Arable (Col 7) -->
                 <div class="lg:col-span-7 glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col">
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3 border-b border-slate-100 pb-3">
                         <div>
                             <div class="flex items-center gap-2 flex-wrap">
                                 <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
-                                    Radar Meteorológico Doppler em Tempo Real
+                                    Radar Meteorológico & Estações Arable
                                 </h3>
                                 <span id="badge-radar-timestamp" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs inline-flex items-center gap-1">
-                                    ● Radar Ativo • Varredura: Atualizando...
+                                    ● Ao Vivo • Atualizando...
                                 </span>
                             </div>
                             <p class="text-[11px] text-slate-500 mt-0.5">
-                                Monitoramento de chuva e refletividade em tempo real (RainViewer / IPMet SP)
+                                Manchas de chuva (IPMet SP) e telemetria física Arable em campo
                             </p>
                         </div>
                         <div class="flex items-center flex-wrap gap-2">
@@ -1891,6 +1798,10 @@
                             <button type="button" onclick="alternarAnimacaoVentoRadar()" id="btn-toggle-vento-animado" title="Ligar ou desligar animação de rajadas de vento no mapa" class="text-xs bg-amber-50 hover:bg-amber-100 text-amber-800 font-bold px-3 py-1.5 rounded-lg border border-amber-300 transition shadow-xs flex items-center gap-1.5 cursor-pointer">
                                 <span id="icone-vento-animado">💨</span>
                                 <span id="lbl-status-vento-animado">Vento: ON</span>
+                            </button>
+                            <button type="button" onclick="toggleEstacoesArableClima()" id="btn-toggle-arable-clima" title="Ligar ou desligar marcações das Estações Arable no mapa" class="text-xs bg-emerald-50 text-emerald-700 hover:bg-emerald-100 font-bold px-3 py-1.5 rounded-lg border border-emerald-300 transition shadow-xs flex items-center gap-1.5 cursor-pointer">
+                                <span>🌦️</span>
+                                <span id="lbl-status-arable-clima">Arable: ON</span>
                             </button>
                             <button type="button" onclick="alternarTipoMapaRadar()" id="btn-toggle-camada-radar" title="Alternar entre Satélite e Mapa de Ruas" class="text-xs bg-white hover:bg-slate-100 text-slate-700 font-bold px-3 py-1.5 rounded-lg border border-slate-200 transition cursor-pointer shadow-xs">
                                 <span id="lbl-tipo-mapa-radar">Satélite</span>
@@ -1997,6 +1908,65 @@
                         <div class="py-12 text-center text-slate-400 text-xs">
                             Carregando histórico...
                         </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Previsão Diária (Próximos 7 Dias) -->
+            <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                <div class="flex items-center justify-between mb-3 border-b border-slate-100 pb-2">
+                    <div class="flex items-center gap-2">
+                        <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
+                            Previsão Diária Detalhada (Próximos 7 Dias)
+                        </h3>
+                    </div>
+                    <span class="text-xs text-slate-400 font-medium">Modelos Globais ECMWF / GFS de Alta Precisão</span>
+                </div>
+                
+                <div id="grid-previsao-diaria" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 sm:gap-3">
+                    <div class="col-span-full py-8 text-center text-slate-400 text-xs">
+                        Carregando previsão do tempo...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gráficos Agrometeorológicos Interativos (2 Colunas) -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+                
+                <!-- Gráfico 1: Janela Operacional Horária (Próximas 24h) -->
+                <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-slate-100 pb-2">
+                        <div>
+                            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
+                                Janela Operacional Horária (Próximas 24h)
+                            </h3>
+                            <p class="text-[11px] text-slate-500">Precipitação horária (mm) e velocidade do vento (km/h)</p>
+                        </div>
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200">
+                            Limite Voo: 28 km/h
+                        </span>
+                    </div>
+                    <div class="relative w-full h-64 sm:h-72">
+                        <canvas id="chart-janela-horaria"></canvas>
+                    </div>
+                </div>
+
+                <!-- Gráfico 2: Balanço de Precipitação Mensal da Safra vs Média Histórica -->
+                <div class="glass-panel p-4 sm:p-5 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3 border-b border-slate-100 pb-2">
+                        <div>
+                            <h3 class="text-sm font-black text-slate-900 uppercase tracking-wide">
+                                Precipitação Mensal da Safra vs Média Histórica
+                            </h3>
+                            <p class="text-[11px] text-slate-500">Normal Climatológica regional (CIIAGRO / INMET: ~1.377 mm anuais)</p>
+                        </div>
+                        <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200">
+                            Safra 2026/2027
+                        </span>
+                    </div>
+                    <div class="relative w-full h-64 sm:h-72">
+                        <canvas id="chart-balanco-safra"></canvas>
                     </div>
                 </div>
 
@@ -4146,11 +4116,6 @@
 
             // Atualiza KPIs e desenha polígonos
             aplicarFiltrosMapa();
-
-            // Atualiza camada de Estações Arable se estiver ativa
-            if (arableVisivelNoMapa && typeof atualizarCamadaEstacoesArable === 'function') {
-                atualizarCamadaEstacoesArable();
-            }
         }
 
         function getEstiloTalhao(status) {
@@ -5145,106 +5110,55 @@
         }
 
         // ================= ESTAÇÕES METEOROLÓGICAS FÍSICAS ARABLE (CLEALCO) =================
-        let camadaEstacoesArable = null;
-        let arableVisivelNoMapa = true;
+        let camadaEstacoesArableClima = null;
+        let arableVisivelNoMapaClima = true;
 
-        function toggleEstacoesArable(forcarAtivo = null) {
+        function toggleEstacoesArableClima(forcarAtivo = null) {
             if (forcarAtivo !== null) {
-                arableVisivelNoMapa = forcarAtivo;
+                arableVisivelNoMapaClima = forcarAtivo;
             } else {
-                arableVisivelNoMapa = !arableVisivelNoMapa;
+                arableVisivelNoMapaClima = !arableVisivelNoMapaClima;
             }
 
-            const btnTop = document.getElementById('btn-arable-mapa-top');
-            const btnBar = document.getElementById('btn-estacoes-arable-bar');
-            const btnFloating = document.getElementById('btn-arable-floating');
+            const btn = document.getElementById('btn-toggle-arable-clima');
+            const lbl = document.getElementById('lbl-status-arable-clima');
 
-            if (arableVisivelNoMapa) {
-                if (btnTop) {
-                    btnTop.classList.remove('bg-emerald-50', 'text-emerald-800', 'border-emerald-300');
-                    btnTop.classList.add('bg-emerald-600', 'text-white', 'border-emerald-700', 'shadow-sm');
-                }
-                if (btnBar) {
-                    btnBar.classList.remove('bg-white', 'text-slate-700', 'border-slate-300');
-                    btnBar.classList.add('bg-emerald-600', 'text-white', 'border-emerald-700', 'shadow-sm');
-                }
-                if (btnFloating) {
-                    btnFloating.classList.remove('bg-white/95', 'text-emerald-700', 'border-slate-300');
-                    btnFloating.classList.add('bg-emerald-600', 'text-white', 'border-emerald-700');
-                }
-            } else {
-                if (btnTop) {
-                    btnTop.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-700');
-                    btnTop.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-300');
-                }
-                if (btnBar) {
-                    btnBar.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-700');
-                    btnBar.classList.add('bg-white', 'text-slate-700', 'border-slate-300');
-                }
-                if (btnFloating) {
-                    btnFloating.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-700');
-                    btnFloating.classList.add('bg-white/95', 'text-emerald-700', 'border-slate-300');
+            if (btn) {
+                if (arableVisivelNoMapaClima) {
+                    btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg border border-emerald-500 bg-emerald-600 text-white shadow-xs transition flex items-center gap-1.5 cursor-pointer';
+                    if (lbl) lbl.innerText = 'Arable: ON';
+                } else {
+                    btn.className = 'px-2.5 py-1 text-xs font-bold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 shadow-xs transition flex items-center gap-1.5 cursor-pointer';
+                    if (lbl) lbl.innerText = 'Arable: OFF';
                 }
             }
 
-            // Garante abertura da aba Mapa se acionado para ativar
-            if (arableVisivelNoMapa && typeof trocarAba === 'function' && document.getElementById('aba-mapa')?.classList.contains('hidden')) {
-                trocarAba('mapa');
-            }
-            if (!mapaVoosInstancia && typeof renderizarMapaVoos === 'function') {
-                renderizarMapaVoos();
-            }
-
-            atualizarCamadaEstacoesArable();
+            atualizarMarcadoresArableNoMapaRadar();
         }
 
+        // Aliases para retrocompatibilidade
+        function toggleEstacoesArable(forcarAtivo = null) {
+            toggleEstacoesArableClima(forcarAtivo);
+        }
         function atualizarCamadaEstacoesArable() {
-            const btnTop = document.getElementById('btn-arable-mapa-top');
-            const btnBar = document.getElementById('btn-estacoes-arable-bar');
-            const btnFloating = document.getElementById('btn-arable-floating');
+            atualizarMarcadoresArableNoMapaRadar();
+        }
 
-            if (arableVisivelNoMapa) {
-                if (btnTop) {
-                    btnTop.classList.remove('bg-emerald-50', 'text-emerald-800', 'border-emerald-300');
-                    btnTop.classList.add('bg-emerald-600', 'text-white', 'border-emerald-700', 'shadow-sm');
-                }
-                if (btnBar) {
-                    btnBar.classList.remove('bg-white', 'text-slate-700', 'border-slate-300');
-                    btnBar.classList.add('bg-emerald-600', 'text-white', 'border-emerald-700', 'shadow-sm');
-                }
-                if (btnFloating) {
-                    btnFloating.classList.remove('bg-white/95', 'text-emerald-700', 'border-slate-300');
-                    btnFloating.classList.add('bg-emerald-600', 'text-white', 'border-emerald-700');
-                }
-            } else {
-                if (btnTop) {
-                    btnTop.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-700');
-                    btnTop.classList.add('bg-emerald-50', 'text-emerald-800', 'border-emerald-300');
-                }
-                if (btnBar) {
-                    btnBar.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-700');
-                    btnBar.classList.add('bg-white', 'text-slate-700', 'border-slate-300');
-                }
-                if (btnFloating) {
-                    btnFloating.classList.remove('bg-emerald-600', 'text-white', 'border-emerald-700');
-                    btnFloating.classList.add('bg-white/95', 'text-emerald-700', 'border-slate-300');
-                }
+        function atualizarMarcadoresArableNoMapaRadar() {
+            if (!mapaRadarClimaInstancia || !window.L) return;
+
+            if (!camadaEstacoesArableClima) {
+                camadaEstacoesArableClima = L.layerGroup();
             }
 
-            if (!mapaVoosInstancia) return;
-
-            if (!camadaEstacoesArable) {
-                camadaEstacoesArable = L.layerGroup();
-            }
-
-            if (!arableVisivelNoMapa) {
-                if (mapaVoosInstancia.hasLayer(camadaEstacoesArable)) {
-                    mapaVoosInstancia.removeLayer(camadaEstacoesArable);
+            if (!arableVisivelNoMapaClima) {
+                if (mapaRadarClimaInstancia.hasLayer(camadaEstacoesArableClima)) {
+                    mapaRadarClimaInstancia.removeLayer(camadaEstacoesArableClima);
                 }
                 return;
             }
 
-            camadaEstacoesArable.clearLayers();
+            camadaEstacoesArableClima.clearLayers();
 
             const dados = window.DADOS_ARABLE_CLIMA;
             if (!dados || !dados.estacoes || !Array.isArray(dados.estacoes) || dados.estacoes.length === 0) {
@@ -5257,20 +5171,20 @@
                 const tempFormat = (est.temperatura !== null && est.temperatura !== undefined) ? `${est.temperatura}°C` : '--';
                 const chuvaFormat = `${est.chuva_24h || 0}mm`;
 
+                // Tag minimalista solicitada pelo usuário: apenas temperatura e chuva mm, sem caixa branca poluída
                 const markerHtml = `
-                    <div class="arable-marker-pin flex items-center gap-1.5 bg-slate-900/95 text-white border-2 border-emerald-400 rounded-full px-2.5 py-1 shadow-lg backdrop-blur-xs font-sans whitespace-nowrap cursor-pointer hover:scale-105 transition-transform">
-                        <span class="text-xs">🌦️</span>
-                        <span class="text-[11px] font-black">${est.unidade.replace('Unidade ', 'Un ')}</span>
-                        <span class="text-[11px] font-bold text-amber-300">${tempFormat}</span>
-                        <span class="text-[10px] font-bold text-cyan-300">${chuvaFormat}</span>
+                    <div class="arable-clean-tag cursor-pointer" title="${est.unidade}: ${tempFormat} | Chuva: ${chuvaFormat}">
+                        <span class="tag-temp">${tempFormat}</span>
+                        <span class="tag-sep">•</span>
+                        <span class="tag-chuva">${chuvaFormat}</span>
                     </div>
                 `;
 
                 const customIcon = L.divIcon({
                     html: markerHtml,
-                    className: 'arable-custom-div-icon',
-                    iconSize: [140, 32],
-                    iconAnchor: [70, 16]
+                    className: 'arable-minimal-icon',
+                    iconSize: [88, 24],
+                    iconAnchor: [44, 12]
                 });
 
                 const badgeApto = est.favoravel_aplicacao
@@ -5282,7 +5196,7 @@
                         <div class="flex items-center justify-between border-b border-slate-200 pb-1.5 mb-2">
                             <div>
                                 <b class="text-sm font-black text-slate-900">${est.unidade}</b>
-                                <span class="block text-[10px] text-slate-500 font-semibold">ID: ${est.id} • Estação Arable Mark 3</span>
+                                <span class="block text-[10px] text-slate-500 font-semibold">ID: ${est.id} • Estação Física Arable Mark 3</span>
                             </div>
                             <span class="text-xl">🌦️</span>
                         </div>
@@ -5324,104 +5238,30 @@
 
                 const marker = L.marker([est.lat, est.lng], { icon: customIcon });
                 marker.bindPopup(popupHtml);
-                camadaEstacoesArable.addLayer(marker);
+                camadaEstacoesArableClima.addLayer(marker);
             });
 
-            if (!mapaVoosInstancia.hasLayer(camadaEstacoesArable)) {
-                camadaEstacoesArable.addTo(mapaVoosInstancia);
+            if (!mapaRadarClimaInstancia.hasLayer(camadaEstacoesArableClima)) {
+                camadaEstacoesArableClima.addTo(mapaRadarClimaInstancia);
             }
         }
 
         function renderizarEstacoesArableClima() {
-            const grid = document.getElementById('grid-estacoes-arable');
-            if (!grid) return;
-
-            const dados = window.DADOS_ARABLE_CLIMA;
-            if (!dados || !dados.estacoes || !Array.isArray(dados.estacoes) || dados.estacoes.length === 0) {
-                grid.innerHTML = `
-                    <div class="col-span-full py-6 text-center text-slate-400 text-xs">
-                        Nenhuma estação Arable conectada ou sincronizada no momento.
-                    </div>
-                `;
-                return;
-            }
-
-            const tagSync = document.getElementById('arable-sync-tag');
-            if (tagSync && dados.atualizado_em) {
-                tagSync.innerText = `Sincronizado: ${dados.atualizado_em}`;
-            }
-
-            grid.innerHTML = dados.estacoes.map(est => {
-                const isFav = est.favoravel_aplicacao;
-                const statusBadge = isFav 
-                    ? '<span class="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300">FAVORÁVEL P/ VOO</span>'
-                    : '<span class="text-[10px] font-black px-2 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-300">ATENÇÃO / LIMÍTROFE</span>';
-
-                const tempFormat = (est.temperatura !== null && est.temperatura !== undefined) ? `${est.temperatura}°C` : '--';
-
-                return `
-                    <div class="bg-gradient-to-b from-white to-slate-50/70 border border-slate-200 rounded-xl p-4 shadow-xs hover:shadow-md transition">
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-3">
-                            <div>
-                                <h4 class="text-sm font-black text-slate-900">${est.unidade}</h4>
-                                <span class="text-[10px] font-semibold text-slate-500">ID: ${est.id} • Alt: ${est.altitude}m</span>
-                            </div>
-                            <button onclick="focarEstacaoNoMapa(${est.lat}, ${est.lng})" type="button" title="Ver no Mapa" class="p-1.5 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition text-xs font-bold cursor-pointer">
-                                📍 Mapa
-                            </button>
-                        </div>
-
-                        <div class="mb-3">
-                            ${statusBadge}
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div class="bg-white p-2 rounded-lg border border-slate-100 shadow-2xs">
-                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Temperatura</span>
-                                <b class="text-amber-700 font-black text-base">${tempFormat}</b>
-                            </div>
-                            <div class="bg-white p-2 rounded-lg border border-slate-100 shadow-2xs">
-                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Umidade Ar</span>
-                                <b class="text-sky-700 font-black text-base">${est.umidade !== null && est.umidade !== undefined ? est.umidade + '%' : '--'}</b>
-                            </div>
-                            <div class="bg-white p-2 rounded-lg border border-slate-100 shadow-2xs">
-                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Chuva 24h</span>
-                                <b class="text-blue-600 font-black text-base">${est.chuva_24h || 0} <span class="text-xs font-normal">mm</span></b>
-                            </div>
-                            <div class="bg-white p-2 rounded-lg border border-slate-100 shadow-2xs">
-                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Chuva 7 Dias</span>
-                                <b class="text-indigo-600 font-black text-base">${est.chuva_7d || 0} <span class="text-xs font-normal">mm</span></b>
-                            </div>
-                            <div class="bg-white p-2 rounded-lg border border-slate-100 shadow-2xs">
-                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Vento Médio</span>
-                                <b class="text-slate-900 font-black text-base">${est.vento_kmh || 0} <span class="text-xs font-normal">km/h</span></b>
-                            </div>
-                            <div class="bg-white p-2 rounded-lg border border-slate-100 shadow-2xs">
-                                <span class="text-[10px] uppercase font-bold text-slate-500 block">Rajadas Vento</span>
-                                <b class="text-rose-600 font-black text-base">${est.rajada_kmh || 0} <span class="text-xs font-normal">km/h</span></b>
-                            </div>
-                        </div>
-
-                        <div class="mt-3 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 font-medium">
-                            <span>🔋 Bateria: <b class="text-slate-700">${est.bateria}%</b></span>
-                            <span>Status: <b class="text-emerald-700 font-bold">${est.status}</b></span>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            // Atualiza os marcadores no mapa de radar e clima
+            atualizarMarcadoresArableNoMapaRadar();
         }
 
-        function focarEstacaoNoMapa(lat = null, lng = null) {
+        function focarEstacaoNoMapaClima(lat = null, lng = null) {
             if (typeof trocarAba === 'function') {
-                trocarAba('mapa');
+                trocarAba('clima');
             }
-            toggleEstacoesArable(true);
+            toggleEstacoesArableClima(true);
             setTimeout(() => {
-                if (window.mapaVoosInstancia) {
+                if (window.mapaRadarClimaInstancia) {
                     if (lat && lng) {
-                        window.mapaVoosInstancia.setView([lat, lng], 14, { animate: true });
+                        window.mapaRadarClimaInstancia.setView([lat, lng], 13, { animate: true });
                     } else {
-                        window.mapaVoosInstancia.setView([-21.65, -50.25], 10, { animate: true });
+                        window.mapaRadarClimaInstancia.setView([-21.65, -50.25], 10, { animate: true });
                     }
                 }
             }, 300);
@@ -6688,6 +6528,9 @@
             radarMarkerClima = L.marker([polo.lat, polo.lng], { icon: customIcon })
                 .addTo(mapaRadarClimaInstancia)
                 .bindPopup(`<b>${polo.nome}</b><br><span style="font-size:11px;">${polo.descricao}</span>`);
+
+            // Atualiza e plota as Estações Arable no Mapa Radar com tags minimalistas
+            atualizarMarcadoresArableNoMapaRadar();
         }
 
         function centralizarRadarPoloAtual() {
