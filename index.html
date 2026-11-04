@@ -2725,6 +2725,7 @@
         let dadosBacklog = [];
         let dadosFalhas = [];
         let dadosMetas = {};
+        let dadosFasAlteradas = {};
         let dadosAcompanhamento = [];
         let creditosInforow = 11195.23;
 
@@ -3285,6 +3286,7 @@
                 dadosBacklog = window.DADOS_CLEALCO_EMBARCADOS.backlog || [];
                 dadosFalhas = window.DADOS_CLEALCO_EMBARCADOS.falhas_plantio || [];
                 dadosMetas = window.DADOS_CLEALCO_EMBARCADOS.metas_globais || {};
+            dadosFasAlteradas = window.DADOS_CLEALCO_EMBARCADOS.fas_alteradas || {};
                 dadosAcompanhamento = window.DADOS_CLEALCO_EMBARCADOS.acompanhamento || [];
                 creditosInforow = window.DADOS_CLEALCO_EMBARCADOS.creditos_inforow || 11195.23;
                 if (window.DADOS_CLEALCO_EMBARCADOS.data_compilacao) {
@@ -3656,6 +3658,20 @@
 
         // ================= RENDERIZADORES =================
 
+        
+        function obterBadgeFaAlterada(faCodigo) {
+            if (!faCodigo || !dadosFasAlteradas) return '';
+            const faLimpa = String(faCodigo).trim();
+            const faAntiga = dadosFasAlteradas[faLimpa];
+            if (faAntiga) {
+                return `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-black bg-blue-50 text-blue-800 border border-blue-300 shadow-2xs" title="Esta fazenda teve seu FA alterado de ${faAntiga} para ${faLimpa}">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+                    <span>NOVO FA (ex-${faAntiga})</span>
+                </span>`;
+            }
+            return '';
+        }
+
         function renderizarDashboard() {
             const tot = dadosBase.length || 100;
             document.getElementById('kpi-total-voos').innerText = tot;
@@ -3905,7 +3921,7 @@
                     ` : ''}
                     <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100 ${isAptoPos ? 'pr-28' : ''}">
                         <div class="flex items-center gap-1.5">
-                            <span class="text-xs font-black text-red-600">FA ${item.fa}</span>
+                            <span class="text-xs font-black text-red-600">FA ${item.fa}</span> ${obterBadgeFaAlterada(item.fa)}
                             <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded ${isProp ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
                                 ${isProp ? 'PRÓPRIA' : 'TERCEIRO'}
                             </span>
@@ -4251,7 +4267,7 @@
                     <div class="bg-white border border-slate-200 border-l-4 ${corBorder} p-3.5 rounded-lg flex items-center justify-between text-xs shadow-sm hover:shadow transition">
                         <div>
                             <div class="flex items-center flex-wrap gap-1">
-                                <span class="font-black text-red-600 text-sm">FA ${b.fa}</span>
+                                <span class="font-black text-red-600 text-sm">FA ${b.fa}</span> ${obterBadgeFaAlterada(b.fa)}
                                 <span class="text-slate-900 ml-1 font-bold">${b.fazenda} ${isPorFa ? `— <span class='text-slate-500 font-normal'>${b.count} talhões</span>` : `- T. ${b.talhao}`}</span>
                                 ${btnKml}
                             </div>
@@ -8242,7 +8258,7 @@
                             <div class="font-bold text-slate-900 group-hover:text-red-700 transition-colors flex items-center gap-1.5">
                                 <span>${f.faz}</span>
                             </div>
-                            <div class="text-[10px] text-slate-500 font-mono">FA: <b>${f.fa}</b></div>
+                            <div class="text-[10px] text-slate-500 font-mono flex items-center gap-1.5"><span>FA: <b>${f.fa}</b></span> ${obterBadgeFaAlterada(f.fa)}</div>
                         </td>
                         <td class="py-3 px-2">
                             <div class="font-semibold text-slate-700">${f.tipo}</div>

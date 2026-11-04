@@ -271,7 +271,7 @@ if os.path.exists(dir_bd_falhas_2026):
             fa_base = m_fa.group(1) if m_fa else b_name
             num_fa = re.sub(r'\D', '', fa_base)
             k_fa = num_fa.lstrip('0')
-            is_prop = (num_fa.startswith('20') and len(num_fa) == 6)
+            is_prop = (num_fa.startswith('20') and len(num_fa) == 6 and num_fa != '200')
             seg_chave = 'Própria' if is_prop else 'Fornecedores'
 
             area_ha = 0.0
@@ -342,7 +342,39 @@ if 'CONFIG' in wb.sheetnames:
 
 CHAVE_ACESSO_CLEALCO = senha_config
 
+
+# Mapeamento dinâmico de FAs alteradas para badges visuais no Painel Web
+mapa_fas_alteradas = {}
+try:
+    caminho_ref_fa = r"M:\17-Estudo de Arrendamentos\Status de Estudos.xlsx"
+    if os.path.exists(caminho_ref_fa):
+        wb_est = openpyxl.load_workbook(caminho_ref_fa, data_only=True)
+        ws_est = wb_est.active
+        for r in range(2, ws_est.max_row + 1):
+            fict = ws_est.cell(row=r, column=1).value
+            corr = ws_est.cell(row=r, column=2).value
+            if fict and corr:
+                f_str = str(int(fict) if isinstance(fict, (int, float)) else fict).strip()
+                c_str = str(int(corr) if isinstance(corr, (int, float)) else corr).strip()
+                if f_str != c_str and f_str not in ['235', '285']:
+                    mapa_fas_alteradas[c_str] = f_str
+        wb_est.close()
+    
+    # FAs corporativas que migraram de 20xxxx para 30xxxx
+    pares_migrados = [
+        ('301085', '201085'),
+        ('302817', '202817'),
+        ('302808', '202808'),
+        ('308012', '208012'),
+        ('308014', '208014')
+    ]
+    for n, a in pares_migrados:
+        mapa_fas_alteradas[n] = a
+except Exception as e:
+    pass
+
 dados_completos = {
+    "fas_alteradas": mapa_fas_alteradas,
     "base_processamentos": base_proc,
     "backlog": backlog,
     "falhas_plantio": falhas,
