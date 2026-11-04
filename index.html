@@ -1410,8 +1410,11 @@
                         <button onclick="localizarMinhaPosicao()" id="btn-gps-posicao" title="Ativar GPS e ver sua localização atual no mapa" class="text-xs bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                             📍 <span>Minha Posição</span>
                         </button>
-                        <button onclick="centralizarMapaVoos()" title="Centralizar visualização em todos os talhões" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                        <button onclick="centralizarMapaVoos()" title="Centralizar visualização e mostrar todos os talhões" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                             🎯 <span>Centralizar</span>
+                        </button>
+                        <button onclick="alternarCamadaSatelite()" id="btn-satelite-toggle" title="Alternar entre Google Satellite e Esri World Imagery" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
+                            🛰️ <span id="lbl-satelite-toggle">Satélite: Google</span>
                         </button>
                         <button onclick="exportarKMLFiltro()" title="Baixar KML de todos os talhões visíveis para levar ao drone ou Google Earth" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg font-bold transition flex items-center gap-1.5 shadow-sm cursor-pointer">
                             📥 <span>Exportar KML</span>
@@ -4080,8 +4083,14 @@
                 trocarAba('mapa');
             }
             setTimeout(() => {
-                if (window.mapaVoosInstancia && lat && lng) {
-                    window.mapaVoosInstancia.setView([lat, lng], 13, { animate: true });
+                if (window.mapaVoosInstancia && lat && lng && !isNaN(lat) && !isNaN(lng)) {
+                    const sel = document.getElementById('mapa-filtro-status');
+                    if (sel && sel.value !== 'TODOS') {
+                        sel.value = 'TODOS';
+                        if (typeof aplicarFiltrosMapa === 'function') aplicarFiltrosMapa();
+                    }
+                    window.mapaVoosInstancia.invalidateSize({ debounceMoveend: true });
+                    window.mapaVoosInstancia.setView([lat, lng], 14, { animate: true });
                 }
             }, 300);
         }
@@ -4604,16 +4613,13 @@
             if (id === 'mapas_safra') renderizarAbaMapasSafra();
             if (id === 'mapa') {
                 renderizarMapaVoos();
-                setTimeout(() => {
-                    if (window.mapaVoosInstancia) {
-                        window.mapaVoosInstancia.invalidateSize();
-                    }
-                }, 100);
-                setTimeout(() => {
-                    if (window.mapaVoosInstancia) {
-                        window.mapaVoosInstancia.invalidateSize();
-                    }
-                }, 350);
+                [50, 150, 300, 600].forEach(delay => {
+                    setTimeout(() => {
+                        if (window.mapaVoosInstancia) {
+                            window.mapaVoosInstancia.invalidateSize({ debounceMoveend: true });
+                        }
+                    }, delay);
+                });
             }
         }
 
@@ -4642,9 +4648,10 @@
                 });
                 window.mapaVoosInstancia = mapaVoosInstancia;
 
-                // Camadas Base
-                const sateliteGoogle = L.tileLayer('https://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
+                // Camadas Base Robustas com Failover Automático
+                const sateliteGoogle = L.tileLayer('https://{s}.google.com/vt/lyrs=y&x={x}&y={y}&z={z}', {
                     maxZoom: 20,
+                    subdomains: ['mt0', 'mt1', 'mt2', 'mt3'],
                     attribution: '© Google Satellite & Hybrid'
                 });
 
@@ -4656,6 +4663,24 @@
                 const mapaRuas = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                     maxZoom: 19,
                     attribution: '© OpenStreetMap contributors'
+                });
+
+                window._sateliteGoogleInst = sateliteGoogle;
+                window._sateliteEsriInst = sateliteEsri;
+                window._mapaRuasInst = mapaRuas;
+
+                // Fallback automático se Google Satellite falhar (ex: proxy / firewall corporativo)
+                sateliteGoogle.on('tileerror', function() {
+                    if (!window._sateliteFallbackAtivado && mapaVoosInstancia) {
+                        window._sateliteFallbackAtivado = true;
+                        console.warn('Google Satellite inacessível no navegador. Alternando automaticamente para Esri World Imagery...');
+                        try {
+                            if (mapaVoosInstancia.hasLayer(sateliteGoogle)) {
+                                mapaVoosInstancia.removeLayer(sateliteGoogle);
+                            }
+                            sateliteEsri.addTo(mapaVoosInstancia);
+                        } catch(e) {}
+                    }
                 });
 
                 sateliteGoogle.addTo(mapaVoosInstancia);
@@ -4714,6 +4739,8 @@
         function criarOuAtualizarLegendaNoMapa(counts) {
             if (!mapaVoosInstancia) return;
             
+            const filtroAtual = document.getElementById('mapa-filtro-status')?.value || 'TODOS';
+
             if (!legendaMapaControl) {
                 legendaMapaControl = L.control({ position: 'bottomleft' });
                 legendaMapaControl.onAdd = function() {
@@ -4721,57 +4748,63 @@
                     const div = L.DomUtil.create('div', 'leaflet-control-legenda');
                     div.style.pointerEvents = 'auto';
                     div.innerHTML = `
-                        <div class="bg-white/95 text-slate-900 backdrop-blur-md p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-300 sm:border-2 shadow-xl sm:shadow-2xl text-[11px] sm:text-[12px] font-sans max-w-[190px] sm:min-w-[230px] select-none transition-all">
+                        <div class="bg-white/95 text-slate-900 backdrop-blur-md p-2 sm:p-3 rounded-xl sm:rounded-2xl border border-slate-300 sm:border-2 shadow-xl sm:shadow-2xl text-[11px] sm:text-[12px] font-sans max-w-[200px] sm:min-w-[240px] select-none transition-all">
                             <div class="flex items-center justify-between gap-1.5 cursor-pointer pb-1 sm:pb-2 border-b border-slate-200" onclick="toggleConteudoLegendaMapa()" title="Clique para minimizar ou expandir a legenda">
                                 <span class="font-black tracking-wider uppercase flex items-center gap-1 text-[10px] sm:text-xs text-slate-900 truncate">
                                     <span class="text-xs sm:text-sm">🗺️</span> <span>LEGENDA</span>
                                 </span>
                                 <span id="btn-toggle-legenda-icon" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-1.5 py-0.5 rounded-md font-mono text-[10px] sm:text-xs font-black leading-none">${isMobile ? '+' : '−'}</span>
                             </div>
+
+                            <!-- Botão Limpar Filtro / Mostrar Todos (aparece quando algum filtro está ativo) -->
+                            <button id="btn-limpar-filtro-legenda" type="button" onclick="filtrarStatusPelaLegenda('TODOS')" class="hidden w-full mt-1.5 text-center py-1 px-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] transition shadow-xs flex items-center justify-center gap-1 cursor-pointer">
+                                <span>✕ Mostrar Todos os Talhões</span>
+                            </button>
+
                             <div id="corpo-legenda-mapa" class="${isMobile ? 'hidden ' : ''}space-y-1 sm:space-y-1.5 transition-all mt-1.5 max-h-[45vh] overflow-y-auto">
-                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('REVOO')" title="Filtrar Voar Novamente">
+                                <div class="item-legenda-status flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent" data-status="REVOO" onclick="filtrarStatusPelaLegenda('REVOO')" title="Clique para filtrar apenas Voar Novamente">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 rounded-[2px] bg-purple-600 border border-purple-800 inline-block shrink-0 shadow-xs"></span>
                                         <span class="text-slate-900 font-bold text-[11px] sm:text-xs truncate">Voar Novamente</span>
                                     </span>
                                     <b class="bg-purple-100 text-purple-900 border border-purple-200 font-black px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono shrink-0" id="leg-map-revoo">${counts.revoo || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('VOO_RECENTE')" title="Filtrar Voo Descarregado (Não Processados)">
+                                <div class="item-legenda-status flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent" data-status="VOO_RECENTE" onclick="filtrarStatusPelaLegenda('VOO_RECENTE')" title="Clique para filtrar apenas Voo Descarregado (Não Processados)">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 rounded-[2px] bg-sky-500 border border-sky-700 inline-block shrink-0 shadow-xs"></span>
                                         <span class="text-slate-900 font-bold text-[11px] sm:text-xs truncate">Voo Descarregado</span>
                                     </span>
                                     <b class="bg-sky-100 text-sky-900 border border-sky-200 font-black px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono shrink-0" id="leg-map-recente">${counts.recente || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('VOADO')" title="Filtrar Área Aproveitada (KML Analisado)">
+                                <div class="item-legenda-status flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent" data-status="VOADO" onclick="filtrarStatusPelaLegenda('VOADO')" title="Clique para filtrar apenas Área Aproveitada (KML Analisado)">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 rounded-[2px] bg-emerald-600 border border-emerald-800 inline-block shrink-0 shadow-xs"></span>
                                         <span class="text-slate-900 font-bold text-[11px] sm:text-xs truncate">Área Aproveitada</span>
                                     </span>
                                     <b class="bg-emerald-100 text-emerald-900 border border-emerald-200 font-black px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono shrink-0" id="leg-map-voado">${counts.voado || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('CRITICO')" title="Filtrar Crítico (> 90d)">
+                                <div class="item-legenda-status flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent" data-status="CRITICO" onclick="filtrarStatusPelaLegenda('CRITICO')" title="Clique para filtrar apenas Crítico (> 90d)">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 rounded-[2px] bg-red-600 border border-red-800 inline-block shrink-0 shadow-xs"></span>
                                         <span class="text-slate-900 font-bold text-[11px] sm:text-xs truncate">Crítico (&gt; 90d)</span>
                                     </span>
                                     <b class="bg-red-100 text-red-900 border border-red-200 font-black px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono shrink-0" id="leg-map-critico">${counts.critico || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('ATENCAO')" title="Filtrar Atenção (60-90d)">
+                                <div class="item-legenda-status flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent" data-status="ATENCAO" onclick="filtrarStatusPelaLegenda('ATENCAO')" title="Clique para filtrar apenas Atenção (60-90d)">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 rounded-[2px] bg-amber-500 border border-amber-700 inline-block shrink-0 shadow-xs"></span>
                                         <span class="text-slate-900 font-bold text-[11px] sm:text-xs truncate">Atenção (60-90d)</span>
                                     </span>
                                     <b class="bg-amber-100 text-amber-900 border border-amber-200 font-black px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono shrink-0" id="leg-map-atencao">${counts.atencao || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('NOPRAZO')" title="Filtrar No Prazo (< 60d)">
+                                <div class="item-legenda-status flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent" data-status="NOPRAZO" onclick="filtrarStatusPelaLegenda('NOPRAZO')" title="Clique para filtrar apenas No Prazo (< 60d)">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 rounded-[2px] bg-yellow-500 border border-yellow-700 inline-block shrink-0 shadow-xs"></span>
                                         <span class="text-slate-900 font-bold text-[11px] sm:text-xs truncate">No Prazo (&lt; 60d)</span>
                                     </span>
                                     <b class="bg-yellow-100 text-yellow-900 border border-yellow-200 font-black px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono shrink-0" id="leg-map-noprazo">${counts.noprazo || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('BASE_CLEALCO')" title="Filtrar Base Clealco">
+                                <div class="item-legenda-status flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent" data-status="BASE_CLEALCO" onclick="filtrarStatusPelaLegenda('BASE_CLEALCO')" title="Clique para filtrar apenas Base Clealco">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-2.5 h-2.5 sm:w-2.5 sm:h-2.5 rounded-[2px] bg-slate-500 border border-slate-700 inline-block shrink-0 shadow-xs"></span>
                                         <span class="text-slate-700 font-semibold text-[11px] sm:text-xs truncate">Base Clealco</span>
@@ -4795,6 +4828,48 @@
                 setL('leg-map-atencao', counts.atencao);
                 setL('leg-map-noprazo', counts.noprazo);
                 setL('leg-map-base', counts.base);
+            }
+
+            atualizarDestaqueFiltroLegenda(filtroAtual);
+        }
+
+        function atualizarDestaqueFiltroLegenda(statusAtivo) {
+            const itens = document.querySelectorAll('.item-legenda-status');
+            itens.forEach(el => {
+                const st = el.dataset.status;
+                if (st && st === statusAtivo && statusAtivo !== 'TODOS') {
+                    el.classList.add('bg-blue-50', 'border-blue-500', 'ring-2', 'ring-blue-400');
+                    el.classList.remove('border-transparent');
+                } else {
+                    el.classList.remove('bg-blue-50', 'border-blue-500', 'ring-2', 'ring-blue-400');
+                    el.classList.add('border-transparent');
+                }
+            });
+
+            const btnLimpar = document.getElementById('btn-limpar-filtro-legenda');
+            if (btnLimpar) {
+                if (statusAtivo && statusAtivo !== 'TODOS') {
+                    btnLimpar.classList.remove('hidden');
+                } else {
+                    btnLimpar.classList.add('hidden');
+                }
+            }
+        }
+
+        function alternarCamadaSatelite() {
+            if (!mapaVoosInstancia || !window._sateliteGoogleInst || !window._sateliteEsriInst) return;
+            const isGoogle = mapaVoosInstancia.hasLayer(window._sateliteGoogleInst);
+            const lbl = document.getElementById('lbl-satelite-toggle');
+            if (isGoogle) {
+                mapaVoosInstancia.removeLayer(window._sateliteGoogleInst);
+                window._sateliteEsriInst.addTo(mapaVoosInstancia);
+                if (lbl) lbl.innerText = 'Satélite: Esri';
+            } else {
+                if (mapaVoosInstancia.hasLayer(window._sateliteEsriInst)) {
+                    mapaVoosInstancia.removeLayer(window._sateliteEsriInst);
+                }
+                window._sateliteGoogleInst.addTo(mapaVoosInstancia);
+                if (lbl) lbl.innerText = 'Satélite: Google';
             }
         }
 
@@ -5070,13 +5145,29 @@
                 }
             }).addTo(mapaVoosInstancia);
 
-            // Ajusta o zoom para englobar os talhões se houver
+            // Ajusta o zoom para englobar os talhões se houver e o container tiver tamanho válido
             if (featuresFiltradasAtuais.length > 0 && camadaGeoJsonVoos.getBounds().isValid()) {
-                mapaVoosInstancia.fitBounds(camadaGeoJsonVoos.getBounds(), { padding: [30, 30], maxZoom: 15 });
+                try {
+                    const sz = mapaVoosInstancia.getSize();
+                    if (sz && sz.x > 0 && sz.y > 0) {
+                        mapaVoosInstancia.fitBounds(camadaGeoJsonVoos.getBounds(), { padding: [30, 30], maxZoom: 15 });
+                    }
+                } catch(e) {
+                    console.warn('fitBounds ignorado temporariamente (container redimensionando):', e);
+                }
             }
+            atualizarDestaqueFiltroLegenda(filtroStatus);
         }
 
         function centralizarMapaVoos() {
+            const sel = document.getElementById('mapa-filtro-status');
+            if (sel && sel.value !== 'TODOS') {
+                sel.value = 'TODOS';
+                aplicarFiltrosMapa();
+            }
+            if (window.mapaVoosInstancia) {
+                window.mapaVoosInstancia.invalidateSize({ debounceMoveend: true });
+            }
             if (camadaGeoJsonVoos && camadaGeoJsonVoos.getBounds().isValid()) {
                 mapaVoosInstancia.fitBounds(camadaGeoJsonVoos.getBounds(), { padding: [30, 30] });
             }
@@ -5124,6 +5215,7 @@
 
         function selecionarTalhaoMapa(fa, talhao) {
             document.getElementById('mapa-busca-sugestoes')?.classList.add('hidden');
+            if (!camadaGeoJsonVoos && typeof renderizarMapaVoos === 'function') renderizarMapaVoos();
             if (!camadaGeoJsonVoos) return;
 
             let layerEncontrado = null;
@@ -5136,8 +5228,26 @@
                 }
             });
 
+            // Se não encontrou na camada filtrada atual, reseta o filtro para TODOS para revelar o talhão
+            if (!layerEncontrado) {
+                const sel = document.getElementById('mapa-filtro-status');
+                if (sel && sel.value !== 'TODOS') {
+                    sel.value = 'TODOS';
+                    aplicarFiltrosMapa();
+                    camadaGeoJsonVoos.eachLayer(layer => {
+                        const p = layer.feature?.properties || {};
+                        if ((limpa(p.fa) === limpa(fa) || String(p.fa) === String(fa)) && String(p.talhao) === String(talhao)) {
+                            layerEncontrado = layer;
+                        }
+                    });
+                }
+            }
+
             if (layerEncontrado) {
-                mapaVoosInstancia.fitBounds(layerEncontrado.getBounds(), { maxZoom: 16 });
+                if (window.mapaVoosInstancia) {
+                    window.mapaVoosInstancia.invalidateSize({ debounceMoveend: true });
+                    mapaVoosInstancia.fitBounds(layerEncontrado.getBounds(), { maxZoom: 16 });
+                }
                 layerEncontrado.openPopup();
             }
         }
