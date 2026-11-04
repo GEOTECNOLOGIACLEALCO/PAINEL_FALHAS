@@ -1,7 +1,24 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 04/11/2026 14:19:16
+// Gerado em: 04/11/2026 14:20:07
 // Total de Mapas: 1323
 window.DADOS_MAPAS_SAFRA = [
+  {
+    "arquivo": "307562 - Sítio Guaporé (CSAgro Administração).pdf",
+    "url": "mapas_safra/Terceiros/307562 - Sítio Guaporé (CSAgro Administração).pdf",
+    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros/307562%20-%20S%C3%ADtio%20Guapor%C3%A9%20%28CSAgro%20Administra%C3%A7%C3%A3o%29.pdf?csf=1&web=1",
+    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros?csf=1&web=1",
+    "categoria": "Terceiros",
+    "subpasta": "",
+    "fa": "307562",
+    "fazenda": "Sítio Guaporé",
+    "proprietario": "CSAgro Administração",
+    "data_modificacao": "04/11/2026 14:19",
+    "timestamp": 1793812785,
+    "tamanho_kb": 275.6,
+    "dias_atras": 0.0,
+    "is_novo": true,
+    "is_hoje": true
+  },
   {
     "arquivo": "201276 - Sítio São Roberto (Roberto Tikara Kawamoto).pdf",
     "url": "mapas_safra/Clealco/201276 - Sítio São Roberto (Roberto Tikara Kawamoto).pdf",
@@ -916,7 +933,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "25/09/2026 10:43",
     "timestamp": 1790343811,
     "tamanho_kb": 609.0,
-    "dias_atras": 40.1,
+    "dias_atras": 40.2,
     "is_novo": false,
     "is_hoje": false
   },
@@ -1715,7 +1732,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "04/09/2026 08:19",
     "timestamp": 1788520793,
     "tamanho_kb": 295.0,
-    "dias_atras": 61.2,
+    "dias_atras": 61.3,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2157,7 +2174,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "28/08/2026 08:19",
     "timestamp": 1787915987,
     "tamanho_kb": 282.0,
-    "dias_atras": 68.2,
+    "dias_atras": 68.3,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3981,23 +3998,6 @@ window.DADOS_MAPAS_SAFRA = [
     "is_hoje": false
   },
   {
-    "arquivo": "307562 - Sítio Guaporé (CSAgro Administração).pdf",
-    "url": "mapas_safra/Terceiros/307562 - Sítio Guaporé (CSAgro Administração).pdf",
-    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros/307562%20-%20S%C3%ADtio%20Guapor%C3%A9%20%28CSAgro%20Administra%C3%A7%C3%A3o%29.pdf?csf=1&web=1",
-    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros?csf=1&web=1",
-    "categoria": "Terceiros",
-    "subpasta": "",
-    "fa": "307562",
-    "fazenda": "Sítio Guaporé",
-    "proprietario": "CSAgro Administração",
-    "data_modificacao": "20/07/2026 16:27",
-    "timestamp": 1784575662,
-    "tamanho_kb": 259.9,
-    "dias_atras": 106.9,
-    "is_novo": false,
-    "is_hoje": false
-  },
-  {
     "arquivo": "306863 - Fazenda Silvana (Esio Nilton Pitta).pdf",
     "url": "mapas_safra/Terceiros/306863 - Fazenda Silvana (Esio Nilton Pitta).pdf",
     "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros/306863%20-%20Fazenda%20Silvana%20%28Esio%20Nilton%20Pitta%29.pdf?csf=1&web=1",
@@ -4401,7 +4401,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "13/07/2026 13:07",
     "timestamp": 1783958869,
     "tamanho_kb": 595.4,
-    "dias_atras": 114.0,
+    "dias_atras": 114.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -8719,7 +8719,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/04/2026 10:43",
     "timestamp": 1775828631,
     "tamanho_kb": 304.4,
-    "dias_atras": 208.1,
+    "dias_atras": 208.2,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14958,7 +14958,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/06/2025 17:55",
     "timestamp": 1749588946,
     "tamanho_kb": 244.0,
-    "dias_atras": 511.8,
+    "dias_atras": 511.9,
     "is_novo": false,
     "is_hoje": false
   },
