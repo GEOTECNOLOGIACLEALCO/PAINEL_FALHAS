@@ -1358,8 +1358,9 @@ def compilar_dados_arable_clima():
             return
 
         now_utc = datetime.now(timezone.utc)
-        start_7d = (now_utc - timedelta(days=7)).strftime('%Y-%m-%dT00:00:00Z')
+        start_14d = (now_utc - timedelta(days=14)).strftime('%Y-%m-%dT00:00:00Z')
         start_24h = now_utc - timedelta(hours=24)
+        start_7d_dt = now_utc - timedelta(days=7)
 
         estacoes = []
         for dev in items:
@@ -1375,7 +1376,7 @@ def compilar_dados_arable_clima():
             elif "Clementina" in site_nome: nome_amigavel = "Unidade Clementina"
             else: nome_amigavel = site_nome
 
-            url_data = f"https://api.arable.cloud/api/v2/data/local_hourly?device={d_id}&start_time={start_7d}"
+            url_data = f"https://api.arable.cloud/api/v2/data/local_hourly?device={d_id}&start_time={start_14d}"
             req_d = urllib.request.Request(url_data, headers=headers)
             hourly_records = []
             try:
@@ -1386,18 +1387,30 @@ def compilar_dados_arable_clima():
 
             last_rec = hourly_records[-1] if hourly_records else {}
             
-            # Cálculo de chuva recente
-            chuva_7d = round(sum(r.get('precip') or 0 for r in hourly_records), 1)
+            # Cálculo de chuva recente e histórico diário real da estação (horário de Brasília UTC-3)
+            chuva_diaria = {}
+            chuva_7d = 0.0
             chuva_24h = 0.0
+            
             for r in hourly_records:
                 r_time_str = r.get('time', '')
+                p_val = float(r.get('precip') or 0.0)
                 if r_time_str:
                     try:
                         r_dt = datetime.fromisoformat(r_time_str.replace('Z', '+00:00'))
+                        # Horário de Brasília
+                        dt_sp = r_dt - timedelta(hours=3)
+                        dia_iso = dt_sp.strftime('%Y-%m-%d')
+                        chuva_diaria[dia_iso] = round(chuva_diaria.get(dia_iso, 0.0) + p_val, 1)
+                        
                         if r_dt >= start_24h:
-                            chuva_24h += (r.get('precip') or 0)
+                            chuva_24h += p_val
+                        if r_dt >= start_7d_dt:
+                            chuva_7d += p_val
                     except: pass
+                    
             chuva_24h = round(chuva_24h, 1)
+            chuva_7d = round(chuva_7d, 1)
 
             temp = last_rec.get('tair')
             ur = round((last_rec.get('rh') or 0) * 100) if last_rec.get('rh') is not None else None
@@ -1420,6 +1433,7 @@ def compilar_dados_arable_clima():
                 "umidade": ur,
                 "chuva_24h": chuva_24h,
                 "chuva_7d": chuva_7d,
+                "chuva_diaria": chuva_diaria,
                 "vento_kmh": vento_kmh,
                 "rajada_kmh": rajada_kmh,
                 "direcao_vento": dir_vento,
