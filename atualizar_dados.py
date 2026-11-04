@@ -511,20 +511,7 @@ try:
                     
         print(f"Varredura concluída: {len(pastas_voo_todas)} pastas de voo ({len(kmls_por_fa)} com KML gerado). Fila Não Processados: {len(pastas_nao_processados)} FAs.")
         
-        # 2. Carrega as geometrias dos KMLs com Bounding Box pré-calculado
-        geoms_por_fa = {}
-        for fa_c, info in kmls_por_fa.items():
-            geoms_por_fa[fa_c] = []
-            for kml_p in info['kmls']:
-                try:
-                    ds_k = ogr.Open(kml_p)
-                    if ds_k:
-                        lyr_k = ds_k.GetLayer()
-                        for f_k in lyr_k:
-                            g_k = f_k.GetGeometryRef()
-                            if g_k: geoms_por_fa[fa_c].append((g_k.Clone(), g_k.GetEnvelope()))
-                except: pass
-        
+        # 2. Leitura das bases e mapeamento de backlog / revoo
         # Dicionário do Backlog indexado por (FA, Talhao)
         backlog_dict = {}
         for b in backlog:
@@ -565,7 +552,7 @@ try:
             r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\doc_planilhas"
         ]
         
-        talhoes_voados_bases = {} # (fa, tal) voados segundo as bases oficiais de voo (Próprias + Terceiros)
+        talhoes_voados_bases = {}
         for pasta in pastas_planilhas:
             if not os.path.exists(pasta): continue
             for arq in os.listdir(pasta):
@@ -606,18 +593,19 @@ try:
                                         backlog_dict[k]["semaforo"] = str(r[idx_sem]).strip()
                     except: pass
         
-        def round_coords(coords, p=5):
-            if isinstance(coords, (float, int)):
-                return round(coords, p)
-            return [round_coords(x, p) for x in coords]
+        def clean_round_coords(coords, p=5):
+            if not coords:
+                return coords
+            if isinstance(coords[0], (float, int)):
+                return [round(coords[0], p), round(coords[1], p)]
+            return [clean_round_coords(c, p) for c in coords]
 
-        # Leitura do SHP
+        # 3. Leitura do SHP Cadastral (Base de todas as fazendas)
         ds = ogr.Open(caminho_shp)
         layer = ds.GetLayer()
         features_geojson = []
         matched_keys = set()
         fas_no_shp = set()
-        fas_com_talhao_voado = set()
         
         for feat in layer:
             geom = feat.GetGeometryRef()
@@ -628,81 +616,47 @@ try:
             
             k = (faz, tal)
             bk = backlog_dict.get(k)
-
-            status_voo = "BASE_CLEALCO"
-            obs_voo = "Base Clealco (Área Cadastrada)"
-            
-            # Caso 1: Fazenda possui KML de voo (cruza espacialmente com o SHP)
-            teve_kml_match = False
-            if faz in geoms_por_fa and geoms_por_fa[faz]:
-                tg_area = geom.GetArea()
-                max_frac = 0.0
-                if tg_area > 0:
-                    env_i = geom.GetEnvelope() # (minX, maxX, minY, maxY)
-                    for kg, env_k in geoms_por_fa[faz]:
-                        # Bounding box filter ultrarrápido (evita cálculo pesado GEOS)
-                        if env_i[0] > env_k[1] or env_i[1] < env_k[0] or env_i[2] > env_k[3] or env_i[3] < env_k[2]:
-                            continue
-                        if geom.Intersects(kg):
-                            inter = geom.Intersection(kg)
-                            if inter and not inter.IsEmpty():
-                                f_area = inter.GetArea() / tg_area
-                                if f_area > max_frac:
-                                    max_frac = f_area
-                if max_frac >= 0.05:
-                    teve_kml_match = True
-                    status_voo = "VOADO"
-                    fas_com_talhao_voado.add(faz)
-                    obs_voo = f"Voo Realizado ({int(round(max_frac*100))}% de cobertura KML)"
-
-            # Caso 2: Confirmação por Base de Voo oficial (se não cruzou por KML)
-            if not teve_kml_match:
-                tals_voados_faz = talhoes_voados_bases.get(faz, set())
-                if tal in tals_voados_faz:
-                    status_voo = "VOADO"
-                    fas_com_talhao_voado.add(faz)
-                    obs_voo = "Voo Realizado (Confirmado na Base de Voo)"
-
-            # Caso 3: Voo recente em Não Processados (mesmo sem talhão/KML individual gerado)
-            if status_voo not in ["VOADO"]:
-                if faz in pastas_nao_processados:
-                    status_voo = "VOO_RECENTE"
-                    fas_com_talhao_voado.add(faz)
-                    obs_voo = "Voo Recente (Aguardando Processamento de Linhas/Falhas)"
-
-            # Caso 4: Se não foi voado e nem é voo recente, checa se está no Backlog oficial (A Voar)
-            if status_voo not in ["VOADO", "VOO_RECENTE"]:
-                if bk:
-                    dias = bk["dias_brota"]
-                    if dias > 90 or "atrasado" in bk["status_prazo"].lower():
-                        status_voo = "CRITICO"
-                        obs_voo = f"Crítico (> 90 dias: {dias}d)"
-                    elif dias >= 60:
-                        status_voo = "ATENCAO"
-                        obs_voo = f"Atenção (60 a 90 dias: {dias}d)"
-                    else:
-                        status_voo = "NOPRAZO"
-                        obs_voo = f"No Prazo (< 60 dias: {dias}d)"
-
-            # Se estava no backlog, registra a chave como vinculada ao mapa
             if bk:
                 matched_keys.add(k)
 
-            # 🔄 REGRA DE RE-VOO / SEM PORTE (Prioridade Máxima):
-            motivo_revoo = custom_revoo_dict.get((faz, tal)) or custom_revoo_dict.get((faz, 'TODOS'))
-            if not motivo_revoo and (pastas_voo_todas.get(faz, {}).get('revoo') or kmls_por_fa.get(faz, {}).get('revoo')):
-                if status_voo not in ["VOADO"]:
-                    motivo_revoo = "Pendente de Voo / Terminar Outras Partes"
+            # LÓGICA DE STATUS DO TALHÃO CADASTRAL:
+            # Caso 1: Pasta em Não Processados sem KML ainda (Voo Descarregado pelo Piloto)
+            if faz in pastas_nao_processados and faz not in kmls_por_fa:
+                status_voo = "VOO_RECENTE"
+                obs_voo = "Voo Recente (Descarregado pelo Piloto em Não Processados)"
+            # Caso 2: Talhão do Backlog oficial (Próprias e Fornecedores)
+            elif bk:
+                dias = bk["dias_brota"]
+                if dias > 90 or "atrasado" in bk["status_prazo"].lower():
+                    status_voo = "CRITICO"
+                    obs_voo = f"Crítico (> 90 dias: {dias}d)"
+                elif dias >= 60:
+                    status_voo = "ATENCAO"
+                    obs_voo = f"Atenção (60 a 90 dias: {dias}d)"
+                else:
+                    status_voo = "NOPRAZO"
+                    obs_voo = f"No Prazo (< 60 dias: {dias}d)"
+                if faz in kmls_por_fa:
+                    obs_voo += " [Voo Analisado Sobreposto]"
+            # Caso 3: Demais talhões cadastrais
+            else:
+                status_voo = "BASE_CLEALCO"
+                obs_voo = "Base Clealco (Área Cadastrada)"
+                if faz in kmls_por_fa:
+                    obs_voo += " [Voo Analisado Sobreposto]"
 
-            if motivo_revoo:
+            # 🔄 REGRA DE RE-VOO / SEM PORTE:
+            motivo_revoo = custom_revoo_dict.get((faz, tal)) or custom_revoo_dict.get((faz, 'TODOS'))
+            if not motivo_revoo and (pastas_voo_todas.get(faz, {}).get('revoo') or kmls_por_fa.get(faz, {}).get('revoo')) and faz not in kmls_por_fa:
+                status_voo = "REVOO"
+                obs_voo = "🔁 Terminar Outras Partes (Voo Pendente)"
+            elif motivo_revoo:
                 status_voo = "REVOO"
                 obs_voo = f"🔁 Voar Novamente ({motivo_revoo})"
-                if faz in fas_com_talhao_voado and (faz, 'TODOS') in custom_revoo_dict:
-                    fas_com_talhao_voado.discard(faz)
                 
             geom_simpl = geom.Simplify(0.00008) # ~8m de precisao para visual ultraleve e responsivo
             geojson_geom = json.loads(geom_simpl.ExportToJson())
-            geojson_geom['coordinates'] = round_coords(geojson_geom['coordinates'], 5)
+            geojson_geom['coordinates'] = clean_round_coords(geojson_geom['coordinates'], 5)
             
             props = {
                 "fa": bk["fa"] if bk else feat.GetField('FAZENDA'),
@@ -711,6 +665,7 @@ try:
                 "area_ha": bk["ha"] if bk else round(float(feat.GetField('AREA_TOTAL') or 0), 2),
                 "status": status_voo,
                 "tipo": bk["tipo"] if bk else ("Própria" if "PROP" in str(feat.GetField('ZONA') or '') else "Terceiro"),
+                "tipo_camada": "shp_base",
                 "dias_brota": bk["dias_brota"] if bk else 0,
                 "porte_cm": bk["porte_cm"] if bk else "",
                 "variedade": bk["variedade"] if bk else "",
@@ -724,61 +679,71 @@ try:
                 "geometry": geojson_geom
             })
             
-        # Inserção direta de KMLs para fazendas que NÃO constam no SHP cadastral ou cujo KML não intersectou o SHP
-        for fa_fora, info_fora in kmls_por_fa.items():
-            if fa_fora not in fas_no_shp or fa_fora not in fas_com_talhao_voado:
-                # Se houver arquivo consolidado com o prefixo da FA (ex: '200 - talhao.kml'), prioriza ele para não duplicar subpartes
-                kmls_validos = info_fora['kmls']
-                consolidado = [k for k in kmls_validos if os.path.basename(k).startswith(fa_fora) and 'parte' not in os.path.basename(os.path.dirname(k)).lower()]
-                if consolidado:
-                    kmls_validos = consolidado
+        # 4. Inserção de TODAS as geometrias dos KMLs Analisados (Overlay de Aproveitamento de Voo)
+        # O polígono do KML cobre e pinta exatamente a área aprovada pelo analista!
+        kmls_inseridos_cont = 0
+        for fa_kml, info_kml in kmls_por_fa.items():
+            kmls_validos = info_kml['kmls']
+            # Se houver arquivo consolidado com o prefixo da FA (ex: '207110 - talhao.kml'), prioriza para não duplicar
+            consolidado = [k for k in kmls_validos if os.path.basename(k).startswith(fa_kml) and 'parte' not in os.path.basename(os.path.dirname(k)).lower()]
+            if consolidado:
+                kmls_validos = consolidado
 
-                for kml_f in kmls_validos:
-                    try:
-                        ds_direct = ogr.Open(kml_f)
-                        if ds_direct:
-                            lyr_direct = ds_direct.GetLayer()
-                            faz_nome_limpo = info_fora['pasta'].split('-')[1].strip() if '-' in info_fora['pasta'] else info_fora['pasta']
-                            is_prop = fa_fora.startswith('20') and len(fa_fora) == 6 or fa_fora in ['200', '106', '240', '285']
-                            tipo_f = "Própria" if is_prop else "Terceiro"
-                            print(f"Inserindo {lyr_direct.GetFeatureCount()} talhões diretos do KML: {faz_nome_limpo} (FA {fa_fora})")
-                            for idx_d, feat_d in enumerate(lyr_direct):
-                                g_d = feat_d.GetGeometryRef()
-                                if not g_d: continue
-                                env_d = g_d.GetEnvelope()
-                                lat_mid_d = (env_d[2] + env_d[3]) / 2.0
-                                area_ha_d = round(g_d.GetArea() * (111319.0 ** 2) * math.cos(math.radians(lat_mid_d)) / 10000.0, 2)
-                                nome_tal_d = feat_d.GetField("Name") or f"{idx_d + 1}"
-                                g_simpl_d = g_d.Simplify(0.00008)
-                                gd_d = json.loads(g_simpl_d.ExportToJson())
-                                gd_d['coordinates'] = round_coords(gd_d['coordinates'], 5)
-                                
-                                st_direct = "VOO_RECENTE" if (fa_fora in pastas_nao_processados and fa_fora not in pastas_falhas_linhas) else "VOADO"
-                                obs_direct = f"Voo Recente ({os.path.basename(kml_f)})" if st_direct == "VOO_RECENTE" else f"Voo Realizado ({os.path.basename(kml_f)})"
-                                m_rev_d = custom_revoo_dict.get((fa_fora, str(nome_tal_d).lstrip('0'))) or custom_revoo_dict.get((fa_fora, 'TODOS'))
-                                if m_rev_d:
-                                    st_direct = "REVOO"
-                                    obs_direct = f"🔁 Voar Novamente ({m_rev_d})"
-                                features_geojson.append({
-                                    "type": "Feature",
-                                    "properties": {
-                                        "fa": fa_fora,
-                                        "fazenda": faz_nome_limpo,
-                                        "talhao": str(nome_tal_d),
-                                        "area_ha": area_ha_d,
-                                        "status": st_direct,
-                                        "tipo": tipo_f,
-                                        "dias_brota": 0,
-                                        "porte_cm": "",
-                                        "variedade": "",
-                                        "data_plantio": "",
-                                        "obs": obs_direct
-                                    },
-                                    "geometry": gd_d
-                                })
-                    except Exception as ex_direct:
-                        print(f"Erro inserindo KML direto {info_fora['pasta']}: {ex_direct}")
+            faz_nome_limpo = info_kml['pasta'].split('-')[1].strip() if '-' in info_kml['pasta'] else info_kml['pasta']
+            faz_cand = next((v['fazenda'] for k, v in backlog_dict.items() if k[0] == fa_kml and v.get('fazenda')), faz_nome_limpo)
+            is_prop = (fa_kml.startswith('20') and len(fa_kml) == 6) or fa_kml in ['106', '240', '285']
+            tipo_kml = "Própria" if is_prop else "Terceiro"
             
+            for kml_f in kmls_validos:
+                try:
+                    ds_direct = ogr.Open(kml_f)
+                    if ds_direct:
+                        lyr_direct = ds_direct.GetLayer()
+                        nome_arq_kml = os.path.basename(kml_f)
+                        for idx_d, feat_d in enumerate(lyr_direct):
+                            g_d = feat_d.GetGeometryRef()
+                            if not g_d: continue
+                            g_type = g_d.GetGeometryName().upper()
+                            if 'POLYGON' not in g_type: continue
+                            
+                            env_d = g_d.GetEnvelope()
+                            lat_mid_d = (env_d[2] + env_d[3]) / 2.0
+                            area_ha_d = round(g_d.GetArea() * (111319.0 ** 2) * math.cos(math.radians(lat_mid_d)) / 10000.0, 2)
+                            nome_tal_d = feat_d.GetField("Name") or f"{idx_d + 1}"
+                            
+                            g_simpl_d = g_d.Simplify(0.00008)
+                            gd_d = json.loads(g_simpl_d.ExportToJson())
+                            gd_d['coordinates'] = clean_round_coords(gd_d['coordinates'], 5)
+                            
+                            m_rev_d = custom_revoo_dict.get((fa_kml, str(nome_tal_d).lstrip('0'))) or custom_revoo_dict.get((fa_kml, 'TODOS'))
+                            st_kml = "REVOO" if m_rev_d else "VOADO"
+                            obs_kml = f"🔁 Voar Novamente ({m_rev_d})" if m_rev_d else f"Área Aproveitada ({nome_arq_kml})"
+                            
+                            features_geojson.append({
+                                "type": "Feature",
+                                "properties": {
+                                    "fa": fa_kml,
+                                    "fazenda": faz_cand,
+                                    "talhao": str(nome_tal_d),
+                                    "area_ha": area_ha_d,
+                                    "status": st_kml,
+                                    "tipo": tipo_kml,
+                                    "tipo_camada": "kml_overlay",
+                                    "dias_brota": 0,
+                                    "porte_cm": "",
+                                    "variedade": "",
+                                    "data_plantio": "",
+                                    "origem_kml": nome_arq_kml,
+                                    "obs": obs_kml
+                                },
+                                "geometry": gd_d
+                            })
+                            kmls_inseridos_cont += 1
+                except Exception as ex_direct:
+                    print(f"Erro inserindo KML direto {info_kml['pasta']}: {ex_direct}")
+                    
+        print(f"Polígonos KML de Aproveitamento sobrepostos com sucesso: {kmls_inseridos_cont} talhões.")
+        
         geo_col = {
             "type": "FeatureCollection",
             "features": features_geojson

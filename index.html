@@ -1472,8 +1472,8 @@
                             <option value="TODOS">🚦 Todos os Polígonos (Geral)</option>
                             <option value="BACKLOG_TODOS">Somente Backlog (A Voar)</option>
                             <option value="REVOO">🔁 Voar Novamente / Sem Porte</option>
-                            <option value="VOO_RECENTE">🔷 Voo Recente / Fila (Não Processados)</option>
-                            <option value="VOADO">🟢 Já Voado / Concluído</option>
+                            <option value="VOO_RECENTE">🔷 Voo Descarregado (Não Processados)</option>
+                            <option value="VOADO">🟢 Área Aproveitada (KML Analisado)</option>
                             <option value="CRITICO">🔴 Crítico / Porte Alto (&gt; 90 dias)</option>
                             <option value="ATENCAO">🟠 Atenção (60 a 90 dias)</option>
                             <option value="NOPRAZO">🟡 No Prazo (&lt; 60 dias)</option>
@@ -4668,10 +4668,11 @@
             aplicarFiltrosMapa();
         }
 
-        function getEstiloTalhao(status) {
+        function getEstiloTalhao(status, feat) {
+            const isKml = feat?.properties?.tipo_camada === 'kml_overlay';
             switch(status) {
                 case 'REVOO':
-                    return { fillColor: '#9333ea', color: '#6b21a8', weight: 2.0, fillOpacity: 0.75 };
+                    return { fillColor: '#9333ea', color: '#6b21a8', weight: 2.2, fillOpacity: 0.80 };
                 case 'CRITICO':
                     return { fillColor: '#dc2626', color: '#991b1b', weight: 1.5, fillOpacity: 0.65 };
                 case 'ATENCAO':
@@ -4679,13 +4680,15 @@
                 case 'NOPRAZO':
                     return { fillColor: '#eab308', color: '#ca8a04', weight: 1.5, fillOpacity: 0.60 };
                 case 'VOO_RECENTE':
-                    return { fillColor: '#0284c7', color: '#0369a1', weight: 1.8, fillOpacity: 0.70 };
+                    return { fillColor: '#0284c7', color: '#0369a1', weight: 2.0, fillOpacity: 0.72 };
                 case 'VOADO':
-                    return { fillColor: '#10b981', color: '#047857', weight: 1.5, fillOpacity: 0.60 };
+                    return isKml
+                        ? { fillColor: '#10b981', color: '#047857', weight: 2.4, fillOpacity: 0.78 }
+                        : { fillColor: '#059669', color: '#047857', weight: 1.8, fillOpacity: 0.65 };
                 case 'BASE_CLEALCO':
-                    return { fillColor: '#64748b', color: '#475569', weight: 0.6, fillOpacity: 0.12 };
+                    return { fillColor: '#64748b', color: '#475569', weight: 0.7, fillOpacity: 0.12 };
                 default:
-                    return { fillColor: '#64748b', color: '#475569', weight: 0.6, fillOpacity: 0.12 };
+                    return { fillColor: '#64748b', color: '#475569', weight: 0.7, fillOpacity: 0.12 };
             }
         }
 
@@ -4717,17 +4720,17 @@
                                     </span>
                                     <b class="bg-purple-100 text-purple-900 border border-purple-200 font-black px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono shrink-0" id="leg-map-revoo">${counts.revoo || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('VOO_RECENTE')" title="Filtrar Voo Recente / Fila">
+                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('VOO_RECENTE')" title="Filtrar Voo Descarregado (Não Processados)">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-sky-500 border border-sky-700 inline-block shrink-0 shadow-xs"></span>
-                                        <span class="text-slate-900 font-bold text-[11px] sm:text-xs truncate">Voo Recente / Fila</span>
+                                        <span class="text-slate-900 font-bold text-[11px] sm:text-xs truncate">Voo Descarregado</span>
                                     </span>
                                     <b class="bg-sky-100 text-sky-900 border border-sky-200 font-black px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono shrink-0" id="leg-map-recente">${counts.recente || 0}</b>
                                 </div>
-                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('VOADO')" title="Filtrar Concluído / Voado">
+                                <div class="flex items-center justify-between gap-1.5 hover:bg-slate-50 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg cursor-pointer transition border border-transparent hover:border-slate-200" onclick="filtrarStatusPelaLegenda('VOADO')" title="Filtrar Área Aproveitada (KML Analisado)">
                                     <span class="flex items-center gap-1.5">
                                         <span class="w-3 h-3 sm:w-3.5 sm:h-3.5 rounded-full bg-emerald-600 border border-emerald-800 inline-block shrink-0 shadow-xs"></span>
-                                        <span class="text-slate-900 font-bold text-[11px] sm:text-xs truncate">Concluído / Voado</span>
+                                        <span class="text-slate-900 font-bold text-[11px] sm:text-xs truncate">Área Aproveitada</span>
                                     </span>
                                     <b class="bg-emerald-100 text-emerald-900 border border-emerald-200 font-black px-1.5 py-0.5 rounded-md text-[10px] sm:text-[11px] font-mono shrink-0" id="leg-map-voado">${counts.voado || 0}</b>
                                 </div>
@@ -4963,16 +4966,18 @@
                 "type": "FeatureCollection",
                 "features": featuresFiltradasAtuais
             }, {
-                style: (feat) => getEstiloTalhao(feat.properties.status),
+                style: (feat) => getEstiloTalhao(feat.properties.status, feat),
                 onEachFeature: (feat, layer) => {
                     const p = feat.properties || {};
+                    const isKml = p.tipo_camada === 'kml_overlay';
                     
                     const statusTxt = p.status === 'REVOO' ? '🔁 Voar Novamente' :
+                                     isKml ? '🟢 Área Aproveitada (KML Analisado)' :
                                      p.status === 'CRITICO' ? '🔴 Crítico (> 90d)' :
                                      p.status === 'ATENCAO' ? '🟠 Atenção (60-90d)' :
                                      p.status === 'NOPRAZO' ? '🟡 No Prazo (< 60d)' :
-                                     p.status === 'VOO_RECENTE' ? '🔷 Voo Recente (Em Fila)' :
-                                     p.status === 'VOADO' ? '🟢 Já Voado / Concluído' : '⚪ Base Clealco';
+                                     p.status === 'VOO_RECENTE' ? '🔷 Voo Descarregado (Não Processados)' :
+                                     p.status === 'VOADO' ? '🟢 Área Aproveitada (KML Analisado)' : '⚪ Base Clealco';
 
                     // Tooltip no hover
                     layer.bindTooltip(`
@@ -4983,10 +4988,11 @@
 
                     // Popup no clique
                     const statusBadge = p.status === 'REVOO' ? '<span class="px-2 py-0.5 bg-purple-100 text-purple-800 font-black rounded text-[10px] border border-purple-300">🔁 VOAR NOVAMENTE</span>' :
+                                       isKml ? '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-black rounded text-[10px] border border-emerald-300">🟢 ÁREA APROVEITADA (KML)</span>' :
                                        p.status === 'CRITICO' ? '<span class="px-2 py-0.5 bg-red-100 text-red-700 font-bold rounded text-[10px]">🔴 CRÍTICO (> 90d)</span>' :
                                        p.status === 'ATENCAO' ? '<span class="px-2 py-0.5 bg-amber-100 text-amber-700 font-bold rounded text-[10px]">🟠 ATENÇÃO (60-90d)</span>' :
                                        p.status === 'NOPRAZO' ? '<span class="px-2 py-0.5 bg-yellow-100 text-yellow-800 font-bold rounded text-[10px]">🟡 NO PRAZO (&lt; 60d)</span>' :
-                                       p.status === 'VOO_RECENTE' ? '<span class="px-2 py-0.5 bg-sky-100 text-sky-800 font-bold rounded text-[10px]">🔷 VOO RECENTE (EM FILA)</span>' :
+                                       p.status === 'VOO_RECENTE' ? '<span class="px-2 py-0.5 bg-sky-100 text-sky-800 font-bold rounded text-[10px]">🔷 VOO DESCARREGADO (NÃO PROCESSADOS)</span>' :
                                        p.status === 'VOADO' ? '<span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded text-[10px]">🟢 JÁ VOADO / CONCLUÍDO</span>' :
                                        '<span class="px-2 py-0.5 bg-slate-100 text-slate-700 font-bold rounded text-[10px]">⚪ BASE CLEALCO</span>';
 
