@@ -1581,10 +1581,15 @@
 
                 <!-- Container do Mapa Leaflet: AMPLIADO E RESPONSIVO -->
                 <div id="mapa-wrapper" class="w-full h-[64vh] sm:h-[72vh] lg:h-[78vh] min-h-[480px] sm:min-h-[580px] lg:min-h-[740px] rounded-2xl overflow-hidden border border-slate-300 shadow-lg relative bg-slate-950 transition-all duration-300">
-                    <div id="mapa-voos-container" class="w-full h-full z-10"></div>
+                    <div id="mapa-voos-container" class="w-full h-full"></div>
                     
-                    <!-- Botão Flutuante de Tela Cheia, GPS e Radar no topo do Mapa -->
-                    <div class="absolute top-3 left-12 z-[1000] flex items-center gap-2">
+                    <!-- Botão Flutuante de Zoom, Tela Cheia, GPS e Radar no topo do Mapa -->
+                    <div class="absolute top-3 left-12 z-[1000] flex items-center gap-1.5 sm:gap-2">
+                        <div class="flex items-center rounded-lg border border-slate-300 shadow-md bg-white/95 overflow-hidden">
+                            <button type="button" onclick="zoomInMapa()" class="hover:bg-slate-100 text-slate-800 px-2.5 py-1.5 font-black text-xs transition cursor-pointer" title="Aproximar Zoom (+)">➕</button>
+                            <span class="w-[1px] h-4 bg-slate-200"></span>
+                            <button type="button" onclick="zoomOutMapa()" class="hover:bg-slate-100 text-slate-800 px-2.5 py-1.5 font-black text-xs transition cursor-pointer" title="Afastar Zoom (-)">➖</button>
+                        </div>
                         <button onclick="toggleTelaCheiaMapa()" class="bg-white/95 hover:bg-white text-slate-800 px-2.5 py-1.5 rounded-lg shadow-md border border-slate-300 font-bold text-xs flex items-center gap-1.5 backdrop-blur-sm transition cursor-pointer" title="Modo Tela Cheia">
                             ⛶ <span class="hidden sm:inline">Tela Cheia</span>
                         </button>
@@ -4642,9 +4647,15 @@
                 mapaVoosInstancia = L.map('mapa-voos-container', {
                     center: [-21.55, -50.40],
                     zoom: 10,
+                    preferCanvas: true,
                     zoomControl: true,
+                    dragging: true,
                     touchZoom: true,
-                    tap: true
+                    scrollWheelZoom: true,
+                    doubleClickZoom: true,
+                    boxZoom: true,
+                    keyboard: true,
+                    tap: false
                 });
                 window.mapaVoosInstancia = mapaVoosInstancia;
 
@@ -4691,14 +4702,14 @@
                     "🗺️ Mapa de Ruas (OSM)": mapaRuas
                 }, null, { position: 'topright' }).addTo(mapaVoosInstancia);
 
-            // Garante que nenhum tooltip fique flutuando durante navegação no mapa
+            // Garante fechamento instantâneo de tooltip em O(1) sem travar o mapa durante zoom e arrasto
             mapaVoosInstancia.off('movestart zoomstart dragstart');
             mapaVoosInstancia.on('movestart zoomstart dragstart', function() {
-                mapaVoosInstancia.eachLayer(l => {
-                    if (l.getTooltip && l.isTooltipOpen && l.isTooltipOpen()) {
-                        try { l.closeTooltip(); } catch(err) {}
-                    }
-                });
+                if (window._camadaTooltipAberta) {
+                    try { window._camadaTooltipAberta.closeTooltip(); } catch(e) {}
+                    window._camadaTooltipAberta = null;
+                }
+                try { mapaVoosInstancia.closeTooltip(); } catch(e) {}
             });
             }
 
@@ -5077,21 +5088,24 @@
                         ${p.obs ? `<br><span style="color:${p.status === 'REVOO' ? '#7e22ce' : (p.status === 'VOO_RECENTE' ? '#0284c7' : '#b45309')};font-weight:bold;">ℹ️ ${p.obs}</span>` : ''}
                     `, { sticky: true, className: 'leaflet-tooltip-clealco', opacity: 0.95 });
 
-                    // Handlers para fechar imediatamente e evitar nomes flutuando
+                    // Handlers ultraleves em O(1) para evitar nomes flutuando sem sobrecarregar o navegador
                     layer.on('mouseover', function(e) {
-                        if (mapaVoosInstancia) {
-                            mapaVoosInstancia.eachLayer(l => {
-                                if (l !== this && l.getTooltip && l.isTooltipOpen && l.isTooltipOpen()) {
-                                    try { l.closeTooltip(); } catch(err) {}
-                                }
-                            });
+                        if (window._camadaTooltipAberta && window._camadaTooltipAberta !== this) {
+                            try { window._camadaTooltipAberta.closeTooltip(); } catch(err) {}
                         }
+                        window._camadaTooltipAberta = this;
                     });
                     layer.on('mouseout', function(e) {
                         try { this.closeTooltip(); } catch(err) {}
+                        if (window._camadaTooltipAberta === this) {
+                            window._camadaTooltipAberta = null;
+                        }
                     });
                     layer.on('click', function(e) {
                         try { this.closeTooltip(); } catch(err) {}
+                        if (window._camadaTooltipAberta === this) {
+                            window._camadaTooltipAberta = null;
+                        }
                     });
 
                     // Popup no clique
@@ -5463,6 +5477,18 @@
             } else {
                 painel.classList.add('hidden');
                 if (seta) seta.innerText = '▼';
+            }
+        }
+
+        function zoomInMapa() {
+            if (window.mapaVoosInstancia) {
+                window.mapaVoosInstancia.zoomIn();
+            }
+        }
+
+        function zoomOutMapa() {
+            if (window.mapaVoosInstancia) {
+                window.mapaVoosInstancia.zoomOut();
             }
         }
 
