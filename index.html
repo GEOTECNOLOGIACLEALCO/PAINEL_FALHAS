@@ -5081,12 +5081,14 @@
                                      p.status === 'VOO_RECENTE' ? '🔷 Voo Descarregado (Não Processados)' :
                                      p.status === 'VOADO' ? '🟢 Área Aproveitada (KML Analisado)' : '⚪ Base Clealco';
 
-                    // Tooltip no hover limpo e controlado
-                    layer.bindTooltip(`
-                        <b>${p.fazenda}</b> - T${p.talhao}<br>
-                        Área: ${p.area_ha} ha | Status: <b>${statusTxt}</b>
-                        ${p.obs ? `<br><span style="color:${p.status === 'REVOO' ? '#7e22ce' : (p.status === 'VOO_RECENTE' ? '#0284c7' : '#b45309')};font-weight:bold;">ℹ️ ${p.obs}</span>` : ''}
-                    `, { sticky: true, className: 'leaflet-tooltip-clealco', opacity: 0.95 });
+                    // Tooltip no hover apenas para talhões prioritários (sem poluir ou travar com os 5.236 da base)
+                    if (p.status !== 'BASE_CLEALCO') {
+                        layer.bindTooltip(`
+                            <b>${p.fazenda}</b> - T${p.talhao}<br>
+                            Área: ${p.area_ha} ha | Status: <b>${statusTxt}</b>
+                            ${p.obs ? `<br><span style="color:${p.status === 'REVOO' ? '#7e22ce' : (p.status === 'VOO_RECENTE' ? '#0284c7' : '#b45309')};font-weight:bold;">ℹ️ ${p.obs}</span>` : ''}
+                        `, { direction: 'top', offset: [0, -6], className: 'leaflet-tooltip-clealco', opacity: 0.95 });
+                    }
 
                     // Handlers ultraleves em O(1) para evitar nomes flutuando sem sobrecarregar o navegador
                     layer.on('mouseover', function(e) {
