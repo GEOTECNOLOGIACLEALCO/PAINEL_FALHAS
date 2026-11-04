@@ -813,7 +813,7 @@
 
                 <div class="glass-panel p-4 border-l-4 border-l-sky-600 bg-white shadow-sm">
                     <span class="text-xs uppercase font-bold text-slate-500 tracking-wider">Créditos Inforow</span>
-                    <div class="text-2xl font-black text-sky-700 mt-1" id="kpi-creditos">11.195,23 cr.</div>
+                    <div class="text-2xl font-black text-sky-700 mt-1" id="kpi-creditos">10.713,75 cr.</div>
                     <div class="text-[11px] text-slate-500 mt-1 font-medium">Saldo operacional ativo</div>
                 </div>
 
@@ -2741,7 +2741,7 @@
         let dadosMetas = {};
         let dadosFasAlteradas = {};
         let dadosAcompanhamento = [];
-        let creditosInforow = 11195.23;
+        let creditosInforow = 10713.75;
 
         let filtroAtual = 'esta_semana';
         let modoAgrupadoBacklog = true; // Consolidado por FA como no print
@@ -3302,7 +3302,7 @@
                 dadosMetas = window.DADOS_CLEALCO_EMBARCADOS.metas_globais || {};
             dadosFasAlteradas = window.DADOS_CLEALCO_EMBARCADOS.fas_alteradas || {};
                 dadosAcompanhamento = window.DADOS_CLEALCO_EMBARCADOS.acompanhamento || [];
-                creditosInforow = window.DADOS_CLEALCO_EMBARCADOS.creditos_inforow || 11195.23;
+                creditosInforow = window.DADOS_CLEALCO_EMBARCADOS.creditos_inforow || 10713.75;
                 if (window.DADOS_CLEALCO_EMBARCADOS.data_compilacao) {
                     const elData = document.getElementById('lbl-data-hora');
                     if (elData) elData.innerText = window.DADOS_CLEALCO_EMBARCADOS.data_compilacao;
