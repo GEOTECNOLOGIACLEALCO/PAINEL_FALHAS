@@ -3674,13 +3674,13 @@
 
         
         function obterBadgeFaAlterada(faCodigo) {
-            if (!faCodigo || !dadosFasAlteradas) return '';
+            if (!faCodigo || typeof dadosFasAlteradas === 'undefined' || !dadosFasAlteradas) return '';
             const faLimpa = String(faCodigo).trim();
             const faAntiga = dadosFasAlteradas[faLimpa];
             if (faAntiga) {
-                return `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-black bg-blue-50 text-blue-800 border border-blue-300 shadow-2xs" title="Esta fazenda teve seu FA alterado de ${faAntiga} para ${faLimpa}">
-                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600 animate-pulse"></span>
-                    <span>NOVO FA (ex-${faAntiga})</span>
+                return `<span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[9px] font-black bg-blue-50 text-blue-700 border border-blue-200 whitespace-nowrap shrink-0 shadow-2xs" title="Código FA atualizado nesta safra (anterior: ${faAntiga} → atual: ${faLimpa})">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                    <span>ex-${faAntiga}</span>
                 </span>`;
             }
             return '';
@@ -3933,14 +3933,17 @@
                             <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> APTO PÓS-PLANTIO
                         </div>
                     ` : ''}
-                    <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100 ${isAptoPos ? 'pr-28' : ''}">
-                        <div class="flex items-center gap-1.5">
-                            <span class="text-xs font-black text-red-600">FA ${item.fa}</span> ${obterBadgeFaAlterada(item.fa)}
-                            <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded ${isProp ? 'bg-red-50 text-red-600 border border-red-200' : 'bg-amber-50 text-amber-700 border border-amber-200'}">
+                    <div class="mb-2 pb-2 border-b border-slate-100 ${isAptoPos ? 'pr-28' : ''}">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="font-mono font-black text-xs text-red-600 whitespace-nowrap">FA ${item.fa}</span>
+                            <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded whitespace-nowrap ${isProp ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}">
                                 ${isProp ? 'PRÓPRIA' : 'TERCEIRO'}
                             </span>
+                            ${obterBadgeFaAlterada(item.fa)}
                         </div>
-                        <span class="text-xs font-bold text-slate-800 truncate max-w-[130px]" title="${item.fazenda}">${item.fazenda}</span>
+                        <h4 class="text-xs font-black text-slate-800 mt-1 truncate" title="${item.fazenda}">
+                            ${item.fazenda}
+                        </h4>
                     </div>
                     <div class="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-slate-600 bg-slate-50 p-2.5 rounded-lg border border-slate-200">
                         <div><b class="text-slate-800">Base:</b> ${item.base}</div>
