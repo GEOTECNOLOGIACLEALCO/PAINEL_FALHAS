@@ -3745,8 +3745,23 @@
             const metaTerc = (typeof parseNum === 'function' ? parseNum(metaConfig.acompanhamento_terceiros) : 0) || 11000.0;
             const metaGeral = metaProp + metaTerc;
 
-            // Mantém os valores reais calculados diretamente da BASE DE PROCESSAMENTOS (voos finalizados)
-            // sem sobrescrever por bases externas de Falhas ou Acompanhamento
+            // Sincroniza o Realizado dos Cards diretamente com o Banco de Dados de Falhas (W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas)
+            let falhasProp = 0, falhasTerc = 0;
+            if (typeof dadosFalhas !== 'undefined' && Array.isArray(dadosFalhas)) {
+                dadosFalhas.forEach(f => {
+                    const fa = String(f.FA || '').trim();
+                    if (!fa || fa.toLowerCase().includes('comparativo') || fa.toLowerCase().includes('valores')) return;
+                    const area = (typeof parseNum === 'function' ? parseNum(f.Area_Ha) : parseFloat(f.Area_Ha)) || 0;
+                    const isProp = (fa.startsWith('20') && fa.length === 6) || String(f.Tipo || '').toLowerCase().startsWith('pr');
+                    if (isProp) falhasProp += area;
+                    else falhasTerc += area;
+                });
+            }
+            if (falhasProp > 0 || falhasTerc > 0) {
+                haProp = falhasProp;
+                haTerc = falhasTerc;
+                haGeral = haProp + haTerc;
+            }
 
             const faltaProp = Math.max(0, metaProp - haProp);
             const faltaTerc = Math.max(0, metaTerc - haTerc);
