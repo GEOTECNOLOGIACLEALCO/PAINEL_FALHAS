@@ -39,9 +39,18 @@ from datetime import datetime
 PASTA_GITHUB = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0"
 PASTA_BACKEND = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentos_2.0"
 PASTA_NAO_PROCESSADOS = r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados"
+PASTA_AUDITORIA_DOCS = os.path.join(PASTA_NAO_PROCESSADOS, "AUDITORIA - DOC - SISTEMA")
 
-ARQ_CREDITOS_TXT = os.path.join(PASTA_NAO_PROCESSADOS, "creditos_inforow.txt")
-ARQ_BASE_EXCEL = os.path.join(PASTA_NAO_PROCESSADOS, "BASE DE PROCESSAMENTOS.xlsx")
+ARQ_CREDITOS_TXT = (
+    os.path.join(PASTA_AUDITORIA_DOCS, "creditos_inforow.txt")
+    if os.path.exists(os.path.join(PASTA_AUDITORIA_DOCS, "creditos_inforow.txt"))
+    else os.path.join(PASTA_NAO_PROCESSADOS, "creditos_inforow.txt")
+)
+ARQ_BASE_EXCEL = (
+    os.path.join(PASTA_AUDITORIA_DOCS, "BASE DE PROCESSAMENTOS.xlsx")
+    if os.path.exists(os.path.join(PASTA_AUDITORIA_DOCS, "BASE DE PROCESSAMENTOS.xlsx"))
+    else os.path.join(PASTA_NAO_PROCESSADOS, "BASE DE PROCESSAMENTOS.xlsx")
+)
 ARQ_DADOS_XLSX = os.path.join(PASTA_GITHUB, "dados.xlsx")
 ARQ_DADOS_INJETADOS = os.path.join(PASTA_GITHUB, "dados_injetados.js")
 ARQ_DADOS_MAPA = os.path.join(PASTA_GITHUB, "dados_mapa_voos.js")
