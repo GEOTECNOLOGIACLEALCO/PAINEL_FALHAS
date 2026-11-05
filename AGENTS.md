@@ -62,6 +62,15 @@ Este documento define a arquitetura, regras de ouro, fluxos de dados e comandos 
 - O arquivo `dados.xlsx` é localmente gerado pelo backend a partir das bases oficiais.
 - **NÃO** tente comitar `dados.xlsx` no Git (ele está no `.gitignore` por proteção de dados corporativos). Apenas os arquivos criptografados (`dados_injetados.js`, `dados_mapa_voos.js`, etc.) sobem para o GitHub.
 
+### 💎 Regra 5: Fonte Oficial de Realizado de Falhas (W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas)
+- **FONTE DE VERDADE ABSOLUTA:** O Realizado de Falhas no Painel Web (Cards de Metas, Tabela de Acompanhamento e Gauges/Velocímetros) é alimentado e referenciado **exclusivamente** pelo Banco de Dados de Falhas:
+  `W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas`
+- **Classificação:**
+  - Arquivos `20XXXX.csv` (6 dígitos iniciando em `20`): **Próprias**.
+  - Arquivos `30XXXX.csv` (6 dígitos iniciando em `30`): **Terceiros / Fornecedores**.
+- **Coerência Geral:** Todo número de hectare realizado deve espelhar a soma dos CSVs dessa pasta, garantindo que os Cards de Metas, os Indicadores de Falhas no Plantio e os Velocímetros estejam sempre perfeitamente alinhados.
+
+
 ---
 
 ## 3. Comandos Rápidos com `pipeline_clealco.py`
