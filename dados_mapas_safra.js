@@ -1,7 +1,24 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 05/11/2026 09:33:31
+// Gerado em: 05/11/2026 09:36:50
 // Total de Mapas: 1326
 window.DADOS_MAPAS_SAFRA = [
+  {
+    "arquivo": "207110 - Sítio Água Boa (Jorge Luiz Nagib).pdf",
+    "url": "mapas_safra/Clealco/207110 - Sítio Água Boa (Jorge Luiz Nagib).pdf",
+    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco/207110%20-%20S%C3%ADtio%20%C3%81gua%20Boa%20%28Jorge%20Luiz%20Nagib%29.pdf?csf=1&web=1",
+    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco?csf=1&web=1",
+    "categoria": "Clealco",
+    "subpasta": "",
+    "fa": "207110",
+    "fazenda": "Sítio Água Boa",
+    "proprietario": "Jorge Luiz Nagib",
+    "data_modificacao": "05/11/2026 09:34",
+    "timestamp": 1793882082,
+    "tamanho_kb": 288.9,
+    "dias_atras": 0.0,
+    "is_novo": true,
+    "is_hoje": true
+  },
   {
     "arquivo": "207968 - Fazenda Nossa Senhora Aparecida ( Nilton Zanchetta).pdf",
     "url": "mapas_safra/Clealco/207968 - Fazenda Nossa Senhora Aparecida ( Nilton Zanchetta).pdf",
@@ -644,7 +661,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "07/10/2026 13:11",
     "timestamp": 1791389468,
     "tamanho_kb": 280.2,
-    "dias_atras": 28.8,
+    "dias_atras": 28.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -865,7 +882,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "02/10/2026 10:46",
     "timestamp": 1790948792,
     "tamanho_kb": 310.2,
-    "dias_atras": 33.9,
+    "dias_atras": 34.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -1290,7 +1307,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "18/09/2026 10:47",
     "timestamp": 1789739271,
     "tamanho_kb": 303.6,
-    "dias_atras": 47.9,
+    "dias_atras": 48.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2412,7 +2429,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "26/08/2026 15:36",
     "timestamp": 1787769388,
     "tamanho_kb": 305.6,
-    "dias_atras": 70.7,
+    "dias_atras": 70.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2429,7 +2446,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "26/08/2026 15:35",
     "timestamp": 1787769329,
     "tamanho_kb": 322.4,
-    "dias_atras": 70.7,
+    "dias_atras": 70.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2684,7 +2701,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/08/2026 10:45",
     "timestamp": 1787147154,
     "tamanho_kb": 267.0,
-    "dias_atras": 77.9,
+    "dias_atras": 78.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3908,7 +3925,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "24/07/2026 13:12",
     "timestamp": 1784909542,
     "tamanho_kb": 356.9,
-    "dias_atras": 103.8,
+    "dias_atras": 103.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4707,7 +4724,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "08/07/2026 13:12",
     "timestamp": 1783527151,
     "tamanho_kb": 841.3,
-    "dias_atras": 119.8,
+    "dias_atras": 119.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4894,7 +4911,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/07/2026 10:47",
     "timestamp": 1783345663,
     "tamanho_kb": 283.0,
-    "dias_atras": 121.9,
+    "dias_atras": 122.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -5812,7 +5829,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "17/06/2026 10:47",
     "timestamp": 1781704023,
     "tamanho_kb": 275.0,
-    "dias_atras": 140.9,
+    "dias_atras": 141.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -6271,7 +6288,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "11/06/2026 10:47",
     "timestamp": 1781185625,
     "tamanho_kb": 361.1,
-    "dias_atras": 146.9,
+    "dias_atras": 147.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -7121,7 +7138,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/05/2026 08:22",
     "timestamp": 1779880973,
     "tamanho_kb": 289.9,
-    "dias_atras": 162.0,
+    "dias_atras": 162.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -7699,7 +7716,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/05/2026 15:35",
     "timestamp": 1778870108,
     "tamanho_kb": 361.9,
-    "dias_atras": 173.7,
+    "dias_atras": 173.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -7733,23 +7750,6 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/05/2026 09:56",
     "timestamp": 1778849779,
     "tamanho_kb": 295.8,
-    "dias_atras": 174.0,
-    "is_novo": false,
-    "is_hoje": false
-  },
-  {
-    "arquivo": "207110 - Sítio Água Boa (Jorge Luiz Nagib).pdf",
-    "url": "mapas_safra/Clealco/207110 - Sítio Água Boa (Jorge Luiz Nagib).pdf",
-    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco/207110%20-%20S%C3%ADtio%20%C3%81gua%20Boa%20%28Jorge%20Luiz%20Nagib%29.pdf?csf=1&web=1",
-    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco?csf=1&web=1",
-    "categoria": "Clealco",
-    "subpasta": "",
-    "fa": "207110",
-    "fazenda": "Sítio Água Boa",
-    "proprietario": "Jorge Luiz Nagib",
-    "data_modificacao": "15/05/2026 09:52",
-    "timestamp": 1778849532,
-    "tamanho_kb": 307.5,
     "dias_atras": 174.0,
     "is_novo": false,
     "is_hoje": false
@@ -8685,7 +8685,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "16/04/2026 10:47",
     "timestamp": 1776347237,
     "tamanho_kb": 261.3,
-    "dias_atras": 202.9,
+    "dias_atras": 203.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9416,7 +9416,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/03/2026 08:23",
     "timestamp": 1773919383,
     "tamanho_kb": 448.6,
-    "dias_atras": 231.0,
+    "dias_atras": 231.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -10504,7 +10504,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "20/02/2026 10:47",
     "timestamp": 1771595233,
     "tamanho_kb": 325.4,
-    "dias_atras": 257.9,
+    "dias_atras": 258.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -11813,7 +11813,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "17/12/2025 15:34",
     "timestamp": 1765996458,
     "tamanho_kb": 349.2,
-    "dias_atras": 322.7,
+    "dias_atras": 322.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -12918,7 +12918,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "16/10/2025 10:46",
     "timestamp": 1760622362,
     "tamanho_kb": 337.0,
-    "dias_atras": 384.9,
+    "dias_atras": 385.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14414,7 +14414,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "23/07/2025 15:36",
     "timestamp": 1753295763,
     "tamanho_kb": 264.3,
-    "dias_atras": 469.7,
+    "dias_atras": 469.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14720,7 +14720,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/07/2025 15:36",
     "timestamp": 1752172576,
     "tamanho_kb": 299.1,
-    "dias_atras": 482.7,
+    "dias_atras": 482.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -15740,7 +15740,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "01/04/2025 10:46",
     "timestamp": 1743515176,
     "tamanho_kb": 296.5,
-    "dias_atras": 582.9,
+    "dias_atras": 583.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -16233,7 +16233,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "04/02/2025 13:12",
     "timestamp": 1738685566,
     "tamanho_kb": 300.8,
-    "dias_atras": 638.8,
+    "dias_atras": 638.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -16556,7 +16556,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "09/12/2024 08:21",
     "timestamp": 1733743301,
     "tamanho_kb": 263.3,
-    "dias_atras": 696.0,
+    "dias_atras": 696.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -16777,7 +16777,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/10/2024 08:23",
     "timestamp": 1728559402,
     "tamanho_kb": 280.1,
-    "dias_atras": 756.0,
+    "dias_atras": 756.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17202,7 +17202,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "25/07/2024 15:35",
     "timestamp": 1721932558,
     "tamanho_kb": 429.7,
-    "dias_atras": 832.7,
+    "dias_atras": 832.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17984,7 +17984,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "08/05/2024 08:24",
     "timestamp": 1715167458,
     "tamanho_kb": 282.9,
-    "dias_atras": 911.0,
+    "dias_atras": 911.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -19225,7 +19225,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/02/2024 15:34",
     "timestamp": 1709058865,
     "tamanho_kb": 296.7,
-    "dias_atras": 981.7,
+    "dias_atras": 981.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -19990,7 +19990,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "23/02/2024 08:23",
     "timestamp": 1708687429,
     "tamanho_kb": 237.6,
-    "dias_atras": 986.0,
+    "dias_atras": 986.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20279,7 +20279,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 15:36",
     "timestamp": 1708540567,
     "tamanho_kb": 248.9,
-    "dias_atras": 987.7,
+    "dias_atras": 987.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20517,7 +20517,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 13:11",
     "timestamp": 1708531869,
     "tamanho_kb": 296.3,
-    "dias_atras": 987.8,
+    "dias_atras": 987.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -21197,7 +21197,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "20/02/2024 15:34",
     "timestamp": 1708454079,
     "tamanho_kb": 235.7,
-    "dias_atras": 988.7,
+    "dias_atras": 988.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -22098,7 +22098,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/02/2024 08:22",
     "timestamp": 1707996134,
     "tamanho_kb": 287.3,
-    "dias_atras": 994.0,
+    "dias_atras": 994.1,
     "is_novo": false,
     "is_hoje": false
   },
