@@ -1,5 +1,5 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 05/11/2026 13:24:42
+// Gerado em: 05/11/2026 13:25:26
 // Total de Mapas: 1326
 window.DADOS_MAPAS_SAFRA = [
   {
@@ -236,7 +236,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "30/10/2026 09:49",
     "timestamp": 1793364544,
     "tamanho_kb": 262.7,
-    "dias_atras": 6.1,
+    "dias_atras": 6.2,
     "is_novo": true,
     "is_hoje": false
   },
@@ -2089,7 +2089,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "31/08/2026 14:37",
     "timestamp": 1788197830,
     "tamanho_kb": 276.3,
-    "dias_atras": 65.9,
+    "dias_atras": 66.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -6951,7 +6951,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "28/05/2026 12:12",
     "timestamp": 1779981168,
     "tamanho_kb": 345.2,
-    "dias_atras": 161.0,
+    "dias_atras": 161.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -11286,7 +11286,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "22/01/2026 07:25",
     "timestamp": 1769077506,
     "tamanho_kb": 291.9,
-    "dias_atras": 287.2,
+    "dias_atras": 287.3,
     "is_novo": false,
     "is_hoje": false
   },
@@ -15944,7 +15944,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/02/2025 12:13",
     "timestamp": 1740669193,
     "tamanho_kb": 247.9,
-    "dias_atras": 616.0,
+    "dias_atras": 616.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -16743,7 +16743,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "22/10/2024 09:49",
     "timestamp": 1729601365,
     "tamanho_kb": 280.7,
-    "dias_atras": 744.1,
+    "dias_atras": 744.2,
     "is_novo": false,
     "is_hoje": false
   },
@@ -18409,7 +18409,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "05/03/2024 12:13",
     "timestamp": 1709651588,
     "tamanho_kb": 335.8,
-    "dias_atras": 975.0,
+    "dias_atras": 975.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -18664,7 +18664,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "29/02/2024 17:01",
     "timestamp": 1709236876,
     "tamanho_kb": 239.7,
-    "dias_atras": 979.8,
+    "dias_atras": 979.9,
     "is_novo": false,
     "is_hoje": false
   },
