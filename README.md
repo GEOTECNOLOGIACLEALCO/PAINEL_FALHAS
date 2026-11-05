@@ -39,8 +39,9 @@ O painel conta com **8 módulos operacionais integrados**:
    - **Radar Meteorológico (IPMet Bauru / Presidente Prudente):** Detecção de nuvens de chuva em tempo real com camada semitransparente Doppler sobreposta aos talhões.
    - **GPS de Campo:** Localização em tempo real para os pilotos e fiscais na lavoura com precisão métrica.
 
-7. **🌧️ Clima & Chuvas:**
-   - Monitoramento das condições meteorológicas locais, pluviometria acumulada e previsão do tempo para planejamento de voos.
+7. **🌧️ Clima & Telemetria Arable IoT:**
+   - Monitoramento micrometeorológico em tempo real integrado à **API Arable Cloud** (estações Clementina, Queiroz, etc.).
+   - Pluviometria acumulada (chuva mm), umidade do solo, temperatura e evapotranspiração (ETo) para planejamento seguro de voos com drones.
 
 8. **📑 Biblioteca de Mapas de Safra em PDF:**
    - Catálogo de mais de **1.300 croquis operacionais** divididos em Próprias, Acionistas, Terceiros e Spot.
@@ -50,23 +51,24 @@ O painel conta com **8 módulos operacionais integrados**:
 
 ## ⚙️ Fluxo de Atualização de Dados (Passo a Passo)
 
-A atualização de dados é 100% automatizada e não exige conhecimentos avançados de programação:
+A atualização de dados é 100% automatizada e monitorada via CLI:
 
 ```
-[Rede W: e F:]
-   ├── dados.xlsx (Planilha Mestra)
+[Rede W:, M: e F:]
+   ├── creditos_inforow.txt (Fonte Raiz Operacional)
+   ├── BASE DE PROCESSAMENTOS.xlsx & Status de Estudos.xlsx
    ├── 08-BANCO DE DADOS (2021 a 2026 / Falhas)
    └── F:\Mapas\01 - Mapas Safra (PDFs)
                 │
                 ▼
-   [Executar: atualizar_dados.bat]
+   [Executar: atualizar_dados.bat OU pipeline_clealco.py sync]
                 │
                 ▼
-   [Script Python: atualizar_dados.py]
-      • Minera dados.xlsx e bases de falhas 2021-2026
-      • Valida cabeçalhos (descarta arquivos de pisoteio)
+   [Script Python: atualizar_dados.py (QGIS 3.12)]
+      • Minera dados.xlsx, shapes e bases de falhas 2021-2026
+      • Conecta à API Arable Cloud e compila clima
       • Criptografa payloads em AES-GCM (Clealco@Geo2026)
-      • Gera dados_injetados.js, dados_historico_falhas.js, etc.
+      • Gera dados_injetados.js, dados_mapa_voos.js, etc.
       • Incrementa a versão do cache no service-worker.js
       • Executa git add, commit e push para o GitHub
                 │
@@ -74,9 +76,14 @@ A atualização de dados é 100% automatizada e não exige conhecimentos avança
    [GitHub Pages: Online em ~1 minuto]
 ```
 
-### 🚀 Para atualizar:
+### 🚀 Para atualizar ou diagnosticar:
 1. Abra a pasta do projeto: `W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0`
-2. Dê um **duplo clique no arquivo `atualizar_dados.bat`**.
+2. **Opção 1:** Dê um **duplo clique no arquivo `atualizar_dados.bat`**.
+3. **Opção 2:** Use o orquestrador unificado no terminal:
+   ```powershell
+   & "C:\Program Files\QGIS 4.2.1\apps\Python312\python.exe" pipeline_clealco.py status
+   & "C:\Program Files\QGIS 4.2.1\apps\Python312\python.exe" pipeline_clealco.py sync
+   ```
 3. O terminal executará a compilação completa, a criptografia dos dados e enviará automaticamente para o GitHub.
 4. Ao abrir o painel online, o Service Worker detecta a nova versão e atualiza o painel instantaneamente.
 

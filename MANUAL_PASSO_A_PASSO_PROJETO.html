@@ -574,6 +574,10 @@
         <a href="#passo-7-mapas-safra" class="nav-link">📑 4.7 Mapas Safra em PDF</a>
         <a href="#passo-8-historico-falhas" class="nav-link">📊 4.8 Histórico de Falhas (2021-2026)</a>
         <a href="#passo-9-kpis-metas" class="nav-link">🎯 4.9 Gestão de Metas & Falta Fazer</a>
+        <a href="#passo-10-arable-clima" class="nav-link">🌦️ 4.10 Clima Arable IoT</a>
+        <a href="#passo-11-creditos-inforow" class="nav-link">💰 4.11 Governança Créditos Inforow</a>
+        <a href="#passo-12-orquestrador" class="nav-link">🛠️ 4.12 Orquestrador CLI</a>
+        <a href="#passo-13-ia-skills" class="nav-link">🧠 4.13 Memória IA & Diretrizes</a>
 
         <div class="nav-categoria">Regras de Negócio</div>
         <a href="#regras-ouro" class="nav-link">⚖️ 5. Regras Críticas & Blindagem</a>
@@ -1253,6 +1257,192 @@ flowchart LR
                     </div>
                 </div>
 
+                <!-- PASSO 10: CLIMA EM TEMPO REAL & ESTAÇÕES ARABLE IOT -->
+                <div class="step-card" id="passo-10-arable-clima">
+                    <div class="step-num-col" style="background: rgba(3, 169, 244, 0.15);">
+                        <div class="step-num" style="color: #03a9f4;">10</div>
+                        <div class="step-num-lbl">Clima & IoT</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Telemetria Meteorológica em Tempo Real & Estações Arable IoT</span>
+                            <span class="step-tag tag-auto">API Arable Cloud</span>
+                        </div>
+                        <p>
+                            A esteira de dados se conecta automaticamente à <strong>API Arable Cloud</strong> para coletar dados micrometeorológicos das estações inteligentes instaladas nos polos da Clealco (ex: Clementina, Queiroz, etc.):
+                        </p>
+                        <div class="grid-3">
+                            <div class="card card-destaque">
+                                <b style="color:var(--ouro);">1. Chuva Acumulada & Histórico</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    Registra precipitação em milímetros (mm) diária e semanal, permitindo cruzar dados pluviométricos com o índice de falhas e planejamento de voo.
+                                </p>
+                            </div>
+                            <div class="card card-plasma">
+                                <b style="color:var(--plasma);">2. Umidade, ETo & Temperatura</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    Evapotranspiração de referência (ETo), temperatura do dossel e umidade do solo essenciais para monitorar o vigor da cana e estresse hídrico.
+                                </p>
+                            </div>
+                            <div class="card card-verde">
+                                <b style="color:var(--verde-claro);">3. Janela Segura para Drones</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    Rajadas de vento e probabilidade de chuva integradas ao portal web para auxiliar os pilotos na decisão de decolagem.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="callout callout-ouro">
+                            <span>🌦️</span>
+                            <div>
+                                <strong>Compilação Automática:</strong> Os dados são gravados em <code>dados_arable_clima.js</code> a cada ciclo de atualização e apresentados nos módulos de Clima e no mapa interativo.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 11: GOVERNANÇA DE CRÉDITOS INFOROW -->
+                <div class="step-card" id="passo-11-creditos-inforow">
+                    <div class="step-num-col" style="background: rgba(255, 193, 7, 0.15);">
+                        <div class="step-num" style="color: #ffc107;">11</div>
+                        <div class="step-num-lbl">Créditos</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Governança do Saldo de Créditos Inforow (Tríplice Fonte)</span>
+                            <span class="step-tag tag-critico">Regra de Ouro</span>
+                        </div>
+                        <p>
+                            Para que o saldo de créditos do software de processamento fotogramétrico (Inforow) permaneça perfeitamente sincronizado e sem risco de divergência, o sistema adota a <strong>Tríplice Fonte com Soberania Raiz</strong>:
+                        </p>
+                        <div class="grid-3">
+                            <div class="card card-destaque">
+                                <b style="color:var(--ouro);">[1] Fonte Raiz (Backend Rede)</b>
+                                <p style="font-size:0.8rem; margin-top:5px; font-family:monospace; color:#81c784;">
+                                    W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\creditos_inforow.txt
+                                </p>
+                                <p style="font-size:0.85rem; color:var(--texto-sec);">
+                                    É a fonte absoluta da verdade. O robô <code>2.0importos.py</code> lê este arquivo para deduzir hectares e recalcular o saldo operacional.
+                                </p>
+                            </div>
+                            <div class="card card-plasma">
+                                <b style="color:var(--plasma);">[2] Entrada Web (Intermediária)</b>
+                                <p style="font-size:0.8rem; margin-top:5px; font-family:monospace; color:#ffb74d;">
+                                    W:\00-SITE QUALIDADE APLICACAO\...\dados.xlsx (Aba CONFIG, célula A2)
+                                </p>
+                                <p style="font-size:0.85rem; color:var(--texto-sec);">
+                                    Compilada automaticamente pelo backend como ponte de dados para publicação na nuvem.
+                                </p>
+                            </div>
+                            <div class="card card-verde">
+                                <b style="color:var(--verde-claro);">[3] Publicado Criptografado</b>
+                                <p style="font-size:0.8rem; margin-top:5px; font-family:monospace; color:#64b5f6;">
+                                    dados_injetados.js ➔ Payload AES-GCM
+                                </p>
+                                <p style="font-size:0.85rem; color:var(--texto-sec);">
+                                    Criptografado com a senha corporativa <code>Clealco@Geo2026</code> e consumido pelo KPI do painel web.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="callout callout-alerta">
+                            <span>⚠️</span>
+                            <div>
+                                <strong>Como Ajustar o Saldo com Segurança Máxima:</strong><br>
+                                Nunca edite apenas o <code>dados.xlsx</code>, pois o robô o sobrescreverá. Utilize o comando unificado do orquestrador:<br>
+                                <code>& "C:\Program Files\QGIS 4.2.1\apps\Python312\python.exe" pipeline_clealco.py set-creditos 10713.75 --compile</code>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PASSO 12: ORQUESTRADOR DO PIPELINE -->
+                <div class="step-card" id="passo-12-orquestrador">
+                    <div class="step-num-col" style="background: rgba(156, 39, 176, 0.15);">
+                        <div class="step-num" style="color: #ba68c8;">12</div>
+                        <div class="step-num-lbl">CLI & Tools</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Orquestrador Centralizado do Pipeline (pipeline_clealco.py)</span>
+                            <span class="step-tag tag-auto">Produtividade & Segurança</span>
+                        </div>
+                        <p>
+                            Para simplificar auditorias, inspeções e operações diárias tanto para a equipe técnica quanto para os agentes de IA, foi introduzido o utilitário de terminal <code>pipeline_clealco.py</code>:
+                        </p>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Comando</th>
+                                    <th>O que faz?</th>
+                                    <th>Quando usar?</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>python pipeline_clealco.py status</code></td>
+                                    <td>Verifica a integridade das 3 fontes de créditos, arquivos do sistema, versão do Service Worker e Git.</td>
+                                    <td>Na rotina diária matinal ou após qualquer edição.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>python pipeline_clealco.py set-creditos &lt;VALOR&gt; --compile</code></td>
+                                    <td>Atualiza de forma atômica o TXT raiz, a planilha CONFIG, os fallbacks do HTML e já reprocessa o payload.</td>
+                                    <td>Sempre que houver recarga ou ajuste de créditos Inforow.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>python pipeline_clealco.py decrypt [injetados|mapa]</code></td>
+                                    <td>Descriptografa na memória e exibe métricas em tempo real (total de voos, talhões, backlog, etc.) sem expor dados.</td>
+                                    <td>Para auditar payloads sem criar scripts temporários.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>python pipeline_clealco.py compile</code></td>
+                                    <td>Executa o <code>atualizar_dados.py</code> usando obrigatoriamente o Python do QGIS 3.12.</td>
+                                    <td>Para recompilar o mapa e bases sem subir para o Git.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>python pipeline_clealco.py sync</code></td>
+                                    <td>Executa o ciclo completo de Git Pull, compilação, commit e envio para o GitHub.</td>
+                                    <td>Para forçar a sincronização imediata com a nuvem.</td>
+                                </tr>
+                                <tr>
+                                    <td><code>python pipeline_clealco.py diagnose</code></td>
+                                    <td>Testa o ambiente Python, presença do GDAL/OGR, cryptography e conectividade com as pastas de rede W: e M:.</td>
+                                    <td>Em caso de falhas ou em novos computadores.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- PASSO 13: MEMÓRIA DA IA & DIRETRIZES AGENTS.MD -->
+                <div class="step-card" id="passo-13-ia-skills">
+                    <div class="step-num-col" style="background: rgba(0, 188, 212, 0.15);">
+                        <div class="step-num" style="color: #26c6da;">13</div>
+                        <div class="step-num-lbl">IA & Memória</div>
+                    </div>
+                    <div class="step-body">
+                        <div class="step-title">
+                            <span>Integração de Memória Contínua para IA (AGENTS.md & Skill Global)</span>
+                            <span class="step-tag tag-auto">Governança AI</span>
+                        </div>
+                        <p>
+                            Para assegurar que nenhum assistente de IA (Antigravity/Gemini) perca o contexto das operações ao longo do tempo ou em diferentes estações de trabalho, o ecossistema conta com blindagem de memória documental:
+                        </p>
+                        <div class="grid-2">
+                            <div class="card card-destaque">
+                                <b style="color:var(--ouro);">Arquivos AGENTS.md e GEMINI.md</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    Presentes nas pastas <code>Voo_e_processamentos_2.0</code>, <code>Voo_e_processamentosparagithub_2.0</code> e raiz. Fornecem à IA as 4 Regras de Ouro, o mapa de diretórios e a proibição estrita de usar o Python padrão do Windows em vez do Python do QGIS.
+                                </p>
+                            </div>
+                            <div class="card card-verde">
+                                <b style="color:var(--verde-claro);">Skill Global clealco-pipeline</b>
+                                <p style="font-size:0.85rem; margin-top:5px; color:var(--texto-sec);">
+                                    Registrada permanentemente nas ferramentas do Antigravity, capacitando a IA a responder de forma contextualizada sobre qualquer rotina de drone, falhas ou mapas da Clealco automaticamente.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
@@ -1328,6 +1518,23 @@ flowchart LR
                     </div>
                 </div>
             </div>
+        
+            <div class="grid-2" style="margin-top:20px;">
+                <div class="card card-destaque">
+                    <h3 style="color:var(--ouro); margin-top:0;">6. 💰 Soberania da Fonte Raiz de Créditos</h3>
+                    <p style="font-size:0.85rem;">
+                        O arquivo <code>creditos_inforow.txt</code> na pasta <code>1 - Não Processados</code> é a raiz imutável. Toda alteração manual feita apenas em <code>dados.xlsx</code> será revertida pelo robô em menos de 2 minutos. Ajustes devem ser feitos sempre na fonte ou via <code>pipeline_clealco.py set-creditos</code>.
+                    </p>
+                </div>
+
+                <div class="card card-plasma">
+                    <h3 style="color:var(--plasma); margin-top:0;">7. 🐍 Interpretador QGIS Python 3.12 Estrito</h3>
+                    <p style="font-size:0.85rem;">
+                        O ambiente Python oficial para compilação é: <code>C:\Program Files\QGIS 4.2.1\apps\Python312\python.exe</code>. O Python padrão do Windows não possui suporte às bibliotecas cartográficas <code>osgeo/ogr/gdal</code> e gera corrupção silenciosa nos arquivos vetoriais do mapa.
+                    </p>
+                </div>
+            </div>
+
         </section>
 
         <!-- SEÇÃO 6: TELAS E BOT TELEGRAM -->
