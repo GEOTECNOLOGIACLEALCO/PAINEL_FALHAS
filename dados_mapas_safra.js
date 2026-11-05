@@ -1,7 +1,24 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 05/11/2026 08:00:17
+// Gerado em: 05/11/2026 08:01:07
 // Total de Mapas: 1326
 window.DADOS_MAPAS_SAFRA = [
+  {
+    "arquivo": "207968 - Fazenda Nossa Senhora Aparecida ( Nilton Zanchetta).pdf",
+    "url": "mapas_safra/Clealco/207968 - Fazenda Nossa Senhora Aparecida ( Nilton Zanchetta).pdf",
+    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco/207968%20-%20Fazenda%20Nossa%20Senhora%20Aparecida%20%28%20Nilton%20Zanchetta%29.pdf?csf=1&web=1",
+    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco?csf=1&web=1",
+    "categoria": "Clealco",
+    "subpasta": "",
+    "fa": "207968",
+    "fazenda": "Fazenda Nossa Senhora Aparecida",
+    "proprietario": "Nilton Zanchetta",
+    "data_modificacao": "05/11/2026 08:00",
+    "timestamp": 1793876437,
+    "tamanho_kb": 418.6,
+    "dias_atras": 0.0,
+    "is_novo": true,
+    "is_hoje": true
+  },
   {
     "arquivo": "308285 - Sitio Sao Francisco (Moacir Carlos Lucheti).pdf",
     "url": "mapas_safra/Terceiros/308285 - Sitio Sao Francisco (Moacir Carlos Lucheti).pdf",
@@ -134,7 +151,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "04/11/2026 09:12",
     "timestamp": 1793794370,
     "tamanho_kb": 279.1,
-    "dias_atras": 0.9,
+    "dias_atras": 1.0,
     "is_novo": true,
     "is_hoje": true
   },
@@ -219,7 +236,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "30/10/2026 09:12",
     "timestamp": 1793362375,
     "tamanho_kb": 328.7,
-    "dias_atras": 5.9,
+    "dias_atras": 6.0,
     "is_novo": true,
     "is_hoje": false
   },
@@ -1103,7 +1120,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "22/09/2026 14:00",
     "timestamp": 1790096457,
     "tamanho_kb": 298.1,
-    "dias_atras": 43.7,
+    "dias_atras": 43.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4367,7 +4384,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "14/07/2026 16:24",
     "timestamp": 1784057065,
     "tamanho_kb": 350.1,
-    "dias_atras": 113.6,
+    "dias_atras": 113.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -8333,23 +8350,6 @@ window.DADOS_MAPAS_SAFRA = [
     "is_hoje": false
   },
   {
-    "arquivo": "207968 - Fazenda Nossa Senhora Aparecida ( Nilton Zanchetta).pdf",
-    "url": "mapas_safra/Clealco/207968 - Fazenda Nossa Senhora Aparecida ( Nilton Zanchetta).pdf",
-    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco/207968%20-%20Fazenda%20Nossa%20Senhora%20Aparecida%20%28%20Nilton%20Zanchetta%29.pdf?csf=1&web=1",
-    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Clealco?csf=1&web=1",
-    "categoria": "Clealco",
-    "subpasta": "",
-    "fa": "207968",
-    "fazenda": "Fazenda Nossa Senhora Aparecida",
-    "proprietario": "Nilton Zanchetta",
-    "data_modificacao": "04/05/2026 17:06",
-    "timestamp": 1777925170,
-    "tamanho_kb": 435.8,
-    "dias_atras": 184.6,
-    "is_novo": false,
-    "is_hoje": false
-  },
-  {
     "arquivo": "306458 - Sítio Molina (Cesar Henrique Esperancin Cruz).pdf",
     "url": "mapas_safra/Terceiros/306458 - Sítio Molina (Cesar Henrique Esperancin Cruz).pdf",
     "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros/306458%20-%20S%C3%ADtio%20Molina%20%28Cesar%20Henrique%20Esperancin%20Cruz%29.pdf?csf=1&web=1",
@@ -11082,7 +11082,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "26/01/2026 16:24",
     "timestamp": 1769455480,
     "tamanho_kb": 258.0,
-    "dias_atras": 282.6,
+    "dias_atras": 282.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -11966,7 +11966,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "11/12/2025 14:01",
     "timestamp": 1765472465,
     "tamanho_kb": 338.9,
-    "dias_atras": 328.7,
+    "dias_atras": 328.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14040,7 +14040,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/08/2025 09:12",
     "timestamp": 1755259974,
     "tamanho_kb": 400.8,
-    "dias_atras": 446.9,
+    "dias_atras": 447.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17151,7 +17151,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "05/08/2024 16:24",
     "timestamp": 1722885895,
     "tamanho_kb": 249.8,
-    "dias_atras": 821.6,
+    "dias_atras": 821.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -22438,7 +22438,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "12/02/2024 14:00",
     "timestamp": 1707757237,
     "tamanho_kb": 255.7,
-    "dias_atras": 996.7,
+    "dias_atras": 996.8,
     "is_novo": false,
     "is_hoje": false
   },
