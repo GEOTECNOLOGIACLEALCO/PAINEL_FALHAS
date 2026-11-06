@@ -1,5 +1,12 @@
-import openpyxl, json, os, base64, math, re, shutil, time, urllib.parse, glob, csv
+import openpyxl, json, os, sys, base64, math, re, shutil, time, urllib.parse, glob, csv, tempfile, uuid
 from datetime import datetime, timedelta
+
+caminho_diag = os.path.join(os.path.dirname(__file__), "log_sync_status.txt")
+try:
+    with open(caminho_diag, "a", encoding="utf-8") as f_diag:
+        f_diag.write(f"[{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}] Executando em Host: {os.environ.get('COMPUTERNAME')} | Python: {sys.executable}\n")
+except Exception: pass
+
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
@@ -28,7 +35,22 @@ def criptografar_payload(data_str, password=CHAVE_ACESSO_CLEALCO):
 caminho_xlsx = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados.xlsx"
 caminho_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_injetados.js"
 
-wb = openpyxl.load_workbook(caminho_xlsx, data_only=True)
+wb = None
+temp_wb_copy = None
+for tent in range(15):
+    try:
+        temp_wb_copy = os.path.join(tempfile.gettempdir(), f"clealco_dados_read_{uuid.uuid4().hex}.xlsx")
+        shutil.copy2(caminho_xlsx, temp_wb_copy)
+        wb = openpyxl.load_workbook(temp_wb_copy, data_only=True)
+        break
+    except Exception:
+        if temp_wb_copy and os.path.exists(temp_wb_copy):
+            try: os.remove(temp_wb_copy)
+            except: pass
+        time.sleep(0.6)
+
+if wb is None:
+    wb = openpyxl.load_workbook(caminho_xlsx, data_only=True)
 
 def parse_num(val):
     if val is None or val == '': return 0.0
@@ -775,11 +797,26 @@ try:
             print(f"Aviso ao exportar coordenadas de FAs para rotas: {e_c}")
 
         mb = os.path.getsize(caminho_mapa_js) / (1024*1024)
-        print(f"dados_mapa_voos.js criptografado com sucesso! {len(features_geojson)} talhões mapeados ({len(matched_keys)} backlog cruzados) - {mb:.2f} MB em {time.time()-t_mapa:.2f}s")
+        msg_ok = f"dados_mapa_voos.js criptografado com sucesso! {len(features_geojson)} talhões mapeados ({len(matched_keys)} backlog cruzados) - {mb:.2f} MB em {time.time()-t_mapa:.2f}s"
+        print(msg_ok)
+        try:
+            with open(caminho_diag, "a", encoding="utf-8") as f_diag:
+                f_diag.write(f"[{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}] [MAPA OK] {msg_ok}\n")
+        except: pass
     else:
-        print(f"Aviso: Shapefile {caminho_shp} não encontrado.")
+        msg_aviso = f"Aviso: Shapefile {caminho_shp} não encontrado."
+        print(msg_aviso)
+        try:
+            with open(caminho_diag, "a", encoding="utf-8") as f_diag:
+                f_diag.write(f"[{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}] [MAPA AVISO] {msg_aviso}\n")
+        except: pass
 except Exception as e:
-    print(f"Aviso: Erro ao gerar dados_mapa_voos.js: {e}")
+    msg_err = f"Aviso: Erro ao gerar dados_mapa_voos.js: {e}"
+    print(msg_err)
+    try:
+        with open(caminho_diag, "a", encoding="utf-8") as f_diag:
+            f_diag.write(f"[{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}] [MAPA ERRO] {msg_err}\n")
+    except: pass
 
 # -------------------------------------------------------------
 # 5. SINCRONIZAÇÃO E CATALOGAÇÃO AUTOMÁTICA DE MAPAS DE SAFRA (PDF)

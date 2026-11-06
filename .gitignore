@@ -8,4 +8,5 @@ mapas_safra/
 *.pdf
 cache_historico_*.json
 *_backup.py
+log_sync_status.txt
 
