@@ -476,6 +476,27 @@ try:
                 if not fa_code and not fas_encontradas: continue
                 if not fas_encontradas and fa_code:
                     fas_encontradas = [fa_code]
+
+                # Mapeamento de Estudos / Códigos Provisórios para FA Definitiva no Shapefile
+                mapa_estudos_fa = {
+                    '202': '307364', # FAZ PEDRA AZUL
+                    '278': '308106', # FAZENDA RECANTO
+                    '235': '308239', # SITIO JC METODIO
+                    '257': '308212', # FAZ LONQUINHO / SITIO LONGHINHO
+                }
+                nome_upper = pasta_faz.upper()
+                if 'PEDRA AZUL' in nome_upper and '307364' not in fas_encontradas:
+                    fas_encontradas.append('307364')
+                if 'RECANTO' in nome_upper and '278' in fas_encontradas and '308106' not in fas_encontradas:
+                    fas_encontradas.append('308106')
+                if 'METODIO' in nome_upper and '235' in fas_encontradas and '308239' not in fas_encontradas:
+                    fas_encontradas.append('308239')
+                if ('LONQUINHO' in nome_upper or 'LONGHINHO' in nome_upper) and '257' in fas_encontradas and '308212' not in fas_encontradas:
+                    fas_encontradas.append('308212')
+
+                for f_c in list(fas_encontradas):
+                    if f_c in mapa_estudos_fa and mapa_estudos_fa[f_c] not in fas_encontradas:
+                        fas_encontradas.append(mapa_estudos_fa[f_c])
                 
                 for f_c in fas_encontradas:
                     if is_np:
@@ -642,10 +663,13 @@ try:
                 matched_keys.add(k)
 
             # LÓGICA DE STATUS DO TALHÃO CADASTRAL:
-            # Caso 1: Pasta em Não Processados sem KML ainda (Voo Descarregado pelo Piloto)
-            if faz in pastas_nao_processados and faz not in kmls_por_fa:
+            # Caso 1: Pasta em Não Processados (Voo Descarregado pelo Piloto / Nova Etapa)
+            if faz in pastas_nao_processados:
                 status_voo = "VOO_RECENTE"
-                obs_voo = "Voo Recente (Descarregado pelo Piloto em Não Processados)"
+                if faz in kmls_por_fa:
+                    obs_voo = "Voo Recente / Etapa Complementar (Não Processados)"
+                else:
+                    obs_voo = "Voo Recente (Descarregado pelo Piloto em Não Processados)"
             # Caso 2: Talhão do Backlog oficial (Próprias e Fornecedores)
             elif bk:
                 dias = bk["dias_brota"]

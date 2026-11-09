@@ -19,12 +19,12 @@ if not defined PY_EXE for /d %%G in ("C:\Program Files\QGIS*") do (
 if not defined PY_EXE if exist "C:\OSGeo4W\bin\python-qgis.bat" set "PY_EXE=C:\OSGeo4W\bin\python-qgis.bat"
 if not defined PY_EXE set "PY_EXE=python"
 
-call "%PY_EXE%" atualizar_dados.py || exit /b 1
+cmd.exe /c ""%PY_EXE%" atualizar_dados.py" || exit /b 1
 echo.
 
 echo Preparando envio para o GitHub...
 :: 3. Adiciona apenas os arquivos de dados CRIPTOGRAFADOS e cache do PWA (dados.xlsx fica protegido localmente)
-git add dados_injetados.js dados_mapa_voos.js dados_historico_falhas.js dados_mapas_safra.js dados_arable_clima.js service-worker.js
+git add dados_injetados.js dados_mapa_voos.js dados_historico_falhas.js dados_mapas_safra.js dados_arable_clima.js dados_coordenadas_fas.js service-worker.js
 
 :: 4. Verifica se existe algo novo. Se os dados forem iguais, sai silenciosamente sem dar erro de "nothing to commit"
 git diff --cached --quiet

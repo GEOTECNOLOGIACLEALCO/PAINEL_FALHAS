@@ -10,6 +10,8 @@ Este documento define a arquitetura, regras de ouro, fluxos de dados e comandos 
 - **Pasta:** `W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentos_2.0`
 - **Script Principal:** `2.0importos.py` (Flask + Robô Watchdog)
 - **Ativador:** `INICIAR_SISTEMA.bat`
+- **Assistente do Piloto (GUI):** `descarregar_voo.py` / `DESCARREGAR_VOO.bat` (Clealco Ingest em PyQt6)
+  - Padroniza o descarregamento das fotos de campo (`IX-12-...`), base RTK e validação de FAs.
 - **Funções:**
   - Monitora novos voos em `W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados`.
   - Verifica ortomosaicos (.tif), KMLs de talhões e arquivos de linhas/falhas.
