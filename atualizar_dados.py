@@ -483,6 +483,7 @@ try:
                     '278': '308106', # FAZENDA RECANTO
                     '235': '308239', # SITIO JC METODIO
                     '257': '308212', # FAZ LONQUINHO / SITIO LONGHINHO
+                    '202817': '302817', # FAZ SANTA ANGELICA (passou de propria para terceiro 302817)
                 }
                 nome_upper = pasta_faz.upper()
                 if 'PEDRA AZUL' in nome_upper and '307364' not in fas_encontradas:
@@ -493,6 +494,8 @@ try:
                     fas_encontradas.append('308239')
                 if ('LONQUINHO' in nome_upper or 'LONGHINHO' in nome_upper) and '257' in fas_encontradas and '308212' not in fas_encontradas:
                     fas_encontradas.append('308212')
+                if 'ANGELICA' in nome_upper and '302817' not in fas_encontradas:
+                    fas_encontradas.append('302817')
 
                 for f_c in list(fas_encontradas):
                     if f_c in mapa_estudos_fa and mapa_estudos_fa[f_c] not in fas_encontradas:
@@ -654,6 +657,8 @@ try:
             geom = feat.GetGeometryRef()
             if not geom: continue
             faz = str(feat.GetField('FAZENDA') or '').strip().lstrip('0')
+            if faz == '202817':
+                faz = '302817'
             fas_no_shp.add(faz)
             tal = str(feat.GetField('TALHAO') or '').strip().lstrip('0')
             
@@ -705,12 +710,12 @@ try:
             geojson_geom['coordinates'] = clean_round_coords(geojson_geom['coordinates'], 5)
             
             props = {
-                "fa": bk["fa"] if bk else feat.GetField('FAZENDA'),
-                "fazenda": bk["fazenda"] if bk else feat.GetField('NOME_FAZ'),
+                "fa": "302817" if faz == "302817" else (bk["fa"] if bk else feat.GetField('FAZENDA')),
+                "fazenda": "FAZ SANTA ANGELICA" if faz == "302817" else (bk["fazenda"] if bk else feat.GetField('NOME_FAZ')),
                 "talhao": bk["talhao"] if bk else feat.GetField('TALHAO'),
                 "area_ha": bk["ha"] if bk else round(float(feat.GetField('AREA_TOTAL') or 0), 2),
                 "status": status_voo,
-                "tipo": bk["tipo"] if bk else ("Própria" if "PROP" in str(feat.GetField('ZONA') or '') else "Terceiro"),
+                "tipo": "Terceiro" if faz == "302817" else (bk["tipo"] if bk else ("Própria" if "PROP" in str(feat.GetField('ZONA') or '') else "Terceiro")),
                 "tipo_camada": "shp_base",
                 "dias_brota": bk["dias_brota"] if bk else 0,
                 "porte_cm": bk["porte_cm"] if bk else "",
