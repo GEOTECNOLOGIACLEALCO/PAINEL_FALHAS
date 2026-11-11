@@ -1,5 +1,5 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 11/11/2026 04:42:57
+// Gerado em: 11/11/2026 04:49:10
 // Total de Mapas: 1332
 window.DADOS_MAPAS_SAFRA = [
   {
@@ -15,7 +15,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/11/2026 15:36",
     "timestamp": 1794335775,
     "tamanho_kb": 261.4,
-    "dias_atras": 0.5,
+    "dias_atras": 0.6,
     "is_novo": true,
     "is_hoje": true
   },
@@ -66,7 +66,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/11/2026 15:33",
     "timestamp": 1793989981,
     "tamanho_kb": 277.1,
-    "dias_atras": 4.5,
+    "dias_atras": 4.6,
     "is_novo": true,
     "is_hoje": false
   },
@@ -457,7 +457,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "26/10/2026 13:09",
     "timestamp": 1793030953,
     "tamanho_kb": 373.7,
-    "dias_atras": 15.6,
+    "dias_atras": 15.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -763,7 +763,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "07/10/2026 13:11",
     "timestamp": 1791389468,
     "tamanho_kb": 280.2,
-    "dias_atras": 34.6,
+    "dias_atras": 34.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -984,7 +984,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "02/10/2026 10:46",
     "timestamp": 1790948792,
     "tamanho_kb": 310.2,
-    "dias_atras": 39.7,
+    "dias_atras": 39.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -1120,7 +1120,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "25/09/2026 10:43",
     "timestamp": 1790343811,
     "tamanho_kb": 609.0,
-    "dias_atras": 46.7,
+    "dias_atras": 46.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -1409,7 +1409,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "18/09/2026 10:47",
     "timestamp": 1789739271,
     "tamanho_kb": 303.6,
-    "dias_atras": 53.7,
+    "dias_atras": 53.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -1919,7 +1919,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "04/09/2026 08:19",
     "timestamp": 1788520793,
     "tamanho_kb": 295.0,
-    "dias_atras": 67.8,
+    "dias_atras": 67.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2259,7 +2259,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "31/08/2026 13:06",
     "timestamp": 1788192419,
     "tamanho_kb": 265.1,
-    "dias_atras": 71.6,
+    "dias_atras": 71.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2361,7 +2361,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "28/08/2026 08:19",
     "timestamp": 1787915987,
     "tamanho_kb": 282.0,
-    "dias_atras": 74.8,
+    "dias_atras": 74.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2531,7 +2531,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "26/08/2026 15:36",
     "timestamp": 1787769388,
     "tamanho_kb": 305.6,
-    "dias_atras": 76.5,
+    "dias_atras": 76.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2548,7 +2548,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "26/08/2026 15:35",
     "timestamp": 1787769329,
     "tamanho_kb": 322.4,
-    "dias_atras": 76.5,
+    "dias_atras": 76.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2633,7 +2633,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/08/2026 15:36",
     "timestamp": 1787337419,
     "tamanho_kb": 288.5,
-    "dias_atras": 81.5,
+    "dias_atras": 81.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2803,7 +2803,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/08/2026 10:45",
     "timestamp": 1787147154,
     "tamanho_kb": 267.0,
-    "dias_atras": 83.7,
+    "dias_atras": 83.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4027,7 +4027,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "24/07/2026 13:12",
     "timestamp": 1784909542,
     "tamanho_kb": 356.9,
-    "dias_atras": 109.6,
+    "dias_atras": 109.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4146,7 +4146,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/07/2026 15:31",
     "timestamp": 1784658669,
     "tamanho_kb": 379.7,
-    "dias_atras": 112.5,
+    "dias_atras": 112.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4588,7 +4588,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "13/07/2026 13:07",
     "timestamp": 1783958869,
     "tamanho_kb": 595.4,
-    "dias_atras": 120.6,
+    "dias_atras": 120.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4826,7 +4826,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "08/07/2026 13:12",
     "timestamp": 1783527151,
     "tamanho_kb": 841.3,
-    "dias_atras": 125.6,
+    "dias_atras": 125.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -5013,7 +5013,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/07/2026 10:47",
     "timestamp": 1783345663,
     "tamanho_kb": 283.0,
-    "dias_atras": 127.7,
+    "dias_atras": 127.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -5931,7 +5931,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "17/06/2026 10:47",
     "timestamp": 1781704023,
     "tamanho_kb": 275.0,
-    "dias_atras": 146.7,
+    "dias_atras": 146.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -6390,7 +6390,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "11/06/2026 10:47",
     "timestamp": 1781185625,
     "tamanho_kb": 361.1,
-    "dias_atras": 152.7,
+    "dias_atras": 152.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -7240,7 +7240,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/05/2026 08:22",
     "timestamp": 1779880973,
     "tamanho_kb": 289.9,
-    "dias_atras": 167.8,
+    "dias_atras": 167.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -7818,7 +7818,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/05/2026 15:35",
     "timestamp": 1778870108,
     "tamanho_kb": 361.9,
-    "dias_atras": 179.5,
+    "dias_atras": 179.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -8702,7 +8702,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/04/2026 10:44",
     "timestamp": 1776779055,
     "tamanho_kb": 279.9,
-    "dias_atras": 203.7,
+    "dias_atras": 203.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -8787,7 +8787,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "16/04/2026 10:47",
     "timestamp": 1776347237,
     "tamanho_kb": 261.3,
-    "dias_atras": 208.7,
+    "dias_atras": 208.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -8872,7 +8872,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/04/2026 10:43",
     "timestamp": 1775828631,
     "tamanho_kb": 304.4,
-    "dias_atras": 214.7,
+    "dias_atras": 214.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9144,7 +9144,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/03/2026 15:33",
     "timestamp": 1774636404,
     "tamanho_kb": 471.0,
-    "dias_atras": 228.5,
+    "dias_atras": 228.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9450,7 +9450,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/03/2026 10:45",
     "timestamp": 1773927906,
     "tamanho_kb": 291.0,
-    "dias_atras": 236.7,
+    "dias_atras": 236.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9518,7 +9518,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/03/2026 08:23",
     "timestamp": 1773919383,
     "tamanho_kb": 448.6,
-    "dias_atras": 236.8,
+    "dias_atras": 236.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -10538,7 +10538,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "23/02/2026 13:07",
     "timestamp": 1771862822,
     "tamanho_kb": 287.9,
-    "dias_atras": 260.6,
+    "dias_atras": 260.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -10606,7 +10606,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "20/02/2026 10:47",
     "timestamp": 1771595233,
     "tamanho_kb": 325.4,
-    "dias_atras": 263.7,
+    "dias_atras": 263.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -11694,7 +11694,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "08/01/2026 10:45",
     "timestamp": 1767879903,
     "tamanho_kb": 262.5,
-    "dias_atras": 306.7,
+    "dias_atras": 306.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -11796,7 +11796,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/01/2026 08:21",
     "timestamp": 1767698476,
     "tamanho_kb": 250.1,
-    "dias_atras": 308.8,
+    "dias_atras": 308.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -11847,7 +11847,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "18/12/2025 15:37",
     "timestamp": 1766083022,
     "tamanho_kb": 264.9,
-    "dias_atras": 327.5,
+    "dias_atras": 327.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -11915,7 +11915,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "17/12/2025 15:34",
     "timestamp": 1765996458,
     "tamanho_kb": 349.2,
-    "dias_atras": 328.5,
+    "dias_atras": 328.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -12170,7 +12170,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/12/2025 10:49",
     "timestamp": 1765374548,
     "tamanho_kb": 332.6,
-    "dias_atras": 335.7,
+    "dias_atras": 335.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -13020,7 +13020,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "16/10/2025 10:46",
     "timestamp": 1760622362,
     "tamanho_kb": 337.0,
-    "dias_atras": 390.7,
+    "dias_atras": 390.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14516,7 +14516,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "23/07/2025 15:36",
     "timestamp": 1753295763,
     "tamanho_kb": 264.3,
-    "dias_atras": 475.5,
+    "dias_atras": 475.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14822,7 +14822,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/07/2025 15:36",
     "timestamp": 1752172576,
     "tamanho_kb": 299.1,
-    "dias_atras": 488.5,
+    "dias_atras": 488.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14975,7 +14975,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "03/07/2025 10:44",
     "timestamp": 1751550285,
     "tamanho_kb": 328.3,
-    "dias_atras": 495.7,
+    "dias_atras": 495.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -15111,7 +15111,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/06/2025 17:55",
     "timestamp": 1749588946,
     "tamanho_kb": 244.0,
-    "dias_atras": 518.4,
+    "dias_atras": 518.5,
     "is_novo": false,
     "is_hoje": false
   },
@@ -15247,7 +15247,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/05/2025 17:55",
     "timestamp": 1747860908,
     "tamanho_kb": 239.0,
-    "dias_atras": 538.4,
+    "dias_atras": 538.5,
     "is_novo": false,
     "is_hoje": false
   },
@@ -15842,7 +15842,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "01/04/2025 10:46",
     "timestamp": 1743515176,
     "tamanho_kb": 296.5,
-    "dias_atras": 588.7,
+    "dias_atras": 588.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -16335,7 +16335,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "04/02/2025 13:12",
     "timestamp": 1738685566,
     "tamanho_kb": 300.8,
-    "dias_atras": 644.6,
+    "dias_atras": 644.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -16658,7 +16658,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "09/12/2024 08:21",
     "timestamp": 1733743301,
     "tamanho_kb": 263.3,
-    "dias_atras": 701.8,
+    "dias_atras": 701.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -16692,7 +16692,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "02/12/2024 10:48",
     "timestamp": 1733147332,
     "tamanho_kb": 276.9,
-    "dias_atras": 708.7,
+    "dias_atras": 708.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -16879,7 +16879,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/10/2024 08:23",
     "timestamp": 1728559402,
     "tamanho_kb": 280.1,
-    "dias_atras": 761.8,
+    "dias_atras": 761.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -16896,7 +16896,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/10/2024 08:20",
     "timestamp": 1728559255,
     "tamanho_kb": 271.5,
-    "dias_atras": 761.8,
+    "dias_atras": 761.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17304,7 +17304,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "25/07/2024 15:35",
     "timestamp": 1721932558,
     "tamanho_kb": 429.7,
-    "dias_atras": 838.5,
+    "dias_atras": 838.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -18086,7 +18086,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "08/05/2024 08:24",
     "timestamp": 1715167458,
     "tamanho_kb": 282.9,
-    "dias_atras": 916.8,
+    "dias_atras": 916.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -19327,7 +19327,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/02/2024 15:34",
     "timestamp": 1709058865,
     "tamanho_kb": 296.7,
-    "dias_atras": 987.5,
+    "dias_atras": 987.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20092,7 +20092,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "23/02/2024 08:23",
     "timestamp": 1708687429,
     "tamanho_kb": 237.6,
-    "dias_atras": 991.8,
+    "dias_atras": 991.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20381,7 +20381,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 15:36",
     "timestamp": 1708540567,
     "tamanho_kb": 248.9,
-    "dias_atras": 993.5,
+    "dias_atras": 993.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20619,7 +20619,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 13:11",
     "timestamp": 1708531869,
     "tamanho_kb": 296.3,
-    "dias_atras": 993.6,
+    "dias_atras": 993.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -21146,7 +21146,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 08:20",
     "timestamp": 1708514409,
     "tamanho_kb": 244.8,
-    "dias_atras": 993.8,
+    "dias_atras": 993.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -21299,7 +21299,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "20/02/2024 15:34",
     "timestamp": 1708454079,
     "tamanho_kb": 235.7,
-    "dias_atras": 994.5,
+    "dias_atras": 994.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -21316,7 +21316,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "20/02/2024 15:31",
     "timestamp": 1708453865,
     "tamanho_kb": 257.2,
-    "dias_atras": 994.5,
+    "dias_atras": 994.6,
     "is_novo": false,
     "is_hoje": false
   },
@@ -22200,7 +22200,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/02/2024 08:22",
     "timestamp": 1707996134,
     "tamanho_kb": 287.3,
-    "dias_atras": 999.8,
+    "dias_atras": 999.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -22217,7 +22217,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/02/2024 08:20",
     "timestamp": 1707996025,
     "tamanho_kb": 290.4,
-    "dias_atras": 999.8,
+    "dias_atras": 999.9,
     "is_novo": false,
     "is_hoje": false
   },
