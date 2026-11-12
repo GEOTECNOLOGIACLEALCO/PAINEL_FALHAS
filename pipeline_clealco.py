@@ -5,9 +5,9 @@ Clealco Geotecnologia - Pipeline & Script Orchestrator
 ------------------------------------------------------
 Utilitário centralizado para o Analista e a IA interagirem
 com segurança com os scripts principais do ecossistema:
-  - W:\\00-SITE QUALIDADE APLICACAO\\Voo_e_processamentos_2.0\\2.0importos.py
-  - W:\\00-SITE QUALIDADE APLICACAO\\Voo_e_processamentosparagithub_2.0\\atualizar_dados.py
-  - W:\\00-SITE QUALIDADE APLICACAO\\Voo_e_processamentosparagithub_2.0\\atualizar_dados.bat
+  - W:\\15-SETOR\\FABIANO\\Voo_e_processamentos_2.0\\2.0importos.py
+  - W:\\15-SETOR\\FABIANO\\Voo_e_processamentosparagithub_2.0\\atualizar_dados.py
+  - W:\\15-SETOR\\FABIANO\\Voo_e_processamentosparagithub_2.0\\atualizar_dados.bat
 
 Uso:
   python pipeline_clealco.py status
@@ -36,8 +36,8 @@ import subprocess
 from datetime import datetime
 
 # Caminhos Mestres
-PASTA_GITHUB = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0"
-PASTA_BACKEND = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentos_2.0"
+PASTA_GITHUB = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0"
+PASTA_BACKEND = r"W:\15-SETOR\FABIANO\Voo_e_processamentos_2.0"
 PASTA_NAO_PROCESSADOS = r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados"
 PASTA_AUDITORIA_DOCS = os.path.join(PASTA_NAO_PROCESSADOS, "AUDITORIA - DOC - SISTEMA")
 

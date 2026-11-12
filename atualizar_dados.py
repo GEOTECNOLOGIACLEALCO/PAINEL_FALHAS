@@ -32,8 +32,8 @@ def criptografar_payload(data_str, password=CHAVE_ACESSO_CLEALCO):
         "d": base64.b64encode(ciphertext).decode('utf-8')
     }
 
-caminho_xlsx = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados.xlsx"
-caminho_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_injetados.js"
+caminho_xlsx = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados.xlsx"
+caminho_js = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados_injetados.js"
 
 wb = None
 temp_wb_copy = None
@@ -114,8 +114,8 @@ for r in rows_base[1:]:
 base_proc.reverse()
 
 # 2. BACKLOG
-sheet_bk = wb['BACKLOG']
-rows_bk = list(sheet_bk.iter_rows(values_only=True))
+sheet_bk = wb['BACKLOG'] if 'BACKLOG' in wb.sheetnames else None
+rows_bk = list(sheet_bk.iter_rows(values_only=True)) if sheet_bk else []
 backlog = []
 for r in rows_bk[1:]:
     fa = str(r[0] or '').strip()
@@ -132,8 +132,8 @@ for r in rows_bk[1:]:
     })
 
 # 3. FALHAS_PLANTIO
-sheet_f = wb['FALHAS_PLANTIO']
-rows_f = list(sheet_f.iter_rows(values_only=True))
+sheet_f = wb['FALHAS_PLANTIO'] if 'FALHAS_PLANTIO' in wb.sheetnames else None
+rows_f = list(sheet_f.iter_rows(values_only=True)) if sheet_f else []
 falhas = []
 fas_em_falhas = set()
 for r in rows_f[1:]:
@@ -216,8 +216,8 @@ for f_item in falhas:
     f_item["Tipo"] = "Própria" if is_p else "Terceiro"
 
 # 4. METAS_GLOBAIS
-sheet_m = wb['METAS_GLOBAIS']
-rows_m = list(sheet_m.iter_rows(values_only=True))
+sheet_m = wb['METAS_GLOBAIS'] if 'METAS_GLOBAIS' in wb.sheetnames else None
+rows_m = list(sheet_m.iter_rows(values_only=True)) if sheet_m else []
 metas = {}
 for r in rows_m[1:]:
     ano = str(r[0] or '').strip()
@@ -429,7 +429,7 @@ try:
     t_mapa = time.time()
     pasta_shp = r"W:\11-SHAPES TEMATICOS\09-SHP ATUALIZADO"
     caminho_shp = os.path.join(pasta_shp, "SHP_CLEALCO.shp")
-    caminho_mapa_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_mapa_voos.js"
+    caminho_mapa_js = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados_mapa_voos.js"
     
     # Busca automaticamente o shapefile mais recente ou atualizado na pasta
     if os.path.exists(pasta_shp):
@@ -595,7 +595,7 @@ try:
         # Enriquecer com planilhas de vistoria/porte e extrair talhões voados oficiais
         pastas_planilhas = [
             r"M:\10-Planilhas\Voos Pós Plantio - Analise de Falhas\2026\BASES - RECEBIDAS",
-            r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\doc_planilhas"
+            r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\doc_planilhas"
         ]
         
         talhoes_voados_bases = {}
@@ -807,7 +807,7 @@ try:
             f.write("window.DADOS_MAPA_VOOS = " + json.dumps(payload_mapa_cifrado, ensure_ascii=False) + ";\n")
             
         # Exporta centroides de FAs para o Roteirizador / Clusters de Proximidade do Backlog
-        caminho_coords_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_coordenadas_fas.js"
+        caminho_coords_js = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados_coordenadas_fas.js"
         try:
             layer.ResetReading()
             cents_map = {}
@@ -852,7 +852,7 @@ except Exception as e:
 # -------------------------------------------------------------
 def sincronizar_e_catalogar_mapas():
     origem = r"F:\Mapas\01 - Mapas Safra"
-    destino = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\mapas_safra"
+    destino = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\mapas_safra"
     
     # Identifica a pasta local do OneDrive da Clealco (Documents/Mapas)
     onedrive_base = os.environ.get('OneDriveCommercial') or os.environ.get('OneDrive')
@@ -1044,7 +1044,7 @@ def compilar_historico_falhas():
             print(f"[HISTORICO FALHAS] Aviso ao ler SHP (osgeo/ogr opcional): {e}")
 
     # Complementar com dados.xlsx
-    excel_path = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados.xlsx"
+    excel_path = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados.xlsx"
     if os.path.exists(excel_path):
         try:
             wb_temp = openpyxl.load_workbook(excel_path, data_only=True)
@@ -1389,7 +1389,7 @@ def compilar_historico_falhas():
     payload_str = json.dumps(payload, ensure_ascii=False)
     encrypted = criptografar_payload(payload_str)
 
-    output_path = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_historico_falhas.js"
+    output_path = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados_historico_falhas.js"
     with open(output_path, "w", encoding="utf-8") as f_out:
         f_out.write("// Histórico Consolidado de Falhas de Plantio (2021 - 2026)\n")
         f_out.write(f"// Gerado em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
@@ -1408,7 +1408,7 @@ compilar_historico_falhas()
 def compilar_dados_arable_clima():
     import urllib.request
     from datetime import timezone
-    caminho_clima_js = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\dados_arable_clima.js"
+    caminho_clima_js = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados_arable_clima.js"
     api_key = "e951a4f6-f5b4-4a61-b2a8-2c40b388bf82"
     headers = {'Authorization': f'Apikey {api_key}', 'Accept': 'application/json'}
     
@@ -1530,7 +1530,7 @@ def compilar_dados_arable_clima():
 compilar_dados_arable_clima()
 
 def incrementar_versao_service_worker():
-    sw_path = r"W:\00-SITE QUALIDADE APLICACAO\Voo_e_processamentosparagithub_2.0\service-worker.js"
+    sw_path = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\service-worker.js"
     if not os.path.exists(sw_path):
         return
     try:
