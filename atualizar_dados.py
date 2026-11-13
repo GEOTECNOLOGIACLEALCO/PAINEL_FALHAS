@@ -147,6 +147,108 @@ if rows_bk:
             "status_prazo": str(r[idx_status] or 'N/D')
         })
 
+# Fallback autônomo e blindado: Se a aba BACKLOG em dados.xlsx estiver vazia (ex: bot em outra estação com código antigo em memória)
+if len(backlog) == 0:
+    try:
+        pasta_doc = os.path.join(os.path.dirname(__file__), "doc_planilhas")
+        if os.path.exists(pasta_doc):
+            fas_voadas_set = set(str(b['fa']).strip().lstrip('0') for b in base_proc if b.get('fa'))
+            fas_voadas_set.update(str(b['fa']).strip() for b in base_proc if b.get('fa'))
+            def formatar_fa_loc(val):
+                if not val: return ''
+                v = str(val).strip()
+                if v.endswith('.0'): v = v[:-2]
+                return v
+
+            for f_nome in os.listdir(pasta_doc):
+                if f_nome.endswith('.xlsx') and not f_nome.startswith('~$'):
+                    p_arq = os.path.join(pasta_doc, f_nome)
+                    tipo_padrao = "Própria" if 'propria' in f_nome.lower() else "Terceiro"
+                    try:
+                        wb_doc = openpyxl.load_workbook(p_arq, data_only=True, read_only=True)
+                        ws_doc = wb_doc['VOOS'] if 'VOOS' in wb_doc.sheetnames else wb_doc.active
+                        all_r = list(ws_doc.iter_rows(values_only=True))
+                        wb_doc.close()
+                        if not all_r: continue
+
+                        idx_fa_d, idx_faz_d, idx_tal_d, idx_area_d, idx_data_d = None, None, None, None, None
+                        r_head = None
+                        for r_i, row in enumerate(all_r[:15]):
+                            vals = [str(c or '').strip().upper() for c in (row[:25] if row else [])]
+                            if any('F.A' in v or 'FA' in v for v in vals) and any('TALH' in v for v in vals):
+                                r_head = r_i
+                                for c_i, v in enumerate(vals):
+                                    if ('F.A' in v or v == 'FA') and idx_fa_d is None: idx_fa_d = c_i
+                                    elif 'FAZENDA' in v and idx_faz_d is None: idx_faz_d = c_i
+                                    elif 'TALH' in v and idx_tal_d is None: idx_tal_d = c_i
+                                    elif ('PRODU' in v or 'REA' in v) and 'REALIZADA' not in v and idx_area_d is None: idx_area_d = c_i
+                                    elif 'DATA' in v and idx_data_d is None: idx_data_d = c_i
+                                break
+
+                        if r_head is None or idx_fa_d is None: continue
+
+                        for row in all_r[r_head + 1:]:
+                            if not row or idx_fa_d >= len(row): continue
+                            fa_val = row[idx_fa_d]
+                            if not fa_val or str(fa_val).strip() == '': continue
+                            fa_str = formatar_fa_loc(fa_val)
+                            if not fa_str or fa_str == "NONE" or "FA" in fa_str.upper(): continue
+                            if fa_str in fas_voadas_set or fa_str.lstrip('0') in fas_voadas_set:
+                                continue
+
+                            faz_val = str(row[idx_faz_d] or '').strip() if (idx_faz_d is not None and idx_faz_d < len(row)) else 'N/D'
+                            tal_val = str(row[idx_tal_d] or '').strip() if (idx_tal_d is not None and idx_tal_d < len(row)) else 'N/D'
+                            area_val = parse_num(row[idx_area_d] if (idx_area_d is not None and idx_area_d < len(row)) else 0)
+
+                            dt_val = row[idx_data_d] if (idx_data_d is not None and idx_data_d < len(row)) else None
+                            dt_str = 'N/D'
+                            dias = 0
+                            if hasattr(dt_val, 'strftime'):
+                                dt_str = dt_val.strftime('%d/%m/%Y')
+                                dias = (datetime.now() - dt_val).days
+                            elif dt_val:
+                                dt_str = format_data(dt_val)
+                                match = re.search(r'(\d{2})[-/](\d{2})[-/](\d{2,4})', str(dt_val))
+                                if match:
+                                    d, m, y = match.groups()
+                                    if len(y) == 2: y = "20" + y
+                                    try: dias = (datetime.now() - datetime(int(y), int(m), int(d))).days
+                                    except: pass
+
+                            if dias < 0: st_prazo = "No Prazo"
+                            elif dias <= 90: st_prazo = "No Prazo"
+                            elif dias <= 120: st_prazo = "Atenção"
+                            else: st_prazo = "Crítico"
+
+                            backlog.append({
+                                "fa": fa_str,
+                                "fazenda": faz_val,
+                                "talhao": tal_val,
+                                "tipo": tipo_padrao,
+                                "ha": area_val,
+                                "data": dt_str,
+                                "dias": dias,
+                                "status_prazo": st_prazo
+                            })
+                    except Exception as e_f:
+                        print(f"Erro lendo planejamento em {f_nome}: {e_f}")
+            backlog.sort(key=lambda x: x["dias"], reverse=True)
+            print(f"[BACKLOG AUTÔNOMO] {len(backlog)} talhões carregados diretamente de doc_planilhas.")
+            if len(rows_bk) <= 1 and len(backlog) > 0:
+                try:
+                    wb_to_save = openpyxl.load_workbook(caminho_xlsx)
+                    if 'BACKLOG' in wb_to_save.sheetnames: del wb_to_save['BACKLOG']
+                    ws_n_bk = wb_to_save.create_sheet('BACKLOG', 1)
+                    ws_n_bk.append(["fa", "fazenda", "talhao", "tipo", "area", "data_plantio", "dias_restantes", "status_tempo"])
+                    for b_it in backlog:
+                        ws_n_bk.append([b_it["fa"], b_it["fazenda"], b_it["talhao"], b_it["tipo"], b_it["ha"], b_it["data"], b_it["dias"], b_it["status_prazo"]])
+                    wb_to_save.save(caminho_xlsx)
+                    wb_to_save.close()
+                    print("[BACKLOG AUTÔNOMO] dados.xlsx atualizado com os talhões!")
+                except Exception as e_sx: pass
+    except Exception as e_bk:
+        print(f"Erro no fallback autônomo de backlog: {e_bk}")
+
 # 3. FALHAS_PLANTIO
 sheet_f = wb['FALHAS_PLANTIO'] if 'FALHAS_PLANTIO' in wb.sheetnames else None
 rows_f = list(sheet_f.iter_rows(values_only=True)) if sheet_f else []

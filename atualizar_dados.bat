@@ -32,7 +32,7 @@ echo.
 
 echo Preparando envio para o GitHub...
 :: 3. Adiciona apenas os arquivos de dados CRIPTOGRAFADOS e cache do PWA (dados.xlsx fica protegido localmente)
-git add dados_injetados.js dados_mapa_voos.js dados_historico_falhas.js dados_mapas_safra.js dados_arable_clima.js dados_coordenadas_fas.js service-worker.js
+git add dados_injetados.js dados_mapa_voos.js dados_historico_falhas.js dados_mapas_safra.js dados_arable_clima.js dados_coordenadas_fas.js service-worker.js index.html atualizar_dados.py exibir_resumo_console.py
 
 :: 4. Verifica se existe algo novo. Se os dados forem iguais, sai silenciosamente sem dar erro de "nothing to commit"
 git diff --cached --quiet

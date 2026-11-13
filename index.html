@@ -3629,10 +3629,10 @@
                         fazenda: String(r.fazenda || r.Fazenda || '').trim(),
                         talhao: String(r.talhao || r.Talhao || '').trim(),
                         tipo: String(r.tipo || r.Tipo || 'Terceiro').trim(),
-                        ha: parseNum(r.ha || r.Ha),
-                        data: formatarData(r.data),
-                        dias: r.dias || 0,
-                        status_prazo: String(r.status_prazo || 'N/D')
+                        ha: parseNum(r.area || r.ha || r.Ha || r['Área'] || 0),
+                        data: formatarData(r.data_plantio || r.data || r.Data),
+                        dias: r.dias_restantes || r.dias || 0,
+                        status_prazo: String(r.status_tempo || r.status_prazo || 'N/D')
                     }));
                 }
 
