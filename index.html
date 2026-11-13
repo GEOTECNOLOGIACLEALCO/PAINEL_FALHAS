@@ -8742,12 +8742,25 @@
             document.getElementById('modal-instalar-app').classList.add('hidden');
         }
 
-        // Registrar Service Worker
+        // Registrar Service Worker com Auto-Atualização Imediata
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js')
-                    .then(reg => console.log('Service Worker registrado:', reg.scope))
+                    .then(reg => {
+                        console.log('Service Worker registrado:', reg.scope);
+                        // Força checagem de nova versão no servidor imediatamente
+                        reg.update();
+                    })
                     .catch(err => console.log('Service Worker falha:', err));
+            });
+
+            // Quando o novo Service Worker assumir o controle, atualiza o PWA automaticamente
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
             });
         }
 
