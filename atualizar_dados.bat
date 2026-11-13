@@ -38,7 +38,12 @@ git add dados_injetados.js dados_mapa_voos.js dados_historico_falhas.js dados_ma
 git diff --cached --quiet
 if %errorlevel% equ 0 (
     echo.
-    echo Nenhuma alteracao de dados detectada. Sincronizacao ignorada.
+    echo Nenhuma nova alteracao de dados detectada. Base de dados 100%% atualizada.
+    if defined PY_EXE (
+        "%PY_EXE%" exibir_resumo_console.py
+    ) else (
+        python exibir_resumo_console.py
+    )
     exit /b 0
 )
 

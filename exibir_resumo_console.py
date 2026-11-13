@@ -1,4 +1,5 @@
 import json, base64, os, sys
+from datetime import datetime
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
@@ -24,14 +25,30 @@ try:
     terc = sum(float(f.get('Area_Ha') or 0) for f in falhas if not (str(f.get('Tipo')).lower().startswith('pr') or (str(f.get('FA')).startswith('20') and len(str(f.get('FA')))==6)))
     total = prop + terc
 
-    print('\n' + '=' * 76)
-    print('  CLEALCO GEOTECNOLOGIA - RESUMO EXECUTIVO ATUALIZADO (PAINEL PWA)')
-    print('=' * 76)
-    print(f'  [+] REALIZADO PROPRIAS:   {prop:10,.2f} ha  (Meta: 3.374,33 ha)')
-    print(f'  [+] REALIZADO TERCEIROS:  {terc:10,.2f} ha  (Meta: 11.000,00 ha)')
-    print(f'  [+] CONSOLIDADO GERAL:    {total:10,.2f} ha  (Meta: 14.374,33 ha)')
-    print('-' * 76)
-    print('  [+] Diario de Auditoria:  W:\\15-SETOR\\FABIANO\\DIARIO_DE_BORDO_AUDITORIA.txt')
-    print('=' * 76 + '\n')
+    meta_prop = 3374.33
+    meta_terc = 11000.00
+    meta_total = meta_prop + meta_terc
+
+    pct_prop = (prop / meta_prop) * 100 if meta_prop else 0
+    pct_terc = (terc / meta_terc) * 100 if meta_terc else 0
+    pct_total = (total / meta_total) * 100 if meta_total else 0
+
+    falta_prop = max(0.0, meta_prop - prop)
+    falta_terc = max(0.0, meta_terc - terc)
+    falta_total = max(0.0, meta_total - total)
+
+    agora = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+
+    print('\n' + '=' * 82)
+    print('   CLEALCO GEOTECNOLOGIA - RESUMO EXECUTIVO (PAINEL PWA)')
+    print('=' * 82)
+    print(f'   [+] REALIZADO PROPRIAS:   {prop:10,.2f} ha  ({pct_prop:5.1f}% | Meta: {meta_prop:,.2f} ha | Falta: {falta_prop:,.2f} ha)'.replace(',', 'X').replace('.', ',').replace('X', '.'))
+    print(f'   [+] REALIZADO TERCEIROS:  {terc:10,.2f} ha  ({pct_terc:5.1f}% | Meta: {meta_terc:,.2f} ha | Falta: {falta_terc:,.2f} ha)'.replace(',', 'X').replace('.', ',').replace('X', '.'))
+    print(f'   [+] CONSOLIDADO GERAL:    {total:10,.2f} ha  ({pct_total:5.1f}% | Meta: {meta_total:,.2f} ha | Falta: {falta_total:,.2f} ha)'.replace(',', 'X').replace('.', ',').replace('X', '.'))
+    print('-' * 82)
+    print(f'   [+] Atualizacao: {agora}  | Total Fazendas: {len(falhas)}')
+    print('   [+] Diario Auditoria: W:\\15-SETOR\\FABIANO\\DIARIO_DE_BORDO_AUDITORIA.txt')
+    print('=' * 82 + '\n')
 except Exception as e:
     pass
+
