@@ -1,7 +1,24 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 13/11/2026 10:00:59
+// Gerado em: 13/11/2026 10:04:35
 // Total de Mapas: 1324
 window.DADOS_MAPAS_SAFRA = [
+  {
+    "arquivo": "307542 - Sítio Bela Vista (Moacir Carlos Lucheti).pdf",
+    "url": "mapas_safra/Terceiros/307542 - Sítio Bela Vista (Moacir Carlos Lucheti).pdf",
+    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros/307542%20-%20S%C3%ADtio%20Bela%20Vista%20%28Moacir%20Carlos%20Lucheti%29.pdf?csf=1&web=1",
+    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros?csf=1&web=1",
+    "categoria": "Terceiros",
+    "subpasta": "",
+    "fa": "307542",
+    "fazenda": "Sítio Bela Vista",
+    "proprietario": "Moacir Carlos Lucheti",
+    "data_modificacao": "13/11/2026 10:02",
+    "timestamp": 1794574924,
+    "tamanho_kb": 298.6,
+    "dias_atras": 0.0,
+    "is_novo": true,
+    "is_hoje": true
+  },
   {
     "arquivo": "307658 - Sítio Irmãos Annelli (Nilton Cezário Annelli).pdf",
     "url": "mapas_safra/Terceiros/307658 - Sítio Irmãos Annelli (Nilton Cezário Annelli).pdf",
@@ -542,7 +559,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "26/10/2026 13:39",
     "timestamp": 1793032761,
     "tamanho_kb": 372.4,
-    "dias_atras": 17.8,
+    "dias_atras": 17.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -1052,7 +1069,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "02/10/2026 11:13",
     "timestamp": 1790950390,
     "tamanho_kb": 289.8,
-    "dias_atras": 41.9,
+    "dias_atras": 42.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2378,7 +2395,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "28/08/2026 08:52",
     "timestamp": 1787917941,
     "tamanho_kb": 263.4,
-    "dias_atras": 77.0,
+    "dias_atras": 77.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3602,7 +3619,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/08/2026 16:02",
     "timestamp": 1786042925,
     "tamanho_kb": 292.3,
-    "dias_atras": 98.7,
+    "dias_atras": 98.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3858,23 +3875,6 @@ window.DADOS_MAPAS_SAFRA = [
     "timestamp": 1785788327,
     "tamanho_kb": 232.4,
     "dias_atras": 101.7,
-    "is_novo": false,
-    "is_hoje": false
-  },
-  {
-    "arquivo": "307542 - Sítio Bela Vista (Moacir Carlos Lucheti).pdf",
-    "url": "mapas_safra/Terceiros/307542 - Sítio Bela Vista (Moacir Carlos Lucheti).pdf",
-    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros/307542%20-%20S%C3%ADtio%20Bela%20Vista%20%28Moacir%20Carlos%20Lucheti%29.pdf?csf=1&web=1",
-    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros?csf=1&web=1",
-    "categoria": "Terceiros",
-    "subpasta": "",
-    "fa": "307542",
-    "fazenda": "Sítio Bela Vista",
-    "proprietario": "Moacir Carlos Lucheti",
-    "data_modificacao": "03/08/2026 13:20",
-    "timestamp": 1785774034,
-    "tamanho_kb": 289.1,
-    "dias_atras": 101.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4894,7 +4894,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "08/07/2026 08:50",
     "timestamp": 1783511441,
     "tamanho_kb": 280.3,
-    "dias_atras": 128.0,
+    "dias_atras": 128.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -5506,7 +5506,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "25/06/2026 11:14",
     "timestamp": 1782396881,
     "tamanho_kb": 659.6,
-    "dias_atras": 140.9,
+    "dias_atras": 141.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -7818,7 +7818,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "14/05/2026 13:40",
     "timestamp": 1778776809,
     "tamanho_kb": 282.2,
-    "dias_atras": 182.8,
+    "dias_atras": 182.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -8583,7 +8583,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/04/2026 11:14",
     "timestamp": 1776780840,
     "tamanho_kb": 313.2,
-    "dias_atras": 205.9,
+    "dias_atras": 206.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9960,7 +9960,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "09/03/2026 13:39",
     "timestamp": 1773074365,
     "tamanho_kb": 258.6,
-    "dias_atras": 248.8,
+    "dias_atras": 248.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -10436,7 +10436,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "23/02/2026 16:03",
     "timestamp": 1771873432,
     "tamanho_kb": 452.5,
-    "dias_atras": 262.7,
+    "dias_atras": 262.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -10555,7 +10555,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "18/02/2026 13:39",
     "timestamp": 1771432758,
     "tamanho_kb": 286.2,
-    "dias_atras": 267.8,
+    "dias_atras": 267.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -10691,7 +10691,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "11/02/2026 16:04",
     "timestamp": 1770836657,
     "tamanho_kb": 259.7,
-    "dias_atras": 274.7,
+    "dias_atras": 274.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -13785,7 +13785,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "04/09/2025 16:02",
     "timestamp": 1757012563,
     "tamanho_kb": 357.5,
-    "dias_atras": 434.7,
+    "dias_atras": 434.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14839,7 +14839,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "04/07/2025 16:02",
     "timestamp": 1751655746,
     "tamanho_kb": 282.2,
-    "dias_atras": 496.7,
+    "dias_atras": 496.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -15893,7 +15893,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "07/03/2025 16:02",
     "timestamp": 1741374140,
     "tamanho_kb": 457.7,
-    "dias_atras": 615.7,
+    "dias_atras": 615.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -16182,7 +16182,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "05/02/2025 11:14",
     "timestamp": 1738764894,
     "tamanho_kb": 289.9,
-    "dias_atras": 645.9,
+    "dias_atras": 646.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17542,7 +17542,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/06/2024 08:52",
     "timestamp": 1717674721,
     "tamanho_kb": 240.3,
-    "dias_atras": 890.0,
+    "dias_atras": 890.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -18443,7 +18443,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "05/03/2024 11:16",
     "timestamp": 1709648178,
     "tamanho_kb": 254.9,
-    "dias_atras": 982.9,
+    "dias_atras": 983.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -18987,7 +18987,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "28/02/2024 08:52",
     "timestamp": 1709121134,
     "tamanho_kb": 352.5,
-    "dias_atras": 989.0,
+    "dias_atras": 989.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20908,7 +20908,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 08:50",
     "timestamp": 1708516244,
     "tamanho_kb": 237.2,
-    "dias_atras": 996.0,
+    "dias_atras": 996.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -21452,7 +21452,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "20/02/2024 13:37",
     "timestamp": 1708447062,
     "tamanho_kb": 245.5,
-    "dias_atras": 996.8,
+    "dias_atras": 996.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -21469,7 +21469,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "20/02/2024 13:37",
     "timestamp": 1708447029,
     "tamanho_kb": 277.8,
-    "dias_atras": 996.8,
+    "dias_atras": 996.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -21605,7 +21605,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/02/2024 16:04",
     "timestamp": 1708369455,
     "tamanho_kb": 307.6,
-    "dias_atras": 997.7,
+    "dias_atras": 997.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -21724,7 +21724,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/02/2024 13:37",
     "timestamp": 1708360652,
     "tamanho_kb": 249.9,
-    "dias_atras": 997.8,
+    "dias_atras": 997.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -22353,7 +22353,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "14/02/2024 13:39",
     "timestamp": 1707928748,
     "tamanho_kb": 294.5,
-    "dias_atras": 1002.8,
+    "dias_atras": 1002.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -22455,7 +22455,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "12/02/2024 11:15",
     "timestamp": 1707747348,
     "tamanho_kb": 276.2,
-    "dias_atras": 1004.9,
+    "dias_atras": 1005.0,
     "is_novo": false,
     "is_hoje": false
   },
