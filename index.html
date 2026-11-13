@@ -1325,27 +1325,27 @@
                     
                     <div class="bg-white p-5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-sm">
                         <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Total de FAs Pendentes</span>
-                        <div class="text-4xl font-black text-slate-900 mt-2" id="bk-total-fas">152</div>
+                        <div class="text-4xl font-black text-slate-900 mt-2" id="bk-total-fas">--</div>
                         <span class="text-[11px] text-slate-400 mt-2 font-medium">Áreas planejadas em espera</span>
                     </div>
 
                     <div class="bg-white p-5 rounded-xl border border-slate-200 flex flex-col justify-between shadow-sm">
                         <span class="text-xs text-slate-500 uppercase font-bold tracking-wider">Área Total Pendente</span>
-                        <div class="text-3xl font-black text-slate-900 mt-2" id="bk-total-ha">9.402,33 ha</div>
+                        <div class="text-3xl font-black text-slate-900 mt-2" id="bk-total-ha">-- ha</div>
                         
                         <!-- Barra Próprias vs Terceiros -->
                         <div class="mt-3">
                             <div class="flex justify-between text-xs mb-1 font-bold">
-                                <span class="text-red-600">PRÓPRIAS: <span id="bk-ha-prop" class="text-slate-800">1.368,48 ha</span></span>
-                                <span class="text-amber-600">TERCEIROS: <span id="bk-ha-terc" class="text-slate-800">8.033,85 ha</span></span>
+                                <span class="text-red-600">PRÓPRIAS: <span id="bk-ha-prop" class="text-slate-800">-- ha</span></span>
+                                <span class="text-amber-600">TERCEIROS: <span id="bk-ha-terc" class="text-slate-800">-- ha</span></span>
                             </div>
                             <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden flex border border-slate-200">
-                                <div id="bk-bar-prop" class="bg-red-600 h-full transition-all duration-700" style="width: 14.6%;"></div>
-                                <div id="bk-bar-terc" class="bg-amber-500 h-full transition-all duration-700" style="width: 85.4%;"></div>
+                                <div id="bk-bar-prop" class="bg-red-600 h-full transition-all duration-700" style="width: 0%;"></div>
+                                <div id="bk-bar-terc" class="bg-amber-500 h-full transition-all duration-700" style="width: 0%;"></div>
                             </div>
                             <div class="flex justify-between text-[10px] text-slate-400 mt-1 font-semibold">
-                                <span id="bk-pct-prop">14.6%</span>
-                                <span id="bk-pct-terc">85.4%</span>
+                                <span id="bk-pct-prop">--%</span>
+                                <span id="bk-pct-terc">--%</span>
                             </div>
                         </div>
                     </div>
@@ -1354,10 +1354,10 @@
                     <div class="bg-white p-4 rounded-xl border border-slate-200 flex items-center justify-around shadow-sm">
                         <div class="relative w-28 h-28 flex items-center justify-center">
                             <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
-                                <path id="bk-donut-terc" stroke="#f59e0b" stroke-width="4.5" stroke-dasharray="91.9, 100" stroke-dashoffset="0" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                <path id="bk-donut-prop" stroke="#dc2626" stroke-width="4.5" stroke-dasharray="8.1, 100" stroke-dashoffset="-91.9" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                <path id="bk-donut-terc" stroke="#f59e0b" stroke-width="4.5" stroke-dasharray="0, 100" stroke-dashoffset="0" stroke="currentColor" fill="none" />
+                                <path id="bk-donut-prop" stroke="#dc2626" stroke-width="4.5" stroke-dasharray="0, 100" stroke-dashoffset="0" stroke="currentColor" fill="none" />
                             </svg>
-                            <span id="bk-donut-total-txt" class="absolute text-xs font-black text-slate-900">8.1k ha</span>
+                            <span id="bk-donut-total-txt" class="absolute text-xs font-black text-slate-900">--</span>
                         </div>
                         <div class="text-xs space-y-2 font-medium">
                             <div class="flex items-center gap-2">
@@ -2271,12 +2271,13 @@
                 <!-- KPI 3: Média (%) -->
                 <div class="glass-panel p-4 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition">
                     <div class="flex items-center justify-between text-slate-500 text-xs font-bold uppercase mb-1.5">
-                        <span>Média</span>
+                        <span>Média Ponderada</span>
                         <span id="hist-kpi-trend-badge" class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">EVOLUÇÃO</span>
                     </div>
                     <div class="flex items-baseline gap-1">
                         <span id="hist-kpi-media-pct" class="text-2xl sm:text-3xl font-black text-emerald-600">--</span>
                         <span class="text-xs font-bold text-slate-500">%</span>
+                        <span id="hist-kpi-media-simples" class="text-[11px] font-semibold text-slate-400 ml-2"></span>
                     </div>
                     <div class="mt-2 text-[11px] text-slate-500 font-semibold" id="hist-kpi-meta-comparativo">
                         Qtd total de vazios: <b id="hist-kpi-qtd-falhas" class="text-slate-800">--</b>
@@ -2830,8 +2831,8 @@
                 elFalhas.className = `text-base font-black ${pctFalhaTotal <= 5.0 ? 'text-emerald-600' : 'text-amber-600'}`;
             }
 
-            const totalHaBacklog = (dadosBacklog || []).reduce((acc, b) => acc + (b.ha || 0), 0) || 9402.33;
-            const totalFasBacklog = new Set((dadosBacklog || []).map(b => b.fa)).size || 152;
+            const totalHaBacklog = (dadosBacklog || []).reduce((acc, b) => acc + (b.ha || 0), 0);
+            const totalFasBacklog = new Set((dadosBacklog || []).map(b => b.fa)).size;
             const elBk = document.getElementById('boletim-kpi-backlog');
             const elBkSub = document.getElementById('boletim-kpi-backlog-sub');
             if (elBk) elBk.innerText = totalHaBacklog.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 }) + ' ha';
@@ -4125,17 +4126,15 @@
                 if (i.tipo === 'Própria') haProp += i.ha;
                 else haTerc += i.ha;
             });
-            const haTotal = haProp + haTerc || 9402.33;
-            haProp = haProp || 1368.5;
-            haTerc = haTerc || 8033.8;
+            const haTotal = haProp + haTerc;
 
-            document.getElementById('bk-total-fas').innerText = fasUnicos.size || 152;
+            document.getElementById('bk-total-fas').innerText = fasUnicos.size;
             document.getElementById('bk-total-ha').innerText = haTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2}) + ' ha';
             document.getElementById('bk-ha-prop').innerText = haProp.toLocaleString('pt-BR', {minimumFractionDigits: 1}) + ' ha';
             document.getElementById('bk-ha-terc').innerText = haTerc.toLocaleString('pt-BR', {minimumFractionDigits: 1}) + ' ha';
 
-            const pctP = ((haProp / haTotal) * 100).toFixed(1);
-            const pctT = ((haTerc / haTotal) * 100).toFixed(1);
+            const pctP = haTotal > 0 ? ((haProp / haTotal) * 100).toFixed(1) : '0.0';
+            const pctT = haTotal > 0 ? ((haTerc / haTotal) * 100).toFixed(1) : '0.0';
 
             document.getElementById('bk-pct-prop').innerText = pctP + '%';
             document.getElementById('bk-pct-terc').innerText = pctT + '%';
@@ -8111,6 +8110,16 @@
                     elMedia.className = "text-2xl sm:text-3xl font-black text-amber-600";
                 } else {
                     elMedia.className = "text-2xl sm:text-3xl font-black text-red-600";
+                }
+            }
+
+            const elMediaSimples = document.getElementById('hist-kpi-media-simples');
+            if (elMediaSimples) {
+                const sPct = data.resumo_anos[safraHistoricoAtiva]?.media_simples_pct;
+                if (sPct != null && safraHistoricoAtiva !== 'todas') {
+                    elMediaSimples.innerText = `(Simples: ${sPct.toFixed(2).replace('.', ',')}%)`;
+                } else {
+                    elMediaSimples.innerText = '';
                 }
             }
 

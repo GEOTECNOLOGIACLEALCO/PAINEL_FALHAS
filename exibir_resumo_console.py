@@ -37,18 +37,24 @@ try:
     falta_terc = max(0.0, meta_terc - terc)
     falta_total = max(0.0, meta_total - total)
 
+    tot_linhas = sum(float(f.get('Comp_Linhas') or 0) for f in falhas)
+    tot_falhas = sum(float(f.get('Comp_Falhas') or 0) for f in falhas)
+    med_ponderada = (tot_falhas / tot_linhas * 100) if tot_linhas > 0 else 0
+    med_simples = sum(float(f.get('Porc_Falha') or 0) for f in falhas) / len(falhas) if falhas else 0
+
     agora = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
 
-    print('\n' + '=' * 82)
+    print('\n' + '=' * 84)
     print('   CLEALCO GEOTECNOLOGIA - RESUMO EXECUTIVO (PAINEL PWA)')
-    print('=' * 82)
+    print('=' * 84)
     print(f'   [+] REALIZADO PROPRIAS:   {prop:10,.2f} ha  ({pct_prop:5.1f}% | Meta: {meta_prop:,.2f} ha | Falta: {falta_prop:,.2f} ha)'.replace(',', 'X').replace('.', ',').replace('X', '.'))
     print(f'   [+] REALIZADO TERCEIROS:  {terc:10,.2f} ha  ({pct_terc:5.1f}% | Meta: {meta_terc:,.2f} ha | Falta: {falta_terc:,.2f} ha)'.replace(',', 'X').replace('.', ',').replace('X', '.'))
     print(f'   [+] CONSOLIDADO GERAL:    {total:10,.2f} ha  ({pct_total:5.1f}% | Meta: {meta_total:,.2f} ha | Falta: {falta_total:,.2f} ha)'.replace(',', 'X').replace('.', ',').replace('X', '.'))
-    print('-' * 82)
-    print(f'   [+] Atualizacao: {agora}  | Total Fazendas: {len(falhas)}')
+    print('-' * 84)
+    print(f'   [+] INDICE DE FALHA REAL: {med_ponderada:5.2f}%  (Ponderada por Linha | Simples: {med_simples:4.2f}%)'.replace(',', 'X').replace('.', ',').replace('X', '.'))
+    print(f'   [+] Atualizacao: {agora}  | Fazendas: {len(falhas)} | Linhas: {tot_linhas/1000:,.0f} km'.replace(',', 'X').replace('.', ',').replace('X', '.'))
     print('   [+] Diario Auditoria: W:\\15-SETOR\\FABIANO\\DIARIO_DE_BORDO_AUDITORIA.txt')
-    print('=' * 82 + '\n')
+    print('=' * 84 + '\n')
 except Exception as e:
     pass
 

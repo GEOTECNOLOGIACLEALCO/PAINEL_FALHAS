@@ -117,19 +117,35 @@ base_proc.reverse()
 sheet_bk = wb['BACKLOG'] if 'BACKLOG' in wb.sheetnames else None
 rows_bk = list(sheet_bk.iter_rows(values_only=True)) if sheet_bk else []
 backlog = []
-for r in rows_bk[1:]:
-    fa = str(r[0] or '').strip()
-    if not fa: continue
-    backlog.append({
-        "fa": fa,
-        "fazenda": str(r[1] or '').strip(),
-        "talhao": str(r[2] or '').strip(),
-        "tipo": str(r[3] or 'Terceiro').strip(),
-        "ha": parse_num(r[4]),
-        "data": format_data(r[5]),
-        "dias": r[6] or 0,
-        "status_prazo": str(r[7] or 'N/D')
-    })
+if rows_bk:
+    header = [str(c or '').strip().lower() for c in rows_bk[0]]
+    def get_col_idx(names, default_idx):
+        for n in names:
+            if n in header: return header.index(n)
+        return default_idx
+
+    idx_fa = get_col_idx(['fa', 'f.a.', 'f.a'], 0)
+    idx_faz = get_col_idx(['fazenda'], 1)
+    idx_tal = get_col_idx(['talhao', 'talhão'], 2)
+    idx_tipo = get_col_idx(['tipo'], 3)
+    idx_ha = get_col_idx(['area', 'área', 'ha'], 4)
+    idx_data = get_col_idx(['data_plantio', 'data plantio', 'data'], 5)
+    idx_dias = get_col_idx(['dias_restantes', 'dias'], 6)
+    idx_status = get_col_idx(['status_tempo', 'status_prazo', 'status'], 7)
+
+    for r in rows_bk[1:]:
+        fa = str(r[idx_fa] or '').strip()
+        if not fa: continue
+        backlog.append({
+            "fa": fa,
+            "fazenda": str(r[idx_faz] or '').strip(),
+            "talhao": str(r[idx_tal] or '').strip(),
+            "tipo": str(r[idx_tipo] or 'Terceiro').strip(),
+            "ha": parse_num(r[idx_ha]),
+            "data": format_data(r[idx_data]),
+            "dias": r[idx_dias] or 0,
+            "status_prazo": str(r[idx_status] or 'N/D')
+        })
 
 # 3. FALHAS_PLANTIO
 sheet_f = wb['FALHAS_PLANTIO'] if 'FALHAS_PLANTIO' in wb.sheetnames else None
@@ -1350,16 +1366,18 @@ def compilar_historico_falhas():
             })
 
         media_simples_2026 = round(sum(lista_medias_2026) / len(lista_medias_2026), 2) if lista_medias_2026 else 0.0
+        media_ponderada_2026 = round((km_f_ano / km_l_ano) * 100, 2) if km_l_ano > 0 else media_simples_2026
         resumo_anos['2026'] = {
             'ha_total': round(ha_ano, 2),
             'km_linhas': round(km_l_ano, 2),
             'km_falhas': round(km_f_ano, 2),
             'num_falhas': num_f_ano,
-            'media_ponderada_pct': media_simples_2026,
+            'media_ponderada_pct': media_ponderada_2026,
+            'media_simples_pct': media_simples_2026,
             'qtd_fazendas': len([f for f in fazendas_todas if f['ano'] == '2026']),
             'status_contagem': status_contagem
         }
-        print(f"[HISTORICO FALHAS] Safra 2026 (Safra Atual): {resumo_anos['2026']['qtd_fazendas']} fazendas, {ha_ano:.1f} ha, Média Simples: {media_simples_2026}%")
+        print(f"[HISTORICO FALHAS] Safra 2026 (Safra Atual): {resumo_anos['2026']['qtd_fazendas']} fazendas, {ha_ano:.1f} ha, Média Ponderada: {media_ponderada_2026}% (Simples: {media_simples_2026}%)")
 
     # Mapear histórico multi-safra para fazendas repetidas
     fa_map = {}
