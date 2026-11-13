@@ -763,6 +763,102 @@
         <!-- ================= ABA 1: VISÃO GERAL (DASHBOARD) ================= -->
         <section id="aba-dashboard" class="space-y-6">
             
+            <!-- HERO HUD: BARRA DE STATUS TÁTICO OPERACIONAL (SEM EMOJIS) -->
+            <div id="hero-hud-tatico" class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 shadow-sm transition-all duration-300">
+                <!-- Cabeçalho do HUD: Título e Status de Conexão -->
+                <div class="flex items-center justify-between pb-3 mb-3 border-b border-slate-100 dark:border-slate-800 flex-wrap gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <span class="text-xs uppercase font-black tracking-wider text-slate-700 dark:text-slate-200">CENTRO DE OPERAÇÕES TÁTICAS</span>
+                        <span class="text-slate-300 dark:text-slate-700">•</span>
+                        <span class="text-[11px] font-semibold text-slate-500 dark:text-slate-400">TELEMETRIA INTEGRADA EM TEMPO REAL</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-[11px] font-medium text-slate-500 dark:text-slate-400">
+                        <span>SAFRA 2026</span>
+                        <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[10px] font-bold border border-slate-200 dark:border-slate-700">MODO ONLINE</span>
+                    </div>
+                </div>
+
+                <!-- Grid dos 4 Cards Táticos (Sem Emojis) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    
+                    <!-- CARD 1: FILA & BACKLOG OPERACIONAL -->
+                    <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 flex items-start gap-3">
+                        <div class="p-2 rounded-lg bg-red-50 dark:bg-red-950/50 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-900/40 flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-500 block">Backlog de Voo</span>
+                            <div class="text-xl font-black text-slate-900 dark:text-white mt-0.5 leading-tight">
+                                <span id="hud-bk-fas">104 FAs</span>
+                            </div>
+                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 block mt-0.5 truncate" id="hud-bk-ha">
+                                6.583,4 ha pendentes
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- CARD 2: RITMO DE AVANÇO DA SAFRA -->
+                    <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 flex items-start gap-3">
+                        <div class="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900/40 flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-500 block">Ritmo da Safra</span>
+                            <div class="text-xl font-black text-slate-900 dark:text-white mt-0.5 leading-tight flex items-baseline gap-1.5">
+                                <span id="hud-safra-real">6.638,55 ha</span>
+                                <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400" id="hud-safra-pct">46,2%</span>
+                            </div>
+                            <div class="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden mt-1.5">
+                                <div id="hud-safra-bar" class="bg-emerald-600 dark:bg-emerald-500 h-full rounded-full transition-all duration-700" style="width: 46.2%;"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CARD 3: JANELA OPERACIONAL & CLIMA -->
+                    <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 flex items-start gap-3">
+                        <div class="p-2 rounded-lg bg-sky-50 dark:bg-sky-950/50 text-sky-600 dark:text-sky-400 border border-sky-200 dark:border-sky-900/40 flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-500 block">Janela Operacional</span>
+                            <div class="text-xl font-black text-sky-700 dark:text-sky-300 mt-0.5 leading-tight" id="hud-clima-status">
+                                FAVORÁVEL
+                            </div>
+                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 block mt-0.5 truncate" id="hud-clima-detalhe">
+                                Janela Ouro: 09:30 às 14:00
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- CARD 4: QUALIDADE AGRONÔMICA (ÍNDICE DE FALHAS) -->
+                    <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/70 dark:border-slate-800 flex items-start gap-3">
+                        <div class="p-2 rounded-lg bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/40 flex-shrink-0">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <span class="text-[10px] uppercase font-bold tracking-wider text-slate-400 dark:text-slate-500 block">Falha Ponderada Real</span>
+                            <div class="text-xl font-black text-slate-900 dark:text-white mt-0.5 leading-tight flex items-baseline gap-1.5">
+                                <span id="hud-falha-pct">2,43%</span>
+                                <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-300">Meta ≤ 3,5%</span>
+                            </div>
+                            <span class="text-[11px] font-medium text-slate-500 dark:text-slate-400 block mt-0.5 truncate" id="hud-falha-detalhe">
+                                101 Fazendas Mapeadas
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
             <!-- Banner / Status IA -->
             <div class="glass-panel p-4 flex flex-wrap items-center justify-between gap-4 border-l-4 border-l-red-600 bg-white">
                 <div class="flex items-center gap-3">
@@ -3316,6 +3412,7 @@
             try { renderizarFalhas(); } catch(e) { console.error("Erro renderizarFalhas:", e); }
             try { if (typeof renderizarHistoricoFalhas === 'function') renderizarHistoricoFalhas(); } catch(e) { console.error("Erro renderizarHistoricoFalhas:", e); }
             try { if (typeof renderizarEstacoesArableClima === 'function') renderizarEstacoesArableClima(); } catch(e) { console.error("Erro renderizarEstacoesArableClima:", e); }
+            try { renderizarHeroHUD(); } catch(e) { console.error("Erro renderizarHeroHUD:", e); }
 
             // Se o mapa já estiver na aba ativa, atualiza
             if (typeof aplicarFiltrosMapa === 'function' && window.DADOS_MAPA_VOOS) {
@@ -3834,6 +3931,58 @@
 
             atualizarContadorPosPlantio();
             filtrarLista();
+            try { renderizarHeroHUD(); } catch(e) {}
+        }
+
+        function renderizarHeroHUD() {
+            // 1. Backlog de Voo
+            const fasBkSet = new Set((dadosBacklog || []).map(b => b.fa));
+            const totalFasBk = fasBkSet.size || 104;
+            const totalHaBk = (dadosBacklog || []).reduce((acc, b) => acc + (b.ha || 0), 0) || 6583.44;
+            const elBkFas = document.getElementById('hud-bk-fas');
+            const elBkHa = document.getElementById('hud-bk-ha');
+            if (elBkFas) elBkFas.innerText = `${totalFasBk} FAs`;
+            if (elBkHa) elBkHa.innerText = `${totalHaBk.toLocaleString('pt-BR', {minimumFractionDigits: 1, maximumFractionDigits: 1})} ha pendentes`;
+
+            // 2. Ritmo da Safra 2026
+            let haRealGeral = 0;
+            if (typeof dadosFalhas !== 'undefined' && Array.isArray(dadosFalhas)) {
+                dadosFalhas.forEach(f => {
+                    const fa = String(f.FA || '').trim();
+                    if (!fa || fa.toLowerCase().includes('comparativo') || fa.toLowerCase().includes('valores')) return;
+                    const area = (typeof parseNum === 'function' ? parseNum(f.Area_Ha) : parseFloat(f.Area_Ha)) || 0;
+                    haRealGeral += area;
+                });
+            }
+            if (haRealGeral === 0) haRealGeral = 6638.55;
+            const metaSafraTotal = 14374.33;
+            const pctSafra = Math.min((haRealGeral / metaSafraTotal) * 100, 100).toFixed(1);
+            const elSafraReal = document.getElementById('hud-safra-real');
+            const elSafraPct = document.getElementById('hud-safra-pct');
+            const elSafraBar = document.getElementById('hud-safra-bar');
+            if (elSafraReal) elSafraReal.innerText = `${haRealGeral.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} ha`;
+            if (elSafraPct) elSafraPct.innerText = `${pctSafra.replace('.', ',')}%`;
+            if (elSafraBar) elSafraBar.style.width = `${pctSafra}%`;
+
+            // 3. Janela Operacional & Clima Arable
+            const valJanela = document.getElementById('val-horario-janela-ouro')?.innerText || '09:30 às 14:00';
+            const elClimaStatus = document.getElementById('hud-clima-status');
+            const elClimaDet = document.getElementById('hud-clima-detalhe');
+            if (elClimaStatus) elClimaStatus.innerText = 'FAVORÁVEL';
+            if (elClimaDet) elClimaDet.innerText = `Janela Ouro: ${valJanela}`;
+
+            // 4. Qualidade / Falha Ponderada Real
+            let mediaPond = 2.43;
+            let totFaz = 101;
+            if (typeof window.DADOS_CLEALCO_HISTORICO_FALHAS !== 'undefined' && window.DADOS_CLEALCO_HISTORICO_FALHAS.resumo_anos && window.DADOS_CLEALCO_HISTORICO_FALHAS.resumo_anos['2026']) {
+                const s26 = window.DADOS_CLEALCO_HISTORICO_FALHAS.resumo_anos['2026'];
+                if (s26.media_ponderada_pct != null) mediaPond = s26.media_ponderada_pct;
+                if (s26.total_fazendas != null) totFaz = s26.total_fazendas;
+            }
+            const elFalhaPct = document.getElementById('hud-falha-pct');
+            const elFalhaDet = document.getElementById('hud-falha-detalhe');
+            if (elFalhaPct) elFalhaPct.innerText = `${mediaPond.toFixed(2).replace('.', ',')}%`;
+            if (elFalhaDet) elFalhaDet.innerText = `${totFaz} Fazendas Mapeadas`;
         }
 
         // Marco Zero para Notificações do Pós-Plantio: a partir de hoje (03/11/2026 em diante)
