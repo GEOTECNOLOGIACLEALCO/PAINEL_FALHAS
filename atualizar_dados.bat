@@ -47,8 +47,10 @@ git commit -m "Atualizacao automatica de dados: %date% %time%"
 git push origin main
 echo.
 if defined PY_EXE (
+    "%PY_EXE%" exibir_resumo_console.py
     "%PY_EXE%" notificar_windows.py "Clealco Geotecnologia" "Base sincronizada com o GitHub com sucesso!" >nul 2>&1
 ) else (
+    python exibir_resumo_console.py
     python notificar_windows.py "Clealco Geotecnologia" "Base sincronizada com o GitHub com sucesso!" >nul 2>&1
 )
 exit /b 0
