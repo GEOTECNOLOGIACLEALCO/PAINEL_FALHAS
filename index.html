@@ -1019,7 +1019,7 @@
                 </div>
 
                 <!-- Lista de Cards de FAs -->
-                <div id="lista-fas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-[480px] overflow-y-auto pr-1">
+                <div id="lista-fas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 pr-1">
                     <!-- Gerado dinamicamente via JS -->
                 </div>
             </div>
@@ -1379,7 +1379,7 @@
                         <span>Detalhes do Voo Pendente</span>
                         <span>Área Mapeada</span>
                     </div>
-                    <div id="lista-backlog" class="space-y-2 max-h-[420px] overflow-y-auto pr-1">
+                    <div id="lista-backlog" class="space-y-2 pr-1">
                         <!-- Injetado via JS -->
                     </div>
                 </div>
@@ -4643,6 +4643,9 @@
                     }, delay);
                 });
             }
+
+            // Rola suavemente para o topo da tela ao trocar de aba
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         // ================= MOTOR DO MAPA OPERACIONAL (LEAFLET / SHP) =================
@@ -8747,6 +8750,24 @@
                     .catch(err => console.log('Service Worker falha:', err));
             });
         }
+
+        // ================= CONTROLE DO BOTÃO VOLTAR AO TOPO =================
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('btn-voltar-topo');
+            if (!btn) return;
+            if (window.scrollY > 300) {
+                btn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-4');
+                btn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            } else {
+                btn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-4');
+                btn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+            }
+        }, { passive: true });
     </script>
+
+    <!-- ================= BOTÃO FLUTUANTE VOLTAR AO TOPO / ROLAR PARA CIMA ================= -->
+    <button id="btn-voltar-topo" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" title="Voltar ao Topo / Rolar para Cima" class="fixed bottom-6 right-6 z-40 bg-red-600 hover:bg-red-700 active:scale-95 text-white p-3 sm:p-3.5 rounded-full shadow-2xl transition-all duration-300 opacity-0 pointer-events-none translate-y-4 flex items-center justify-center border-2 border-white/40 cursor-pointer group hover:shadow-red-600/30" aria-label="Voltar ao topo">
+        <svg class="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:-translate-y-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg>
+    </button>
 </body>
 </html>

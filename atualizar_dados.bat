@@ -7,7 +7,15 @@ git pull --rebase origin main >nul 2>&1
 echo Atualizando dados locais...
 :: 2. Prioriza o interpretador Python do QGIS (com suporte a osgeo/ogr e shapefiles) com deteccao multi-estacao
 set "PY_EXE="
-if exist "C:\Program Files\QGIS 4.2.1\apps\Python312\python.exe" set "PY_EXE=C:\Program Files\QGIS 4.2.1\apps\Python312\python.exe"
+if exist "C:\Program Files\QGIS 4.2.1\apps\Python312\python.exe" (
+    set "PY_EXE=C:\Program Files\QGIS 4.2.1\apps\Python312\python.exe"
+    set "PYTHONHOME=C:\Program Files\QGIS 4.2.1\apps\Python312"
+    set "PATH=C:\Program Files\QGIS 4.2.1\apps\Python312;C:\Program Files\QGIS 4.2.1\apps\Python312\Scripts;C:\Program Files\QGIS 4.2.1\bin;C:\Program Files\QGIS 4.2.1\apps\gdal\bin;C:\Program Files\QGIS 4.2.1\apps\qt5\bin;%PATH%"
+    set "PROJ_DATA=C:\Program Files\QGIS 4.2.1\share\proj"
+    set "PROJ_LIB=C:\Program Files\QGIS 4.2.1\share\proj"
+    set "GDAL_DATA=C:\Program Files\QGIS 4.2.1\apps\gdal\share\gdal"
+    set "PYTHONUTF8=1"
+)
 if not defined PY_EXE if exist "C:\Program Files\QGIS 3.22.6\bin\python-qgis-ltr.bat" set "PY_EXE=C:\Program Files\QGIS 3.22.6\bin\python-qgis-ltr.bat"
 if not defined PY_EXE for /d %%G in ("C:\Program Files\QGIS*") do (
     if not defined PY_EXE if exist "%%G\bin\python-qgis-ltr.bat" set "PY_EXE=%%G\bin\python-qgis-ltr.bat"
@@ -38,5 +46,9 @@ if %errorlevel% equ 0 (
 git commit -m "Atualizacao automatica de dados: %date% %time%"
 git push origin main
 echo.
-echo Painel atualizado com sucesso no GitHub!
-python notificar_windows.py "Clealco Geotecnologia" "Base sincronizada com o GitHub com sucesso!"
+if defined PY_EXE (
+    "%PY_EXE%" notificar_windows.py "Clealco Geotecnologia" "Base sincronizada com o GitHub com sucesso!" >nul 2>&1
+) else (
+    python notificar_windows.py "Clealco Geotecnologia" "Base sincronizada com o GitHub com sucesso!" >nul 2>&1
+)
+exit /b 0
