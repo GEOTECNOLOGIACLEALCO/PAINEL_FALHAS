@@ -1,7 +1,24 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 13/11/2026 09:57:15
+// Gerado em: 13/11/2026 10:00:59
 // Total de Mapas: 1324
 window.DADOS_MAPAS_SAFRA = [
+  {
+    "arquivo": "307658 - Sítio Irmãos Annelli (Nilton Cezário Annelli).pdf",
+    "url": "mapas_safra/Terceiros/307658 - Sítio Irmãos Annelli (Nilton Cezário Annelli).pdf",
+    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros/307658%20-%20S%C3%ADtio%20Irm%C3%A3os%20Annelli%20%28Nilton%20Cez%C3%A1rio%20Annelli%29.pdf?csf=1&web=1",
+    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros?csf=1&web=1",
+    "categoria": "Terceiros",
+    "subpasta": "",
+    "fa": "307658",
+    "fazenda": "Sítio Irmãos Annelli",
+    "proprietario": "Nilton Cezário Annelli",
+    "data_modificacao": "13/11/2026 10:00",
+    "timestamp": 1794574814,
+    "tamanho_kb": 246.0,
+    "dias_atras": 0.0,
+    "is_novo": true,
+    "is_hoje": true
+  },
   {
     "arquivo": "306352 - Sítio São Pedro (Nilton Cezário Annelli).pdf",
     "url": "mapas_safra/Terceiros/306352 - Sítio São Pedro (Nilton Cezário Annelli).pdf",
@@ -1324,7 +1341,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "22/09/2026 13:35",
     "timestamp": 1790094959,
     "tamanho_kb": 313.2,
-    "dias_atras": 51.8,
+    "dias_atras": 51.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2633,7 +2650,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "24/08/2026 11:09",
     "timestamp": 1787580590,
     "tamanho_kb": 280.1,
-    "dias_atras": 80.9,
+    "dias_atras": 81.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2820,7 +2837,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/08/2026 13:34",
     "timestamp": 1787157276,
     "tamanho_kb": 430.3,
-    "dias_atras": 85.8,
+    "dias_atras": 85.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4554,7 +4571,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "14/07/2026 13:34",
     "timestamp": 1784046878,
     "tamanho_kb": 306.9,
-    "dias_atras": 121.8,
+    "dias_atras": 121.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4622,7 +4639,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "13/07/2026 11:11",
     "timestamp": 1783951903,
     "tamanho_kb": 319.2,
-    "dias_atras": 122.9,
+    "dias_atras": 123.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4996,7 +5013,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/07/2026 15:58",
     "timestamp": 1783364314,
     "tamanho_kb": 287.1,
-    "dias_atras": 129.7,
+    "dias_atras": 129.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -5659,23 +5676,6 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/06/2026 10:55",
     "timestamp": 1781877336,
     "tamanho_kb": 310.8,
-    "dias_atras": 147.0,
-    "is_novo": false,
-    "is_hoje": false
-  },
-  {
-    "arquivo": "307658 - Sítio Irmãos Annelli (Nilton Cezário Annelli).pdf",
-    "url": "mapas_safra/Terceiros/307658 - Sítio Irmãos Annelli (Nilton Cezário Annelli).pdf",
-    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros/307658%20-%20S%C3%ADtio%20Irm%C3%A3os%20Annelli%20%28Nilton%20Cez%C3%A1rio%20Annelli%29.pdf?csf=1&web=1",
-    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros?csf=1&web=1",
-    "categoria": "Terceiros",
-    "subpasta": "",
-    "fa": "307658",
-    "fazenda": "Sítio Irmãos Annelli",
-    "proprietario": "Nilton Cezário Annelli",
-    "data_modificacao": "19/06/2026 10:36",
-    "timestamp": 1781876186,
-    "tamanho_kb": 289.7,
     "dias_atras": 147.0,
     "is_novo": false,
     "is_hoje": false
@@ -6679,7 +6679,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "05/06/2026 11:12",
     "timestamp": 1780668774,
     "tamanho_kb": 313.9,
-    "dias_atras": 160.9,
+    "dias_atras": 161.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -7070,7 +7070,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/05/2026 15:59",
     "timestamp": 1779908360,
     "tamanho_kb": 308.5,
-    "dias_atras": 169.7,
+    "dias_atras": 169.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -7614,7 +7614,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/05/2026 11:11",
     "timestamp": 1779199903,
     "tamanho_kb": 418.8,
-    "dias_atras": 177.9,
+    "dias_atras": 178.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -8481,7 +8481,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/04/2026 15:58",
     "timestamp": 1777316334,
     "tamanho_kb": 345.7,
-    "dias_atras": 199.7,
+    "dias_atras": 199.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9229,7 +9229,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "25/03/2026 15:57",
     "timestamp": 1774465069,
     "tamanho_kb": 278.3,
-    "dias_atras": 232.7,
+    "dias_atras": 232.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -10045,7 +10045,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "05/03/2026 13:35",
     "timestamp": 1772728512,
     "tamanho_kb": 327.1,
-    "dias_atras": 252.8,
+    "dias_atras": 252.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -10351,7 +10351,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "25/02/2026 13:36",
     "timestamp": 1772037416,
     "tamanho_kb": 291.5,
-    "dias_atras": 260.8,
+    "dias_atras": 260.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -12051,7 +12051,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/12/2025 15:58",
     "timestamp": 1765393094,
     "tamanho_kb": 255.8,
-    "dias_atras": 337.7,
+    "dias_atras": 337.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14142,7 +14142,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "01/08/2025 08:46",
     "timestamp": 1754048798,
     "tamanho_kb": 310.6,
-    "dias_atras": 469.0,
+    "dias_atras": 469.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14703,7 +14703,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "11/07/2025 08:46",
     "timestamp": 1752234362,
     "tamanho_kb": 305.5,
-    "dias_atras": 490.0,
+    "dias_atras": 490.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17066,7 +17066,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "20/08/2024 08:46",
     "timestamp": 1724154400,
     "tamanho_kb": 375.8,
-    "dias_atras": 815.0,
+    "dias_atras": 815.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17865,7 +17865,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "13/05/2024 15:58",
     "timestamp": 1715626718,
     "tamanho_kb": 274.5,
-    "dias_atras": 913.7,
+    "dias_atras": 913.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17882,7 +17882,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "13/05/2024 15:58",
     "timestamp": 1715626681,
     "tamanho_kb": 303.2,
-    "dias_atras": 913.7,
+    "dias_atras": 913.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -18698,7 +18698,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "29/02/2024 15:59",
     "timestamp": 1709233191,
     "tamanho_kb": 273.8,
-    "dias_atras": 987.7,
+    "dias_atras": 987.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -19633,7 +19633,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "23/02/2024 11:12",
     "timestamp": 1708697558,
     "tamanho_kb": 252.0,
-    "dias_atras": 993.9,
+    "dias_atras": 994.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20925,7 +20925,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 08:47",
     "timestamp": 1708516067,
     "tamanho_kb": 256.5,
-    "dias_atras": 996.0,
+    "dias_atras": 996.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20942,7 +20942,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 08:45",
     "timestamp": 1708515937,
     "tamanho_kb": 291.5,
-    "dias_atras": 996.0,
+    "dias_atras": 996.1,
     "is_novo": false,
     "is_hoje": false
   },
