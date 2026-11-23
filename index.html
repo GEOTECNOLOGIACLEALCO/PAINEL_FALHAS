@@ -3302,12 +3302,13 @@
         function isFaPropria(fa, tipo) {
             const faStr = String(fa || '').trim();
             const faLimpo = faStr.replace(/\D/g, '');
-            const forcadasProp = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_proprias) || ['100542'];
+            const forcadasProp = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_proprias) || ['100542', '100458'];
             const forcadasTerc = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_terceiros) || ['200', '302817', '301085', '302808', '308012', '308014', '106', '240', '285'];
-            if (forcadasProp.includes(faStr) || forcadasProp.includes(faLimpo) || forcadasProp.includes(faLimpo.replace(/^0+/, ''))) return true;
             if (forcadasTerc.includes(faStr) || forcadasTerc.includes(faLimpo) || forcadasTerc.includes(faLimpo.replace(/^0+/, ''))) return false;
+            if (forcadasProp.includes(faStr) || forcadasProp.includes(faLimpo) || forcadasProp.includes(faLimpo.replace(/^0+/, ''))) return true;
+            if (faLimpo.length === 6 && (faLimpo.startsWith('20') || faLimpo.startsWith('100'))) return true;
             if (tipo && String(tipo).toLowerCase().includes('pr')) return true;
-            return faLimpo.startsWith('20') && faLimpo.length === 6;
+            return false;
         }
 
         function carregarDadosEmbarcadosERenderizar() {
