@@ -435,7 +435,7 @@ if os.path.exists(dir_bd_falhas_2026):
             fa_base = m_fa.group(1) if m_fa else b_name
             num_fa = re.sub(r'\D', '', fa_base)
             k_fa = num_fa.lstrip('0')
-            is_prop = (num_fa.startswith('20') and len(num_fa) == 6 and num_fa != '200')
+            is_prop = eh_fa_propria(num_fa or fa_base)
             seg_chave = 'Própria' if is_prop else 'Fornecedores'
 
             area_ha = 0.0
@@ -580,6 +580,8 @@ if rows_post and len(rows_post) > 1:
 
 dados_completos = {
     "fas_alteradas": mapa_fas_alteradas,
+    "fas_forcadas_proprias": list(FAS_FORCADAS_PROPRIAS),
+    "fas_forcadas_terceiros": list(FAS_FORCADAS_TERCEIROS),
     "base_processamentos": base_proc,
     "backlog": backlog,
     "falhas_plantio": falhas,
@@ -928,7 +930,7 @@ try:
 
             faz_nome_limpo = info_kml['pasta'].split('-')[1].strip() if '-' in info_kml['pasta'] else info_kml['pasta']
             faz_cand = next((v['fazenda'] for k, v in backlog_dict.items() if k[0] == fa_kml and v.get('fazenda')), faz_nome_limpo)
-            is_prop = (fa_kml.startswith('20') and len(fa_kml) == 6) or fa_kml in ['106', '240', '285']
+            is_prop = eh_fa_propria(fa_kml)
             tipo_kml = "Própria" if is_prop else "Terceiro"
             
             for kml_f in kmls_validos:
@@ -1318,7 +1320,7 @@ def compilar_historico_falhas():
                             nome = info.get('nome', f"FAZENDA FA {fa_k}")
 
                         tipo_orig = str(r[2] or '').strip()
-                        is_prop = 'prop' in tipo_orig.lower() or (fa_k.startswith('20') and len(fa_k) == 6)
+                        is_prop = eh_fa_propria(fa_k, tipo_orig)
                         tipo_clean = 'Própria' if is_prop else 'Terceiro'
 
                         try: ha_val = float(str(r[3] or 0).strip().replace(',', '.'))
@@ -1425,7 +1427,7 @@ def compilar_historico_falhas():
             fa = m_fa_h.group(1) if m_fa_h else basename.split()[0].strip()
             fa_clean = fa.lstrip('0')
             
-            is_propria = fa.startswith('20') and len(fa) == 6
+            is_propria = eh_fa_propria(fa)
             tipo = 'Própria' if is_propria else 'Terceiro'
 
             info = info_por_fa.get(fa, info_por_fa.get(fa_clean, {}))

@@ -2812,11 +2812,12 @@
                 const fa = String(f.FA || '').trim().toLowerCase();
                 return fa && !fa.includes('comparativo') && !fa.includes('valores_coluna');
             }).forEach(f => {
+                const fa = String(f.FA || '').trim();
                 const tipo = (f.Tipo || '').toLowerCase();
                 const area = parseFloat(f.Area_Ha) || 0;
                 const linhas = parseFloat(f.Comp_Linhas) || 0;
                 const falhas = parseFloat(f.Comp_Falhas) || 0;
-                if (tipo.includes('próp') || tipo.includes('prop')) {
+                if (isFaPropria(fa, tipo)) {
                     propArea += area; propLinhas += linhas; propFalhas += falhas;
                 } else {
                     fornecArea += area; fornecLinhas += linhas; fornecFalhas += falhas;
@@ -3298,6 +3299,17 @@
             console.log('[Auto-Polling] Monitor de atualizações ativado a cada 60s.');
         }
 
+        function isFaPropria(fa, tipo) {
+            const faStr = String(fa || '').trim();
+            const faLimpo = faStr.replace(/\D/g, '');
+            const forcadasProp = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_proprias) || ['100542', '106', '240', '285'];
+            const forcadasTerc = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_terceiros) || ['200', '302817', '301085', '302808', '308012', '308014'];
+            if (forcadasProp.includes(faStr) || forcadasProp.includes(faLimpo) || forcadasProp.includes(faLimpo.replace(/^0+/, ''))) return true;
+            if (forcadasTerc.includes(faStr) || forcadasTerc.includes(faLimpo)) return false;
+            if (tipo && String(tipo).toLowerCase().includes('pr')) return true;
+            return faLimpo.startsWith('20') && faLimpo.length === 6;
+        }
+
         function carregarDadosEmbarcadosERenderizar() {
             if (window.DADOS_CLEALCO_EMBARCADOS) {
                 dadosBase = window.DADOS_CLEALCO_EMBARCADOS.base_processamentos || [];
@@ -3307,6 +3319,12 @@
             dadosFasAlteradas = window.DADOS_CLEALCO_EMBARCADOS.fas_alteradas || {};
                 dadosAcompanhamento = window.DADOS_CLEALCO_EMBARCADOS.acompanhamento || [];
                 creditosInforow = window.DADOS_CLEALCO_EMBARCADOS.creditos_inforow || 10713.75;
+
+                // Garante classificacao consistente em todos os arrays embarcados
+                dadosFalhas.forEach(f => { f.Tipo = isFaPropria(f.FA, f.Tipo) ? 'Própria' : 'Terceiro'; });
+                dadosBacklog.forEach(b => { b.tipo = isFaPropria(b.fa, b.tipo) ? 'Própria' : 'Terceiro'; });
+                dadosBase.forEach(i => { i.tipo = isFaPropria(i.fa, i.tipo) ? 'Própria' : 'Terceiro'; });
+
                 if (window.DADOS_CLEALCO_EMBARCADOS.data_compilacao) {
                     const elData = document.getElementById('lbl-data-hora');
                     if (elData) elData.innerText = window.DADOS_CLEALCO_EMBARCADOS.data_compilacao;
@@ -3710,7 +3728,7 @@
                 if (i.tif === 'FEITO') tifsFeitos++;
                 if (i.linhas === 'FEITO') linhasFeitas++;
                 if (i.exp === 'FEITO') expFeitos++;
-                const isP = (i.fa.startsWith('20') && i.fa.length === 6 && i.fa !== '200') || (i.fa.startsWith('2') && !i.fa.startsWith('3'));
+                const isP = isFaPropria(i.fa, i.tipo);
                 if (isP) {
                     haProp += i.area_kml;
                     haVooProp += i.ha_voo;
@@ -3727,7 +3745,7 @@
                     const fa = String(f.FA || '').trim();
                     if (!fa || fa.toLowerCase().includes('comparativo') || fa.toLowerCase().includes('valores')) return;
                     const area = (typeof parseNum === 'function' ? parseNum(f.Area_Ha) : parseFloat(f.Area_Ha)) || 0;
-                    const isProp = (fa.startsWith('20') && fa.length === 6 && fa !== '200') || String(f.Tipo || '').toLowerCase().startsWith('pr');
+                    const isProp = isFaPropria(fa, f.Tipo);
                     if (isProp) falhasProp += area;
                     else falhasTerc += area;
                 });
@@ -3925,8 +3943,8 @@
             else if (filtroAtual === 'linhas_feitas') lista = lista.filter(i => i.linhas === 'FEITO');
             else if (filtroAtual === 'postergados_2_corte') lista = lista.filter(i => (i.linhas || '').toUpperCase().includes('POSTERGADO'));
             else if (filtroAtual === 'nao_exportado') lista = lista.filter(i => i.exp !== 'FEITO');
-            else if (filtroAtual === 'proprias') lista = lista.filter(i => i.fa.startsWith('2'));
-            else if (filtroAtual === 'terceiros') lista = lista.filter(i => i.fa.startsWith('1') || i.fa.startsWith('3'));
+            else if (filtroAtual === 'proprias') lista = lista.filter(i => isFaPropria(i.fa, i.tipo));
+            else if (filtroAtual === 'terceiros') lista = lista.filter(i => !isFaPropria(i.fa, i.tipo));
             else if (filtroAtual === 'esta_semana') lista = lista.slice(0, 30);
 
             if (termo) {
@@ -3949,7 +3967,7 @@
             }
 
             container.innerHTML = lista.map(item => {
-                const isProp = item.fa.startsWith('2');
+                const isProp = isFaPropria(item.fa, item.tipo);
                 const isAptoPos = isAptoPosPlantio(item);
                 const isPostergado = (item.linhas || '').toUpperCase().includes('POSTERGADO');
 
@@ -4529,7 +4547,7 @@
                 const linhas = parseFloat(f.Comp_Linhas) || 0;
                 const falhas = parseFloat(f.Comp_Falhas) || 0;
 
-                const isProp = tipo.includes('próp') || tipo.includes('prop') || (fa.startsWith('20') && fa.length === 6);
+                const isProp = isFaPropria(fa, tipo);
 
                 if (isProp) {
                     propArea += area;
