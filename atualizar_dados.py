@@ -312,7 +312,7 @@ if os.path.exists(dir_falhas_live):
             continue
 
         num_clean = re.sub(r'\D', '', b_fa)
-        tipo_calc = "Própria" if (num_clean.startswith('20') and len(num_clean) == 6) else "Terceiro"
+        tipo_calc = "Própria" if eh_fa_propria(num_clean or b_fa) else "Terceiro"
         nome_f = mapa_faz_nome.get(b_fa, "N/D")
         
         ha_val, comp_l, comp_f, p_falha = 0.0, 0.0, 0.0, 0.0
@@ -354,7 +354,7 @@ if os.path.exists(dir_falhas_live):
 # Normaliza os Tipos de todas as fazendas na lista de falhas para evitar problemas de acentuação
 for f_item in falhas:
     fa_str = str(f_item.get("FA", "")).strip()
-    is_p = (fa_str.startswith('20') and len(fa_str) == 6) or str(f_item.get("Tipo", "")).lower().startswith("pr")
+    is_p = eh_fa_propria(fa_str, f_item.get("Tipo", ""))
     f_item["Tipo"] = "Própria" if is_p else "Terceiro"
 
 # 4. METAS_GLOBAIS
