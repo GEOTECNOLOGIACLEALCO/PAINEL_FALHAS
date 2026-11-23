@@ -13,6 +13,21 @@ from cryptography.hazmat.primitives import hashes
 
 CHAVE_ACESSO_CLEALCO = "Clealco@Geo2026"
 
+# ================= REGRAS CORPORATIVAS DE CLASSIFICAÇÃO (OVERRIDES DE PRÓPRIAS / TERCEIROS) =================
+FAS_FORCADAS_PROPRIAS = {'100542', '106', '240', '285'}
+FAS_FORCADAS_TERCEIROS = {'200', '302817', '301085', '302808', '308012', '308014'}
+
+def eh_fa_propria(fa, tipo_original=''):
+    fa_str = str(fa or '').strip()
+    fa_limpo = re.sub(r'\D', '', fa_str)
+    if fa_str in FAS_FORCADAS_PROPRIAS or fa_limpo in FAS_FORCADAS_PROPRIAS or fa_limpo.lstrip('0') in FAS_FORCADAS_PROPRIAS:
+        return True
+    if fa_str in FAS_FORCADAS_TERCEIROS or fa_limpo in FAS_FORCADAS_TERCEIROS:
+        return False
+    if str(tipo_original).strip().lower().startswith('pr'):
+        return True
+    return (fa_limpo.startswith('20') and len(fa_limpo) == 6)
+
 def criptografar_payload(data_str, password=CHAVE_ACESSO_CLEALCO):
     salt = os.urandom(16)
     kdf = PBKDF2HMAC(
