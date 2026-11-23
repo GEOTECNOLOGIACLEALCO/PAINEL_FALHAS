@@ -1013,6 +1013,9 @@
                     <button class="filtro-pill" onclick="setFiltro('tif_pendente', this)">TIF Pendente</button>
                     <button class="filtro-pill" onclick="setFiltro('linhas_pendentes', this)">Linhas Pendentes</button>
                     <button class="filtro-pill" onclick="setFiltro('linhas_feitas', this)">Linhas Feitas</button>
+                    <button class="filtro-pill text-purple-700 bg-purple-50 border border-purple-200 hover:bg-purple-100" id="pill-postergados" onclick="setFiltro('postergados_2_corte', this)">
+                        Postergados 2º Corte (<span id="pill-count-postergados">0</span>)
+                    </button>
                     <button class="filtro-pill" onclick="setFiltro('nao_exportado', this)">Não Exportados</button>
                     <button class="filtro-pill" onclick="setFiltro('proprias', this)">Próprias</button>
                     <button class="filtro-pill" onclick="setFiltro('terceiros', this)">Terceiros</button>
@@ -3880,6 +3883,12 @@
             const elPill = document.getElementById('pill-count-pos-plantio');
             if (elPill) elPill.innerText = qtd;
 
+            const elPillPost = document.getElementById('pill-count-postergados');
+            if (elPillPost) {
+                const totalPost = dadosBase.filter(i => (i.linhas || '').toUpperCase().includes('POSTERGADO')).length;
+                elPillPost.innerText = totalPost;
+            }
+
             // Ativa o pulso luminoso do sino apenas se houver pendências reais de hoje em diante
             const elPing = document.getElementById('ping-pos-plantio');
             if (elPing) {
@@ -3912,8 +3921,9 @@
 
             if (filtroAtual === 'pronto_pos_plantio') lista = lista.filter(isAptoPosPlantio);
             else if (filtroAtual === 'tif_pendente') lista = lista.filter(i => i.tif !== 'FEITO');
-            else if (filtroAtual === 'linhas_pendentes') lista = lista.filter(i => i.linhas !== 'FEITO');
+            else if (filtroAtual === 'linhas_pendentes') lista = lista.filter(i => i.linhas !== 'FEITO' && !(i.linhas || '').toUpperCase().includes('POSTERGADO'));
             else if (filtroAtual === 'linhas_feitas') lista = lista.filter(i => i.linhas === 'FEITO');
+            else if (filtroAtual === 'postergados_2_corte') lista = lista.filter(i => (i.linhas || '').toUpperCase().includes('POSTERGADO'));
             else if (filtroAtual === 'nao_exportado') lista = lista.filter(i => i.exp !== 'FEITO');
             else if (filtroAtual === 'proprias') lista = lista.filter(i => i.fa.startsWith('2'));
             else if (filtroAtual === 'terceiros') lista = lista.filter(i => i.fa.startsWith('1') || i.fa.startsWith('3'));
@@ -3941,20 +3951,52 @@
             container.innerHTML = lista.map(item => {
                 const isProp = item.fa.startsWith('2');
                 const isAptoPos = isAptoPosPlantio(item);
+                const isPostergado = (item.linhas || '').toUpperCase().includes('POSTERGADO');
+
+                let restituicaoHtml = '';
+                if (isPostergado) {
+                    restituicaoHtml = `
+                        <span><b class="text-slate-800">Restituição:</b> <span class="text-purple-700 font-bold bg-purple-100/80 px-2 py-0.5 rounded border border-purple-200">Postergado (2º Corte)</span></span>
+                        <span class="text-[10px] font-extrabold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">Safra 2027</span>
+                    `;
+                } else if (item.linhas === 'FEITO') {
+                    restituicaoHtml = `
+                        <span><b class="text-slate-800">Restituição:</b> <span class="text-emerald-700 font-bold">Realizada (1º Corte)</span></span>
+                        <span class="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Concluído</span>
+                    `;
+                } else if (isAptoPos) {
+                    restituicaoHtml = `
+                        <span><b class="text-slate-800">Restituição:</b> <span class="text-emerald-600 font-bold">Aguardando Restituição</span></span>
+                        <span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Apto Pós-Plantio</span>
+                    `;
+                } else if (item.tif === 'FEITO') {
+                    restituicaoHtml = `
+                        <span><b class="text-slate-800">Restituição:</b> <span class="text-amber-600 font-bold">Pendente (1º Corte)</span></span>
+                    `;
+                } else {
+                    restituicaoHtml = `
+                        <span><b class="text-slate-800">Restituição:</b> <span class="text-slate-400 font-medium">Aguardando Voo / TIF</span></span>
+                    `;
+                }
+
                 return `
-                <div class="bg-white border ${isAptoPos ? 'border-emerald-500 ring-2 ring-emerald-400/25 shadow-md' : 'border-slate-200'} rounded-xl p-3.5 hover:border-red-400 hover:shadow-md transition shadow-sm relative overflow-hidden">
+                <div class="bg-white border ${isPostergado ? 'border-purple-300 ring-2 ring-purple-400/30 shadow-md' : (isAptoPos ? 'border-emerald-500 ring-2 ring-emerald-400/25 shadow-md' : 'border-slate-200')} rounded-xl p-3.5 hover:border-red-400 hover:shadow-md transition shadow-sm relative overflow-hidden">
                     ${isAptoPos ? `
                         <div class="absolute top-0 right-0 bg-emerald-600 text-white text-[9px] font-black uppercase px-2.5 py-0.5 rounded-bl-lg shadow-sm flex items-center gap-1.5 tracking-wider">
                             <span class="w-1.5 h-1.5 rounded-full bg-white animate-pulse"></span> APTO PÓS-PLANTIO
                         </div>
-                    ` : ''}
-                    <div class="mb-2 pb-2 border-b border-slate-100 ${isAptoPos ? 'pr-28' : ''}">
+                    ` : (isPostergado ? `
+                        <div class="absolute top-0 right-0 bg-purple-700 text-white text-[9px] font-black uppercase px-2.5 py-0.5 rounded-bl-lg shadow-sm flex items-center gap-1.5 tracking-wider">
+                            2º CORTE (2027)
+                        </div>
+                    ` : '')}
+                    <div class="mb-2 pb-2 border-b border-slate-100 ${isAptoPos || isPostergado ? 'pr-28' : ''}">
                         <div class="flex items-center gap-1.5 flex-wrap">
                             <span class="font-mono font-black text-xs text-red-600 whitespace-nowrap">FA ${item.fa}</span>
                             <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded whitespace-nowrap ${isProp ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}">
                                 ${isProp ? 'PRÓPRIA' : 'TERCEIRO'}
                             </span>
-                            ${item.linhas && item.linhas.includes('POSTERGADO') ? '<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded whitespace-nowrap bg-purple-50 text-purple-700 border border-purple-200">2º CORTE (2027)</span>' : ''}
+                            ${isPostergado ? '<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded whitespace-nowrap bg-purple-50 text-purple-700 border border-purple-200">POSTERGADO</span>' : ''}
                             ${obterBadgeFaAlterada(item.fa)}
                         </div>
                         <h4 class="text-xs font-black text-slate-800 mt-1 truncate" title="${item.fazenda}">
@@ -3965,12 +4007,11 @@
                         <div><b class="text-slate-800">Base:</b> ${item.base}</div>
                         <div><b class="text-slate-800">Voo:</b> ${item.data_voo}</div>
                         <div><b class="text-slate-800">TIF:</b> <span class="${item.tif==='FEITO'?'text-emerald-700 font-bold':'text-slate-500'}">${item.tif}</span></div>
-                        <div><b class="text-slate-800">Linhas:</b> <span class="${item.linhas==='FEITO'?'text-emerald-700 font-bold':(item.linhas.includes('POSTERGADO')?'text-purple-700 font-bold':'text-amber-600 font-bold')}">${item.linhas}</span></div>
+                        <div><b class="text-slate-800">Linhas:</b> <span class="${item.linhas==='FEITO'?'text-emerald-700 font-bold':(isPostergado ? 'text-purple-700 font-bold':'text-amber-600 font-bold')}">${item.linhas}</span></div>
                         <div><b class="text-slate-800">Ha Voo:</b> ${item.ha_voo}</div>
                         <div><b class="text-slate-800">Área KML:</b> ${item.area_kml} ha</div>
                         <div class="col-span-2 pt-1 border-t border-slate-200 text-slate-700 flex items-center justify-between">
-                            <span><b class="text-slate-800">Exportação:</b> <span class="${item.exp==='FEITO'?'text-emerald-700 font-bold':(item.exp.includes('2º CORTE')?'text-purple-700 font-bold':'text-amber-600 font-bold')}">${item.exp}</span></span>
-                            ${isAptoPos ? '<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Aguardando Restituição</span>' : ''}
+                            ${restituicaoHtml}
                         </div>
                     </div>
                 </div>
