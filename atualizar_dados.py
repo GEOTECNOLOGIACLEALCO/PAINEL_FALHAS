@@ -90,7 +90,16 @@ for r in rows_base[1:]:
     linhas = str(r[9] or 'PENDENTE').upper().strip()
     exp = str(r[10] or 'PENDENTE').upper().strip()
     
-    bd_falhas = "FEITO" if "FEITO" in linhas else "PENDENTE"
+    if "FEITO" in linhas:
+        status_linhas_clean = "FEITO"
+        bd_falhas = "FEITO"
+    elif "POSTERGADO" in linhas:
+        status_linhas_clean = "POSTERGADO (2º CORTE)"
+        bd_falhas = "POSTERGADO (2º CORTE)"
+    else:
+        status_linhas_clean = "PENDENTE"
+        bd_falhas = "PENDENTE"
+        
     bd_pisoteio = "FEITO"
     
     base_proc.append({
@@ -101,13 +110,13 @@ for r in rows_base[1:]:
         "data_voo": dt_voo,
         "data_proc": dt_proc,
         "tif": "FEITO" if "FEITO" in tif else "PENDENTE",
-        "linhas": "FEITO" if "FEITO" in linhas else "PENDENTE",
+        "linhas": status_linhas_clean,
         "data_linhas": dt_proc,
         "ha_voo": round(ha_voo, 2),
         "area_kml": round(ha_linhas, 2),
         "bd_falhas": bd_falhas,
         "bd_pisoteio": bd_pisoteio,
-        "exp": "FEITO" if "FEITO" in exp else "Pendente"
+        "exp": "FEITO" if "FEITO" in exp else ("N/A (2º CORTE)" if "2º CORTE" in exp else "Pendente")
     })
 
 # Inverter para que as mais recentes apareçam primeiro
@@ -513,6 +522,47 @@ try:
 except Exception as e:
     pass
 
+# 7. POSTERGADOS_2_CORTE
+sheet_post = wb['POSTERGADOS_2_CORTE'] if 'POSTERGADOS_2_CORTE' in wb.sheetnames else None
+rows_post = list(sheet_post.iter_rows(values_only=True)) if sheet_post else []
+if not rows_post:
+    try:
+        caminho_bp_fallback = r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\AUDITORIA - DOC - SISTEMA\BASE DE PROCESSAMENTOS.xlsx"
+        if os.path.exists(caminho_bp_fallback):
+            wb_bp_fb = openpyxl.load_workbook(caminho_bp_fallback, data_only=True, read_only=True)
+            if 'POSTERGADOS_2_CORTE' in wb_bp_fb.sheetnames:
+                rows_post = list(wb_bp_fb['POSTERGADOS_2_CORTE'].iter_rows(values_only=True))
+            wb_bp_fb.close()
+    except Exception: pass
+postergados = []
+if rows_post and len(rows_post) > 1:
+    h_post = [str(c or '').strip().upper() for c in rows_post[0]]
+    def get_post_idx(names, def_idx):
+        for n in names:
+            if n in h_post: return h_post.index(n)
+        return def_idx
+    
+    idx_p_fa = get_post_idx(['FA', 'F.A.'], 0)
+    idx_p_faz = get_post_idx(['FAZENDA'], 1)
+    idx_p_tal = get_post_idx(['TALHAO', 'TALHÃO'], 2)
+    idx_p_tipo = get_post_idx(['TIPO'], 3)
+    idx_p_ha = get_post_idx(['AREA_HA', 'AREA', 'ÁREA', 'HA'], 4)
+    idx_p_mot = get_post_idx(['MOTIVO'], 5)
+    idx_p_ret = get_post_idx(['SAFRA_RETORNO', 'SAFRA RETORNO', 'RETORNO'], 6)
+    
+    for r in rows_post[1:]:
+        fa_val = str(r[idx_p_fa] or '').strip()
+        if not fa_val: continue
+        postergados.append({
+            "fa": fa_val,
+            "fazenda": str(r[idx_p_faz] or '').strip(),
+            "talhao": str(r[idx_p_tal] or '').strip(),
+            "tipo": str(r[idx_p_tipo] or 'Terceiro').strip(),
+            "area_ha": parse_num(r[idx_p_ha]),
+            "motivo": str(r[idx_p_mot] or 'Porte fechado / Impossibilidade de restituição no 1º corte').strip(),
+            "safra_retorno": str(r[idx_p_ret] or '2027 - 2º Corte').strip()
+        })
+
 dados_completos = {
     "fas_alteradas": mapa_fas_alteradas,
     "base_processamentos": base_proc,
@@ -521,13 +571,16 @@ dados_completos = {
     "metas_globais": metas,
     "acompanhamento": acomp,
     "creditos_inforow": creditos_dinamicos,
+    "postergados_2_corte": postergados,
+    "total_postergados_ha": round(sum(p.get("area_ha", 0.0) for p in postergados), 2),
     "data_compilacao": datetime.now().strftime("%d/%m/%Y às %H:%M"),
     "status_automacao": {
         "status": "Online",
         "data_hora": datetime.now().strftime("%d/%m/%Y às %H:%M"),
         "total_voos": len(base_proc),
         "total_backlog": len(backlog),
-        "total_falhas": len(falhas)
+        "total_falhas": len(falhas),
+        "total_postergados": len(postergados)
     }
 }
 

@@ -3859,7 +3859,7 @@
         function isAptoPosPlantio(item) {
             if (!item) return false;
             const tifOk = (item.tif || '').toUpperCase() === 'FEITO';
-            const linhasPendentes = (item.linhas || '').toUpperCase() !== 'FEITO';
+            const linhasPendentes = (item.linhas || '').toUpperCase() !== 'FEITO' && !(item.linhas || '').toUpperCase().includes('POSTERGADO');
             if (!tifOk || !linhasPendentes) return false;
 
             // Filtra estritamente a partir de hoje (03/11/2026)
@@ -3954,6 +3954,7 @@
                             <span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded whitespace-nowrap ${isProp ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-amber-50 text-amber-800 border border-amber-200'}">
                                 ${isProp ? 'PRÓPRIA' : 'TERCEIRO'}
                             </span>
+                            ${item.linhas && item.linhas.includes('POSTERGADO') ? '<span class="text-[9px] font-extrabold px-1.5 py-0.5 rounded whitespace-nowrap bg-purple-50 text-purple-700 border border-purple-200">2º CORTE (2027)</span>' : ''}
                             ${obterBadgeFaAlterada(item.fa)}
                         </div>
                         <h4 class="text-xs font-black text-slate-800 mt-1 truncate" title="${item.fazenda}">
@@ -3964,11 +3965,11 @@
                         <div><b class="text-slate-800">Base:</b> ${item.base}</div>
                         <div><b class="text-slate-800">Voo:</b> ${item.data_voo}</div>
                         <div><b class="text-slate-800">TIF:</b> <span class="${item.tif==='FEITO'?'text-emerald-700 font-bold':'text-slate-500'}">${item.tif}</span></div>
-                        <div><b class="text-slate-800">Linhas:</b> <span class="${item.linhas==='FEITO'?'text-emerald-700 font-bold':'text-amber-600'} font-bold">${item.linhas}</span></div>
+                        <div><b class="text-slate-800">Linhas:</b> <span class="${item.linhas==='FEITO'?'text-emerald-700 font-bold':(item.linhas.includes('POSTERGADO')?'text-purple-700 font-bold':'text-amber-600 font-bold')}">${item.linhas}</span></div>
                         <div><b class="text-slate-800">Ha Voo:</b> ${item.ha_voo}</div>
                         <div><b class="text-slate-800">Área KML:</b> ${item.area_kml} ha</div>
                         <div class="col-span-2 pt-1 border-t border-slate-200 text-slate-700 flex items-center justify-between">
-                            <span><b class="text-slate-800">Exportação:</b> <span class="${item.exp==='FEITO'?'text-emerald-700 font-bold':'text-amber-600 font-bold'}">${item.exp}</span></span>
+                            <span><b class="text-slate-800">Exportação:</b> <span class="${item.exp==='FEITO'?'text-emerald-700 font-bold':(item.exp.includes('2º CORTE')?'text-purple-700 font-bold':'text-amber-600 font-bold')}">${item.exp}</span></span>
                             ${isAptoPos ? '<span class="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">Aguardando Restituição</span>' : ''}
                         </div>
                     </div>
