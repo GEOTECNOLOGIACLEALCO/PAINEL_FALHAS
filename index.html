@@ -6429,6 +6429,286 @@
             });
         }
 
+        // ================= RELATÓRIO EXECUTIVO DE FALHAS DE PLANTIO (OPÇÃO A) =================
+        let filtroSegmentoRelatorioExecutivo = 'todas';
+
+        function abrirModalRelatorioExecutivo() {
+            atualizarDadosRelatorioExecutivo();
+            const modal = document.getElementById('modal-relatorio-falhas-executivo');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function fecharModalRelatorioExecutivo() {
+            const modal = document.getElementById('modal-relatorio-falhas-executivo');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function setFiltroRelatorioExecutivo(segmento) {
+            filtroSegmentoRelatorioExecutivo = segmento;
+            
+            const btnTodas = document.getElementById('btn-rep-filtro-todas');
+            const btnProp = document.getElementById('btn-rep-filtro-proprias');
+            const btnTerc = document.getElementById('btn-rep-filtro-terceiros');
+
+            [btnTodas, btnProp, btnTerc].forEach(b => {
+                if (b) {
+                    b.classList.remove('bg-red-600', 'text-white', 'shadow-xs');
+                    b.classList.add('text-slate-600');
+                }
+            });
+
+            if (segmento === 'todas' && btnTodas) {
+                btnTodas.classList.add('bg-red-600', 'text-white', 'shadow-xs');
+                btnTodas.classList.remove('text-slate-600');
+            } else if (segmento === 'propria' && btnProp) {
+                btnProp.classList.add('bg-red-600', 'text-white', 'shadow-xs');
+                btnProp.classList.remove('text-slate-600');
+            } else if (segmento === 'terceiro' && btnTerc) {
+                btnTerc.classList.add('bg-red-600', 'text-white', 'shadow-xs');
+                btnTerc.classList.remove('text-slate-600');
+            }
+
+            atualizarDadosRelatorioExecutivo();
+        }
+
+        function atualizarDadosRelatorioExecutivo() {
+            const lista = (dadosFalhas || []).filter(f => {
+                const fa = String(f.FA || '').trim();
+                if (!fa || fa.toLowerCase().includes('comparativo') || fa.toLowerCase().includes('valores_coluna')) return false;
+                if (filtroSegmentoRelatorioExecutivo === 'propria') return isFaPropria(fa, f.Tipo);
+                if (filtroSegmentoRelatorioExecutivo === 'terceiro') return !isFaPropria(fa, f.Tipo);
+                return true;
+            });
+
+            const fazendasMap = new Map();
+            lista.forEach(f => {
+                const fa = String(f.FA || '').trim();
+                const nome = String(f.Fazenda || f.nome || '').trim();
+                const area = parseFloat(f.Area_Ha) || 0;
+                const linhas = parseFloat(f.Comp_Linhas) || 0;
+                const falhas = parseFloat(f.Comp_Falhas) || 0;
+                const key = fa + ' - ' + nome;
+                if (!fazendasMap.has(key)) {
+                    fazendasMap.set(key, { fa, nome, area: 0, linhas: 0, falhas: 0, tipo: f.Tipo });
+                }
+                const item = fazendasMap.get(key);
+                item.area += area;
+                item.linhas += linhas;
+                item.falhas += falhas;
+            });
+
+            let totalArea = 0, totalLinhas = 0, totalFalhas = 0;
+            const listaFazendas = [];
+            fazendasMap.forEach(item => {
+                item.pct = item.linhas > 0 ? (item.falhas / item.linhas * 100) : 0;
+                totalArea += item.area;
+                totalLinhas += item.linhas;
+                totalFalhas += item.falhas;
+                listaFazendas.push(item);
+            });
+
+            const mediaGeralPct = totalLinhas > 0 ? (totalFalhas / totalLinhas * 100) : 0;
+
+            // 1. Data de Atualização
+            const elData = document.getElementById('rep-data-atualizacao');
+            if (elData) {
+                const dataStr = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.data_compilacao) 
+                    ? window.DADOS_CLEALCO_EMBARCADOS.data_compilacao 
+                    : new Date().toLocaleDateString('pt-BR');
+                elData.innerText = dataStr;
+            }
+
+            // 2. Metas e Programação por Segmento
+            let progPlantio = 14374.33;
+            let realPlantio = 10434.15;
+            if (filtroSegmentoRelatorioExecutivo === 'propria') {
+                progPlantio = 3374.33;
+                realPlantio = 2934.13;
+            } else if (filtroSegmentoRelatorioExecutivo === 'terceiro') {
+                progPlantio = 11000.00;
+                realPlantio = 7500.02;
+            }
+
+            const elProg = document.getElementById('rep-card-prog');
+            if (elProg) elProg.innerText = progPlantio.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ha';
+
+            const elPlantada = document.getElementById('rep-card-plantada');
+            if (elPlantada) elPlantada.innerText = realPlantio.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ha';
+
+            const elLevantada = document.getElementById('rep-card-levantada');
+            if (elLevantada) elLevantada.innerText = totalArea.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ha';
+
+            // 3. Média Geral e Status da Meta
+            const elMediaGeral = document.getElementById('rep-media-geral-txt');
+            if (elMediaGeral) elMediaGeral.innerText = mediaGeralPct.toFixed(2).replace('.', ',') + '%';
+
+            const elBadgeMeta = document.getElementById('rep-badge-meta-status');
+            if (elBadgeMeta) {
+                if (mediaGeralPct <= 5.0) {
+                    elBadgeMeta.className = "inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300";
+                    elBadgeMeta.innerText = "✓ DENTRO DA META";
+                } else {
+                    elBadgeMeta.className = "inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-red-100 text-red-800 border border-red-300";
+                    elBadgeMeta.innerText = "FORA DA META";
+                }
+            }
+
+            // 4. TOP 5 Maiores Falhas
+            const top5 = [...listaFazendas].sort((a, b) => b.pct - a.pct).slice(0, 5);
+            const containerTop5 = document.getElementById('rep-container-top5');
+            if (containerTop5) {
+                containerTop5.innerHTML = '';
+                const maxPct = Math.max(...top5.map(x => x.pct), 6.0);
+                top5.forEach(f => {
+                    const largura = Math.min(100, Math.max(8, (f.pct / maxPct) * 100));
+                    const corBarra = f.pct <= 5.0 ? 'bg-gradient-to-r from-emerald-600 to-emerald-400' : 'bg-gradient-to-r from-red-600 to-amber-500';
+                    const div = document.createElement('div');
+                    div.className = "space-y-1";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-center text-[11px]">
+                            <span class="font-bold text-slate-800 truncate max-w-[280px]">${f.nome} <span class="text-slate-400 font-mono text-[10px]">(${f.fa})</span></span>
+                            <span class="font-extrabold ${f.pct > 5 ? 'text-red-600' : 'text-emerald-700'}">${f.pct.toFixed(2).replace('.', ',')}%</span>
+                        </div>
+                        <div class="w-full bg-slate-200/80 rounded-full h-3 overflow-hidden flex items-center p-0.5">
+                            <div class="${corBarra} h-2 rounded-full transition-all duration-500" style="width: ${largura}%"></div>
+                        </div>
+                    `;
+                    containerTop5.appendChild(div);
+                });
+            }
+
+            // 5. Tabela de Resultados por Fazenda
+            listaFazendas.sort((a, b) => a.nome.localeCompare(b.nome));
+            const tbody = document.getElementById('rep-tbody-fazendas');
+            if (tbody) {
+                tbody.innerHTML = '';
+                listaFazendas.forEach((f, idx) => {
+                    const tr = document.createElement('tr');
+                    tr.className = idx % 2 === 0 ? "bg-white" : "bg-slate-50/60";
+                    const corPct = f.pct <= 3.0 ? 'text-emerald-700 font-bold' : (f.pct <= 5.0 ? 'text-amber-700 font-bold' : 'text-red-600 font-black');
+                    tr.innerHTML = `
+                        <td class="py-1 px-2.5 font-mono text-slate-700 font-semibold">${f.fa}</td>
+                        <td class="py-1 px-2.5 font-bold text-slate-900 truncate max-w-[200px]" title="${f.nome}">${f.nome}</td>
+                        <td class="py-1 px-2.5 text-right font-medium text-slate-700">${f.area.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td class="py-1 px-2.5 text-right ${corPct}">${f.pct.toFixed(2).replace('.', ',')}%</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                const elTotAud = document.getElementById('rep-total-fazendas-auditadas');
+                if (elTotAud) elTotAud.innerText = `${listaFazendas.length} fazendas auditadas`;
+
+                const elTotArea = document.getElementById('rep-totalizador-area');
+                if (elTotArea) elTotArea.innerText = totalArea.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ha';
+
+                const elTotMedia = document.getElementById('rep-totalizador-media');
+                if (elTotMedia) elTotMedia.innerText = mediaGeralPct.toFixed(2).replace('.', ',') + '%';
+            }
+
+            // 6. Status das Medições (Donut + Chips)
+            const faFinalizadasSet = new Set(listaFazendas.map(f => f.fa));
+            const fazendasAguardandoMap = new Map();
+            (dadosBacklog || []).forEach(b => {
+                const fa = String(b.fa || '').trim();
+                const nome = String(b.fazenda || '').trim();
+                if (fa && !faFinalizadasSet.has(fa) && !fazendasAguardandoMap.has(fa)) {
+                    if (filtroSegmentoRelatorioExecutivo === 'propria' && !isFaPropria(fa, b.tipo)) return;
+                    if (filtroSegmentoRelatorioExecutivo === 'terceiro' && isFaPropria(fa, b.tipo)) return;
+                    fazendasAguardandoMap.set(fa, nome);
+                }
+            });
+
+            const qtdFin = listaFazendas.length;
+            const qtdAgu = fazendasAguardandoMap.size;
+            const totalMedicoes = qtdFin + qtdAgu;
+            const pctFin = totalMedicoes > 0 ? (qtdFin / totalMedicoes * 100) : 0;
+            const pctAgu = totalMedicoes > 0 ? (qtdAgu / totalMedicoes * 100) : 0;
+
+            const elDonutStroke = document.getElementById('rep-donut-stroke');
+            if (elDonutStroke) elDonutStroke.setAttribute('stroke-dasharray', `${Math.round(pctFin)}, 100`);
+
+            const elDonutTotal = document.getElementById('rep-donut-total-txt');
+            if (elDonutTotal) elDonutTotal.innerText = `${totalMedicoes} FA`;
+
+            const elPctFinTxt = document.getElementById('rep-pct-fin-txt');
+            if (elPctFinTxt) elPctFinTxt.innerText = `${pctFin.toFixed(1).replace('.', ',')}%`;
+
+            const elPctAguTxt = document.getElementById('rep-pct-agu-txt');
+            if (elPctAguTxt) elPctAguTxt.innerText = `${pctAgu.toFixed(1).replace('.', ',')}%`;
+
+            const elBadgeCountFin = document.getElementById('rep-count-finalizadas-badge');
+            if (elBadgeCountFin) elBadgeCountFin.innerText = `${qtdFin} fazendas`;
+
+            const elBadgeCountAgu = document.getElementById('rep-count-aguardando-badge');
+            if (elBadgeCountAgu) elBadgeCountAgu.innerText = `${qtdAgu} fazendas`;
+
+            // Chips Finalizadas
+            const chipsFin = document.getElementById('rep-chips-finalizadas');
+            if (chipsFin) {
+                chipsFin.innerHTML = '';
+                listaFazendas.slice(0, 10).forEach(f => {
+                    const span = document.createElement('span');
+                    span.className = "inline-block bg-emerald-50 text-emerald-800 border border-emerald-200 text-[8px] font-semibold px-1.5 py-0.5 rounded";
+                    span.innerText = f.nome;
+                    chipsFin.appendChild(span);
+                });
+                if (listaFazendas.length > 10) {
+                    const span = document.createElement('span');
+                    span.className = "text-[8px] text-slate-500 font-bold self-center";
+                    span.innerText = `+${listaFazendas.length - 10} outras`;
+                    chipsFin.appendChild(span);
+                }
+            }
+
+            // Chips Aguardando
+            const chipsAgu = document.getElementById('rep-chips-aguardando');
+            if (chipsAgu) {
+                chipsAgu.innerHTML = '';
+                const aguList = Array.from(fazendasAguardandoMap.entries());
+                aguList.slice(0, 10).forEach(([fa, nome]) => {
+                    const span = document.createElement('span');
+                    span.className = "inline-block bg-sky-50 text-sky-800 border border-sky-200 text-[8px] font-semibold px-1.5 py-0.5 rounded";
+                    span.innerText = nome;
+                    chipsAgu.appendChild(span);
+                });
+                if (aguList.length > 10) {
+                    const span = document.createElement('span');
+                    span.className = "text-[8px] text-slate-500 font-bold self-center";
+                    span.innerText = `+${aguList.length - 10} outras`;
+                    chipsAgu.appendChild(span);
+                }
+            }
+        }
+
+        function baixarImagemRelatorioExecutivo() {
+            const el = document.getElementById('container-relatorio-executivo');
+            if (!el) return;
+            const btn = document.getElementById('btn-download-rep-png');
+            const textoOriginal = btn ? btn.innerHTML : '';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<span>Gerando Imagem HD...</span>';
+            }
+            html2canvas(el, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+                const a = document.createElement('a');
+                const dataHoje = new Date().toISOString().slice(0, 10);
+                const sufixoSegmento = filtroSegmentoRelatorioExecutivo !== 'todas' ? `_${filtroSegmentoRelatorioExecutivo}` : '';
+                a.href = canvas.toDataURL("image/png");
+                a.download = `Resumo_Falhas_Plantio_Clealco_2026${sufixoSegmento}_${dataHoje}.png`;
+                a.click();
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = textoOriginal;
+                }
+            }).catch(err => {
+                console.error("Erro ao gerar imagem do relatório executivo:", err);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = textoOriginal;
+                }
+            });
+        }
+
         function gerarRelatorioExcel() {
             const dadosExport = dadosBase.map(i => ({
                 "FA": i.fa,
