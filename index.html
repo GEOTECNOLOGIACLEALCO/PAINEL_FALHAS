@@ -1080,8 +1080,9 @@
                     </div>
 
                     <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <button onclick="exportarTabelaPNG('aba-falhas', 'Falhas_Plantio_Clealco.png')" class="flex-1 sm:flex-initial bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 text-xs font-bold px-3 py-2 rounded-lg transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
-                            📥 <span>Baixar Imagem / PPT</span>
+                        <button type="button" onclick="abrirModalRelatorioExecutivo()" class="flex-1 sm:flex-initial bg-red-600 hover:bg-red-700 text-white text-xs font-bold px-3.5 py-2.5 rounded-lg transition flex items-center justify-center gap-2 shadow-sm whitespace-nowrap cursor-pointer">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            <span>Relatório Executivo (Baixar Imagem / PPT)</span>
                         </button>
                     </div>
                 </div>
@@ -2618,6 +2619,254 @@
                 <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-[10px] text-slate-400">
                     <span>Singularity AI Geotecnologia • Usina Clealco</span>
                     <span>Documento Oficial de Uso Interno e Agronômico</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= MODAL DO RELATÓRIO EXECUTIVO DE FALHAS DE PLANTIO (OPÇÃO A) ================= -->
+    <div id="modal-relatorio-falhas-executivo" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-[9999] hidden flex items-center justify-center p-2 sm:p-4 overflow-y-auto">
+        <div class="relative bg-white rounded-2xl max-w-7xl w-full p-4 sm:p-6 shadow-2xl border border-slate-200 my-auto max-h-[96vh] flex flex-col">
+            <!-- Barra de Ações Superior do Modal (não sai na imagem baixada) -->
+            <div class="flex flex-wrap items-center justify-between pb-3 mb-3 border-b border-slate-200 gap-3 flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-red-600"></span>
+                    <span class="text-xs font-black uppercase tracking-wider text-slate-800">Relatório Executivo • Resumo de Falhas de Plantio (Safra 2026)</span>
+                </div>
+
+                <!-- Filtros de Segmento + Botão de Download -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <!-- Segmentos -->
+                    <div class="inline-flex rounded-lg border border-slate-200 p-0.5 bg-slate-100 text-xs shadow-2xs">
+                        <button type="button" id="btn-rep-filtro-todas" onclick="setFiltroRelatorioExecutivo('todas')" class="px-3 py-1 rounded-md font-bold text-xs transition bg-red-600 text-white shadow-xs cursor-pointer">Todas</button>
+                        <button type="button" id="btn-rep-filtro-proprias" onclick="setFiltroRelatorioExecutivo('propria')" class="px-3 py-1 rounded-md font-bold text-xs transition text-slate-600 hover:text-slate-900 cursor-pointer">Próprias</button>
+                        <button type="button" id="btn-rep-filtro-terceiros" onclick="setFiltroRelatorioExecutivo('terceiro')" class="px-3 py-1 rounded-md font-bold text-xs transition text-slate-600 hover:text-slate-900 cursor-pointer">Terceiros</button>
+                    </div>
+
+                    <!-- Botão Baixar Imagem PNG -->
+                    <button type="button" id="btn-download-rep-png" onclick="baixarImagemRelatorioExecutivo()" class="px-4 py-1.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs transition shadow-sm cursor-pointer flex items-center gap-1.5">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        <span>Baixar Imagem PNG (Alta Resolução)</span>
+                    </button>
+
+                    <!-- Botão Fechar -->
+                    <button type="button" onclick="fecharModalRelatorioExecutivo()" class="p-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 transition text-lg leading-none cursor-pointer">
+                        &times;
+                    </button>
+                </div>
+            </div>
+
+            <!-- Container do Relatório (Formatado para Captura em Imagem PNG com 1200px) -->
+            <div class="overflow-auto flex-grow bg-slate-100/70 rounded-xl p-3 flex justify-center">
+                <div id="container-relatorio-executivo" style="width: 1200px; min-width: 1200px;" class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200 text-slate-800">
+                    
+                    <!-- CABEÇALHO EXECUTIVO -->
+                    <div class="flex items-center justify-between border-b-2 border-red-600 pb-4 mb-5">
+                        <div class="flex items-center gap-4">
+                            <img src="logo_clealco_oficial.png?v=6" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-14 w-auto object-contain">
+                            <div class="border-l-2 border-slate-200 pl-4">
+                                <h1 class="text-2xl font-black text-slate-900 tracking-tight uppercase leading-tight">RESUMO DE FALHAS DE PLANTIO</h1>
+                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">MONITORAMENTO DE QUALIDADE – SAFRA 2026</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-right shadow-2xs">
+                                <span class="text-[10px] font-bold text-slate-400 block uppercase">Atualizado em</span>
+                                <span id="rep-data-atualizacao" class="text-xs font-black text-slate-800">24 de novembro de 2026</span>
+                            </div>
+                            <div class="bg-red-50 border border-red-200 rounded-xl px-3.5 py-2 text-center shadow-2xs">
+                                <span class="text-[9px] font-black text-red-600 block uppercase tracking-wider">GEOTECNOLOGIA</span>
+                                <span class="text-[11px] font-bold text-slate-800">CLEALCO</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GRID PRINCIPAL DE 4 QUADRANTES -->
+                    <div class="grid grid-cols-12 gap-5">
+                        
+                        <!-- COLUNA ESQUERDA (VISÃO GERAL + TOP 5) -->
+                        <div class="col-span-6 space-y-5 flex flex-col justify-between">
+                            
+                            <!-- QUADRANTE 1: VISÃO GERAL -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="w-2 h-4 bg-emerald-600 rounded-xs"></div>
+                                    <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">VISÃO GERAL</h2>
+                                </div>
+
+                                <!-- 3 Cards de Métricas -->
+                                <div class="grid grid-cols-3 gap-2.5 mb-3">
+                                    <div class="bg-white border border-slate-200 rounded-lg p-3 text-center shadow-2xs">
+                                        <div class="w-7 h-7 mx-auto mb-1 flex items-center justify-center text-slate-700">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 8h4l3 3v5h-4" /></svg>
+                                        </div>
+                                        <span class="text-[9px] font-extrabold text-slate-400 block uppercase tracking-tight">PROGRAMAÇÃO DE PLANTIO</span>
+                                        <b class="text-sm font-black text-slate-900" id="rep-card-prog">14.374,33 ha</b>
+                                    </div>
+
+                                    <div class="bg-white border border-slate-200 rounded-lg p-3 text-center shadow-2xs">
+                                        <div class="w-7 h-7 mx-auto mb-1 flex items-center justify-center text-emerald-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
+                                        </div>
+                                        <span class="text-[9px] font-extrabold text-slate-400 block uppercase tracking-tight">ÁREA PLANTADA</span>
+                                        <b class="text-sm font-black text-slate-900" id="rep-card-plantada">10.434,15 ha</b>
+                                    </div>
+
+                                    <div class="bg-white border border-slate-200 rounded-lg p-3 text-center shadow-2xs">
+                                        <div class="w-7 h-7 mx-auto mb-1 flex items-center justify-center text-red-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
+                                        </div>
+                                        <span class="text-[9px] font-extrabold text-slate-400 block uppercase tracking-tight">ÁREA LEVANTADA (FALHAS)</span>
+                                        <b class="text-sm font-black text-slate-900" id="rep-card-levantada">7.060,26 ha</b>
+                                    </div>
+                                </div>
+
+                                <!-- Destaque Média Geral + Meta -->
+                                <div class="bg-white border border-slate-200 rounded-lg p-3 flex items-center justify-between shadow-2xs">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-11 h-11 rounded-full border-3 border-emerald-500 flex items-center justify-center bg-emerald-50">
+                                            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        </div>
+                                        <div>
+                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight block">MÉDIA GERAL DE FALHAS 2026</span>
+                                            <b class="text-2xl font-black text-slate-900" id="rep-media-geral-txt">2,38%</b>
+                                        </div>
+                                    </div>
+
+                                    <div class="text-right border-l border-slate-200 pl-4">
+                                        <span class="text-[9px] font-bold text-slate-400 uppercase block">META CORPORATIVA:</span>
+                                        <span class="text-xs font-black text-slate-700 block">≤ 5,00% <span class="text-[9px] font-medium text-slate-400">(Todas as fazendas)</span></span>
+                                        <span id="rep-badge-meta-status" class="inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300">
+                                            ✓ DENTRO DA META
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- QUADRANTE 3: MÉDIA DE FALHAS POR FAZENDA (TOP 5) -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs flex-grow flex flex-col justify-between">
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-4 bg-red-600 rounded-xs"></div>
+                                        <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">MÉDIA DE FALHAS POR FAZENDA (TOP 5 MAIORES)</h2>
+                                    </div>
+                                    <div class="bg-white border border-slate-200 rounded px-2 py-0.5 text-[9px] font-bold text-slate-600">
+                                        META: ≤ 5,00%
+                                    </div>
+                                </div>
+
+                                <!-- Barras Horizontais do Top 5 -->
+                                <div class="space-y-2.5" id="rep-container-top5">
+                                    <!-- Inserido dinamicamente -->
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- COLUNA DIREITA (RESULTADOS POR FAZENDA + STATUS DAS MEDIÇÕES) -->
+                        <div class="col-span-6 space-y-5 flex flex-col justify-between">
+                            
+                            <!-- QUADRANTE 2: RESULTADOS POR FAZENDA -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs flex flex-col justify-between" style="min-height: 295px;">
+                                <div class="flex items-center justify-between mb-2">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-4 bg-slate-800 rounded-xs"></div>
+                                        <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">RESULTADOS POR FAZENDA</h2>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-slate-500" id="rep-total-fazendas-auditadas">100 fazendas auditadas</span>
+                                </div>
+
+                                <!-- Tabela de Fazendas -->
+                                <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-2xs">
+                                    <div class="overflow-y-auto" style="max-height: 200px;">
+                                        <table class="w-full text-left text-[11px]">
+                                            <thead class="bg-slate-800 text-white sticky top-0 uppercase text-[9px] tracking-wider">
+                                                <tr>
+                                                    <th class="py-1.5 px-2.5 font-bold">CÓDIGO</th>
+                                                    <th class="py-1.5 px-2.5 font-bold">FAZENDA</th>
+                                                    <th class="py-1.5 px-2.5 font-bold text-right">ÁREA LEVANTADA (ha)</th>
+                                                    <th class="py-1.5 px-2.5 font-bold text-right">MÉDIA PONDERADA (%)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-slate-100" id="rep-tbody-fazendas">
+                                                <!-- Inserido dinamicamente -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- Rodapé Totalizador -->
+                                    <div class="bg-slate-800 text-white font-black text-[11px] flex justify-between items-center px-3 py-2 border-t border-slate-700">
+                                        <span>TOTAL SAFRA 2026</span>
+                                        <div class="flex gap-6">
+                                            <span id="rep-totalizador-area">7.060,26 ha</span>
+                                            <span id="rep-totalizador-media" class="text-emerald-400">2,38%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- QUADRANTE 4: STATUS DAS MEDIÇÕES -->
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs">
+                                <div class="flex items-center gap-2 mb-3">
+                                    <div class="w-2 h-4 bg-sky-600 rounded-xs"></div>
+                                    <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">STATUS DAS MEDIÇÕES DE DRONE</h2>
+                                </div>
+
+                                <div class="grid grid-cols-12 gap-3 items-center">
+                                    <!-- Donut SVG -->
+                                    <div class="col-span-4 flex flex-col items-center justify-center">
+                                        <div class="relative w-24 h-24">
+                                            <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                                                <!-- Fundo Azul (Aguardando) -->
+                                                <path stroke="#0284C7" stroke-width="4.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                                <!-- Verde (Finalizada) -->
+                                                <path id="rep-donut-stroke" stroke="#10B981" stroke-dasharray="55, 100" stroke-width="4.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                            </svg>
+                                            <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+                                                <span class="text-[9px] font-bold text-slate-400 uppercase leading-none">Total</span>
+                                                <b class="text-xs font-black text-slate-800 leading-tight" id="rep-donut-total-txt">180 FA</b>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center gap-3 mt-1 text-[9px] font-bold">
+                                            <span class="text-emerald-700 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> <span id="rep-pct-fin-txt">55%</span></span>
+                                            <span class="text-sky-700 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-sky-600 inline-block"></span> <span id="rep-pct-agu-txt">45%</span></span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 2 Caixas de Listagem Nominal -->
+                                    <div class="col-span-8 space-y-2">
+                                        <!-- Caixa Finalizada -->
+                                        <div class="bg-white border border-emerald-200 rounded-lg p-2 shadow-2xs">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <span class="text-[10px] font-black text-emerald-800 uppercase flex items-center gap-1">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> FINALIZADA
+                                                </span>
+                                                <span class="text-[9px] font-bold text-emerald-700" id="rep-count-finalizadas-badge">100 fazendas</span>
+                                            </div>
+                                            <div class="flex flex-wrap gap-1 max-h-12 overflow-hidden" id="rep-chips-finalizadas">
+                                                <!-- Inserido dinamicamente -->
+                                            </div>
+                                        </div>
+
+                                        <!-- Caixa Aguardando -->
+                                        <div class="bg-white border border-sky-200 rounded-lg p-2 shadow-2xs">
+                                            <div class="flex justify-between items-center mb-1">
+                                                <span class="text-[10px] font-black text-sky-800 uppercase flex items-center gap-1">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span> AGUARDANDO PARA LEVANTAMENTO
+                                                </span>
+                                                <span class="text-[9px] font-bold text-sky-700" id="rep-count-aguardando-badge">80 fazendas</span>
+                                            </div>
+                                            <div class="flex flex-wrap gap-1 max-h-12 overflow-hidden" id="rep-chips-aguardando">
+                                                <!-- Inserido dinamicamente -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
                 </div>
             </div>
         </div>
