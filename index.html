@@ -2658,25 +2658,33 @@
 
             <!-- Container do Relatório (Formatado para Captura em Imagem PNG com 1200px) -->
             <div class="overflow-auto flex-grow bg-slate-100/70 rounded-xl p-3 flex justify-center">
-                <div id="container-relatorio-executivo" style="width: 1200px; min-width: 1200px;" class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200 text-slate-800">
+                <div id="container-relatorio-executivo" style="width: 1200px; min-width: 1200px;" class="bg-white rounded-2xl shadow-lg p-5 border border-slate-200 text-slate-800">
                     
-                    <!-- CABEÇALHO EXECUTIVO -->
-                    <div class="flex items-center justify-between border-b-2 border-red-600 pb-4 mb-5">
-                        <div class="flex items-center gap-4">
-                            <img src="logo_clealco_oficial.png?v=6" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-14 w-auto object-contain">
-                            <div class="border-l-2 border-slate-200 pl-4">
-                                <h1 class="text-2xl font-black text-slate-900 tracking-tight uppercase leading-tight">RESUMO DE FALHAS DE PLANTIO</h1>
-                                <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">MONITORAMENTO DE QUALIDADE – SAFRA 2026</p>
+                    <!-- CABEÇALHO PANORÂMICO COM BANNER DE CANAVIAL -->
+                    <div class="relative w-full rounded-xl overflow-hidden mb-5 border border-slate-300 shadow-sm" style="height: 120px;">
+                        <img src="banner_canavial.jpg?v=1" alt="Canavial Clealco" class="absolute inset-0 w-full h-full object-cover object-center">
+                        <div class="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-900/65 to-slate-950/30 flex items-center justify-between px-6">
+                            <div class="flex items-center gap-4">
+                                <div class="bg-white/95 backdrop-blur-md p-2 rounded-xl border border-white/50 shadow-md flex items-center justify-center">
+                                    <img src="logo_clealco_oficial.png?v=6" alt="Clealco" onerror="this.outerHTML='<b class=\'text-red-600 text-xl\'>CLEALCO</b>'" class="h-12 w-auto object-contain">
+                                </div>
+                                <div class="text-white drop-shadow-md">
+                                    <h1 class="text-2xl font-black tracking-tight uppercase leading-tight text-white flex items-center gap-2">
+                                        <span>RESUMO DE FALHAS DE PLANTIO</span>
+                                    </h1>
+                                    <p class="text-xs font-bold text-emerald-300 uppercase tracking-wider">MONITORAMENTO DE QUALIDADE – SAFRA 2026</p>
+                                </div>
                             </div>
-                        </div>
-                        <div class="flex items-center gap-3">
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-right shadow-2xs">
-                                <span class="text-[10px] font-bold text-slate-400 block uppercase">Atualizado em</span>
-                                <span id="rep-data-atualizacao" class="text-xs font-black text-slate-800">24 de novembro de 2026</span>
-                            </div>
-                            <div class="bg-red-50 border border-red-200 rounded-xl px-3.5 py-2 text-center shadow-2xs">
-                                <span class="text-[9px] font-black text-red-600 block uppercase tracking-wider">GEOTECNOLOGIA</span>
-                                <span class="text-[11px] font-bold text-slate-800">CLEALCO</span>
+
+                            <div class="flex items-center gap-3">
+                                <div class="bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2 text-right text-white shadow-lg">
+                                    <span class="text-[9px] font-bold text-slate-300 block uppercase tracking-wider">ATUALIZADO EM</span>
+                                    <span id="rep-data-atualizacao" class="text-xs font-black text-white">25/11/2026 às 07:19</span>
+                                </div>
+                                <div class="bg-red-600/90 backdrop-blur-md border border-red-400/30 rounded-xl px-3.5 py-2 text-center text-white shadow-lg">
+                                    <span class="text-[9px] font-black text-red-100 block uppercase tracking-wider">GEOTECNOLOGIA</span>
+                                    <span class="text-[11px] font-black text-white">CLEALCO</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2689,47 +2697,70 @@
                             
                             <!-- QUADRANTE 1: VISÃO GERAL -->
                             <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <div class="w-2 h-4 bg-emerald-600 rounded-xs"></div>
-                                    <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">VISÃO GERAL</h2>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-4 bg-emerald-600 rounded-xs"></div>
+                                        <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">1) VISÃO GERAL</h2>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-slate-500 uppercase">Indicadores Estratégicos</span>
                                 </div>
 
-                                <!-- 3 Cards de Métricas -->
-                                <div class="grid grid-cols-3 gap-2.5 mb-3">
-                                    <div class="bg-white border border-slate-200 rounded-lg p-3 text-center shadow-2xs">
-                                        <div class="w-7 h-7 mx-auto mb-1 flex items-center justify-center text-slate-700">
+                                <!-- 4 Cards de Métricas em Grade 2x2 -->
+                                <div class="grid grid-cols-2 gap-2.5 mb-3">
+                                    <div class="bg-white border border-slate-200 rounded-lg p-2.5 flex items-center gap-3 shadow-2xs">
+                                        <div class="w-9 h-9 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0 text-amber-700">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 8h4l3 3v5h-4" /></svg>
                                         </div>
-                                        <span class="text-[9px] font-extrabold text-slate-400 block uppercase tracking-tight">PROGRAMAÇÃO DE PLANTIO</span>
-                                        <b class="text-sm font-black text-slate-900" id="rep-card-prog">14.374,33 ha</b>
+                                        <div>
+                                            <span class="text-[9px] font-bold text-slate-400 block uppercase tracking-tight">PROGRAMAÇÃO</span>
+                                            <b class="text-sm font-black text-slate-900 leading-tight" id="rep-card-prog">3.374,33 ha</b>
+                                            <span class="text-[9px] text-slate-500 font-semibold block" id="rep-sub-prog">100% Planejado</span>
+                                        </div>
                                     </div>
 
-                                    <div class="bg-white border border-slate-200 rounded-lg p-3 text-center shadow-2xs">
-                                        <div class="w-7 h-7 mx-auto mb-1 flex items-center justify-center text-emerald-600">
+                                    <div class="bg-white border border-slate-200 rounded-lg p-2.5 flex items-center gap-3 shadow-2xs">
+                                        <div class="w-9 h-9 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center flex-shrink-0 text-emerald-600">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>
                                         </div>
-                                        <span class="text-[9px] font-extrabold text-slate-400 block uppercase tracking-tight">ÁREA PLANTADA</span>
-                                        <b class="text-sm font-black text-slate-900" id="rep-card-plantada">10.434,15 ha</b>
+                                        <div>
+                                            <span class="text-[9px] font-bold text-slate-400 block uppercase tracking-tight">ÁREA PLANTADA</span>
+                                            <b class="text-sm font-black text-slate-900 leading-tight" id="rep-card-plantada">2.934,13 ha</b>
+                                            <span class="text-[9px] text-emerald-700 font-bold block" id="rep-sub-plantada">87,0% Realizado</span>
+                                        </div>
                                     </div>
 
-                                    <div class="bg-white border border-slate-200 rounded-lg p-3 text-center shadow-2xs">
-                                        <div class="w-7 h-7 mx-auto mb-1 flex items-center justify-center text-red-600">
+                                    <div class="bg-white border border-slate-200 rounded-lg p-2.5 flex items-center gap-3 shadow-2xs">
+                                        <div class="w-9 h-9 rounded-lg bg-red-50 border border-red-200 flex items-center justify-center flex-shrink-0 text-red-600">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
                                         </div>
-                                        <span class="text-[9px] font-extrabold text-slate-400 block uppercase tracking-tight">ÁREA LEVANTADA (FALHAS)</span>
-                                        <b class="text-sm font-black text-slate-900" id="rep-card-levantada">7.060,26 ha</b>
+                                        <div>
+                                            <span class="text-[9px] font-bold text-slate-400 block uppercase tracking-tight">ÁREA LEVANTADA</span>
+                                            <b class="text-sm font-black text-slate-900 leading-tight" id="rep-card-levantada">2.514,21 ha</b>
+                                            <span class="text-[9px] text-red-700 font-bold block" id="rep-sub-levantada">85,7% Cobertura</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="bg-white border border-slate-200 rounded-lg p-2.5 flex items-center gap-3 shadow-2xs">
+                                        <div class="w-9 h-9 rounded-lg bg-sky-50 border border-sky-200 flex items-center justify-center flex-shrink-0 text-sky-600">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>
+                                        </div>
+                                        <div>
+                                            <span class="text-[9px] font-bold text-slate-400 block uppercase tracking-tight">LINHAS MAPEADAS</span>
+                                            <b class="text-sm font-black text-slate-900 leading-tight" id="rep-card-linhas">16.098 km</b>
+                                            <span class="text-[9px] text-slate-500 font-semibold block">Extensão Linear Auditada</span>
+                                        </div>
                                     </div>
                                 </div>
 
                                 <!-- Destaque Média Geral + Meta -->
                                 <div class="bg-white border border-slate-200 rounded-lg p-3 flex items-center justify-between shadow-2xs">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-11 h-11 rounded-full border-3 border-emerald-500 flex items-center justify-center bg-emerald-50">
-                                            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                        <div class="w-12 h-12 rounded-full border-3 border-emerald-500 flex items-center justify-center bg-emerald-50 flex-shrink-0">
+                                            <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><circle cx="12" cy="12" r="6" stroke-width="2"/><circle cx="12" cy="12" r="2" stroke-width="2"/></svg>
                                         </div>
                                         <div>
-                                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tight block">MÉDIA GERAL DE FALHAS 2026</span>
-                                            <b class="text-2xl font-black text-slate-900" id="rep-media-geral-txt">2,38%</b>
+                                            <span class="text-[9px] font-bold text-slate-400 uppercase tracking-tight block">MÉDIA GERAL DE FALHAS 2026</span>
+                                            <b class="text-2xl font-black text-slate-900 leading-none" id="rep-media-geral-txt">3,39%</b>
                                         </div>
                                     </div>
 
@@ -2743,21 +2774,33 @@
                                 </div>
                             </div>
 
-                            <!-- QUADRANTE 3: MÉDIA DE FALHAS POR FAZENDA (TOP 5) -->
+                            <!-- QUADRANTE 3: MÉDIA DE FALHAS POR FAZENDA (TOP 5 MAIORES) -->
                             <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs flex-grow flex flex-col justify-between">
                                 <div class="flex items-center justify-between mb-3">
                                     <div class="flex items-center gap-2">
                                         <div class="w-2 h-4 bg-red-600 rounded-xs"></div>
-                                        <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">MÉDIA DE FALHAS POR FAZENDA (TOP 5 MAIORES)</h2>
+                                        <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">3) TOP 5 MAIORES FALHAS</h2>
                                     </div>
-                                    <div class="bg-white border border-slate-200 rounded px-2 py-0.5 text-[9px] font-bold text-slate-600">
-                                        META: ≤ 5,00%
-                                    </div>
+                                    <span class="text-[9px] font-bold text-slate-500 uppercase">Atenção Agronômica</span>
                                 </div>
 
-                                <!-- Barras Horizontais do Top 5 -->
-                                <div class="space-y-2.5" id="rep-container-top5">
-                                    <!-- Inserido dinamicamente -->
+                                <div class="grid grid-cols-12 gap-3 items-center">
+                                    <!-- Barras Horizontais do Top 5 (Col 8) -->
+                                    <div class="col-span-8 space-y-2" id="rep-container-top5">
+                                        <!-- Inserido dinamicamente -->
+                                    </div>
+
+                                    <!-- Caixa Lateral de Alvo (Col 4) -->
+                                    <div class="col-span-4 bg-white border border-slate-200 rounded-lg p-2.5 text-center flex flex-col items-center justify-center shadow-2xs">
+                                        <div class="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 mb-1">
+                                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><circle cx="12" cy="12" r="6" stroke-width="2"/><circle cx="12" cy="12" r="2" stroke-width="2"/></svg>
+                                        </div>
+                                        <span class="text-[8px] font-black text-slate-400 uppercase tracking-wider">ALVO DE QUALIDADE</span>
+                                        <b class="text-sm font-black text-slate-900 leading-tight">META: ≤ 5,00%</b>
+                                        <span class="text-[8px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full mt-1">
+                                            Padrão Agronômico
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
 
@@ -2767,25 +2810,28 @@
                         <div class="col-span-6 space-y-5 flex flex-col justify-between">
                             
                             <!-- QUADRANTE 2: RESULTADOS POR FAZENDA -->
-                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs flex flex-col justify-between" style="min-height: 295px;">
+                            <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs flex flex-col justify-between" style="min-height: 310px;">
                                 <div class="flex items-center justify-between mb-2">
                                     <div class="flex items-center gap-2">
                                         <div class="w-2 h-4 bg-slate-800 rounded-xs"></div>
-                                        <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">RESULTADOS POR FAZENDA</h2>
+                                        <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">2) RESULTADOS POR FAZENDA</h2>
                                     </div>
-                                    <span class="text-[10px] font-bold text-slate-500" id="rep-total-fazendas-auditadas">100 fazendas auditadas</span>
+                                    <span class="text-[10px] font-bold text-slate-500" id="rep-total-fazendas-auditadas">19 fazendas auditadas</span>
                                 </div>
 
                                 <!-- Tabela de Fazendas -->
                                 <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-2xs">
-                                    <div class="overflow-y-auto" style="max-height: 200px;">
+                                    <div class="overflow-y-auto" style="max-height: 215px;">
                                         <table class="w-full text-left text-[11px]">
                                             <thead class="bg-slate-800 text-white sticky top-0 uppercase text-[9px] tracking-wider">
                                                 <tr>
-                                                    <th class="py-1.5 px-2.5 font-bold">CÓDIGO</th>
-                                                    <th class="py-1.5 px-2.5 font-bold">FAZENDA</th>
-                                                    <th class="py-1.5 px-2.5 font-bold text-right">ÁREA LEVANTADA (ha)</th>
-                                                    <th class="py-1.5 px-2.5 font-bold text-right">MÉDIA PONDERADA (%)</th>
+                                                    <th class="py-2 px-2.5 font-bold">CÓDIGO</th>
+                                                    <th class="py-2 px-2.5 font-bold">FAZENDA</th>
+                                                    <th class="py-2 px-1.5 font-bold text-center">TALHÕES</th>
+                                                    <th class="py-2 px-2 font-bold text-right">ÁREA (ha)</th>
+                                                    <th class="py-2 px-2 font-bold text-right">LINHAS (km)</th>
+                                                    <th class="py-2 px-2 font-bold text-right">FALHA (%)</th>
+                                                    <th class="py-2 px-2 font-bold text-center">STATUS</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-slate-100" id="rep-tbody-fazendas">
@@ -2794,45 +2840,55 @@
                                         </table>
                                     </div>
                                     <!-- Rodapé Totalizador -->
-                                    <div class="bg-slate-800 text-white font-black text-[11px] flex justify-between items-center px-3 py-2 border-t border-slate-700">
-                                        <span>TOTAL SAFRA 2026</span>
-                                        <div class="flex gap-6">
-                                            <span id="rep-totalizador-area">7.060,26 ha</span>
-                                            <span id="rep-totalizador-media" class="text-emerald-400">2,38%</span>
-                                        </div>
+                                    <div class="bg-slate-800 text-white font-black text-[10px] grid grid-cols-12 items-center px-3 py-2 border-t border-slate-700 uppercase">
+                                        <span class="col-span-4">TOTAL SAFRA 2026</span>
+                                        <span class="col-span-1 text-center font-mono" id="rep-totalizador-talhoes">19</span>
+                                        <span class="col-span-2 text-right font-mono" id="rep-totalizador-area">2.514,21 ha</span>
+                                        <span class="col-span-2 text-right font-mono" id="rep-totalizador-linhas">16.098 km</span>
+                                        <span class="col-span-1 text-right font-mono text-emerald-400" id="rep-totalizador-media">3,39%</span>
+                                        <span class="col-span-2 text-center text-emerald-300 font-bold text-[9px]">100% Auditado</span>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- QUADRANTE 4: STATUS DAS MEDIÇÕES -->
                             <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-2xs">
-                                <div class="flex items-center gap-2 mb-3">
-                                    <div class="w-2 h-4 bg-sky-600 rounded-xs"></div>
-                                    <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">STATUS DAS MEDIÇÕES DE DRONE</h2>
+                                <div class="flex items-center justify-between mb-3">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-2 h-4 bg-sky-600 rounded-xs"></div>
+                                        <h2 class="text-xs font-black text-slate-800 uppercase tracking-wider">4) STATUS DAS MEDIÇÕES DE DRONE</h2>
+                                    </div>
+                                    <span class="text-[9px] font-bold text-slate-500 uppercase">Acompanhamento Físico (ha)</span>
                                 </div>
 
                                 <div class="grid grid-cols-12 gap-3 items-center">
-                                    <!-- Donut SVG -->
+                                    <!-- Donut SVG com Hectares -->
                                     <div class="col-span-4 flex flex-col items-center justify-center">
                                         <div class="relative w-24 h-24">
                                             <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
                                                 <!-- Fundo Azul (Aguardando) -->
                                                 <path stroke="#0284C7" stroke-width="4.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                                 <!-- Verde (Finalizada) -->
-                                                <path id="rep-donut-stroke" stroke="#10B981" stroke-dasharray="55, 100" stroke-width="4.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                                <path id="rep-donut-stroke" stroke="#10B981" stroke-dasharray="85, 100" stroke-width="4.5" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                             </svg>
                                             <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
-                                                <span class="text-[9px] font-bold text-slate-400 uppercase leading-none">Total</span>
-                                                <b class="text-xs font-black text-slate-800 leading-tight" id="rep-donut-total-txt">180 FA</b>
+                                                <b class="text-xs font-black text-slate-900 leading-tight" id="rep-donut-total-txt">24 FA</b>
+                                                <span class="text-[8px] font-bold text-slate-500 leading-tight" id="rep-donut-total-ha">2.968 ha</span>
                                             </div>
                                         </div>
-                                        <div class="flex items-center gap-3 mt-1 text-[9px] font-bold">
-                                            <span class="text-emerald-700 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> <span id="rep-pct-fin-txt">55%</span></span>
-                                            <span class="text-sky-700 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-sky-600 inline-block"></span> <span id="rep-pct-agu-txt">45%</span></span>
+                                        <div class="flex flex-col gap-0.5 mt-1.5 text-[9px] font-bold w-full px-1">
+                                            <div class="flex justify-between items-center text-emerald-800">
+                                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500 inline-block"></span> Finalizada:</span>
+                                                <span id="rep-ha-fin-txt">2.514 ha (85%)</span>
+                                            </div>
+                                            <div class="flex justify-between items-center text-sky-800">
+                                                <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-sky-600 inline-block"></span> Aguardando:</span>
+                                                <span id="rep-ha-agu-txt">454 ha (15%)</span>
+                                            </div>
                                         </div>
                                     </div>
 
-                                    <!-- 2 Caixas de Listagem Nominal -->
+                                    <!-- 2 Caixas de Listagem Nominal com Hectares -->
                                     <div class="col-span-8 space-y-2">
                                         <!-- Caixa Finalizada -->
                                         <div class="bg-white border border-emerald-200 rounded-lg p-2 shadow-2xs">
@@ -2840,7 +2896,7 @@
                                                 <span class="text-[10px] font-black text-emerald-800 uppercase flex items-center gap-1">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> FINALIZADA
                                                 </span>
-                                                <span class="text-[9px] font-bold text-emerald-700" id="rep-count-finalizadas-badge">100 fazendas</span>
+                                                <span class="text-[9px] font-bold text-emerald-700" id="rep-count-finalizadas-badge">19 fazendas • 2.514,21 ha</span>
                                             </div>
                                             <div class="flex flex-wrap gap-1 max-h-12 overflow-hidden" id="rep-chips-finalizadas">
                                                 <!-- Inserido dinamicamente -->
@@ -2853,7 +2909,7 @@
                                                 <span class="text-[10px] font-black text-sky-800 uppercase flex items-center gap-1">
                                                     <span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span> AGUARDANDO PARA LEVANTAMENTO
                                                 </span>
-                                                <span class="text-[9px] font-bold text-sky-700" id="rep-count-aguardando-badge">80 fazendas</span>
+                                                <span class="text-[9px] font-bold text-sky-700" id="rep-count-aguardando-badge">5 fazendas • 453,72 ha</span>
                                             </div>
                                             <div class="flex flex-wrap gap-1 max-h-12 overflow-hidden" id="rep-chips-aguardando">
                                                 <!-- Inserido dinamicamente -->
