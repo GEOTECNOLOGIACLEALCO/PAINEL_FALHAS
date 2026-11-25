@@ -3604,23 +3604,21 @@
             console.log('[Auto-Polling] Monitor de atualizações ativado a cada 60s.');
         }
 
-        const MAPA_EQUIVALENCIA_FAS = {
-            '201085': '301085', '301085': '201085',
-            '201452': '301452', '301452': '201452',
-            '208008': '308008', '308008': '208008',
-            '208012': '308012', '308012': '208012',
-            '208014': '308014', '308014': '208014',
-            '200498': '208008'
-        };
+        const MAPA_EQUIVALENCIA_FAS = {};
 
         function isFaPropria(fa, tipo) {
             const faStr = String(fa || '').trim();
             const faLimpo = faStr.replace(/\D/g, '');
-            const forcadasProp = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_proprias) || ['100542', '100458', '100862', '301085', '301452', '308008', '308012', '308014', '201085', '201452', '208008', '208012', '208014', '200498'];
+            const forcadasProp = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_proprias) || [
+                '100542', '100458', '100862', '200498', '200501', '200506', '200509',
+                '200518', '200528', '200560', '201276', '201431', '202001', '202255',
+                '202303', '202714', '202806', '202807', '207110', '207749', '207870',
+                '207875', '207968', '207969', '207982', '208066', '208097', '208183'
+            ];
             const forcadasTerc = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_terceiros) || ['200', '302817', '302808', '106', '240', '285'];
             if (forcadasTerc.includes(faStr) || forcadasTerc.includes(faLimpo) || forcadasTerc.includes(faLimpo.replace(/^0+/, ''))) return false;
             if (forcadasProp.includes(faStr) || forcadasProp.includes(faLimpo) || forcadasProp.includes(faLimpo.replace(/^0+/, ''))) return true;
-            if (faLimpo.length === 6 && (faLimpo.startsWith('20') || faLimpo.startsWith('100'))) return true;
+            if (faLimpo.length === 6 && (faLimpo.startswith('20') || faLimpo.startswith('100'))) return true;
             if (tipo && String(tipo).toLowerCase().includes('pr')) return true;
             return false;
         }
