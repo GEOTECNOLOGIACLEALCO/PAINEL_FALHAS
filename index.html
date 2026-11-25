@@ -6529,43 +6529,45 @@
 
         function atualizarDadosRelatorioExecutivo() {
             const lista = (dadosFalhas || []).filter(f => {
-                const fa = String(f.FA || '').trim();
+                const fa = String(f.FA || f.fa || '').trim();
                 if (!fa || fa.toLowerCase().includes('comparativo') || fa.toLowerCase().includes('valores_coluna')) return false;
-                if (filtroSegmentoRelatorioExecutivo === 'propria') return isFaPropria(fa, f.Tipo);
-                if (filtroSegmentoRelatorioExecutivo === 'terceiro') return !isFaPropria(fa, f.Tipo);
+                if (filtroSegmentoRelatorioExecutivo === 'propria') return isFaPropria(fa, f.Tipo || f.tipo);
+                if (filtroSegmentoRelatorioExecutivo === 'terceiro') return !isFaPropria(fa, f.Tipo || f.tipo);
                 return true;
             });
 
             const fazendasMap = new Map();
             lista.forEach(f => {
-                const fa = String(f.FA || '').trim();
+                const fa = String(f.FA || f.fa || '').trim();
                 const nome = String(f.Fazenda || f.nome || '').trim();
-                const area = parseFloat(f.Area_Ha) || 0;
-                const linhas = parseFloat(f.Comp_Linhas) || 0;
-                const falhas = parseFloat(f.Comp_Falhas) || 0;
+                const area = parseFloat(f.Area_Ha || f.area) || 0;
+                const linhas = parseFloat(f.Comp_Linhas || f.linhas) || 0;
+                const falhas = parseFloat(f.Comp_Falhas || f.falhas) || 0;
                 const key = fa + ' - ' + nome;
                 if (!fazendasMap.has(key)) {
-                    fazendasMap.set(key, { fa, nome, area: 0, linhas: 0, falhas: 0, tipo: f.Tipo });
+                    fazendasMap.set(key, { fa, nome, area: 0, linhas: 0, falhas: 0, talhoes: 0, tipo: f.Tipo || f.tipo });
                 }
                 const item = fazendasMap.get(key);
                 item.area += area;
                 item.linhas += linhas;
                 item.falhas += falhas;
+                item.talhoes += 1;
             });
 
-            let totalArea = 0, totalLinhas = 0, totalFalhas = 0;
+            let totalArea = 0, totalLinhas = 0, totalFalhas = 0, totalTalhoes = 0;
             const listaFazendas = [];
             fazendasMap.forEach(item => {
                 item.pct = item.linhas > 0 ? (item.falhas / item.linhas * 100) : 0;
                 totalArea += item.area;
                 totalLinhas += item.linhas;
                 totalFalhas += item.falhas;
+                totalTalhoes += item.talhoes;
                 listaFazendas.push(item);
             });
 
             const mediaGeralPct = totalLinhas > 0 ? (totalFalhas / totalLinhas * 100) : 0;
 
-            // 1. Data de Atualização
+            // 1. Data de Atualizacao
             const elData = document.getElementById('rep-data-atualizacao');
             if (elData) {
                 const dataStr = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.data_compilacao) 
@@ -6574,7 +6576,7 @@
                 elData.innerText = dataStr;
             }
 
-            // 2. Metas e Programação por Segmento
+            // 2. Metas e Programacao por Segmento
             let progPlantio = 14374.33;
             let realPlantio = 10434.15;
             if (filtroSegmentoRelatorioExecutivo === 'propria') {
@@ -6585,16 +6587,28 @@
                 realPlantio = 7500.02;
             }
 
+            const pctPlantado = progPlantio > 0 ? ((realPlantio / progPlantio) * 100).toFixed(1).replace('.', ',') : '0,0';
+            const pctCobertura = realPlantio > 0 ? ((totalArea / realPlantio) * 100).toFixed(1).replace('.', ',') : '0,0';
+
             const elProg = document.getElementById('rep-card-prog');
             if (elProg) elProg.innerText = progPlantio.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ha';
 
             const elPlantada = document.getElementById('rep-card-plantada');
             if (elPlantada) elPlantada.innerText = realPlantio.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ha';
 
+            const elSubPlantada = document.getElementById('rep-sub-plantada');
+            if (elSubPlantada) elSubPlantada.innerText = pctPlantado + '% Realizado';
+
             const elLevantada = document.getElementById('rep-card-levantada');
             if (elLevantada) elLevantada.innerText = totalArea.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ha';
 
-            // 3. Média Geral e Status da Meta
+            const elSubLevantada = document.getElementById('rep-sub-levantada');
+            if (elSubLevantada) elSubLevantada.innerText = pctCobertura + '% Cobertura';
+
+            const elLinhas = document.getElementById('rep-card-linhas');
+            if (elLinhas) elLinhas.innerText = (totalLinhas / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + ' km';
+
+            // 3. Media Geral e Status da Meta
             const elMediaGeral = document.getElementById('rep-media-geral-txt');
             if (elMediaGeral) elMediaGeral.innerText = mediaGeralPct.toFixed(2).replace('.', ',') + '%';
 
@@ -6602,7 +6616,7 @@
             if (elBadgeMeta) {
                 if (mediaGeralPct <= 5.0) {
                     elBadgeMeta.className = "inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-emerald-100 text-emerald-800 border border-emerald-300";
-                    elBadgeMeta.innerText = "✓ DENTRO DA META";
+                    elBadgeMeta.innerText = "DENTRO DA META";
                 } else {
                     elBadgeMeta.className = "inline-block mt-1 px-2.5 py-0.5 rounded-full text-[10px] font-black bg-red-100 text-red-800 border border-red-300";
                     elBadgeMeta.innerText = "FORA DA META";
@@ -6615,17 +6629,24 @@
             if (containerTop5) {
                 containerTop5.innerHTML = '';
                 const maxPct = Math.max(...top5.map(x => x.pct), 6.0);
-                top5.forEach(f => {
+                top5.forEach((f, idx) => {
                     const largura = Math.min(100, Math.max(8, (f.pct / maxPct) * 100));
                     const corBarra = f.pct <= 5.0 ? 'bg-gradient-to-r from-emerald-600 to-emerald-400' : 'bg-gradient-to-r from-red-600 to-amber-500';
                     const div = document.createElement('div');
                     div.className = "space-y-1";
                     div.innerHTML = `
                         <div class="flex justify-between items-center text-[11px]">
-                            <span class="font-bold text-slate-800 truncate max-w-[280px]">${f.nome} <span class="text-slate-400 font-mono text-[10px]">(${f.fa})</span></span>
-                            <span class="font-extrabold ${f.pct > 5 ? 'text-red-600' : 'text-emerald-700'}">${f.pct.toFixed(2).replace('.', ',')}%</span>
+                            <span class="font-bold text-slate-800 truncate max-w-[260px]">
+                                <span class="text-slate-400 font-black mr-1">#${idx + 1}</span>
+                                ${f.nome}
+                                <span class="text-slate-400 font-mono text-[9px]">(${f.fa})</span>
+                            </span>
+                            <span class="font-extrabold ${f.pct > 5 ? 'text-red-600' : 'text-emerald-700'}">
+                                <span class="text-[9px] font-medium text-slate-400 mr-1">(${f.area.toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })} ha)</span>
+                                ${f.pct.toFixed(2).replace('.', ',')}%
+                            </span>
                         </div>
-                        <div class="w-full bg-slate-200/80 rounded-full h-3 overflow-hidden flex items-center p-0.5">
+                        <div class="w-full bg-slate-200/80 rounded-full h-2.5 overflow-hidden flex items-center p-0.5">
                             <div class="${corBarra} h-2 rounded-full transition-all duration-500" style="width: ${largura}%"></div>
                         </div>
                     `;
@@ -6633,7 +6654,7 @@
                 });
             }
 
-            // 5. Tabela de Resultados por Fazenda
+            // 5. Tabela de Resultados por Fazenda (7 Colunas)
             listaFazendas.sort((a, b) => a.nome.localeCompare(b.nome));
             const tbody = document.getElementById('rep-tbody-fazendas');
             if (tbody) {
@@ -6642,11 +6663,20 @@
                     const tr = document.createElement('tr');
                     tr.className = idx % 2 === 0 ? "bg-white" : "bg-slate-50/60";
                     const corPct = f.pct <= 3.0 ? 'text-emerald-700 font-bold' : (f.pct <= 5.0 ? 'text-amber-700 font-bold' : 'text-red-600 font-black');
+                    let badgeStatus = '<span class="inline-block px-1.5 py-0.5 rounded text-[8px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">Excelente</span>';
+                    if (f.pct > 5.0) {
+                        badgeStatus = '<span class="inline-block px-1.5 py-0.5 rounded text-[8px] font-black bg-red-100 text-red-700 border border-red-200">Atenção</span>';
+                    } else if (f.pct > 3.0) {
+                        badgeStatus = '<span class="inline-block px-1.5 py-0.5 rounded text-[8px] font-bold bg-amber-100 text-amber-800 border border-amber-200">Na Meta</span>';
+                    }
                     tr.innerHTML = `
-                        <td class="py-1 px-2.5 font-mono text-slate-700 font-semibold">${f.fa}</td>
-                        <td class="py-1 px-2.5 font-bold text-slate-900 truncate max-w-[200px]" title="${f.nome}">${f.nome}</td>
-                        <td class="py-1 px-2.5 text-right font-medium text-slate-700">${f.area.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                        <td class="py-1 px-2.5 text-right ${corPct}">${f.pct.toFixed(2).replace('.', ',')}%</td>
+                        <td class="py-1.5 px-2.5 font-mono text-slate-700 font-semibold">${f.fa}</td>
+                        <td class="py-1.5 px-2.5 font-bold text-slate-900 truncate max-w-[190px]" title="${f.nome}">${f.nome}</td>
+                        <td class="py-1.5 px-1.5 text-center font-medium text-slate-600 font-mono">${f.talhoes}</td>
+                        <td class="py-1.5 px-2 text-right font-medium text-slate-700 font-mono">${f.area.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                        <td class="py-1.5 px-2 text-right font-medium text-slate-700 font-mono">${(f.linhas / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}</td>
+                        <td class="py-1.5 px-2 text-right font-mono ${corPct}">${f.pct.toFixed(2).replace('.', ',')}%</td>
+                        <td class="py-1.5 px-2 text-center">${badgeStatus}</td>
                     `;
                     tbody.appendChild(tr);
                 });
@@ -6654,29 +6684,44 @@
                 const elTotAud = document.getElementById('rep-total-fazendas-auditadas');
                 if (elTotAud) elTotAud.innerText = `${listaFazendas.length} fazendas auditadas`;
 
+                const elTotTalhoes = document.getElementById('rep-totalizador-talhoes');
+                if (elTotTalhoes) elTotTalhoes.innerText = totalTalhoes;
+
                 const elTotArea = document.getElementById('rep-totalizador-area');
                 if (elTotArea) elTotArea.innerText = totalArea.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' ha';
+
+                const elTotLinhas = document.getElementById('rep-totalizador-linhas');
+                if (elTotLinhas) elTotLinhas.innerText = (totalLinhas / 1000).toLocaleString('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 1 }) + ' km';
 
                 const elTotMedia = document.getElementById('rep-totalizador-media');
                 if (elTotMedia) elTotMedia.innerText = mediaGeralPct.toFixed(2).replace('.', ',') + '%';
             }
 
-            // 6. Status das Medições (Donut + Chips)
+            // 6. Status das Medicoes (Donut + Chips com Hectares)
             const faFinalizadasSet = new Set(listaFazendas.map(f => f.fa));
             const fazendasAguardandoMap = new Map();
+            let areaBacklogTotal = 0;
+
             (dadosBacklog || []).forEach(b => {
                 const fa = String(b.fa || '').trim();
                 const nome = String(b.fazenda || '').trim();
-                if (fa && !faFinalizadasSet.has(fa) && !fazendasAguardandoMap.has(fa)) {
-                    if (filtroSegmentoRelatorioExecutivo === 'propria' && !isFaPropria(fa, b.tipo)) return;
-                    if (filtroSegmentoRelatorioExecutivo === 'terceiro' && isFaPropria(fa, b.tipo)) return;
-                    fazendasAguardandoMap.set(fa, nome);
+                const ha = parseFloat(b.ha || b.Area || b.area) || 0;
+                if (!fa || faFinalizadasSet.has(fa)) return;
+                if (filtroSegmentoRelatorioExecutivo === 'propria' && !isFaPropria(fa, b.tipo)) return;
+                if (filtroSegmentoRelatorioExecutivo === 'terceiro' && isFaPropria(fa, b.tipo)) return;
+
+                if (!fazendasAguardandoMap.has(fa)) {
+                    fazendasAguardandoMap.set(fa, { nome: nome || ('FA ' + fa), area: 0 });
                 }
+                const bkItem = fazendasAguardandoMap.get(fa);
+                bkItem.area += ha;
+                areaBacklogTotal += ha;
             });
 
             const qtdFin = listaFazendas.length;
             const qtdAgu = fazendasAguardandoMap.size;
             const totalMedicoes = qtdFin + qtdAgu;
+            const totalAreaMedicoes = totalArea + areaBacklogTotal;
             const pctFin = totalMedicoes > 0 ? (qtdFin / totalMedicoes * 100) : 0;
             const pctAgu = totalMedicoes > 0 ? (qtdAgu / totalMedicoes * 100) : 0;
 
@@ -6686,17 +6731,20 @@
             const elDonutTotal = document.getElementById('rep-donut-total-txt');
             if (elDonutTotal) elDonutTotal.innerText = `${totalMedicoes} FA`;
 
-            const elPctFinTxt = document.getElementById('rep-pct-fin-txt');
-            if (elPctFinTxt) elPctFinTxt.innerText = `${pctFin.toFixed(1).replace('.', ',')}%`;
+            const elDonutTotalHa = document.getElementById('rep-donut-total-ha');
+            if (elDonutTotalHa) elDonutTotalHa.innerText = totalAreaMedicoes.toLocaleString('pt-BR', { maximumFractionDigits: 0 }) + ' ha';
 
-            const elPctAguTxt = document.getElementById('rep-pct-agu-txt');
-            if (elPctAguTxt) elPctAguTxt.innerText = `${pctAgu.toFixed(1).replace('.', ',')}%`;
+            const elHaFinTxt = document.getElementById('rep-ha-fin-txt');
+            if (elHaFinTxt) elHaFinTxt.innerText = `${totalArea.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} ha (${pctFin.toFixed(0)}%)`;
+
+            const elHaAguTxt = document.getElementById('rep-ha-agu-txt');
+            if (elHaAguTxt) elHaAguTxt.innerText = `${areaBacklogTotal.toLocaleString('pt-BR', { maximumFractionDigits: 0 })} ha (${pctAgu.toFixed(0)}%)`;
 
             const elBadgeCountFin = document.getElementById('rep-count-finalizadas-badge');
-            if (elBadgeCountFin) elBadgeCountFin.innerText = `${qtdFin} fazendas`;
+            if (elBadgeCountFin) elBadgeCountFin.innerText = `${qtdFin} fazendas • ${totalArea.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`;
 
             const elBadgeCountAgu = document.getElementById('rep-count-aguardando-badge');
-            if (elBadgeCountAgu) elBadgeCountAgu.innerText = `${qtdAgu} fazendas`;
+            if (elBadgeCountAgu) elBadgeCountAgu.innerText = `${qtdAgu} fazendas • ${areaBacklogTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ha`;
 
             // Chips Finalizadas
             const chipsFin = document.getElementById('rep-chips-finalizadas');
@@ -6705,7 +6753,7 @@
                 listaFazendas.slice(0, 10).forEach(f => {
                     const span = document.createElement('span');
                     span.className = "inline-block bg-emerald-50 text-emerald-800 border border-emerald-200 text-[8px] font-semibold px-1.5 py-0.5 rounded";
-                    span.innerText = f.nome;
+                    span.innerText = `${f.nome} (${f.area.toFixed(0)} ha)`;
                     chipsFin.appendChild(span);
                 });
                 if (listaFazendas.length > 10) {
@@ -6720,11 +6768,11 @@
             const chipsAgu = document.getElementById('rep-chips-aguardando');
             if (chipsAgu) {
                 chipsAgu.innerHTML = '';
-                const aguList = Array.from(fazendasAguardandoMap.entries());
-                aguList.slice(0, 10).forEach(([fa, nome]) => {
+                const aguList = Array.from(fazendasAguardandoMap.values());
+                aguList.slice(0, 10).forEach(item => {
                     const span = document.createElement('span');
                     span.className = "inline-block bg-sky-50 text-sky-800 border border-sky-200 text-[8px] font-semibold px-1.5 py-0.5 rounded";
-                    span.innerText = nome;
+                    span.innerText = `${item.nome} (${item.area.toFixed(0)} ha)`;
                     chipsAgu.appendChild(span);
                 });
                 if (aguList.length > 10) {
