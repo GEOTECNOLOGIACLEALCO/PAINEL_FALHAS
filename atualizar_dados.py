@@ -31,7 +31,9 @@ def eh_fa_propria(fa, tipo_original=''):
         return False
     if fa_str in FAS_FORCADAS_PROPRIAS or fa_limpo in FAS_FORCADAS_PROPRIAS or fa_limpo.lstrip('0') in FAS_FORCADAS_PROPRIAS:
         return True
-    if len(fa_limpo) == 6 and (fa_limpo.startswith('20') or fa_limpo.startswith('100')):
+    if len(fa_limpo) == 3 or fa_limpo.startswith('30') or fa_limpo == '112235':
+        return False
+    if len(fa_limpo) == 6 and (fa_limpo.startswith('20') or fa_limpo.startswith('10')):
         return True
     if str(tipo_original).strip().lower().startswith('pr'):
         return True
