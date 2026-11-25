@@ -418,7 +418,86 @@ if 'ACOMPANHAMENTO' in wb.sheetnames:
             "Mes": parse_num(r[6])
         })
 
-# 🛡️ RECALCULO DINÂMICO EM TEMPO REAL: Falhas no plantio (2026)
+# Recalculo dinamico em tempo real: Voos realizados e Mosaico processado (2026)
+try:
+    hoje_now = datetime.now()
+    mes_atual = hoje_now.month
+    ano_atual = hoje_now.year
+    inicio_sem = hoje_now - timedelta(days=hoje_now.weekday())
+    inicio_sem = inicio_sem.replace(hour=0, minute=0, second=0, microsecond=0)
+    fim_sem = inicio_sem + timedelta(days=6, hours=23, minutes=59, seconds=59)
+
+    voos_calc = {'Própria': {'r': 0.0, 's': 0.0, 'm': 0.0}, 'Fornecedores': {'r': 0.0, 's': 0.0, 'm': 0.0}}
+    mosaicos_calc = {'Própria': {'r': 0.0, 's': 0.0, 'm': 0.0}, 'Fornecedores': {'r': 0.0, 's': 0.0, 'm': 0.0}}
+
+    def parse_d(d_val):
+        if isinstance(d_val, (datetime, date)): return d_val
+        if d_val:
+            m = re.search(r'(\d{2})[-/](\d{2})[-/](\d{2,4})', str(d_val).strip())
+            if m:
+                d, mo, y = m.groups()
+                if len(y) == 2: y = '20' + y
+                try: return datetime(int(y), int(mo), int(d))
+                except: pass
+        return None
+
+    for r in rows_base[1:]:
+        fa_item = str(r[0] or '').strip()
+        if not fa_item: continue
+        ha_item = parse_num(r[7])
+        if ha_item <= 0: ha_item = parse_num(r[8])
+        if ha_item <= 0: continue
+        
+        is_prop = eh_fa_propria(fa_item)
+        seg = 'Própria' if is_prop else 'Fornecedores'
+
+        dt_v = parse_d(r[4])
+        dt_p = parse_d(r[6])
+        tif_status = str(r[5] or '').strip().upper()
+
+        voos_calc[seg]['r'] += ha_item
+        if dt_v:
+            if dt_v.year == ano_atual and dt_v.month == mes_atual:
+                voos_calc[seg]['m'] += ha_item
+            if inicio_sem <= dt_v <= fim_sem:
+                voos_calc[seg]['s'] += ha_item
+
+        if 'FEITO' in tif_status:
+            mosaicos_calc[seg]['r'] += ha_item
+            if dt_p:
+                if dt_p.year == ano_atual and dt_p.month == mes_atual:
+                    mosaicos_calc[seg]['m'] += ha_item
+                if inicio_sem <= dt_p <= fim_sem:
+                    mosaicos_calc[seg]['s'] += ha_item
+
+    norm_txt_fn = lambda s: str(s or '').lower().replace('ó', 'o').replace('ô', 'o').replace('í', 'i').replace('ã', 'a').strip()
+    for item in acomp:
+        if str(item.get("Ano", "")).strip() == '2026':
+            cat_it = norm_txt_fn(item.get("Categoria", ""))
+            seg_it = norm_txt_fn(item.get("Segmento", ""))
+            calc_dict = None
+            if cat_it == 'voos realizados':
+                calc_dict = voos_calc
+            elif cat_it == 'mosaico processado':
+                calc_dict = mosaicos_calc
+
+            if calc_dict:
+                if 'prop' in seg_it:
+                    item["Realizado"] = round(calc_dict['Própria']['r'], 2)
+                    item["Semana"] = round(calc_dict['Própria']['s'], 2)
+                    item["Mes"] = round(calc_dict['Própria']['m'], 2)
+                elif 'fornec' in seg_it:
+                    item["Realizado"] = round(calc_dict['Fornecedores']['r'], 2)
+                    item["Semana"] = round(calc_dict['Fornecedores']['s'], 2)
+                    item["Mes"] = round(calc_dict['Fornecedores']['m'], 2)
+                elif 'consol' in seg_it:
+                    item["Realizado"] = round(calc_dict['Própria']['r'] + calc_dict['Fornecedores']['r'], 2)
+                    item["Semana"] = round(calc_dict['Própria']['s'] + calc_dict['Fornecedores']['s'], 2)
+                    item["Mes"] = round(calc_dict['Própria']['m'] + calc_dict['Fornecedores']['m'], 2)
+except Exception as e:
+    print(f"Aviso no recalculo dinamico de voos e mosaicos: {e}")
+
+# RECALCULO DINÂMICO EM TEMPO REAL: Falhas no plantio (2026)
 # Garante que qualquer novo CSV em W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas entre imediatamente na conta!
 dir_bd_falhas_2026 = r"W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas"
 if os.path.exists(dir_bd_falhas_2026):

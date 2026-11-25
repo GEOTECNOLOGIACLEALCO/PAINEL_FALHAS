@@ -4785,6 +4785,34 @@
                 }
             });
 
+            // Sincronizacao Dinamica em Tempo Real: Voos Realizados e Mosaicos Processados (2026)
+            if (String(anoAlvo).trim() === '2026' && typeof dadosBase !== 'undefined' && Array.isArray(dadosBase) && dadosBase.length > 0) {
+                let vProp = 0, vTerc = 0, mProp = 0, mTerc = 0;
+                dadosBase.forEach(b => {
+                    const ha = parseNum(b.ha_voo) || parseNum(b.area_kml) || 0;
+                    if (ha <= 0) return;
+                    const isP = isFaPropria(b.fa, b.tipo);
+                    if (isP) {
+                        vProp += ha;
+                        if (String(b.tif || '').toUpperCase().includes('FEITO')) mProp += ha;
+                    } else {
+                        vTerc += ha;
+                        if (String(b.tif || '').toUpperCase().includes('FEITO')) mTerc += ha;
+                    }
+                });
+
+                if (vProp > 0 || vTerc > 0) {
+                    matrizDinamica['Voos realizados']['Própria'].r = vProp;
+                    matrizDinamica['Voos realizados']['Fornecedores'].r = vTerc;
+                    matrizDinamica['Voos realizados']['Consolidado'].r = vProp + vTerc;
+                }
+                if (mProp > 0 || mTerc > 0) {
+                    matrizDinamica['Mosaico processado']['Própria'].r = mProp;
+                    matrizDinamica['Mosaico processado']['Fornecedores'].r = mTerc;
+                    matrizDinamica['Mosaico processado']['Consolidado'].r = mProp + mTerc;
+                }
+            }
+
             // 5. Renderização mantendo rigorosamente o layout HTML e classes Tailwind
             container.innerHTML = CATEGORIAS.map(cat => {
                 const rows = ['Própria', 'Fornecedores', 'Consolidado'].map(seg => {
