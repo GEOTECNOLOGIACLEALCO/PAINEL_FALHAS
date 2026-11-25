@@ -1168,11 +1168,11 @@
                             <div class="relative w-36 h-36 flex items-center justify-center">
                                 <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
                                     <path stroke="#e2e8f0" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                    <path stroke="#16a34a" stroke-dasharray="33, 100" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path id="falhas-prop-donut-green" stroke="#16a34a" stroke-dasharray="75, 100" stroke-width="4.5" stroke="currentColor" fill="none" class="transition-all duration-700 ease-out" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                 </svg>
                                 <div class="absolute text-center">
                                     <span class="text-[10px] text-slate-500 uppercase font-semibold block">Total</span>
-                                    <b class="text-sm font-black text-slate-900">3.374</b>
+                                    <b class="text-sm font-black text-slate-900" id="falhas-prop-donut-total">3.374</b>
                                 </div>
                             </div>
 
@@ -1227,11 +1227,11 @@
                             <div class="relative w-36 h-36 flex items-center justify-center">
                                 <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
                                     <path stroke="#e2e8f0" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                    <path stroke="#16a34a" stroke-dasharray="34, 100" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path id="falhas-fornec-donut-green" stroke="#16a34a" stroke-dasharray="39, 100" stroke-width="4.5" stroke="currentColor" fill="none" class="transition-all duration-700 ease-out" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                 </svg>
                                 <div class="absolute text-center">
                                     <span class="text-[10px] text-slate-500 uppercase font-semibold block">Total</span>
-                                    <b class="text-sm font-black text-slate-900">11.970</b>
+                                    <b class="text-sm font-black text-slate-900" id="falhas-fornec-donut-total">11.970</b>
                                 </div>
                             </div>
 
@@ -1286,11 +1286,11 @@
                             <div class="relative w-36 h-36 flex items-center justify-center">
                                 <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
                                     <path stroke="#e2e8f0" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                    <path stroke="#16a34a" stroke-dasharray="34, 100" stroke-width="4.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                                    <path id="falhas-consol-donut-green" stroke="#16a34a" stroke-dasharray="47, 100" stroke-width="4.5" stroke="currentColor" fill="none" class="transition-all duration-700 ease-out" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
                                 </svg>
                                 <div class="absolute text-center">
                                     <span class="text-[10px] text-slate-500 uppercase font-semibold block">Total</span>
-                                    <b class="text-sm font-black text-slate-900">14.374</b>
+                                    <b class="text-sm font-black text-slate-900" id="falhas-consol-donut-total">15.345</b>
                                 </div>
                             </div>
 
@@ -4980,6 +4980,35 @@
             if (elConsolReal) elConsolReal.innerText = `${realTotal.toLocaleString('pt-BR')} (${pctMetaTotal}%)`;
             const elConsolAreal = document.getElementById('falhas-consol-areal');
             if (elConsolAreal) elConsolAreal.innerText = `${arealTotal.toLocaleString('pt-BR')} (${100 - pctMetaTotal}%)`;
+
+            // Atualiza os arcos verdes dos gráficos de rosca para ficarem 100% coerentes com o % Realizado
+            const donutProp = document.getElementById('falhas-prop-donut-green');
+            if (donutProp) donutProp.setAttribute('stroke-dasharray', `${Math.min(100, Math.max(0, pctMetaProp))}, 100`);
+
+            const donutFornec = document.getElementById('falhas-fornec-donut-green');
+            if (donutFornec) donutFornec.setAttribute('stroke-dasharray', `${Math.min(100, Math.max(0, pctMetaFornec))}, 100`);
+
+            const donutConsol = document.getElementById('falhas-consol-donut-green');
+            if (donutConsol) donutConsol.setAttribute('stroke-dasharray', `${Math.min(100, Math.max(0, pctMetaTotal))}, 100`);
+
+            const elTotalConsol = document.getElementById('falhas-consol-donut-total');
+            if (elTotalConsol) elTotalConsol.innerText = Math.round(metaTotal).toLocaleString('pt-BR');
+
+            // Atualiza badge e cor da Média Geral de Falha (< 8%)
+            const elMediaKpi = document.getElementById('falhas-kpi-media');
+            if (elMediaKpi) {
+                elMediaKpi.className = pctFalhaTotal <= 8.0 ? 'text-2xl font-black text-emerald-600 mt-1' : 'text-2xl font-black text-amber-600 mt-1';
+            }
+            const elPadrao = document.getElementById('falhas-kpi-padrao');
+            if (elPadrao) {
+                if (pctFalhaTotal <= 8.0) {
+                    elPadrao.className = "text-[11px] text-emerald-700 font-bold mt-0.5";
+                    elPadrao.innerHTML = "✓ Padrão Aceitável (&lt; 8%)";
+                } else {
+                    elPadrao.className = "text-[11px] text-amber-700 font-bold mt-0.5";
+                    elPadrao.innerHTML = "⚠ Acima do Padrão (&gt; 8%)";
+                }
+            }
 
             // Atualiza posição dos ponteiros nos 3 velocímetros (escala 0% a 15%)
             const atualizarPonteiro = (idNeedle, pct) => {
