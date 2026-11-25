@@ -3604,11 +3604,20 @@
             console.log('[Auto-Polling] Monitor de atualizações ativado a cada 60s.');
         }
 
+        const MAPA_EQUIVALENCIA_FAS = {
+            '201085': '301085', '301085': '201085',
+            '201452': '301452', '301452': '201452',
+            '208008': '308008', '308008': '208008',
+            '208012': '308012', '308012': '208012',
+            '208014': '308014', '308014': '208014',
+            '200498': '208008'
+        };
+
         function isFaPropria(fa, tipo) {
             const faStr = String(fa || '').trim();
             const faLimpo = faStr.replace(/\D/g, '');
-            const forcadasProp = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_proprias) || ['100542', '100458'];
-            const forcadasTerc = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_terceiros) || ['200', '302817', '301085', '302808', '308012', '308014', '106', '240', '285'];
+            const forcadasProp = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_proprias) || ['100542', '100458', '100862', '301085', '301452', '308008', '308012', '308014', '201085', '201452', '208008', '208012', '208014', '200498'];
+            const forcadasTerc = (window.DADOS_CLEALCO_EMBARCADOS && window.DADOS_CLEALCO_EMBARCADOS.fas_forcadas_terceiros) || ['200', '302817', '302808', '106', '240', '285'];
             if (forcadasTerc.includes(faStr) || forcadasTerc.includes(faLimpo) || forcadasTerc.includes(faLimpo.replace(/^0+/, ''))) return false;
             if (forcadasProp.includes(faStr) || forcadasProp.includes(faLimpo) || forcadasProp.includes(faLimpo.replace(/^0+/, ''))) return true;
             if (faLimpo.length === 6 && (faLimpo.startsWith('20') || faLimpo.startsWith('100'))) return true;
@@ -6699,6 +6708,10 @@
 
             // 6. Status das Medicoes (Donut + Chips com Hectares)
             const faFinalizadasSet = new Set(listaFazendas.map(f => f.fa));
+            listaFazendas.forEach(f => {
+                const eq = MAPA_EQUIVALENCIA_FAS[f.fa];
+                if (eq) faFinalizadasSet.add(eq);
+            });
             const fazendasAguardandoMap = new Map();
             let areaBacklogTotal = 0;
 
@@ -6706,7 +6719,8 @@
                 const fa = String(b.fa || '').trim();
                 const nome = String(b.fazenda || '').trim();
                 const ha = parseFloat(b.ha || b.Area || b.area) || 0;
-                if (!fa || faFinalizadasSet.has(fa)) return;
+                const faEq = MAPA_EQUIVALENCIA_FAS[fa] || '';
+                if (!fa || faFinalizadasSet.has(fa) || (faEq && faFinalizadasSet.has(faEq))) return;
                 if (filtroSegmentoRelatorioExecutivo === 'propria' && !isFaPropria(fa, b.tipo)) return;
                 if (filtroSegmentoRelatorioExecutivo === 'terceiro' && isFaPropria(fa, b.tipo)) return;
 

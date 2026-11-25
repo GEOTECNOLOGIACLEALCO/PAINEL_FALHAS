@@ -14,8 +14,21 @@ from cryptography.hazmat.primitives import hashes
 CHAVE_ACESSO_CLEALCO = "Clealco@Geo2026"
 
 # ================= REGRAS CORPORATIVAS DE CLASSIFICAÇÃO (OVERRIDES DE PRÓPRIAS / TERCEIROS) =================
-FAS_FORCADAS_PROPRIAS = {'100542', '100458'}
-FAS_FORCADAS_TERCEIROS = {'200', '302817', '301085', '302808', '308012', '308014', '106', '240', '285'}
+FAS_FORCADAS_PROPRIAS = {
+    '100542', '100458', '100862',
+    '301085', '301452', '308008', '308012', '308014',
+    '201085', '201452', '208008', '208012', '208014', '200498'
+}
+FAS_FORCADAS_TERCEIROS = {'200', '302817', '302808', '106', '240', '285'}
+
+MAPA_EQUIVALENCIA_FAS = {
+    '201085': '301085', '301085': '201085',
+    '201452': '301452', '301452': '201452',
+    '208008': '308008', '308008': '208008',
+    '208012': '308012', '308012': '208012',
+    '208014': '308014', '308014': '208014',
+    '200498': '208008',
+}
 
 def eh_fa_propria(fa, tipo_original=''):
     fa_str = str(fa or '').strip()
@@ -159,14 +172,29 @@ if rows_bk:
     idx_dias = get_col_idx(['dias_restantes', 'dias'], 6)
     idx_status = get_col_idx(['status_tempo', 'status_prazo', 'status'], 7)
 
+    fas_voadas_base = set()
+    for b in base_proc:
+        f_b = str(b.get('fa') or '').strip()
+        if f_b:
+            fas_voadas_base.add(f_b)
+            fas_voadas_base.add(f_b.lstrip('0'))
+            eq_b = MAPA_EQUIVALENCIA_FAS.get(f_b)
+            if eq_b:
+                fas_voadas_base.add(eq_b)
+                fas_voadas_base.add(eq_b.lstrip('0'))
+
     for r in rows_bk[1:]:
         fa = str(r[idx_fa] or '').strip()
         if not fa: continue
+        fa_eq = MAPA_EQUIVALENCIA_FAS.get(fa, '')
+        if fa in fas_voadas_base or fa.lstrip('0') in fas_voadas_base or (fa_eq and (fa_eq in fas_voadas_base or fa_eq.lstrip('0') in fas_voadas_base)):
+            continue
+        tipo_final = "Própria" if eh_fa_propria(fa, str(r[idx_tipo] or '')) else "Terceiro"
         backlog.append({
             "fa": fa,
             "fazenda": str(r[idx_faz] or '').strip(),
             "talhao": str(r[idx_tal] or '').strip(),
-            "tipo": str(r[idx_tipo] or 'Terceiro').strip(),
+            "tipo": tipo_final,
             "ha": parse_num(r[idx_ha]),
             "data": format_data(r[idx_data]),
             "dias": r[idx_dias] or 0,
@@ -285,10 +313,11 @@ for r in rows_f[1:]:
     if not fa or 'comparativo' in fa.lower() or 'valores_coluna' in fa.lower():
         continue
     fas_em_falhas.add(fa)
+    tipo_falha = "Própria" if eh_fa_propria(fa, str(r[2] or '')) else "Terceiro"
     falhas.append({
         "FA": fa,
         "Fazenda": str(r[1] or '').strip(),
-        "Tipo": str(r[2] or 'Terceiro').strip(),
+        "Tipo": tipo_falha,
         "Area_Ha": parse_num(r[3]),
         "Comp_Linhas": parse_num(r[4]),
         "Comp_Falhas": parse_num(r[5]),
