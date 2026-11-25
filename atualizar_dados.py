@@ -1,5 +1,5 @@
 import openpyxl, json, os, sys, base64, math, re, shutil, time, urllib.parse, glob, csv, tempfile, uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 caminho_diag = os.path.join(os.path.dirname(__file__), "log_sync_status.txt")
 try:
