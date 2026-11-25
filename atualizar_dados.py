@@ -348,9 +348,12 @@ if os.path.exists(dir_falhas_live):
                 r_all = list(csv.reader(fp))
                 if len(r_all) > 1:
                     r1 = r_all[1]
-                    if len(r1) > 2:
-                        ha_val = float(r1[2].strip().replace(',', '.'))
                     c_hdr = [str(c).strip().upper() for c in r_all[0]]
+                    i_area = next((i for i, c in enumerate(c_hdr) if 'A_LIQ' in c or 'A LIQ' in c), None)
+                    if i_area is None:
+                        i_area = next((i for i, c in enumerate(c_hdr) if 'A_POLYG' in c or 'AREA' in c), 2)
+                    if len(r1) > i_area:
+                        ha_val = float(r1[i_area].strip().replace(',', '.'))
                     i_l = next((i for i, c in enumerate(c_hdr) if 'COMP_LINHAS' in c or 'COMP LINHAS' in c), None)
                     i_f = next((i for i, c in enumerate(c_hdr) if 'COMP_FALHAS' in c or 'COMP FALHAS' in c), None)
                     i_p = next((i for i, c in enumerate(c_hdr) if 'PORC_FALHA' in c or 'PORC FALHA' in c), 5)
@@ -548,10 +551,15 @@ if os.path.exists(dir_bd_falhas_2026):
             try:
                 with open(arq_csv, 'r', encoding='latin1', errors='ignore') as f_csv:
                     rdr = csv.reader(f_csv)
-                    _ = next(rdr, None)
+                    hdr = next(rdr, None)
                     r2 = next(rdr, None)
                     if r2 and len(r2) > 2:
-                        area_ha = float(r2[2].strip().replace(',', '.'))
+                        idx_area = 2
+                        if hdr:
+                            c_hdr = [str(c).strip().upper() for c in hdr]
+                            if 'A_LIQ' in c_hdr:
+                                idx_area = c_hdr.index('A_LIQ')
+                        area_ha = float(r2[idx_area].strip().replace(',', '.'))
             except:
                 continue
 
