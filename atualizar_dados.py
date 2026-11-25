@@ -361,7 +361,7 @@ if os.path.exists(dir_falhas_live):
                     if i_p is not None and len(r1) > i_p:
                         p_falha = float(str(r1[i_p]).replace(',', '.'))
 
-            lim_verde = 8.0 if tipo_calc == "Própria" else 5.0
+            lim_verde = 8.0
             ind = 'Aceitável' if p_falha <= lim_verde else ('Atenção' if p_falha <= 10.0 else 'Crítico')
             novo_item = {
                 "FA": b_fa,
