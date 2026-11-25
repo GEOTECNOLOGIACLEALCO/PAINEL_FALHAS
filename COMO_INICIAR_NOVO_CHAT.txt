@@ -1,0 +1,28 @@
+================================================================================
+CLEALCO GEOTECNOLOGIA - GUIA RAPIDO PARA INICIAR UM NOVO CHAT NO ANTIGRAVITY
+================================================================================
+
+Se por qualquer motivo voce abrir uma nova conversa ou usar outro computador,
+basta copiar e colar o texto abaixo no primeiro prompt do chat:
+
+------------------------- COPIE A PARTIR DAQUI ---------------------------------
+Ola. Estou continuando o gerenciamento do ecossistema Clealco Geotecnologia.
+Por favor, ative a skill clealco-pipeline e leia obrigatoriamente os arquivos:
+1) W:\15-SETOR\FABIANO\AGENTS.md
+2) W:\15-SETOR\FABIANO\DIARIO_DE_BORDO_AUDITORIA.txt
+3) W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\index.html
+
+Principais regras vigentes que voce deve respeitar:
+- Regra corporativa de classificacao de FAs:
+  * FAs iniciadas por 10 e 20 (6 digitos) = PROPRIAS (Meta: 3.374,33 ha, 100% batida em voo).
+  * FAs com 3 digitos (ex: 106, 240, 285), iniciadas por 30 ou codigo 112235 = TERCEIROS (Meta auditada: 11.970,41 ha).
+- Realizado das Metas de Area nos cards de topo:
+  * Deve refletir estritamente os hectares de LINHAS FEITAS do Banco de Dados de Falhas (dadosFalhas).
+- Seguranca e comunicacao:
+  * PROIBIDO DELETAR pastas de voo ou arquivos do usuario sem ordem expressa.
+  * Sempre apresentar comparativo Antes vs Depois em qualquer alteracao numerica.
+  * Estritamente ZERO emojis em qualquer resposta, commit ou arquivo.
+------------------------- ATE AQUI ---------------------------------------------
+
+Com esse comando, o assistente assimilara 100% do historico e regras imediatamente!
+================================================================================
