@@ -83,6 +83,21 @@
         #modal-relatorio-falhas-executivo ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
         #modal-relatorio-falhas-executivo ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
 
+        /* Visibilidade e alto contraste para tabela do Relatorio Executivo */
+        #modal-relatorio-falhas-executivo table thead,
+        #modal-relatorio-falhas-executivo table thead tr,
+        #modal-relatorio-falhas-executivo table thead th {
+            background-color: #0F172A !important;
+            color: #FFFFFF !important;
+        }
+        #modal-relatorio-falhas-executivo .rep-tfoot-container,
+        #modal-relatorio-falhas-executivo .rep-tfoot-container table,
+        #modal-relatorio-falhas-executivo .rep-tfoot-container tr,
+        #modal-relatorio-falhas-executivo .rep-tfoot-container td {
+            background-color: #0F172A !important;
+            color: #FFFFFF !important;
+        }
+
         .glass-panel {
             background-color: #FFFFFF !important;
             border: 1px solid #E2E8F0 !important;
@@ -2682,16 +2697,7 @@
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-3">
-                                <div class="bg-slate-900/80 backdrop-blur-md border border-white/20 rounded-xl px-4 py-2 text-right text-white shadow-lg">
-                                    <span class="text-[9px] font-bold text-slate-300 block uppercase tracking-wider">ATUALIZADO EM</span>
-                                    <span id="rep-data-atualizacao" class="text-xs font-black text-white">25/11/2026 às 07:19</span>
-                                </div>
-                                <div class="bg-red-600/90 backdrop-blur-md border border-red-400/30 rounded-xl px-3.5 py-2 text-center text-white shadow-lg">
-                                    <span class="text-[9px] font-black text-red-100 block uppercase tracking-wider">GEOTECNOLOGIA</span>
-                                    <span class="text-[11px] font-black text-white">CLEALCO</span>
-                                </div>
-                            </div>
+                            <span id="rep-data-atualizacao" style="display: none;"></span>
                         </div>
                     </div>
 
@@ -2829,15 +2835,15 @@
                                 <div class="border border-slate-200 rounded-lg overflow-hidden bg-white shadow-2xs flex flex-col">
                                     <div class="overflow-y-auto overflow-x-hidden flex-grow" style="max-height: 225px; padding-bottom: 2px;">
                                         <table class="w-full text-left text-[11px]" style="table-layout: fixed; width: 100%;">
-                                            <thead class="bg-slate-800 text-white sticky top-0 uppercase text-[9px] tracking-wider z-10 shadow-xs">
-                                                <tr>
-                                                    <th style="width: 14%;" class="py-2 px-2 font-bold">CÓDIGO</th>
-                                                    <th style="width: 32%;" class="py-2 px-2 font-bold">FAZENDA</th>
-                                                    <th style="width: 9%;" class="py-2 px-1 font-bold text-center">TALHÕES</th>
-                                                    <th style="width: 12%;" class="py-2 px-1.5 font-bold text-right">ÁREA (ha)</th>
-                                                    <th style="width: 12%;" class="py-2 px-1.5 font-bold text-right">LINHAS (km)</th>
-                                                    <th style="width: 10%;" class="py-2 px-1.5 font-bold text-right">FALHA (%)</th>
-                                                    <th style="width: 11%;" class="py-2 px-1.5 font-bold text-center">STATUS</th>
+                                            <thead class="sticky top-0 z-10 shadow-xs" style="background-color: #0f172a !important; color: #ffffff !important;">
+                                                <tr style="background-color: #0f172a !important; color: #ffffff !important;">
+                                                    <th style="width: 14%; color: #ffffff !important; background-color: #0f172a !important;" class="py-2.5 px-2 font-black uppercase text-[9px] tracking-wider text-white">CÓDIGO</th>
+                                                    <th style="width: 32%; color: #ffffff !important; background-color: #0f172a !important;" class="py-2.5 px-2 font-black uppercase text-[9px] tracking-wider text-white">FAZENDA</th>
+                                                    <th style="width: 9%; color: #ffffff !important; background-color: #0f172a !important;" class="py-2.5 px-1 font-black uppercase text-[9px] tracking-wider text-white text-center">TALHÕES</th>
+                                                    <th style="width: 12%; color: #ffffff !important; background-color: #0f172a !important;" class="py-2.5 px-1.5 font-black uppercase text-[9px] tracking-wider text-white text-right">ÁREA (ha)</th>
+                                                    <th style="width: 12%; color: #ffffff !important; background-color: #0f172a !important;" class="py-2.5 px-1.5 font-black uppercase text-[9px] tracking-wider text-white text-right">LINHAS (km)</th>
+                                                    <th style="width: 10%; color: #ffffff !important; background-color: #0f172a !important;" class="py-2.5 px-1.5 font-black uppercase text-[9px] tracking-wider text-white text-right">FALHA (%)</th>
+                                                    <th style="width: 11%; color: #ffffff !important; background-color: #0f172a !important;" class="py-2.5 px-1.5 font-black uppercase text-[9px] tracking-wider text-white text-center">STATUS</th>
                                                 </tr>
                                             </thead>
                                             <tbody class="divide-y divide-slate-100" id="rep-tbody-fazendas">
@@ -2846,16 +2852,16 @@
                                         </table>
                                     </div>
                                     <!-- Rodapé Totalizador perfeitamente alinhado com as mesmas colunas -->
-                                    <div class="bg-slate-800 text-white font-black text-[10px] border-t-2 border-slate-700 uppercase">
-                                        <table class="w-full text-left text-[10px]" style="table-layout: fixed; width: 100%;">
+                                    <div class="rep-tfoot-container border-t-2 border-slate-700 uppercase" style="background-color: #0f172a !important;">
+                                        <table class="w-full text-left text-[10px]" style="table-layout: fixed; width: 100%; background-color: #0f172a !important;">
                                             <tbody>
-                                                <tr class="bg-slate-800 text-white font-black">
-                                                    <td style="width: 46%;" colspan="2" class="py-2 px-2.5 tracking-wider text-slate-200">TOTAL SAFRA 2026</td>
-                                                    <td style="width: 9%;" class="py-2 px-1 text-center font-mono text-white" id="rep-totalizador-talhoes">109</td>
-                                                    <td style="width: 12%;" class="py-2 px-1.5 text-right font-mono text-white" id="rep-totalizador-area">7.242,82 ha</td>
-                                                    <td style="width: 12%;" class="py-2 px-1.5 text-right font-mono text-white" id="rep-totalizador-linhas">47.448 km</td>
-                                                    <td style="width: 10%;" class="py-2 px-1.5 text-right font-mono text-emerald-400" id="rep-totalizador-media">2,37%</td>
-                                                    <td style="width: 11%;" class="py-2 px-1.5 text-center text-emerald-300 font-bold text-[8px] whitespace-nowrap">100% AUDITADO</td>
+                                                <tr style="background-color: #0f172a !important; color: #ffffff !important;">
+                                                    <td style="width: 46%; color: #f8fafc !important; background-color: #0f172a !important;" colspan="2" class="py-2.5 px-2.5 font-black tracking-wider text-white">TOTAL SAFRA 2026</td>
+                                                    <td style="width: 9%; color: #ffffff !important; background-color: #0f172a !important;" class="py-2.5 px-1 text-center font-mono font-black text-white" id="rep-totalizador-talhoes">109</td>
+                                                    <td style="width: 12%; color: #ffffff !important; background-color: #0f172a !important;" class="py-2.5 px-1.5 text-right font-mono font-black text-white" id="rep-totalizador-area">7.242,82 ha</td>
+                                                    <td style="width: 12%; color: #ffffff !important; background-color: #0f172a !important;" class="py-2.5 px-1.5 text-right font-mono font-black text-white" id="rep-totalizador-linhas">47.448 km</td>
+                                                    <td style="width: 10%; color: #4ade80 !important; background-color: #0f172a !important;" class="py-2.5 px-1.5 text-right font-mono font-black text-emerald-400" id="rep-totalizador-media">2,37%</td>
+                                                    <td style="width: 11%; color: #86efac !important; background-color: #0f172a !important;" class="py-2.5 px-1.5 text-center font-black text-[8px] whitespace-nowrap text-emerald-300">100% AUDITADO</td>
                                                 </tr>
                                             </tbody>
                                         </table>
