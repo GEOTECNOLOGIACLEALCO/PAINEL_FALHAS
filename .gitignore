@@ -9,4 +9,8 @@ mapas_safra/
 cache_historico_*.json
 *_backup.py
 log_sync_status.txt
+doc_planilhas/
+Doc/
+doc/
+
 
