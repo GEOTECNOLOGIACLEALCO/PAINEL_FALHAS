@@ -1777,6 +1777,22 @@ flowchart LR
                 </div>
             </div>
 
+            <div class="grid-2">
+                <div class="card card-ouro">
+                    <h3 style="color:var(--ouro); margin-top:0;">5. Isolamento de Credenciais & Zero Segredos no Git</h3>
+                    <p style="font-size:0.85rem;">
+                        Nenhuma senha ou chave de API fica hardcoded no código ou exposta no histórico do Git. Todas as credenciais ativas residem no arquivo local <code>config_seguranca_local.json</code> (ignorado pelo <code>.gitignore</code>). Um modelo limpo (<code>config_seguranca_exemplo.json</code>) orienta novas configurações, garantindo que mesmo se o repositório for clonado ou tornado público, nenhum segredo institucional é vazado.
+                    </p>
+                </div>
+
+                <div class="card card-destaque">
+                    <h3 style="color:var(--plasma); margin-top:0;">6. Blindagem Contra Ataques Web (OWASP - Anti-XSS & Força Bruta)</h3>
+                    <p style="font-size:0.85rem;">
+                        O frontend implementa sanitização rigorosa via função <code>escapeHtml()</code> em todos os campos de busca e filtros dinâmicos, anulando ataques de <strong>Cross-Site Scripting (DOM XSS)</strong>. O modal de desbloqueio com senha conta com <strong>Rate Limiting</strong> (bloqueio temporário de 60 segundos após 5 tentativas consecutivas) e um atraso proposital de 400ms para mitigar ataques de enumeração por análise de tempo de resposta (Timing Attacks).
+                    </p>
+                </div>
+            </div>
+
             <!-- TABELA DE MATRIZ DE REQUISITOS DE TI -->
             <h3>Matriz de Requisitos Técnicos & Governança</h3>
             <table>
@@ -1799,13 +1815,28 @@ flowchart LR
                         <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Blindado</span></td>
                     </tr>
                     <tr>
+                        <td><strong>Gestão de Segredos & Chaves</strong></td>
+                        <td>Credenciais desacopladas em config_seguranca_local.json. Zero chaves versionadas no Git.</td>
+                        <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Blindado</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Mitigação OWASP (XSS & Força Bruta)</strong></td>
+                        <td>Sanitização de inputs via escapeHtml(), rate limit de 5 tentativas / 60s e delay de 400ms.</td>
+                        <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Seguro</span></td>
+                    </tr>
+                    <tr>
                         <td><strong>Proteção de Concorrência de Arquivos</strong></td>
                         <td>Shadow Copying (cópia temporária UUID) + Mutex Threading Lock (não trava arquivos no W: ou M:).</td>
                         <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Sem Locks</span></td>
                     </tr>
                     <tr>
+                        <td><strong>Resiliência e Autocura de Dados</strong></td>
+                        <td>Fallback autônomo multinível em atualizar_dados.py restaura Backlog e Postergadas sem perda.</td>
+                        <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Resiliente</span></td>
+                    </tr>
+                    <tr>
                         <td><strong>Continuidade Operacional (Offline)</strong></td>
-                        <td>Progressive Web App (PWA) com Service Worker Cache v35 (funciona em áreas rurais sem sinal).</td>
+                        <td>Progressive Web App (PWA) com Service Worker Cache (funciona em áreas rurais sem sinal).</td>
                         <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Resiliente</span></td>
                     </tr>
                     <tr>

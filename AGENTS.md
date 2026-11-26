@@ -72,6 +72,25 @@ Este documento define a arquitetura, regras de ouro, fluxos de dados e comandos 
   - Arquivos `30XXXX.csv` (6 dígitos iniciando em `30`): **Terceiros / Fornecedores**.
 - **Coerência Geral:** Todo número de hectare realizado deve espelhar a soma dos CSVs dessa pasta, garantindo que os Cards de Metas, os Indicadores de Falhas no Plantio e os Velocímetros estejam sempre perfeitamente alinhados.
 
+### 🛡️ Regra 6: Isolamento de Credenciais e Segredos (config_seguranca_local.json)
+- **PROIBIDO COMMITAR SENHAS NO GIT:** Senhas, chaves de API e segredos nunca devem ser colocados diretamente no código-fonte versionado.
+- Todas as credenciais ativas ficam no arquivo local desvinculado `config_seguranca_local.json` (ignorado pelo `.gitignore`), contendo:
+  * `CHAVE_ACESSO_CLEALCO`: Senha corporativa para cifrar/decifrar os dados da aplicação.
+  * `ARABLE_API_KEY`: Chave de autenticação da API meteorológica Arable Cloud.
+- O template seguro para novas instalações é mantido em `config_seguranca_exemplo.json`.
+- Arquivos `.env`, `*.env` e `config_seguranca_local.json` devem permanecer rigorosamente listados no `.gitignore`.
+
+### 🔒 Regra 7: Sanitização de Inputs (Anti-XSS) e Rate Limiting
+- Todo texto ou input digitado pelo usuário (como termos de busca e filtros do Backlog) deve ser tratado com `escapeHtml()` antes de ser inserido no DOM via `innerHTML`, eliminando riscos de Cross-Site Scripting (DOM XSS).
+- O modal de desbloqueio com senha deve operar com rate limiting (máximo de 5 tentativas consecutivas com bloqueio de 60 segundos) e um atraso deliberado de 400ms para mitigar ataques de enumeração e força bruta por análise de temporização (timing attacks).
+
+### 📦 Regra 8: Proteção de Planilhas Sensíveis e Backups Físicos
+- Planilhas de planejamento com dados cadastrais de parceiros (`doc_planilhas/`) são restritas ao ambiente corporativo interno (`W:\15-SETOR\FABIANO\Voo_e_processamentos_2.0\Doc\Backup_Planilhas_Plantio_2026\`) e não devem ser rastreadas pelo Git.
+- Antes de qualquer modificação de grande porte na segurança ou arquitetura, deve ser gerado um backup físico completo em pasta dedicada e gravada uma tag Git permanente (ex: `backup-pre-seguranca`).
+
+### 🧬 Regra 9: Autocura e Resiliência da Base (dados.xlsx)
+- Se a planilha `dados.xlsx` for salva pelo Excel em outra estação sem as abas auxiliares, o script `atualizar_dados.py` ativa fallbacks autônomos para restaurar os talhões do Backlog (119 talhões) e as fazendas postergadas de 2º corte (372,95 ha), mantendo os dados do PWA 100% íntegros.
+
 
 ---
 
