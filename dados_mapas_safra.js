@@ -1,5 +1,5 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 26/11/2026 14:58:23
+// Gerado em: 26/11/2026 14:59:21
 // Total de Mapas: 1327
 window.DADOS_MAPAS_SAFRA = [
   {
@@ -933,7 +933,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "22/10/2026 16:11",
     "timestamp": 1792696272,
     "tamanho_kb": 358.5,
-    "dias_atras": 34.9,
+    "dias_atras": 35.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -950,7 +950,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "22/10/2026 16:10",
     "timestamp": 1792696249,
     "tamanho_kb": 410.2,
-    "dias_atras": 34.9,
+    "dias_atras": 35.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3296,7 +3296,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "13/08/2026 13:47",
     "timestamp": 1786639639,
     "tamanho_kb": 288.7,
-    "dias_atras": 105.0,
+    "dias_atras": 105.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -11609,7 +11609,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "12/01/2026 16:10",
     "timestamp": 1768245025,
     "tamanho_kb": 319.9,
-    "dias_atras": 317.9,
+    "dias_atras": 318.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17236,7 +17236,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "30/07/2024 13:46",
     "timestamp": 1722357992,
     "tamanho_kb": 235.8,
-    "dias_atras": 849.0,
+    "dias_atras": 849.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17338,7 +17338,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "17/07/2024 16:10",
     "timestamp": 1721243424,
     "tamanho_kb": 242.1,
-    "dias_atras": 861.9,
+    "dias_atras": 862.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17814,7 +17814,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/05/2024 11:22",
     "timestamp": 1715782971,
     "tamanho_kb": 253.6,
-    "dias_atras": 925.1,
+    "dias_atras": 925.2,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20942,7 +20942,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 08:59",
     "timestamp": 1708516755,
     "tamanho_kb": 240.6,
-    "dias_atras": 1009.2,
+    "dias_atras": 1009.3,
     "is_novo": false,
     "is_hoje": false
   },
