@@ -1,5 +1,30 @@
-import openpyxl, json, os, sys, base64, math, re, shutil, time, urllib.parse, glob, csv, tempfile, uuid
+import openpyxl, json, os, sys, base64, math, re, shutil, time, urllib.parse, glob, csv, tempfile, uuid, hashlib
 from datetime import datetime, timedelta, date
+
+PASTA_BASE_ATUALIZAR = os.path.dirname(os.path.abspath(__file__))
+CAMINHO_HASHES_SYNC = os.path.join(PASTA_BASE_ATUALIZAR, "cache_sync_hashes.json")
+
+def carregar_hashes_sync():
+    if os.path.exists(CAMINHO_HASHES_SYNC):
+        try:
+            with open(CAMINHO_HASHES_SYNC, "r", encoding="utf-8") as fh:
+                return json.load(fh)
+        except Exception:
+            pass
+    return {}
+
+def salvar_hashes_sync(hashes_dict):
+    try:
+        with open(CAMINHO_HASHES_SYNC, "w", encoding="utf-8") as fh:
+            json.dump(hashes_dict, fh, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+
+def calcular_hash_objeto(obj):
+    return hashlib.sha256(json.dumps(obj, sort_keys=True, ensure_ascii=False).encode("utf-8")).hexdigest()
+
+HASHES_SYNC = carregar_hashes_sync()
+HOUVE_ALTERACAO_DADOS_REAIS = False
 
 caminho_diag = os.path.join(os.path.dirname(__file__), "log_sync_status.txt")
 try:
@@ -806,13 +831,20 @@ dados_completos = {
     }
 }
 
-dados_str = json.dumps(dados_completos, ensure_ascii=False)
-payload_cifrado = criptografar_payload(dados_str, CHAVE_ACESSO_CLEALCO)
+dados_hash_base = {k: v for k, v in dados_completos.items() if k not in ("data_compilacao", "status_automacao")}
+dados_hash_base["status_automacao"] = {k: v for k, v in dados_completos["status_automacao"].items() if k != "data_hora"}
+hash_injetados = calcular_hash_objeto(dados_hash_base)
 
-with open(caminho_js, "w", encoding="utf-8") as f:
-    f.write("window.DADOS_CLEALCO_EMBARCADOS = " + json.dumps(payload_cifrado, ensure_ascii=False) + ";\n")
-
-print(f"dados_injetados.js criptografado com sucesso! {len(base_proc)} voos, {len(backlog)} backlog, {len(falhas)} falhas.")
+if hash_injetados != HASHES_SYNC.get("injetados") or not os.path.exists(caminho_js):
+    dados_str = json.dumps(dados_completos, ensure_ascii=False)
+    payload_cifrado = criptografar_payload(dados_str, CHAVE_ACESSO_CLEALCO)
+    with open(caminho_js, "w", encoding="utf-8") as f:
+        f.write("window.DADOS_CLEALCO_EMBARCADOS = " + json.dumps(payload_cifrado, ensure_ascii=False) + ";\n")
+    HASHES_SYNC["injetados"] = hash_injetados
+    HOUVE_ALTERACAO_DADOS_REAIS = True
+    print(f"dados_injetados.js criptografado com sucesso! {len(base_proc)} voos, {len(backlog)} backlog, {len(falhas)} falhas.")
+else:
+    print(f"dados_injetados.js sem alteracoes reais ({len(base_proc)} voos, {len(backlog)} backlog, {len(falhas)} falhas). Mantido.")
 
 # ================= 6. MOTOR GEOGRÁFICO (MAPA OPERACIONAL DE VOOS) =================
 try:
@@ -1193,11 +1225,23 @@ try:
             "features": features_geojson
         }
         
-        geo_str = json.dumps(geo_col, ensure_ascii=False)
-        payload_mapa_cifrado = criptografar_payload(geo_str, CHAVE_ACESSO_CLEALCO)
-        
-        with open(caminho_mapa_js, "w", encoding="utf-8") as f:
-            f.write("window.DADOS_MAPA_VOOS = " + json.dumps(payload_mapa_cifrado, ensure_ascii=False) + ";\n")
+        hash_mapa = calcular_hash_objeto(geo_col)
+        if hash_mapa != HASHES_SYNC.get("mapa") or not os.path.exists(caminho_mapa_js):
+            geo_str = json.dumps(geo_col, ensure_ascii=False)
+            payload_mapa_cifrado = criptografar_payload(geo_str, CHAVE_ACESSO_CLEALCO)
+            with open(caminho_mapa_js, "w", encoding="utf-8") as f:
+                f.write("window.DADOS_MAPA_VOOS = " + json.dumps(payload_mapa_cifrado, ensure_ascii=False) + ";\n")
+            HASHES_SYNC["mapa"] = hash_mapa
+            HOUVE_ALTERACAO_DADOS_REAIS = True
+            mb = os.path.getsize(caminho_mapa_js) / (1024*1024)
+            msg_ok = f"dados_mapa_voos.js criptografado com sucesso! {len(features_geojson)} talhões mapeados ({len(matched_keys)} backlog cruzados) - {mb:.2f} MB em {time.time()-t_mapa:.2f}s"
+            print(msg_ok)
+            try:
+                with open(caminho_diag, "a", encoding="utf-8") as f_diag:
+                    f_diag.write(f"[{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}] [MAPA OK] {msg_ok}\n")
+            except: pass
+        else:
+            print(f"dados_mapa_voos.js sem alteracoes reais ({len(features_geojson)} talhões). Mantido.")
             
         # Exporta centroides de FAs para o Roteirizador / Clusters de Proximidade do Backlog
         caminho_coords_js = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados_coordenadas_fas.js"
@@ -1212,19 +1256,17 @@ try:
                     if ct:
                         cents_map.setdefault(fa_c, []).append((ct.GetY(), ct.GetX()))
             fa_coords_export = {fa: [round(sum(p[0] for p in pts)/len(pts), 5), round(sum(p[1] for p in pts)/len(pts), 5)] for fa, pts in cents_map.items()}
-            with open(caminho_coords_js, "w", encoding="utf-8") as f_c:
-                f_c.write("window.COORDENADAS_FAS_CLEALCO = " + json.dumps(fa_coords_export, separators=(',', ':')) + ";\n")
-            print(f"dados_coordenadas_fas.js exportado com sucesso! ({len(fa_coords_export)} FAs mapeadas para rotas).")
+            hash_coords = calcular_hash_objeto(fa_coords_export)
+            if hash_coords != HASHES_SYNC.get("coords") or not os.path.exists(caminho_coords_js):
+                with open(caminho_coords_js, "w", encoding="utf-8") as f_c:
+                    f_c.write("window.COORDENADAS_FAS_CLEALCO = " + json.dumps(fa_coords_export, separators=(',', ':')) + ";\n")
+                HASHES_SYNC["coords"] = hash_coords
+                HOUVE_ALTERACAO_DADOS_REAIS = True
+                print(f"dados_coordenadas_fas.js exportado com sucesso! ({len(fa_coords_export)} FAs mapeadas para rotas).")
+            else:
+                print(f"dados_coordenadas_fas.js sem alteracoes reais ({len(fa_coords_export)} FAs). Mantido.")
         except Exception as e_c:
             print(f"Aviso ao exportar coordenadas de FAs para rotas: {e_c}")
-
-        mb = os.path.getsize(caminho_mapa_js) / (1024*1024)
-        msg_ok = f"dados_mapa_voos.js criptografado com sucesso! {len(features_geojson)} talhões mapeados ({len(matched_keys)} backlog cruzados) - {mb:.2f} MB em {time.time()-t_mapa:.2f}s"
-        print(msg_ok)
-        try:
-            with open(caminho_diag, "a", encoding="utf-8") as f_diag:
-                f_diag.write(f"[{datetime.now().strftime('%d/%m/%Y %H:%M:%S')}] [MAPA OK] {msg_ok}\n")
-        except: pass
     else:
         msg_aviso = f"Aviso: Shapefile {caminho_shp} não encontrado."
         print(msg_aviso)
@@ -1400,17 +1442,24 @@ def sincronizar_e_catalogar_mapas():
     mapas_catalogo.sort(key=lambda x: x['timestamp'], reverse=True)
     
     caminho_js_mapas = os.path.join(os.path.dirname(destino), "dados_mapas_safra.js")
-    with open(caminho_js_mapas, "w", encoding="utf-8") as f_out:
-        agora_str = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
-        f_out.write("// Catalogo Automatico de Mapas de Safra em PDF\n")
-        f_out.write(f"// Gerado em: {agora_str}\n")
-        f_out.write(f"// Total de Mapas: {len(mapas_catalogo)}\n")
-        f_out.write("window.DADOS_MAPAS_SAFRA = ")
-        json.dump(mapas_catalogo, f_out, ensure_ascii=False, indent=2)
-        f_out.write(";\n")
-        
-    novos = [m for m in mapas_catalogo if m['is_novo']]
-    print(f"[MAPAS] Catálogo atualizado em dados_mapas_safra.js: {len(mapas_catalogo)} mapas ({len(novos)} novos/atualizados nos últimos 7 dias).")
+    sig_mapas = [[m['arquivo'], m['url'], m['timestamp'], m['tamanho_kb'], m['is_novo'], m['is_hoje'], m['dias_atras'] <= 30] for m in mapas_catalogo]
+    hash_mapas = calcular_hash_objeto(sig_mapas)
+    global HOUVE_ALTERACAO_DADOS_REAIS
+    if hash_mapas != HASHES_SYNC.get("mapas_safra") or not os.path.exists(caminho_js_mapas):
+        with open(caminho_js_mapas, "w", encoding="utf-8") as f_out:
+            agora_str = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
+            f_out.write("// Catalogo Automatico de Mapas de Safra em PDF\n")
+            f_out.write(f"// Gerado em: {agora_str}\n")
+            f_out.write(f"// Total de Mapas: {len(mapas_catalogo)}\n")
+            f_out.write("window.DADOS_MAPAS_SAFRA = ")
+            json.dump(mapas_catalogo, f_out, ensure_ascii=False, indent=2)
+            f_out.write(";\n")
+        HASHES_SYNC["mapas_safra"] = hash_mapas
+        HOUVE_ALTERACAO_DADOS_REAIS = True
+        novos = [m for m in mapas_catalogo if m['is_novo']]
+        print(f"[MAPAS] Catálogo atualizado em dados_mapas_safra.js: {len(mapas_catalogo)} mapas ({len(novos)} novos/atualizados nos últimos 7 dias).")
+    else:
+        print(f"[MAPAS] Catálogo sem alteracoes reais ({len(mapas_catalogo)} mapas). Mantido.")
 
 sincronizar_e_catalogar_mapas()
 
@@ -1781,19 +1830,24 @@ def compilar_historico_falhas():
         'data_atualizacao': datetime.now().strftime('%d/%m/%Y %H:%M')
     }
 
-    payload_str = json.dumps(payload, ensure_ascii=False)
-    encrypted = criptografar_payload(payload_str)
-
     output_path = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados_historico_falhas.js"
-    with open(output_path, "w", encoding="utf-8") as f_out:
-        f_out.write("// Histórico Consolidado de Falhas de Plantio (2021 - 2026)\n")
-        f_out.write(f"// Gerado em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
-        f_out.write("// Payload criptografado AES-GCM (Clealco)\n")
-        f_out.write("window.DADOS_HISTORICO_FALHAS = ")
-        json.dump(encrypted, f_out, ensure_ascii=False)
-        f_out.write(";\n")
-
-    print(f"[HISTORICO FALHAS] Arquivo gravado com sucesso: {output_path} ({len(fazendas_todas)} registros compilados).")
+    hash_hist = calcular_hash_objeto({'resumo_anos': resumo_anos, 'fazendas': fazendas_todas})
+    global HOUVE_ALTERACAO_DADOS_REAIS
+    if hash_hist != HASHES_SYNC.get("historico") or not os.path.exists(output_path):
+        payload_str = json.dumps(payload, ensure_ascii=False)
+        encrypted = criptografar_payload(payload_str)
+        with open(output_path, "w", encoding="utf-8") as f_out:
+            f_out.write("// Histórico Consolidado de Falhas de Plantio (2021 - 2026)\n")
+            f_out.write(f"// Gerado em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
+            f_out.write("// Payload criptografado AES-GCM (Clealco)\n")
+            f_out.write("window.DADOS_HISTORICO_FALHAS = ")
+            json.dump(encrypted, f_out, ensure_ascii=False)
+            f_out.write(";\n")
+        HASHES_SYNC["historico"] = hash_hist
+        HOUVE_ALTERACAO_DADOS_REAIS = True
+        print(f"[HISTORICO FALHAS] Arquivo gravado com sucesso: {output_path} ({len(fazendas_todas)} registros compilados).")
+    else:
+        print(f"[HISTORICO FALHAS] Sem alteracoes reais ({len(fazendas_todas)} registros). Mantido.")
 
 compilar_historico_falhas()
 
