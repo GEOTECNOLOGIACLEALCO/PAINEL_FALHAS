@@ -89,7 +89,12 @@ Este documento define a arquitetura, regras de ouro, fluxos de dados e comandos 
 - Antes de qualquer modificação de grande porte na segurança ou arquitetura, deve ser gerado um backup físico completo em pasta dedicada e gravada uma tag Git permanente (ex: `backup-pre-seguranca`).
 
 ### 🧬 Regra 9: Autocura e Resiliência da Base (dados.xlsx)
-- Se a planilha `dados.xlsx` for salva pelo Excel em outra estação sem as abas auxiliares, o script `atualizar_dados.py` ativa fallbacks autônomos para restaurar os talhões do Backlog (119 talhões) e as fazendas postergadas de 2º corte (372,95 ha), mantendo os dados do PWA 100% íntegros.
+- O backend `2.0importos.py` lê as planilhas de planejamento diretamente de `W:\15-SETOR\FABIANO\Voo_e_processamentos_2.0\Doc\Backup_Planilhas_Plantio_2026` (com fallback ao backup mestre), preserva a aba `POSTERGADOS_2_CORTE` em `dados.xlsx` e filtra CSVs em `2026\Falhas` exigindo código numérico de FA (`^\d+`).
+- Na etapa de publicação, `atualizar_dados.py` também mantém fallbacks autônomos para restaurar os talhões do Backlog e as fazendas postergadas de 2º corte, garantindo integridade total no PWA.
+
+### Regra 10: Publicação Inteligente por Hash (Sem Commits Vazios)
+- `atualizar_dados.py` calcula hashes SHA-256 dos dados reais em `cache_sync_hashes.json` (ignorado pelo `.gitignore`), usando ordenação determinística de listas e janela de 30 minutos para consultas à API Arable.
+- Arquivos `.js` e a versão do `service-worker.js` só são reescritos e commitados no GitHub quando houver alteração real de voos, CSVs, créditos, mapas ou clima, evitando dezenas de commits vazios por passagem de relógio.
 
 
 ---

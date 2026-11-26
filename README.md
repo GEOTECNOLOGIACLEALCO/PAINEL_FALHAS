@@ -66,11 +66,10 @@ A atualização de dados é 100% automatizada e monitorada via CLI:
                 ▼
    [Script Python: atualizar_dados.py (QGIS 3.12)]
       • Minera dados.xlsx, shapes e bases de falhas 2021-2026
-      • Conecta à API Arable Cloud e compila clima
+      • Conecta à API Arable Cloud e compila clima (janela de 30 min)
       • Criptografa payloads em AES-GCM (chave local em config_seguranca_local.json)
-      • Gera dados_injetados.js, dados_mapa_voos.js, etc.
-      • Incrementa a versão do cache no service-worker.js
-      • Executa git add, commit e push para o GitHub
+      • Compara hashes SHA-256 reais e só atualiza JS/PWA quando há mudança real
+      • Executa git add, commit e push para o GitHub apenas se houver alteração
                 │
                 ▼
    [GitHub Pages: Online em ~1 minuto]

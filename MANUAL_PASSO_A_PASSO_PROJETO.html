@@ -569,7 +569,7 @@
         <a href="#passo-2-descarregar" class="nav-link">📂 4.2 Nomenclatura e Pastas</a>
         <a href="#passo-3-processamento" class="nav-link">⚙️ 4.3 Processamento & Robô</a>
         <a href="#passo-4-fechamento" class="nav-link">📊 4.4 Fechamento Diário (BD)</a>
-        <a href="#passo-5-github" class="nav-link">🌐 4.5 GitHub Pages & Cron 30 min</a>
+        <a href="#passo-5-github" class="nav-link">🌐 4.5 GitHub Pages & Sync Hash</a>
         <a href="#passo-6-mapa-radar" class="nav-link">🌧️ 4.6 Mapa, Radar IPMet & GPS</a>
         <a href="#passo-7-mapas-safra" class="nav-link">📑 4.7 Mapas Safra em PDF</a>
         <a href="#passo-8-historico-falhas" class="nav-link">📊 4.8 Histórico de Falhas (2021-2026)</a>
@@ -979,7 +979,7 @@ flowchart TD
                     </div>
                     <div class="step-body">
                         <div class="step-title">
-                            <span>Sincronização com o GitHub Pages & Cron Automático de 30 Minutos</span>
+                            <span>Sincronização Inteligente com o GitHub Pages (Hash + Clima 30 min)</span>
                             <span class="step-tag tag-auto">1-Clique / Automático</span>
                         </div>
                         <p>
@@ -990,14 +990,14 @@ flowchart TD
                         
                         <div class="grid-3">
                             <div class="card card-destaque">
-                                <b style="color:var(--ouro);">Método 1: Automático a Cada 30 Min (Cron)</b>
+                                <b style="color:var(--ouro);">Método 1: Automático Inteligente (Cron + Hash)</b>
                                 <p style="font-size:0.85rem; margin-top:5px;">
                                     Dê dois cliques no atalho <strong>"INICIAR_SISTEMA_CLEALCO_2.0"</strong> na sua Área de Trabalho (ou <code>INICIAR_SISTEMA.bat</code>).
                                 </p>
                                 <ul style="font-size:0.8rem; color:var(--texto-sec); margin-left:18px;">
-                                    <li>Inicia o robô Python <code>2.0importos.py</code>;</li>
-                                    <li>Executa o loop contínuo <code>cron_publicar_github(30)</code> a cada 30 minutos em background;</li>
-                                    <li>Atualiza planilhas, cruza shapes e envia para a nuvem de forma autônoma sem você precisar fazer nada.</li>
+                                    <li>Inicia o robô Python <code>2.0importos.py</code> em tempo real;</li>
+                                    <li>Vigia novas pastas em 30s e executa ciclo de checagem a cada 3 minutos (com leitura do Backlog oficial em <code>Doc\Backup_Planilhas_Plantio_2026</code> e preservação da aba <code>POSTERGADOS_2_CORTE</code>);</li>
+                                    <li>Publica no GitHub somente quando há mudança real de dados (verificação SHA-256 em <code>cache_sync_hashes.json</code>) ou na janela de 30 min do clima Arable, evitando commits vazios.</li>
                                 </ul>
                             </div>
 
@@ -1035,12 +1035,12 @@ flowchart LR
     classDef bat fill:#1f0606,stroke:#B22222,stroke-width:2px,color:#fff;
     classDef nuvem fill:#062338,stroke:#2196f3,stroke-width:2px,color:#fff;
 
-    A["Cron (30 min) / Botão Local"]:::origem -->|"Compila dados"| B["dados.xlsx (Local Privado)"]:::processa
+    A["Cron (3 min) / Botão Local"]:::origem -->|"Compila dados"| B["dados.xlsx (Local Privado)"]:::processa
     B -->|"Aciona"| C["atualizar_dados.bat"]:::bat
-    C -->|"Executa"| D["atualizar_dados.py"]:::bat
-    D -->|"Criptografia AES-256 GCM"| E["dados_injetados.js + dados_mapa_voos.js"]:::processa
+    C -->|"Executa"| D["atualizar_dados.py (Hash SHA-256)"]:::bat
+    D -->|"AES-256 GCM (se houve mudança)"| E["dados_injetados.js + dados_mapa_voos.js"]:::processa
     C -->|"git push origin main"| F["GitHub (Repositório Seguro)"]:::nuvem
-    F -->|"PWA Cache v35"| G["Painel Online + Celular Campo"]:::nuvem
+    F -->|"PWA Cache"| G["Painel Online + Celular Campo"]:::nuvem
                             </div>
                         </div>
 
@@ -1512,17 +1512,17 @@ flowchart LR
                 </p>
                 <div class="grid-2" style="margin: 10px 0;">
                     <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; border:1px solid rgba(255,209,102,0.2);">
-                        <b style="color:var(--ouro); font-size:0.82rem;">Origem Soberana dos Dados:</b>
+                        <b style="color:var(--ouro); font-size:0.82rem;">Origem Soberana e Filtro de CSVs:</b>
                         <p style="font-size:0.8rem; margin: 5px 0 0 0; color:var(--texto-sec);">
-                            Os <strong>86 arquivos CSVs auditados</strong> em <code>W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas</code> são a única fonte válida. O script zera a categoria antes de somar os arquivos, garantindo que nunca ocorra a soma duplicada com a planilha da rede (que antes inflava para 7.162 ha).
+                            Os arquivos CSVs numéricos de FAs em <code>W:\01-DRONE\08-BANCO DE DADOS\2026\Falhas</code> (atualmente 111 registros válidos) são a única fonte oficial. Tanto o <code>2.0importos.py</code> quanto o <code>atualizar_dados.py</code> aplicam filtro rigoroso (<code>^\d+</code>) para ignorar CSVs auxiliares ou comparativos que não sejam FAs, zerando a categoria antes de consolidar.
                         </p>
                     </div>
                     <div style="background:rgba(0,0,0,0.5); padding:12px; border-radius:8px; border:1px solid rgba(76,175,80,0.2);">
-                        <b style="color:var(--verde-claro); font-size:0.82rem;">Valores Oficiais Auditados (Safra 2026):</b>
+                        <b style="color:var(--verde-claro); font-size:0.82rem;">Valores Oficiais Consolidados (Safra 2026):</b>
                         <ul style="font-size:0.8rem; margin: 5px 0 0 16px; color:var(--texto-sec);">
-                            <li><strong>Própria</strong>: Meta 3.374 ha | Realizado <strong>1.125 ha</strong> (33,3%)</li>
-                            <li><strong>Fornecedores</strong>: Meta 11.000 ha | Realizado <strong>3.755 ha</strong> (34,1%)</li>
-                            <li><strong>Consolidado</strong>: Meta 14.374 ha | Realizado <strong>4.880 ha</strong> (33,9%)</li>
+                            <li><strong>Própria</strong>: Meta 3.374,33 ha | Realizado <strong>2.809,63 ha</strong> (83,3%) + <strong>372,95 ha</strong> Postergadas 2º Corte</li>
+                            <li><strong>Fornecedores</strong>: Meta 11.970,41 ha | Realizado <strong>4.700,47 ha</strong> (39,3%)</li>
+                            <li><strong>Consolidado</strong>: Meta 15.344,74 ha | Realizado <strong>7.510,10 ha</strong> (48,9%)</li>
                         </ul>
                     </div>
                 </div>
@@ -1733,7 +1733,7 @@ flowchart LR
                 </li>
                 <li>
                     <span class="check-icon">✓</span>
-                    <div><strong>Sincronização Online Automática:</strong> O robô <code>2.0importos.py</code> sincroniza sozinho de 30 em 30 minutos para o GitHub Pages. Se quiser forçar na hora, basta clicar em <strong>"📤 Exportar GitHub"</strong> ou rodar <code>atualizar_dados.bat</code>.</div>
+                    <div><strong>Sincronização Online Automática:</strong> O robô <code>2.0importos.py</code> verifica alterações em ciclos de 3 minutos e só envia ao GitHub Pages quando há novidade real nos dados (ou a cada 30 min pelo clima Arable). Se quiser forçar na hora, basta clicar em <strong>"📤 Exportar GitHub"</strong> ou rodar <code>atualizar_dados.bat</code>.</div>
                 </li>
             </ul>
         </section>
@@ -1830,8 +1830,8 @@ flowchart LR
                         <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Sem Locks</span></td>
                     </tr>
                     <tr>
-                        <td><strong>Resiliência e Autocura de Dados</strong></td>
-                        <td>Fallback autônomo multinível em atualizar_dados.py restaura Backlog e Postergadas sem perda.</td>
+                        <td><strong>Resiliência, Hash & Autocura de Dados</strong></td>
+                        <td>2.0importos.py lê Backlog de Doc\Backup_Planilhas_Plantio_2026, preserva POSTERGADOS_2_CORTE e filtra CSVs não-FA; atualizar_dados.py publica apenas quando há mudança real (SHA-256).</td>
                         <td><span style="color:#4caf50; font-weight:bold;">● Aprovado / Resiliente</span></td>
                     </tr>
                     <tr>
