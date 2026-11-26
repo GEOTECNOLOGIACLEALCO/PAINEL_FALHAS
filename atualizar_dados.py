@@ -11,7 +11,21 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 
-CHAVE_ACESSO_CLEALCO = "Clealco@Geo2026"
+# ================= CONFIGURAÇÃO SEGURA LOCAL (NÃO VERSIONADA) =================
+caminho_cfg_local = os.path.join(os.path.dirname(__file__), "config_seguranca_local.json")
+cfg_segura = {}
+if os.path.exists(caminho_cfg_local):
+    try:
+        with open(caminho_cfg_local, "r", encoding="utf-8") as f_cfg:
+            cfg_segura = json.load(f_cfg)
+    except Exception as e_cfg:
+        print(f"[AVISO SEGURANÇA] Erro ao carregar config_seguranca_local.json: {e_cfg}")
+
+CHAVE_ACESSO_CLEALCO = os.environ.get("CLEALCO_CHAVE_ACESSO") or cfg_segura.get("CHAVE_ACESSO_CLEALCO")
+if not CHAVE_ACESSO_CLEALCO:
+    raise ValueError("CHAVE_ACESSO_CLEALCO não configurada em config_seguranca_local.json nem no ambiente do sistema!")
+
+ARABLE_API_KEY = os.environ.get("ARABLE_API_KEY") or cfg_segura.get("ARABLE_API_KEY", "")
 
 # ================= REGRAS CORPORATIVAS DE CLASSIFICAÇÃO (OVERRIDES DE PRÓPRIAS / TERCEIROS) =================
 FAS_FORCADAS_PROPRIAS = {
@@ -1733,7 +1747,10 @@ def compilar_dados_arable_clima():
     import urllib.request
     from datetime import timezone
     caminho_clima_js = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados_arable_clima.js"
-    api_key = "e951a4f6-f5b4-4a61-b2a8-2c40b388bf82"
+    api_key = ARABLE_API_KEY
+    if not api_key:
+        print("[ARABLE CLIMA] ARABLE_API_KEY não configurada em config_seguranca_local.json. Pulando sincronização IoT.")
+        return
     headers = {'Authorization': f'Apikey {api_key}', 'Accept': 'application/json'}
     
     print("[ARABLE CLIMA] Conectando à API Arable Cloud...")

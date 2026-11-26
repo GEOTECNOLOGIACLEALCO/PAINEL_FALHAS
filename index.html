@@ -3307,8 +3307,20 @@
         }
 
         // ================= CRIPTOGRAFIA & AUTENTICAÇÃO SEGURA (AES-GCM-256) =================
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
         const CHAVE_STORAGE_AUTH = 'clealco_geo_auth_token_v1';
         let senhaAtivaSessao = "";
+        let authTentativasFalhas = 0;
+        let authBloqueioAte = 0;
 
         function obterSenhaAtiva() {
             if (senhaAtivaSessao) return senhaAtivaSessao;
@@ -3426,11 +3438,24 @@
             const lembrar = document.getElementById('chk-lembrar-acesso')?.checked;
             const senha = input ? input.value.trim() : '';
 
+            const agora = Date.now();
+            if (agora < authBloqueioAte) {
+                const segRestantes = Math.ceil((authBloqueioAte - agora) / 1000);
+                if (erroMsg) {
+                    erroMsg.innerText = `Muitas tentativas incorretas. Aguarde ${segRestantes}s para tentar novamente.`;
+                    erroMsg.classList.remove('hidden');
+                }
+                return;
+            }
+
             if (!senha) return;
 
             erroMsg.classList.add('hidden');
             btnSubmit.innerHTML = '⏳ <span>Verificando...</span>';
             btnSubmit.disabled = true;
+
+            // Delay artificial para atenuar timing attacks e scripts de força bruta
+            await new Promise(r => setTimeout(r, 400));
 
             try {
                 let dadosDecifrados = window.DADOS_CLEALCO_EMBARCADOS;
@@ -3454,6 +3479,8 @@
                 }
 
                 // Se chegou aqui, a senha está correta!
+                authTentativasFalhas = 0;
+                authBloqueioAte = 0;
                 senhaAtivaSessao = senha;
                 window.DADOS_CLEALCO_EMBARCADOS = dadosDecifrados;
                 window.DADOS_MAPA_VOOS = mapaDecifrado;
@@ -3472,6 +3499,14 @@
                 });
             } catch (err) {
                 console.error("Falha de autenticação/descriptografia:", err);
+                authTentativasFalhas++;
+                if (authTentativasFalhas >= 5) {
+                    authBloqueioAte = Date.now() + 60000;
+                    authTentativasFalhas = 0;
+                    if (erroMsg) erroMsg.innerText = "Limite de tentativas excedido. Bloqueado por 60 segundos.";
+                } else {
+                    if (erroMsg) erroMsg.innerText = `Senha incorreta. Tentativa ${authTentativasFalhas} de 5.`;
+                }
                 erroMsg.classList.remove('hidden');
                 btnSubmit.innerHTML = '<span>🔓</span> <span>Desbloquear Painel</span>';
                 btnSubmit.disabled = false;
@@ -4573,7 +4608,7 @@
                 }
 
                 if (clusters.length === 0) {
-                    container.innerHTML = `<div class="bg-slate-50 border border-slate-200 text-center py-8 rounded-lg text-slate-500 text-xs">Nenhum cluster encontrado para a pesquisa "${termoBusca}".</div>`;
+                    container.innerHTML = `<div class="bg-slate-50 border border-slate-200 text-center py-8 rounded-lg text-slate-500 text-xs">Nenhum cluster encontrado para a pesquisa "${escapeHtml(termoBusca)}".</div>`;
                     return;
                 }
 
@@ -4667,7 +4702,7 @@
             }
 
             if (lista.length === 0) {
-                container.innerHTML = `<div class="bg-slate-50 border border-slate-200 text-center py-8 rounded-lg text-slate-500 text-xs">Nenhum FA ou Fazenda encontrada para a pesquisa "${termoBusca}".</div>`;
+                container.innerHTML = `<div class="bg-slate-50 border border-slate-200 text-center py-8 rounded-lg text-slate-500 text-xs">Nenhum FA ou Fazenda encontrada para a pesquisa "${escapeHtml(termoBusca)}".</div>`;
                 return;
             }
 

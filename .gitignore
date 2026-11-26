@@ -12,5 +12,9 @@ log_sync_status.txt
 doc_planilhas/
 Doc/
 doc/
+config_seguranca_local.json
+*.env
+.env
+
 
 
