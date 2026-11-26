@@ -7,6 +7,7 @@ Thumbs.db
 mapas_safra/
 *.pdf
 cache_historico_*.json
+cache_sync_hashes.json
 *_backup.py
 log_sync_status.txt
 doc_planilhas/

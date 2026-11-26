@@ -1857,7 +1857,14 @@ compilar_historico_falhas()
 def compilar_dados_arable_clima():
     import urllib.request
     from datetime import timezone
+    global HOUVE_ALTERACAO_DADOS_REAIS
     caminho_clima_js = r"W:\15-SETOR\FABIANO\Voo_e_processamentosparagithub_2.0\dados_arable_clima.js"
+    agora_ts = time.time()
+    ultimo_ts = float(HASHES_SYNC.get("arable_last_fetch_ts") or 0)
+    if os.path.exists(caminho_clima_js) and (agora_ts - ultimo_ts) < 1800:
+        mins_rest = int((1800 - (agora_ts - ultimo_ts)) / 60) + 1
+        print(f"[ARABLE CLIMA] Aguardando janela de 30 min (~{mins_rest} min restantes). Clima mantido.")
+        return
     api_key = ARABLE_API_KEY
     if not api_key:
         print("[ARABLE CLIMA] ARABLE_API_KEY não configurada em config_seguranca_local.json. Pulando sincronização IoT.")
@@ -1958,24 +1965,31 @@ def compilar_dados_arable_clima():
                 "favoravel_aplicacao": (vento_kmh <= 18 and (ur is None or ur >= 50) and (temp is None or temp <= 32))
             })
 
-        payload_final = {
-            "atualizado_em": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
-            "total_estacoes": len(estacoes),
-            "estacoes": estacoes
-        }
+        HASHES_SYNC["arable_last_fetch_ts"] = time.time()
+        hash_clima = calcular_hash_objeto(estacoes)
+        if hash_clima != HASHES_SYNC.get("clima") or not os.path.exists(caminho_clima_js):
+            payload_final = {
+                "atualizado_em": datetime.now().strftime("%d/%m/%Y %H:%M:%S"),
+                "total_estacoes": len(estacoes),
+                "estacoes": estacoes
+            }
 
-        json_str = json.dumps(payload_final, ensure_ascii=False)
-        encrypted = criptografar_payload(json_str, CHAVE_ACESSO_CLEALCO)
+            json_str = json.dumps(payload_final, ensure_ascii=False)
+            encrypted = criptografar_payload(json_str, CHAVE_ACESSO_CLEALCO)
 
-        with open(caminho_clima_js, "w", encoding="utf-8") as f_out:
-            f_out.write("// Estações Agrometeorológicas Arable (Queiroz, Penápolis, Clementina)\n")
-            f_out.write(f"// Atualizado em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
-            f_out.write("// Payload criptografado AES-GCM (Clealco)\n")
-            f_out.write("window.DADOS_ARABLE_CLIMA = ")
-            json.dump(encrypted, f_out, ensure_ascii=False)
-            f_out.write(";\n")
+            with open(caminho_clima_js, "w", encoding="utf-8") as f_out:
+                f_out.write("// Estações Agrometeorológicas Arable (Queiroz, Penápolis, Clementina)\n")
+                f_out.write(f"// Atualizado em: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}\n")
+                f_out.write("// Payload criptografado AES-GCM (Clealco)\n")
+                f_out.write("window.DADOS_ARABLE_CLIMA = ")
+                json.dump(encrypted, f_out, ensure_ascii=False)
+                f_out.write(";\n")
 
-        print(f"[ARABLE CLIMA] Sucesso! {len(estacoes)} estações compiladas em {caminho_clima_js}")
+            HASHES_SYNC["clima"] = hash_clima
+            HOUVE_ALTERACAO_DADOS_REAIS = True
+            print(f"[ARABLE CLIMA] Sucesso! {len(estacoes)} estações compiladas em {caminho_clima_js}")
+        else:
+            print(f"[ARABLE CLIMA] Sem novas leituras nas {len(estacoes)} estações. Mantido.")
     except Exception as e:
         print(f"[ARABLE CLIMA] Erro ao sincronizar estações Arable: {e}")
 
@@ -2002,7 +2016,12 @@ def incrementar_versao_service_worker():
     except Exception as e:
         print(f"[SERVICE WORKER] Erro ao incrementar versão do cache: {e}")
 
-incrementar_versao_service_worker()
+if HOUVE_ALTERACAO_DADOS_REAIS:
+    incrementar_versao_service_worker()
+else:
+    print("[SERVICE WORKER] Nenhuma alteracao real de dados; versao do cache PWA mantida.")
+
+salvar_hashes_sync(HASHES_SYNC)
 
 
 
