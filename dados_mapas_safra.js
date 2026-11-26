@@ -1,7 +1,24 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 26/11/2026 10:08:34
+// Gerado em: 26/11/2026 10:12:07
 // Total de Mapas: 1327
 window.DADOS_MAPAS_SAFRA = [
+  {
+    "arquivo": "307211 - Fazenda Santa Ernestina (Adenilson Potin).pdf",
+    "url": "mapas_safra/Terceiros/307211 - Fazenda Santa Ernestina (Adenilson Potin).pdf",
+    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros/307211%20-%20Fazenda%20Santa%20Ernestina%20%28Adenilson%20Potin%29.pdf?csf=1&web=1",
+    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros?csf=1&web=1",
+    "categoria": "Terceiros",
+    "subpasta": "",
+    "fa": "307211",
+    "fazenda": "Fazenda Santa Ernestina",
+    "proprietario": "Adenilson Potin",
+    "data_modificacao": "26/11/2026 10:08",
+    "timestamp": 1795698539,
+    "tamanho_kb": 287.3,
+    "dias_atras": 0.0,
+    "is_novo": true,
+    "is_hoje": true
+  },
   {
     "arquivo": "100543 - Fazenda Sempre Verde (Clealco).pdf",
     "url": "mapas_safra/Clealco/100543 - Fazenda Sempre Verde (Clealco).pdf",
@@ -899,7 +916,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "22/10/2026 16:11",
     "timestamp": 1792696272,
     "tamanho_kb": 358.5,
-    "dias_atras": 34.7,
+    "dias_atras": 34.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -916,7 +933,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "22/10/2026 16:10",
     "timestamp": 1792696249,
     "tamanho_kb": 410.2,
-    "dias_atras": 34.7,
+    "dias_atras": 34.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -933,7 +950,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "22/10/2026 16:10",
     "timestamp": 1792696217,
     "tamanho_kb": 282.2,
-    "dias_atras": 34.7,
+    "dias_atras": 34.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -2293,7 +2310,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "01/09/2026 16:12",
     "timestamp": 1788289921,
     "tamanho_kb": 264.7,
-    "dias_atras": 85.7,
+    "dias_atras": 85.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3279,7 +3296,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "13/08/2026 13:47",
     "timestamp": 1786639639,
     "tamanho_kb": 288.7,
-    "dias_atras": 104.8,
+    "dias_atras": 104.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3330,23 +3347,6 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "12/08/2026 15:45",
     "timestamp": 1786560349,
     "tamanho_kb": 243.0,
-    "dias_atras": 105.8,
-    "is_novo": false,
-    "is_hoje": false
-  },
-  {
-    "arquivo": "307211 - Fazenda Santa Ernestina (Adenilson Potin).pdf",
-    "url": "mapas_safra/Terceiros/307211 - Fazenda Santa Ernestina (Adenilson Potin).pdf",
-    "url_sharepoint": "https://clealco-my.sharepoint.com/:b:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros/307211%20-%20Fazenda%20Santa%20Ernestina%20%28Adenilson%20Potin%29.pdf?csf=1&web=1",
-    "url_pasta_sharepoint": "https://clealco-my.sharepoint.com/:f:/r/personal/fabiano_castro_clealco_com_br/Documents/Mapas/Terceiros?csf=1&web=1",
-    "categoria": "Terceiros",
-    "subpasta": "",
-    "fa": "307211",
-    "fazenda": "Fazenda Santa Ernestina",
-    "proprietario": "Adenilson Potin",
-    "data_modificacao": "12/08/2026 14:34",
-    "timestamp": 1786556095,
-    "tamanho_kb": 310.2,
     "dias_atras": 105.8,
     "is_novo": false,
     "is_hoje": false
@@ -4163,7 +4163,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "29/07/2026 11:21",
     "timestamp": 1785334886,
     "tamanho_kb": 313.1,
-    "dias_atras": 119.9,
+    "dias_atras": 120.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4452,7 +4452,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "17/07/2026 13:45",
     "timestamp": 1784306752,
     "tamanho_kb": 286.6,
-    "dias_atras": 131.8,
+    "dias_atras": 131.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4588,7 +4588,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "16/07/2026 08:57",
     "timestamp": 1784203031,
     "tamanho_kb": 335.3,
-    "dias_atras": 133.0,
+    "dias_atras": 133.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -5234,7 +5234,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/07/2026 08:59",
     "timestamp": 1783339166,
     "tamanho_kb": 409.4,
-    "dias_atras": 143.0,
+    "dias_atras": 143.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -7240,7 +7240,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/05/2026 13:45",
     "timestamp": 1779900355,
     "tamanho_kb": 280.4,
-    "dias_atras": 182.8,
+    "dias_atras": 182.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -7886,7 +7886,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/05/2026 13:47",
     "timestamp": 1778863645,
     "tamanho_kb": 282.9,
-    "dias_atras": 194.8,
+    "dias_atras": 194.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9229,7 +9229,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "27/03/2026 08:57",
     "timestamp": 1774612644,
     "tamanho_kb": 437.1,
-    "dias_atras": 244.0,
+    "dias_atras": 244.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9756,7 +9756,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "12/03/2026 11:21",
     "timestamp": 1773325310,
     "tamanho_kb": 272.2,
-    "dias_atras": 258.9,
+    "dias_atras": 259.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -10402,7 +10402,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "04/03/2026 08:57",
     "timestamp": 1772625459,
     "tamanho_kb": 259.7,
-    "dias_atras": 267.0,
+    "dias_atras": 267.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -11609,7 +11609,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "12/01/2026 16:10",
     "timestamp": 1768245025,
     "tamanho_kb": 319.9,
-    "dias_atras": 317.7,
+    "dias_atras": 317.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -12357,7 +12357,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "01/12/2025 16:11",
     "timestamp": 1764616293,
     "tamanho_kb": 313.4,
-    "dias_atras": 359.7,
+    "dias_atras": 359.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -15638,7 +15638,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "10/04/2025 13:45",
     "timestamp": 1744303551,
     "tamanho_kb": 329.9,
-    "dias_atras": 594.8,
+    "dias_atras": 594.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -15757,7 +15757,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "03/04/2025 16:09",
     "timestamp": 1743707340,
     "tamanho_kb": 293.5,
-    "dias_atras": 601.7,
+    "dias_atras": 601.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17236,7 +17236,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "30/07/2024 13:46",
     "timestamp": 1722357992,
     "tamanho_kb": 235.8,
-    "dias_atras": 848.8,
+    "dias_atras": 848.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17338,7 +17338,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "17/07/2024 16:10",
     "timestamp": 1721243424,
     "tamanho_kb": 242.1,
-    "dias_atras": 861.7,
+    "dias_atras": 861.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17814,7 +17814,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/05/2024 11:22",
     "timestamp": 1715782971,
     "tamanho_kb": 253.6,
-    "dias_atras": 924.9,
+    "dias_atras": 925.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20126,7 +20126,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "22/02/2024 11:21",
     "timestamp": 1708611710,
     "tamanho_kb": 284.9,
-    "dias_atras": 1007.9,
+    "dias_atras": 1008.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20942,7 +20942,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 08:59",
     "timestamp": 1708516755,
     "tamanho_kb": 240.6,
-    "dias_atras": 1009.0,
+    "dias_atras": 1009.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -20959,7 +20959,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "21/02/2024 08:56",
     "timestamp": 1708516595,
     "tamanho_kb": 387.9,
-    "dias_atras": 1009.0,
+    "dias_atras": 1009.1,
     "is_novo": false,
     "is_hoje": false
   },
@@ -22013,7 +22013,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/02/2024 08:57",
     "timestamp": 1707998232,
     "tamanho_kb": 313.1,
-    "dias_atras": 1015.0,
+    "dias_atras": 1015.1,
     "is_novo": false,
     "is_hoje": false
   },
