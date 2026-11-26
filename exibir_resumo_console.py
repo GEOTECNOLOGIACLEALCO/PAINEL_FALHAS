@@ -9,6 +9,14 @@ if not os.path.exists(caminho_js):
     sys.exit(0)
 
 try:
+    cfg_path = os.path.join(os.path.dirname(__file__), 'config_seguranca_local.json')
+    chave_acesso = os.environ.get('CLEALCO_CHAVE_ACESSO', '')
+    if not chave_acesso and os.path.exists(cfg_path):
+        with open(cfg_path, 'r', encoding='utf-8') as f_cfg:
+            chave_acesso = json.load(f_cfg).get('CHAVE_ACESSO_CLEALCO', '')
+    if not chave_acesso:
+        sys.exit(0)
+
     with open(caminho_js, 'r', encoding='utf-8') as f:
         content = f.read()
     payload = json.loads(content.split('window.DADOS_CLEALCO_EMBARCADOS = ')[1].strip().rstrip(';'))
@@ -16,17 +24,18 @@ try:
     iv = base64.b64decode(payload['i'])
     ct = base64.b64decode(payload['d'])
     kdf = PBKDF2HMAC(algorithm=hashes.SHA256(), length=32, salt=salt, iterations=100000)
-    key = kdf.derive(b'Clealco@Geo2026')
+    key = kdf.derive(chave_acesso.encode('utf-8'))
     aesgcm = AESGCM(key)
     dec = json.loads(aesgcm.decrypt(iv, ct, None).decode('utf-8'))
 
     falhas = dec.get('falhas_plantio', [])
-    prop = sum(float(f.get('Area_Ha') or 0) for f in falhas if str(f.get('Tipo')).lower().startswith('pr') or (str(f.get('FA')).startswith('20') and len(str(f.get('FA')))==6))
-    terc = sum(float(f.get('Area_Ha') or 0) for f in falhas if not (str(f.get('Tipo')).lower().startswith('pr') or (str(f.get('FA')).startswith('20') and len(str(f.get('FA')))==6)))
+    prop = sum(float(f.get('Area_Ha') or 0) for f in falhas if str(f.get('Tipo')).lower().startswith('pr') or (str(f.get('FA')).startswith(('10', '20')) and len(str(f.get('FA'))) == 6))
+    terc = sum(float(f.get('Area_Ha') or 0) for f in falhas if not (str(f.get('Tipo')).lower().startswith('pr') or (str(f.get('FA')).startswith(('10', '20')) and len(str(f.get('FA'))) == 6)))
     total = prop + terc
 
-    meta_prop = 3374.33
-    meta_terc = 11000.00
+    metas_2026 = dec.get('metas_globais', {}).get('2026', {})
+    meta_prop = float(metas_2026.get('propria') or 3374.33)
+    meta_terc = float(metas_2026.get('terceiros') or 11970.41)
     meta_total = meta_prop + meta_terc
 
     pct_prop = (prop / meta_prop) * 100 if meta_prop else 0
