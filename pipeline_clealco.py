@@ -60,14 +60,31 @@ ARQ_ATUALIZAR_PY = os.path.join(PASTA_GITHUB, "atualizar_dados.py")
 ARQ_ATUALIZAR_BAT = os.path.join(PASTA_GITHUB, "atualizar_dados.bat")
 
 QGIS_PY = r"C:\Program Files\QGIS 4.2.1\apps\Python312\python.exe"
-CHAVE_ACESSO = "Clealco@Geo2026"
+
+def carregar_chave_acesso():
+    chave_env = os.environ.get("CLEALCO_CHAVE_ACESSO")
+    if chave_env:
+        return chave_env
+    cfg_path = os.path.join(PASTA_GITHUB, "config_seguranca_local.json")
+    if os.path.exists(cfg_path):
+        try:
+            with open(cfg_path, "r", encoding="utf-8") as f_cfg:
+                chave_cfg = json.load(f_cfg).get("CHAVE_ACESSO_CLEALCO")
+                if chave_cfg:
+                    return chave_cfg
+        except Exception:
+            pass
+    raise ValueError("CHAVE_ACESSO_CLEALCO não encontrada em config_seguranca_local.json nem na variável de ambiente CLEALCO_CHAVE_ACESSO.")
+
+CHAVE_ACESSO = carregar_chave_acesso()
 
 def get_python_exe():
     if os.path.exists(QGIS_PY):
         return QGIS_PY
     return sys.executable
 
-def decrypt_payload(c_dict, password=CHAVE_ACESSO):
+def decrypt_payload(c_dict, password=None):
+    password = password or CHAVE_ACESSO
     try:
         from cryptography.hazmat.primitives.ciphers.aead import AESGCM
         from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC

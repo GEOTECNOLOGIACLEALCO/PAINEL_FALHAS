@@ -55,7 +55,7 @@ Este documento define a arquitetura, regras de ouro, fluxos de dados e comandos 
 - O Python padrão do Windows não possui `osgeo`, `ogr`, `gdal`, `geopandas` ou `cryptography`, o que causa falhas silenciosas na compilação do mapa e dos dados criptografados.
 
 ### 🥉 Regra 3: Criptografia e Service Worker
-- Os dados do painel web são criptografados com **AES-GCM (PBKDF2-SHA256)** usando a chave de acesso corporativa (`Clealco@Geo2026`).
+- Os dados do painel web são criptografados com **AES-GCM (PBKDF2-SHA256)** usando a chave de acesso corporativa configurada em `config_seguranca_local.json` (`CHAVE_ACESSO_CLEALCO`).
 - Ao recompilar dados para a web, o `service-worker.js` deve ser incrementado (ex: `clealco-voos-v3715`) para que os navegadores dos usuários e celulares descarreguem o cache antigo.
 
 ### 🏅 Regra 4: dados.xlsx é Derivado e Ignorado
