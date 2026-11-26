@@ -810,8 +810,8 @@ if len(postergados) == 0:
 
 dados_completos = {
     "fas_alteradas": mapa_fas_alteradas,
-    "fas_forcadas_proprias": list(FAS_FORCADAS_PROPRIAS),
-    "fas_forcadas_terceiros": list(FAS_FORCADAS_TERCEIROS),
+    "fas_forcadas_proprias": sorted(list(FAS_FORCADAS_PROPRIAS)),
+    "fas_forcadas_terceiros": sorted(list(FAS_FORCADAS_TERCEIROS)),
     "base_processamentos": base_proc,
     "backlog": backlog,
     "falhas_plantio": falhas,
@@ -957,11 +957,11 @@ try:
                                     if sub_sub_arq.lower().endswith('.kml') and ('talhao' in sub_sub_arq.lower() or 'talho' in sub_sub_arq.lower()):
                                         achados.append(os.path.join(p_arq, sub_sub_arq))
                 if achados:
-                    for f_c in fas_encontradas:
+                    for f_c in sorted(fas_encontradas):
                         if f_c not in kmls_por_fa:
                             kmls_por_fa[f_c] = {
                                 'pasta': pasta_faz,
-                                'kmls': list(set(achados)),
+                                'kmls': sorted(list(set(achados))),
                                 'revoo': 'terminar' in pasta_faz.lower()
                             }
                         else:
@@ -1158,8 +1158,8 @@ try:
         # 4. Inserção de TODAS as geometrias dos KMLs Analisados (Overlay de Aproveitamento de Voo)
         # O polígono do KML cobre e pinta exatamente a área aprovada pelo analista!
         kmls_inseridos_cont = 0
-        for fa_kml, info_kml in kmls_por_fa.items():
-            kmls_validos = info_kml['kmls']
+        for fa_kml, info_kml in sorted(kmls_por_fa.items()):
+            kmls_validos = sorted(info_kml['kmls'])
             # Se houver arquivo consolidado com o prefixo da FA (ex: '207110 - talhao.kml'), prioriza para não duplicar
             consolidado = [k for k in kmls_validos if os.path.basename(k).startswith(fa_kml) and 'parte' not in os.path.basename(os.path.dirname(k)).lower()]
             if consolidado:
