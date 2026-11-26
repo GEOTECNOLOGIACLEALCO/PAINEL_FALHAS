@@ -217,8 +217,41 @@ if rows_bk:
 # Fallback autônomo e blindado: Se a aba BACKLOG em dados.xlsx estiver vazia (ex: bot em outra estação com código antigo em memória)
 if len(backlog) == 0:
     try:
+        caminho_bk_master = r"W:\15-SETOR\FABIANO\BACKUP_PRE_SEGURANCA_20261126\dados.xlsx"
+        if os.path.exists(caminho_bk_master):
+            try:
+                wb_bk_m = openpyxl.load_workbook(caminho_bk_master, data_only=True, read_only=True)
+                if 'BACKLOG' in wb_bk_m.sheetnames:
+                    r_bk_m = list(wb_bk_m['BACKLOG'].iter_rows(values_only=True))
+                    if len(r_bk_m) > 1:
+                        fas_voadas_base = set()
+                        for b in base_proc:
+                            f_b = str(b.get('fa') or '').strip()
+                            if f_b:
+                                fas_voadas_base.add(f_b)
+                                fas_voadas_base.add(f_b.lstrip('0'))
+                        for r in r_bk_m[1:]:
+                            fa_v = str(r[0] or '').strip()
+                            if not fa_v or fa_v in fas_voadas_base or fa_v.lstrip('0') in fas_voadas_base:
+                                continue
+                            tipo_f = "Própria" if eh_fa_propria(fa_v, str(r[3] or '')) else "Terceiro"
+                            backlog.append({
+                                "fa": fa_v,
+                                "fazenda": str(r[1] or '').strip(),
+                                "talhao": str(r[2] or '').strip(),
+                                "tipo": tipo_f,
+                                "ha": parse_num(r[4]),
+                                "data": format_data(r[5]),
+                                "dias": r[6] or 0,
+                                "status_prazo": str(r[7] or 'N/D')
+                            })
+                wb_bk_m.close()
+            except Exception: pass
+
         pasta_doc = os.path.join(os.path.dirname(__file__), "doc_planilhas")
-        if os.path.exists(pasta_doc):
+        if not os.path.exists(pasta_doc):
+            pasta_doc = r"W:\15-SETOR\FABIANO\Voo_e_processamentos_2.0\Doc\Backup_Planilhas_Plantio_2026"
+        if len(backlog) == 0 and os.path.exists(pasta_doc):
             fas_voadas_set = set(str(b['fa']).strip().lstrip('0') for b in base_proc if b.get('fa'))
             fas_voadas_set.update(str(b['fa']).strip() for b in base_proc if b.get('fa'))
             def formatar_fa_loc(val):
@@ -688,15 +721,24 @@ except Exception as e:
 # 7. POSTERGADOS_2_CORTE
 sheet_post = wb['POSTERGADOS_2_CORTE'] if 'POSTERGADOS_2_CORTE' in wb.sheetnames else None
 rows_post = list(sheet_post.iter_rows(values_only=True)) if sheet_post else []
-if not rows_post:
+if not rows_post or len(rows_post) <= 1:
     try:
-        caminho_bp_fallback = r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\AUDITORIA - DOC - SISTEMA\BASE DE PROCESSAMENTOS.xlsx"
-        if os.path.exists(caminho_bp_fallback):
-            wb_bp_fb = openpyxl.load_workbook(caminho_bp_fallback, data_only=True, read_only=True)
+        caminho_bk_master = r"W:\15-SETOR\FABIANO\BACKUP_PRE_SEGURANCA_20261126\dados.xlsx"
+        if os.path.exists(caminho_bk_master):
+            wb_bp_fb = openpyxl.load_workbook(caminho_bk_master, data_only=True, read_only=True)
             if 'POSTERGADOS_2_CORTE' in wb_bp_fb.sheetnames:
                 rows_post = list(wb_bp_fb['POSTERGADOS_2_CORTE'].iter_rows(values_only=True))
             wb_bp_fb.close()
     except Exception: pass
+    if not rows_post or len(rows_post) <= 1:
+        try:
+            caminho_bp_fallback = r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\AUDITORIA - DOC - SISTEMA\BASE DE PROCESSAMENTOS.xlsx"
+            if os.path.exists(caminho_bp_fallback):
+                wb_bp_fb = openpyxl.load_workbook(caminho_bp_fallback, data_only=True, read_only=True)
+                if 'POSTERGADOS_2_CORTE' in wb_bp_fb.sheetnames:
+                    rows_post = list(wb_bp_fb['POSTERGADOS_2_CORTE'].iter_rows(values_only=True))
+                wb_bp_fb.close()
+        except Exception: pass
 postergados = []
 if rows_post and len(rows_post) > 1:
     h_post = [str(c or '').strip().upper() for c in rows_post[0]]
@@ -725,6 +767,21 @@ if rows_post and len(rows_post) > 1:
             "motivo": str(r[idx_p_mot] or 'Porte fechado / Impossibilidade de restituição no 1º corte').strip(),
             "safra_retorno": str(r[idx_p_ret] or '2027 - 2º Corte').strip()
         })
+
+if len(postergados) == 0:
+    for b in base_proc:
+        f_b = str(b.get('fa') or '').strip()
+        f_clean = re.sub(r'\D', '', f_b)
+        if f_b in FAS_POSTERGADAS_2_CORTE or f_clean in FAS_POSTERGADAS_2_CORTE:
+            postergados.append({
+                "fa": f_b,
+                "fazenda": b.get("fazenda", "N/D"),
+                "talhao": "Todos",
+                "tipo": "Própria" if eh_fa_propria(f_b) else "Terceiro",
+                "area_ha": parse_num(b.get("ha_voo", 0.0)),
+                "motivo": "Sem porte agronômico / 2º Corte em 2027",
+                "safra_retorno": "2027 - 2º Corte"
+            })
 
 dados_completos = {
     "fas_alteradas": mapa_fas_alteradas,
