@@ -21,6 +21,7 @@ FAS_FORCADAS_PROPRIAS = {
     '207875', '207968', '207969', '207982', '208066', '208097', '208183'
 }
 FAS_FORCADAS_TERCEIROS = {'200', '302817', '302808', '106', '240', '285'}
+FAS_POSTERGADAS_2_CORTE = {'100862', '200498', '200501', '202303', '202807'}
 
 MAPA_EQUIVALENCIA_FAS = {}
 
@@ -116,12 +117,14 @@ for r in rows_base[1:]:
     linhas = str(r[9] or 'PENDENTE').upper().strip()
     exp = str(r[10] or 'PENDENTE').upper().strip()
     
-    if "FEITO" in linhas:
-        status_linhas_clean = "FEITO"
-        bd_falhas = "FEITO"
-    elif "POSTERGADO" in linhas:
+    fa_clean = re.sub(r'\D', '', fa)
+    if fa in FAS_POSTERGADAS_2_CORTE or fa_clean in FAS_POSTERGADAS_2_CORTE or "POSTERGADO" in linhas:
         status_linhas_clean = "POSTERGADO (2º CORTE)"
         bd_falhas = "POSTERGADO (2º CORTE)"
+        exp = "N/A (2º CORTE)"
+    elif "FEITO" in linhas:
+        status_linhas_clean = "FEITO"
+        bd_falhas = "FEITO"
     else:
         status_linhas_clean = "PENDENTE"
         bd_falhas = "PENDENTE"
@@ -610,7 +613,24 @@ if 'CONFIG' in wb.sheetnames:
         # Lê creditos_inforow
         idx_cred = next((i for i, h in enumerate(headers_c) if 'credito' in h or 'inforow' in h), 0)
         if len(rows_c) > 1 and len(rows_c[1]) > idx_cred:
-            creditos_dinamicos = parse_num(rows_c[1][idx_cred])
+            val_c = parse_num(rows_c[1][idx_cred])
+            if val_c > 0:
+                creditos_dinamicos = val_c
+    if creditos_dinamicos <= 0:
+        for p_txt in [
+            r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\AUDITORIA - DOC - SISTEMA\creditos_inforow.txt",
+            r"W:\01-DRONE\01-IMAGENS VOO\2026\1 - Não Processados\creditos_inforow.txt"
+        ]:
+            if os.path.exists(p_txt):
+                try:
+                    with open(p_txt, 'r', encoding='utf-8') as f_t:
+                        val_t = parse_num(f_t.read().strip())
+                        if val_t > 0:
+                            creditos_dinamicos = val_t
+                            break
+                except Exception: pass
+    if creditos_dinamicos <= 0:
+        creditos_dinamicos = 9269.85
         
         # Lê senha_acesso se existir na coluna
         idx_senha = next((i for i, h in enumerate(headers_c) if 'senha' in h or 'chave' in h or 'password' in h), -1)
