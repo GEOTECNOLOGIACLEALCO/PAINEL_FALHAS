@@ -1,5 +1,5 @@
 // Catalogo Automatico de Mapas de Safra em PDF
-// Gerado em: 27/11/2026 08:15:47
+// Gerado em: 27/11/2026 08:17:09
 // Total de Mapas: 1327
 window.DADOS_MAPAS_SAFRA = [
   {
@@ -12,8 +12,8 @@ window.DADOS_MAPAS_SAFRA = [
     "fa": "307885",
     "fazenda": "Sitio Rizzato (Marcio Hidekazu Kimura)-A4",
     "proprietario": "",
-    "data_modificacao": "27/11/2026 08:14",
-    "timestamp": 1795778079,
+    "data_modificacao": "27/11/2026 08:16",
+    "timestamp": 1795778167,
     "tamanho_kb": 264.5,
     "dias_atras": 0.0,
     "is_novo": true,
@@ -3279,7 +3279,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "14/08/2026 11:52",
     "timestamp": 1786719168,
     "tamanho_kb": 274.7,
-    "dias_atras": 104.8,
+    "dias_atras": 104.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3398,7 +3398,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "12/08/2026 16:40",
     "timestamp": 1786563611,
     "tamanho_kb": 261.7,
-    "dias_atras": 106.6,
+    "dias_atras": 106.7,
     "is_novo": false,
     "is_hoje": false
   },
@@ -3993,7 +3993,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "05/08/2026 09:28",
     "timestamp": 1785932927,
     "tamanho_kb": 248.7,
-    "dias_atras": 113.9,
+    "dias_atras": 114.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -4248,7 +4248,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "29/07/2026 09:29",
     "timestamp": 1785328140,
     "tamanho_kb": 301.5,
-    "dias_atras": 120.9,
+    "dias_atras": 121.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -5268,7 +5268,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/07/2026 09:27",
     "timestamp": 1783340879,
     "tamanho_kb": 287.3,
-    "dias_atras": 143.9,
+    "dias_atras": 144.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -8498,7 +8498,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "05/05/2026 14:15",
     "timestamp": 1778001352,
     "tamanho_kb": 348.6,
-    "dias_atras": 205.7,
+    "dias_atras": 205.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9603,7 +9603,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "19/03/2026 09:28",
     "timestamp": 1773923330,
     "tamanho_kb": 299.5,
-    "dias_atras": 252.9,
+    "dias_atras": 253.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -9858,7 +9858,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "11/03/2026 14:16",
     "timestamp": 1773249387,
     "tamanho_kb": 266.4,
-    "dias_atras": 260.7,
+    "dias_atras": 260.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -12816,7 +12816,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "30/10/2025 11:53",
     "timestamp": 1761835982,
     "tamanho_kb": 295.9,
-    "dias_atras": 392.8,
+    "dias_atras": 392.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14023,7 +14023,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "03/09/2025 09:28",
     "timestamp": 1756902534,
     "tamanho_kb": 305.9,
-    "dias_atras": 449.9,
+    "dias_atras": 450.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -14907,7 +14907,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "08/07/2025 11:51",
     "timestamp": 1751986309,
     "tamanho_kb": 316.9,
-    "dias_atras": 506.8,
+    "dias_atras": 506.9,
     "is_novo": false,
     "is_hoje": false
   },
@@ -17593,7 +17593,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "06/06/2024 09:28",
     "timestamp": 1717676896,
     "tamanho_kb": 286.2,
-    "dias_atras": 903.9,
+    "dias_atras": 904.0,
     "is_novo": false,
     "is_hoje": false
   },
@@ -18103,7 +18103,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "29/04/2024 14:15",
     "timestamp": 1714410954,
     "tamanho_kb": 281.1,
-    "dias_atras": 941.7,
+    "dias_atras": 941.8,
     "is_novo": false,
     "is_hoje": false
   },
@@ -21911,7 +21911,7 @@ window.DADOS_MAPAS_SAFRA = [
     "data_modificacao": "15/02/2024 09:28",
     "timestamp": 1708000106,
     "tamanho_kb": 252.2,
-    "dias_atras": 1015.9,
+    "dias_atras": 1016.0,
     "is_novo": false,
     "is_hoje": false
   },
